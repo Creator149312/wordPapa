@@ -1,0 +1,716 @@
+/* Reset default margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body{
+    background-color: #f2f2f2; /* Set background color for right container */
+  }
+  
+  /* Apply mobile-first styles */
+  .container {
+    display: flex;
+    flex-direction: column; /* Stack columns vertically on small screens */
+  }
+  
+  .left-column {
+    flex: 9; /* Occupy 9 out of 12 columns on large screens */
+    padding: 10px; /* Add padding for content separation */
+  }
+  
+  .right-column {
+    flex: 3; /* Occupy 3 out of 12 columns on large screens */
+    padding: 10px; /* Add padding for content separation */
+  }
+
+  /* Define a container for the row */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Define columns within the row */
+.col-1 {
+  flex-basis: calc(8.33% - 20px); /* Adjust for column padding */
+  margin: 10px; /* Add column padding */
+}
+ 
+.col-2 {
+  flex-basis: calc(16.66% - 20px);
+  margin: 10px;
+}
+
+.col-3 {
+  flex-basis: calc(25% - 20px);
+  margin: 10px;
+}
+
+/* Define columns within the row */
+
+.col-4 {
+  flex-basis: calc(33.33% - 20px);
+  margin: 10px;
+}
+
+.col-5 {
+  flex-basis: calc(41.66% - 20px);
+  margin: 10px;
+}
+
+.col-6 {
+  flex-basis: calc(50% - 20px);
+  margin: 10px;
+}
+
+.col-7 {
+  flex-basis: calc(58.33% - 20px);
+  margin: 10px;
+}
+
+.col-8 {
+  flex-basis: calc(66.66% - 20px);
+  margin: 10px;
+}
+
+.col-9 {
+  flex-basis: calc(75% - 20px);
+  margin: 10px;
+}
+
+.col-10 {
+  flex-basis: calc(83.33% - 20px);
+  margin: 10px;
+}
+
+.col-11 {
+  flex-basis: calc(91.66% - 20px);
+  margin: 10px;
+}
+
+.col-12 {
+  flex-basis: calc(100% - 20px);
+  margin: 10px;
+}
+
+/* Define a CSS class to clear floats (optional) */
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+  /* Media query for larger screens */
+  @media (min-width: 768px) {
+    .container {
+      flex-direction: row; /* Lay out columns side by side on large screens */
+    }
+
+
+  }
+  /* card.css */
+
+/* Define a card class */
+.card {
+    background-color: #ffffff; /* Card background color */
+    border: 1px solid #e1e1e1; /* Card border */
+    border-radius: 8px; /* Rounded corners for the card */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
+    padding: 16px; /* Padding inside the card */
+  }
+  
+  /* Card title */
+  .card-title {
+    font-size: 1.5rem; /* Title font size */
+    font-weight: bold; /* Title font weight */
+    margin-bottom: 8px; /* Spacing below the title */
+  }
+  
+  /* Card content */
+  .card-content {
+    font-size: 1rem; /* Content font size */
+    line-height: 1.4; /* Line height for content */
+  }
+  
+  /* Card footer */
+  .card-footer {
+    margin-top: 16px; /* Spacing above the footer */
+  }
+  
+  /* Card image */
+  .card-image {
+    max-width: 100%; /* Ensure the image doesn't exceed the card width */
+    border-top-left-radius: 8px; /* Rounded corners for the top-left */
+    border-top-right-radius: 8px; /* Rounded corners for the top-right */
+  }
+  
+  /* Responsive styles for smaller screens */
+  @media (max-width: 768px) {
+    .card {
+      padding: 12px; /* Decrease padding for smaller screens */
+    }
+    .card-title {
+      font-size: 1.3rem; /* Decrease title font size */
+    }
+    .card-content {
+      font-size: 0.9rem; /* Decrease content font size */
+    }
+  }
+  
+/* Navbar.css */
+
+/* Define the .text-center class */
+.text-center {
+  text-align: center;
+}
+
+/* Define the .form-control class for standard size */
+.form-control {
+  width: 100%; /* Full width by default */
+  padding: 10px; /* Padding for input elements */
+  font-size: 16px; /* Default font size */
+  border: 1px solid #ccc; /* Default border style */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Define a smaller size variation */
+.form-control-sm {
+  font-size: 14px; /* Smaller font size */
+  padding: 8px; /* Smaller padding */
+}
+
+/* Define a larger size variation */
+.form-control-lg {
+  font-size: 18px; /* Larger font size */
+  padding: 12px; /* Larger padding */
+}
+
+/* Margin classes */
+
+/* Margin utilities for all sides */
+.m-1 {
+  margin: 0.25rem;
+}
+
+.m-2 {
+  margin: 0.5rem;
+}
+
+.m-3 {
+  margin: 1rem;
+}
+
+.m-4 {
+  margin: 1.5rem;
+}
+
+.m-5 {
+  margin: 3rem;
+}
+
+/* Margin utilities for specific sides */
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.mt-5 {
+  margin-top: 3rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-5 {
+  margin-bottom: 3rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.ml-3 {
+  margin-left: 1rem;
+}
+
+.ml-4 {
+  margin-left: 1.5rem;
+}
+
+.ml-5 {
+  margin-left: 3rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mr-3 {
+  margin-right: 1rem;
+}
+
+.mr-4 {
+  margin-right: 1.5rem;
+}
+
+.mr-5 {
+  margin-right: 3rem;
+}
+
+/* Margin utilities for horizontal and vertical margins */
+.mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.mx-3 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.mx-4 {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+.mx-5 {
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.my-1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-3 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.my-4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-5 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+/* Padding classes */
+
+/* Padding utilities for all sides */
+.p-1 {
+  padding: 0.25rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-3 {
+  padding: 1rem;
+}
+
+.p-4 {
+  padding: 1.5rem;
+}
+
+.p-5 {
+  padding: 3rem;
+}
+
+/* Padding utilities for specific sides */
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pt-2 {
+  padding-top: 0.5rem;
+}
+
+.pt-3 {
+  padding-top: 1rem;
+}
+
+.pt-4 {
+  padding-top: 1.5rem;
+}
+
+.pt-5 {
+  padding-top: 3rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pb-3 {
+  padding-bottom: 1rem;
+}
+
+.pb-4 {
+  padding-bottom: 1.5rem;
+}
+
+.pb-5 {
+  padding-bottom: 3rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pl-3 {
+  padding-left: 1rem;
+}
+
+.pl-4 {
+  padding-left: 1.5rem;
+}
+
+.pl-5 {
+  padding-left: 3rem;
+}
+
+.pr-1 {
+  padding-right: 0.25rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pr-3 {
+  padding-right: 1rem;
+}
+
+.pr-4 {
+  padding-right: 1.5rem;
+}
+
+.pr-5 {
+  padding-right: 3rem;
+}
+
+/* Padding utilities for horizontal and vertical padding */
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.px-4 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.px-5 {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.py-3 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.py-4 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.py-5 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+/* Define a button class with background color and shadow */
+.custom-button {
+  background-color: #75c32c;
+  color: #fff; /* Text color */
+  border: none;
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 20px; /* Adjust padding as needed */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+  cursor: pointer; /* Add pointer cursor */
+  transition: background-color 0.3s, box-shadow 0.3s; /* Add transition effects */
+}
+
+/* Hover effect - change background color and shadow on hover */
+.custom-button:hover {
+  background-color: #64ab27; /* Change background color on hover */
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3); /* Change shadow on hover */
+}
+
+/* Optional: Disabled state */
+.custom-button:disabled {
+  background-color: #ccc; /* Change background color for disabled state */
+  cursor: not-allowed; /* Change cursor for disabled state */
+  box-shadow: none; /* Remove shadow for disabled state */
+}
+
+.wordSpan{
+  font-size: large;
+  padding: 10px;
+  margin: 5px;
+  background-color: lightgreen;
+  display: inline-block;
+  text-align: center;
+  line-height: 0.75;
+  box-shadow: 2px 3px lightgreen;
+  font-family: "Belanosima", sans-serif;
+  cursor:pointer;
+}
+
+.words-container{
+  border: 34px lightgreen;
+padding: 10px;
+box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+margin: 20px 20px;
+}
+
+/* Default font size for all screens */
+.font-responsive {
+  font-size: 16px; /* Adjust this to your desired base font size */
+}
+
+/* Media query for screens wider than 768px (typical tablet and desktop screens) */
+@media (min-width: 768px) {
+  .font-responsive {
+    font-size: 18px; /* Adjust this to your desired font size for larger screens */
+  }
+}
+
+/* Media query for screens wider than 1200px (typical desktop screens) */
+@media (min-width: 1200px) {
+  .font-responsive {
+    font-size: 20px; /* Adjust this to your desired font size for even larger screens */
+  }
+}
+
+
+/* Paragraph related Properties */
+p {
+  line-height: 1.5; /* Adjust line height for proper spacing between lines */
+  margin: 10px 0; /* Add vertical margin to separate paragraphs */
+  hyphens: auto; /* Enable automatic hyphenation for improved word wrapping */
+}
+
+/* Styling the default link appearance */
+a {
+  text-decoration: none; /* Remove underlines */
+  color: #75c32c; /* Set the link color to #75c32c */
+  padding: 2px 6px; /* Add padding for better spacing around the link text */
+}
+
+/* General heading styles */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold; /* Make headings bold */
+  color: #4f4f4f; /* Set a color for headings */
+  margin-top: 20px; /* Add spacing above headings */
+  margin-bottom: 10px; /* Add spacing below headings */
+}
+
+/* Default style for all headings */
+h1, h2, h3, h4, h5, h6 {
+  font-size: 24px; /* Default font size for all headings */
+}
+
+/* Media query for screens wider than 768px (typical tablet and desktop screens) */
+@media (min-width: 768px) {
+  /* Increase font size for headings on larger screens */
+  h1 { font-size: 36px; }
+  h2 { font-size: 30px; }
+  h3 { font-size: 26px; }
+  h4 { font-size: 22px; }
+  h5 { font-size: 20px; }
+  h6 { font-size: 18px; }
+}
+
+
+/* Style for list items (<li>) */
+li {
+  margin-bottom: 10px; /* Add spacing between list items */
+  padding-left: 20px; /* Add left padding for indentation */
+  position: relative; /* Position relative for list item markers */
+}
+/* Styling for the SearchBarNav component */
+.search-bar-nav {
+  display: flex;
+  margin: 0 auto;
+  width: 60%;
+}
+
+/* Style for the search input */
+.search-input {
+  flex-grow: 3; /* Grow to take available space */
+  padding: 10px; /* Add padding for input */
+  border: 1px solid #ccc; /* Add border for input */
+  border-radius: 4px 0px 0px 4px;; /* Add border radius */
+}
+
+/* Style for the select box */
+.search-select {
+  flex-grow: 1; /* Grow to take available space */
+  margin-right: 10px; /* Add spacing between elements */
+  padding: 10px; /* Add padding for select box */
+  border: 1px solid #ccc; /* Add border for select box */
+  border-radius: 4px; /* Add border radius */
+  background-color: #fff; /* Background color for select box */
+  color: #333; /* Text color for select box */
+}
+
+/* Style for the search button */
+.search-button {
+  flex-grow: 1; /* Grow to take available space */
+  padding: 10px; /* Add padding for button */
+  background-color: #75c32c; /* Button background color */
+  color: #fff; /* Button text color */
+  border: none; /* Remove button border */
+  border-radius: 0px 4px 4px 0px; /* Add border radius */
+  cursor: pointer; /* Add pointer cursor */
+}
+
+/* Media query for small 768px (typical mobiles) */
+@media (max-width: 769px) {
+  .search-bar-nav {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+ 
+  .search-select {
+    width: 100%; /* Set width to 50% for larger screens */
+    border-radius: 4px; /* Add border radius */
+    margin-right: 0px;
+  }
+
+  .search-input{
+    width: 80%; /* Set width to 50% for larger screens */
+  }
+
+  .search-button{
+    width: 20%;
+  }
+}
+
+/* Large Input */
+.input-lg {
+  padding: 5px 10px; /* Adjust padding for a larger input */
+  font-size: 18px; /* Increase font size for a larger input */
+}
+
+
+/* Large Input */
+.input-xlg {
+  padding: 5px 10px; /* Adjust padding for a larger input */
+  font-size: 22px; /* Increase font size for a larger input */
+}
+
+/* Small Input */
+.input-sm {
+  padding: 5px 10px; /* Adjust padding for a smaller input */
+  font-size: 14px; /* Decrease font size for a smaller input */
+}
+
+/* Style for the accordion container */
+.accordion {
+  border: 1px solid #ccc;
+}
+
+/* Style for individual accordion items */
+.accordion-item {
+  border-top: 1px solid #ccc;
+}
+
+/* Style for accordion headers */
+.accordion-header {
+  background-color: #f2f2f2;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Style for accordion content (hidden by default) */
+.accordion-content {
+  padding: 10px;
+  display: none;
+}
+
+/* Style for active (open) accordion items */
+.accordion-item.active .accordion-content {
+  display: block;
+}
