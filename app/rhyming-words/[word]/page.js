@@ -2,14 +2,14 @@ import axios from 'axios';
 import { displayWords } from '@utils/HelperFunctions';
 import Link from 'next/link';
 
-export function generateStaticParams() {
-  // let words = allWords.map((w)=>{
-  //   return {word: w};
-  // });
+// export function generateStaticParams() {
+//   // let words = allWords.map((w)=>{
+//   //   return {word: w};
+//   // });
 
-  // return words; 
-  return [{word: "apple"}, {word: "card"}, {word: "papa"}];
-}
+//   // return words; 
+//   return [{word: "apple"}, {word: "card"}, {word: "papa"}];
+// }
 
 let rhymingWords = [];
 export default async function Page({ params }) {
