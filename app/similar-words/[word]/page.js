@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { displayWords } from '@utils/HelperFunctions';
 
-// let allWords = ["apple", "card", "papa"]
-
 // export function generateStaticParams() {
 //   // let words = allWords.map((w)=>{
 //   //   return {word: w};
