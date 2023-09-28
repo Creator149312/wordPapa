@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import styles from '@public/styles/Navbar.module.css';
+import styles from '@public/styles/NavBar.module.css';
 
 function Navbar() {
 
