@@ -1,5 +1,6 @@
-import axios from 'axios';
-import { displayWords } from '@utils/HelperFunctions';
+import DataFilterDisplay from "@utils/DataFilterDisplay";
+import axios from "axios";
+import Link from "next/link";
 
 // export function generateStaticParams() {
 //   // let words = allWords.map((w)=>{
@@ -30,8 +31,15 @@ export default async function Page({ params }) {
       <div>
       <h1>Similar Words and Phrases for {word}</h1>
       <p> There are {rhymingWords.length} words and phrases that are related to {word}. </p>
-      {displayWords(rhymingWords, '', '', '', '')}
-    </div>
+      <DataFilterDisplay words={rhymingWords} />
+      <div className='p-4 m-4'>
+          <p><strong>Related Links:</strong></p>
+        <ol>
+          <li><Link href={`/adjectives-finder/${word}/`}>Adjectives for {word}</Link></li>
+          <li><Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link></li>
+          <li><Link href={`/homophones-finder/${word}/`}>Homophones for {word}</Link></li>
+        </ol>
+        </div> </div>
     );
   }
 
