@@ -1,4 +1,4 @@
-import { displayWords } from '@utils/HelperFunctions';
+import DataFilterDisplay from '@utils/DataFilterDisplay';
 import axios from 'axios';
 
 // export function generateStaticParams() {
@@ -29,7 +29,7 @@ export default async function Page({ params }) {
     return (
       <div>
         <h1>Homophones words for "{word}"</h1>
-        {displayWords(rhymingWords, '', '', '', '')}
+        <DataFilterDisplay words={rhymingWords} />
       </div>
     );
   }

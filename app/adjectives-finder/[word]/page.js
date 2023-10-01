@@ -31,15 +31,15 @@ export default async function Page({ params }) {
 
   return (
     <div>
-      <h1>Adjective Words to Describe "{params.word.toUpperCase()}"</h1>
-      <p> Following is a list of {rhymingWords.length} adjective words and phrases used to describe {word}. </p>
+      <h1>Adjective Words to Describe {word.charAt(0).toUpperCase() + word.slice(1)}</h1>
+      <p> Following is a list of {rhymingWords.length} adjective words and phrases used for describing {word}. </p>
       <DataFilterDisplay words={rhymingWords} />
       <div className='p-4 m-4'>
           <p><strong>Related Links:</strong></p>
         <ol>
-          <li><Link href={`/adjectives-finder/${word}/`}>Adjectives for {word}</Link></li>
-          <li><Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link></li>
-          <li><Link href={`/homophones-finder/${word}/`}>Homophones for {word}</Link></li>
+        <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
+         <li><Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link></li>
+        <li><Link href={`/homophones-finder/${word}/`}>Homophones for {word}</Link></li>
         </ol>
         </div>
     </div>

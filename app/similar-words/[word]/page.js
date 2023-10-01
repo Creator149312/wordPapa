@@ -29,14 +29,14 @@ export default async function Page({ params }) {
 
     return (
       <div>
-      <h1>Similar Words and Phrases for {word}</h1>
-      <p> There are {rhymingWords.length} words and phrases that are related to {word}. </p>
+      <h1>Similar Words and Phrases for {word.charAt(0).toUpperCase() + word.slice(1)}</h1>
+      <p> Following is a list of {rhymingWords.length} similar words and phrases that are related to {word}. </p>
       <DataFilterDisplay words={rhymingWords} />
       <div className='p-4 m-4'>
           <p><strong>Related Links:</strong></p>
         <ol>
           <li><Link href={`/adjectives-finder/${word}/`}>Adjectives for {word}</Link></li>
-          <li><Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link></li>
+          <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
           <li><Link href={`/homophones-finder/${word}/`}>Homophones for {word}</Link></li>
         </ol>
         </div> </div>
