@@ -2,6 +2,19 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 import axios from "axios";
 import Link from "next/link";
 
+let titleStr = "";
+export async function generateMetadata({ params }, parent) {
+
+  const {word} = params;
+  // read route params
+  titleStr = "Similar Sounding Words and Phrases for " + (word.charAt(0).toUpperCase() + word.slice(1));
+  const descriptionStr = "Explore an extensive list of similar sounding words for " + params.word;
+  return {
+    title: titleStr,
+    description: descriptionStr ,
+  }
+}
+
 // export function generateStaticParams() {
 //   // let words = allWords.map((w)=>{
 //   //   return {word: w};
@@ -17,7 +30,7 @@ export default async function Page({ params }) {
   
     try {
       rhymingWords = [];
-      const response = await axios.get(`https://api.datamuse.com/words?ml=${word}&max=15`
+      const response = await axios.get(`https://api.datamuse.com/words?ml=${word}`
       );
       rhymingWords = response.data.map((item) => item.word);
     } catch (error) {
@@ -29,15 +42,14 @@ export default async function Page({ params }) {
 
     return (
       <div>
-      <h1>Similar Words and Phrases for {word.charAt(0).toUpperCase() + word.slice(1)}</h1>
-      <p> Following is a list of {rhymingWords.length} similar words and phrases that are related to {word}. </p>
+      <h1>{titleStr}</h1>
+      <p> Following is a list of {rhymingWords.length} words and phrases that sound similar to {word}. </p>
       <DataFilterDisplay words={rhymingWords} />
       <div className='p-4 m-4'>
           <p><strong>Related Links:</strong></p>
         <ol>
           <li><Link href={`/adjectives/${word}/`}>Adjectives for {word}</Link></li>
           <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
-          <li><Link href={`/homophones/${word}/`}>Homophones for {word}</Link></li>
         </ol>
         </div> </div>
     );

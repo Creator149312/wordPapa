@@ -2,6 +2,19 @@ import axios from "axios";
 import Link from "next/link";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 
+let titleStr = "";
+export async function generateMetadata({ params }, parent) {
+
+  const {word} = params;
+  // read route params
+  titleStr = "Rhyming Words and Phrases for" + (word.charAt(0).toUpperCase() + word.slice(1));
+  const descriptionStr = "Explore list of common words that rhyme with " + params.word + " to use in creative writing and poetry.";
+  return {
+    title: titleStr,
+    description: descriptionStr ,
+  }
+}
+
 // export function generateStaticParams() {
 //   // let words = allWords.map((w)=>{
 //   //   return {word: w};
@@ -31,7 +44,7 @@ export default async function Page({ params }) {
   return (
     <div>
       <h1>
-        Rhyming Words and Phrases for {word.charAt(0).toUpperCase() + word.slice(1)}
+      {titleStr}
       </h1>
       <p>
         Following is a list of {rhymingWords.length} words and phrases that
