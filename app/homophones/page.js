@@ -1,6 +1,5 @@
 
 import Homophones from "./Homophones";
-import SideBar from "@components/SideBar";
 
 export const metadata = {
     title: "Homophones Generator - Find Homophones for English Words",

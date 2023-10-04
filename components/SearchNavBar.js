@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
 const SearchBarNav = () => {
-  const [selectedOption, setSelectedOption] = useState("/adjectives-finder/");
+  const [selectedOption, setSelectedOption] = useState("/adjectives/");
   const [word, setWord] = useState("");
 
   const urlOptions = [
-    { value: "/adjectives-finder/", label: "Find Adjectives" },
+    { value: "/adjectives/", label: "Find Adjectives" },
     { value: "/rhyming-words/", label: "Rhyming Words" },
     { value: "/similar-words/", label: "Similar Words" },
-    { value: "/homophones-finder/", label: "Homophones Words" },
+    { value: "/homophones/", label: "Homophones Words" },
   ];
 
   const handleOptionChange = (e) => {
