@@ -29,7 +29,6 @@ const SearchBarNav = () => {
           onChange={handleOptionChange}
           className="search-select input-lg"
         >
-          {" "}
           {urlOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
