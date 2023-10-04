@@ -12,6 +12,11 @@ const SideBar = () => {
                   Rhyming Words Tracing Workbook
                 </a>
               </li>
+              <li className='no-style-list'>
+                <a href="https://www.englishbix.com/product/3-letter-rhyming-words-workbook/">
+                  Rhyming Words Tracing Workbook
+                </a>
+              </li>
             </ul>
           </div>
             {/* <div>
