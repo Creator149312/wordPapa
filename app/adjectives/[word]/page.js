@@ -51,7 +51,7 @@ export default async function Page({ params }) {
           <p><strong>Related Links:</strong></p>
         <ol>
         <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
-         <li><Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link></li>
+         <li><Link href={`/synonyms/${word}/`}>Synonyms for {word}</Link></li>
         <li><Link href={`/homophones/${word}/`}>Homophones for {word}</Link></li>
         </ol>
         </div>

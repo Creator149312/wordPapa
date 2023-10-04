@@ -62,7 +62,7 @@ export default async function Page({ params }) {
             </Link>
           </li>
           <li>
-            <Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link>
+            <Link href={`/synonyms/${word}/`}>Synonyms for {word}</Link>
           </li>
           <li>
             <Link href={`/homophones/${word}/`}>
