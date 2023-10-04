@@ -25,9 +25,9 @@ function Navbar() {
           </a>
 
           <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
-            <li onClick={removeActive}>
+            {/* <li onClick={removeActive}>
               <a href='/define/' className={`${styles.navLink}`}>Dictionary</a>
-            </li>
+            </li> */}
             <li onClick={removeActive}>
               <a href='/adjectives/' className={`${styles.navLink}`}>Adjectives Finder</a>
             </li>
