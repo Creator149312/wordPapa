@@ -1,16 +1,17 @@
 import SimilarWords from "./SimilarWords";
-import SideBar from "@components/SideBar";
+
+export const metadata = {
+  title: "Synonyms Finder - Get Similar Meaning Words",
+  description: "Our Synonyms Generator is a versatile linguistic tool designed to find synonym and other related words that share semantic similarities with a given input word."
+}
 
 function SimilarWordsPage() {
   return (
     <div>
       <div className="row">
-        {/* Left side: 9-column scrollable content */}
         <div>
           <div>
             <div>
-              {/* Replace with your scrollable content */}
-              {/* Your content here */}
               <SimilarWords />
               {/* Continue adding content */}
               <div className="m-3 p-3">

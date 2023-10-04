@@ -10,14 +10,10 @@ function RhymingWordsPage() {
   return (
     <div>
     <div className="row">
-      {/* Left side: 9-column scrollable content */}
       <div>
         <div>
           <div >
-              {/* Replace with your scrollable content */}
-                    {/* Your content here */}
                     <RhymingWords />
-                    {/* Continue adding content */}
                    <div className='m-3 p-3'>
                    <p>Introducing the Rhyming Words Generator, an easy to use tool designed to make learning fun and engaging for kids. </p>
                    <p>Users input a word, and the tool provides a list of words that share similar end sounds or phonetic patterns, aiding in the composition of engaging and rhythmically pleasing content.</p>

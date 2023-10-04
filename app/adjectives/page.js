@@ -1,22 +1,18 @@
 import AdjectivesExtractor from "./AdjectivesExtractor";
 
 export const metadata = {
-  title: "Adjectives Page",
-  description: "This is not a papa page but Adjectives Page"
+  title: "Adjectives Finder - Get Describing Words for Nouns",
+  description: "Use our Adjectives Finder to find perfect describing words for Nouns or Objects to enhance the quality of your writings and make communications engaging."
 }
 
 function AdjectivesExtractorPage() {
   return (
     <div>
       <div className="row">
-        {/* Left side: 9-column scrollable content */}
         <div>
           <div>
             <div >
-              {/* Replace with your scrollable content */}
-              {/* Your content here */}
               <AdjectivesExtractor />
-              {/* Continue adding content */}
               <div className="m-2 p-2">
                 <p>
                   Introducing our Adjectives Finder is a handy resource for word

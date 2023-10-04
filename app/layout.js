@@ -3,14 +3,13 @@ import '@public/styles/globals.css'
 import NavbarComponent from '@components/NavBar';
 import Footer from '@components/Footer';
 import SearchNavBar from '@components/SearchNavBar';
-import TestSelector from '@components/TestSelector';
 
 export const metadata = {
   title: {
     default: "My Papa's App",
     template: '%s - WordPapa'
   },
-  description: "This is word papa"
+  description: "WordPapa is a enriching vocabulary and word tools hub to find words for games and language learning. Dive into a world of words and become a confident English speaker and writer."
 }
 
 const layout = ({children}) => {

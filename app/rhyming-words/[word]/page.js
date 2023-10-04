@@ -44,7 +44,7 @@ export default async function Page({ params }) {
         </p>
         <ol>
           <li>
-            <Link href={`/adjectives-finder/${word}/`}>
+            <Link href={`/adjectives/${word}/`}>
               Adjectives for {word}
             </Link>
           </li>
@@ -52,7 +52,7 @@ export default async function Page({ params }) {
             <Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link>
           </li>
           <li>
-            <Link href={`/homophones-finder/${word}/`}>
+            <Link href={`/homophones/${word}/`}>
               Homophones for {word}
             </Link>
           </li>

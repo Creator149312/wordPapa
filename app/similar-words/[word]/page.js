@@ -35,9 +35,9 @@ export default async function Page({ params }) {
       <div className='p-4 m-4'>
           <p><strong>Related Links:</strong></p>
         <ol>
-          <li><Link href={`/adjectives-finder/${word}/`}>Adjectives for {word}</Link></li>
+          <li><Link href={`/adjectives/${word}/`}>Adjectives for {word}</Link></li>
           <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
-          <li><Link href={`/homophones-finder/${word}/`}>Homophones for {word}</Link></li>
+          <li><Link href={`/homophones/${word}/`}>Homophones for {word}</Link></li>
         </ol>
         </div> </div>
     );

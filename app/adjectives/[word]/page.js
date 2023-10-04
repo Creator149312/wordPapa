@@ -2,6 +2,19 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 import axios from "axios";
 import Link from "next/link";
 
+let titleStr = "";
+export async function generateMetadata({ params }, parent) {
+
+  const {word} = params;
+  // read route params
+  titleStr = "Adjective Words to Describe " + (word.charAt(0).toUpperCase() + word.slice(1));
+  const descriptionStr = "Explore list of commonly used adjective words for describing " + params.word + " in writing.";
+  return {
+    title: titleStr,
+    description: descriptionStr ,
+  }
+}
+
 // export function generateStaticParams() {
 // //   // let words = allWords.map((w)=>{
 // //   //   return {word: w};
@@ -31,15 +44,15 @@ export default async function Page({ params }) {
 
   return (
     <div>
-      <h1>Adjective Words to Describe {word.charAt(0).toUpperCase() + word.slice(1)}</h1>
-      <p> Following is a list of {rhymingWords.length} adjective words and phrases used for describing {word}. </p>
+      <h1>{titleStr}</h1>
+      <p> Following is a list of {rhymingWords.length} adjective words and phrases used for describing {word} in writing. </p>
       <DataFilterDisplay words={rhymingWords} />
       <div className='p-4 m-4'>
           <p><strong>Related Links:</strong></p>
         <ol>
         <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
          <li><Link href={`/similar-words/${word}/`}>Synonyms for {word}</Link></li>
-        <li><Link href={`/homophones-finder/${word}/`}>Homophones for {word}</Link></li>
+        <li><Link href={`/homophones/${word}/`}>Homophones for {word}</Link></li>
         </ol>
         </div>
     </div>
