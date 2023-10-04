@@ -1,5 +1,4 @@
 import AdjectivesExtractor from "./AdjectivesExtractor";
-import SideBar from "@components/SideBar";
 
 export const metadata = {
   title: "Adjectives Page",
