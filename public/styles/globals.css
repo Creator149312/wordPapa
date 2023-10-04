@@ -606,6 +606,12 @@ li {
   padding-left: 20px; /* Add left padding for indentation */
   position: relative; /* Position relative for list item markers */
 }
+
+.no-style-list{
+  list-style:none;
+  padding-left: 0px;
+}
+
 /* Styling for the SearchBarNav component */
 .search-bar-nav {
   display: flex;
