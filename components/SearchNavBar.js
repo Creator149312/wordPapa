@@ -6,9 +6,9 @@ const SearchBarNav = () => {
 
   const urlOptions = [
     { value: "/adjectives/", label: "Find Adjectives" },
-    { value: "/rhyming-words/", label: "Rhyming Words" },
-    { value: "/similar-words/", label: "Similar Words" },
-    { value: "/homophones/", label: "Homophones Words" },
+    { value: "/rhyming-words/", label: "Find Rhyming Words" },
+    { value: "/similar-words/", label: "Find Similar Words" },
+    { value: "/homophones/", label: "Find Homophones" },
   ];
 
   const handleOptionChange = (e) => {
