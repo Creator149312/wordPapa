@@ -7,8 +7,8 @@ export async function generateMetadata({ params }, parent) {
 
   const {word} = params;
   // read route params
-  titleStr = "Similar Sounding Words and Phrases for " + (word.charAt(0).toUpperCase() + word.slice(1));
-  const descriptionStr = "Explore an extensive list of similar sounding words for " + params.word;
+  titleStr = "Synonym Words and Phrases for " + (word.charAt(0).toUpperCase() + word.slice(1));
+  const descriptionStr = "Explore an extensive list of synonyms words for " + params.word + " with similar meaning.";
   return {
     title: titleStr,
     description: descriptionStr ,
@@ -43,7 +43,7 @@ export default async function Page({ params }) {
     return (
       <div>
       <h1>{titleStr}</h1>
-      <p> Following is a list of {rhymingWords.length} words and phrases that sound similar to {word}. </p>
+      <p> Following is a list of {rhymingWords.length} words and phrases that are related to {word}. </p>
       <DataFilterDisplay words={rhymingWords} />
       <div className='p-4 m-4'>
           <p><strong>Related Links:</strong></p>
