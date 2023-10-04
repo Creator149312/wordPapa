@@ -38,7 +38,7 @@ function Navbar() {
               <a href='/homophones/' className={`${styles.navLink}`}>Find Homophones</a>
             </li>
             <li onClick={removeActive}>
-              <a href='/similar-words/' className={`${styles.navLink}`}> Similar Words</a>
+              <a href='/synonyms/' className={`${styles.navLink}`}> Find Synonyms</a>
             </li>
           </ul>
 

@@ -7,7 +7,7 @@ export async function generateMetadata({ params }, parent) {
 
   const {word} = params;
   // read route params
-  titleStr = "Rhyming Words and Phrases for" + (word.charAt(0).toUpperCase() + word.slice(1));
+  titleStr = "Rhyming Words and Phrases for " + (word.charAt(0).toUpperCase() + word.slice(1));
   const descriptionStr = "Explore list of common words that rhyme with " + params.word + " to use in creative writing and poetry.";
   return {
     title: titleStr,
