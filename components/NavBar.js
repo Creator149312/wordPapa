@@ -26,16 +26,16 @@ function Navbar() {
 
           <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
             <li onClick={removeActive}>
-              <a href='/dictionary/' className={`${styles.navLink}`}>Dictionary</a>
+              <a href='/define/' className={`${styles.navLink}`}>Dictionary</a>
             </li>
             <li onClick={removeActive}>
-              <a href='/adjectives-finder/' className={`${styles.navLink}`}>Adjectives Finder</a>
+              <a href='/adjectives/' className={`${styles.navLink}`}>Adjectives Finder</a>
             </li>
             <li onClick={removeActive}>
               <a href='/rhyming-words/' className={`${styles.navLink}`}>Rhyming Words</a>
             </li>
             <li onClick={removeActive}>
-              <a href='/homophones-finder/' className={`${styles.navLink}`}>Find Homophones</a>
+              <a href='/homophones/' className={`${styles.navLink}`}>Find Homophones</a>
             </li>
             <li onClick={removeActive}>
               <a href='/similar-words/' className={`${styles.navLink}`}> Similar Words</a>
