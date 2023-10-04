@@ -1,7 +1,7 @@
 import AdjectivesExtractor from "./AdjectivesExtractor";
 
 export const metadata = {
-  title: "Adjectives Finder - Get Describing Words for Nouns",
+  title: "Adjectives Finder: Get Describing Words for Nouns",
   description: "Use our Adjectives Finder to find perfect describing words for Nouns or Objects to enhance the quality of your writings and make communications engaging."
 }
 

@@ -1,7 +1,7 @@
 import SimilarWords from "./SimilarWords";
 
 export const metadata = {
-  title: "Synonyms Finder - Get Similar Meaning Words",
+  title: "Synonyms Finder: Get Similar Meaning Words",
   description: "Our Synonyms Generator is a versatile linguistic tool designed to find synonym and other related words that share semantic similarities with a given input word."
 }
 

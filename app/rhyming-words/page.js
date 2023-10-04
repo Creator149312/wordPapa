@@ -2,7 +2,7 @@
 import RhymingWords from './RhymingWords';
 
 export const metadata = {
-  title: "Rhyming Words - Get Pefect Rhymes For Kids",
+  title: "Rhyming Words Generator: Get Pefect Rhymes",
   description: "Use our Rhyming Words to find delightful array of words and phrases that rhyme with it. Use it craft engaging poems, songs, and activities that inspire kids to discover the beauty of language."
 }
 
