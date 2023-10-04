@@ -21,7 +21,7 @@ function Navbar() {
         <nav className={`${styles.navbar}`}>
 
           {/* logo */}
-          <a href='#home' className={`${styles.logo}`}>WordPapa
+          <a href='/' className={`${styles.logo}`}>WordPapa
           </a>
 
           <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>

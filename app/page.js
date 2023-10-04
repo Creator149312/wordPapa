@@ -3,7 +3,6 @@ import {useState } from "react";
 import AdvancedInputs from "@utils/AdvancedInputs";
 import { displayWords } from "@utils/HelperFunctions";
 import axios from "axios";
-import SideBar from "@components/SideBar";
 import ErrorBox from "@utils/ErrorBox";
 
 const Page = () => {
@@ -70,47 +69,6 @@ const Page = () => {
                     EnglishBix
                   </sub>
                 </h1>
-                <label>What type of words you want to generate? </label>
-                <select value={selectedOption} onChange={handleChange}>
-                  <option value="adjectives">Adjectives </option>
-                  <option value="synonyms">Synonyms</option>
-                  <option value="rhyming-words">Rhyming Words</option>
-                  <option value="consonants">Match Consonants</option>
-                  <option value="homophones">Homophones</option>
-                  {/* Add more options as needed */}
-                </select>
-                <AdvancedInputs
-                  inputLetters={inputLetters}
-                  setInputLetters={setInputLetters}
-                  startsWith={startsWith}
-                  handleStartsWith={handleStartsWith}
-                  endsWith={endsWith}
-                  handleEndsWith={handleEndsWith}
-                  contains={contains}
-                  handleContains={handleContains}
-                  length={length}
-                  handleLength={handleLength}
-                  handleFindWords={extractData}
-                />
-                {loading ? (
-                  <div className="text-center">
-                    <div role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  </div>
-                ) : error ? (
-                  <ErrorBox error={error} />
-                ) : (
-                  displayWords(
-                    responseData,
-                    startsWith,
-                    endsWith,
-                    contains,
-                    length
-                  )
-                )}
-              </div>
-              <div>
                 <p>
                   An enriching vocabulary hub, where language mastery begins.
                   Dive into a world of words and their nuances.
@@ -122,9 +80,17 @@ const Page = () => {
                   adjectives.{" "}
                 </p>
               </div>
+              <div className="p-3 mb-2">
+                <h2>How to Use</h2>
+                <ol>
+                  <li>Select want you want to find</li>
+                  <li>Type your word</li>
+                  <li>Click on Search</li>
+                </ol>
+              </div>
               <h2>Explore Our Word Tools Crafted For You</h2>
               <div>
-              <p>
+              {/* <p>
                 <strong>
                   1. <a href="/word-cloud">Word Cloud Generator</a>:
                 </strong>
@@ -134,21 +100,21 @@ const Page = () => {
                 used for data analysis, presentations, and content
                 visualization, or identifying prominent themes within a text
                 corpus.
-              </p>
+              </p> */}
               <p>
                 <strong>
-                  2. <a href="/synonym-words">Synonyms Generator</a>:
-                </strong>
+                 <a href="/synonyms/">Synonyms Generator</a>:
+                </strong> {" "}
                 It is a linguistic tool designed to provide alternative words or
                 phrases with similar meanings to a given word. It helps writers,
                 content creators, and language enthusiasts to choose from
                 diverse vocabulary, and finally enhancing the clarity and
-                richness of their writing.{" "}
+                richness of their writing.
               </p>
               <p>
                 <strong>
-                  3. <a href="/rhyming-words">Rhyming Words Generator</a>:
-                </strong>
+                 <a href="/rhyming-words/">Rhyming Words Generator</a>:
+                </strong> {" "}
                 A Rhyming Words Generator is a utility for teachers, poets,
                 lyricists, and anyone looking to create rhyming verses or
                 content. It generates words that rhyme with a given input word,
@@ -157,18 +123,17 @@ const Page = () => {
               </p>
               <p>
                 <strong>
-                  4. <a href="/describing-words">Describing Words Generator</a>:
-                </strong>
+                  <a href="/adjectives/">Describing Words Generator</a>:
+                </strong> {" "}
                 A Describing Words Generator, also known as an adjective
                 generator, assists writers and content creators in finding
                 adjectives or describing words to enhance the details and
-                imagery in their writing.{" "}
+                imagery in their writing.
               </p>
               </div>
             </div>
           </div>
         </div>
-        <SideBar />
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ const SideBar = () => {
               </li>
               <li className='no-style-list'>
                 <a href="https://www.englishbix.com/product/3-letter-rhyming-words-workbook/">
-                  Rhyming Words Tracing Workbook
+                  3 Letter Rhyming Words Workbook
                 </a>
               </li>
             </ul>
