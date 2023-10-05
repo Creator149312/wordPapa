@@ -10,7 +10,6 @@ function SyllableCounterPage() {
         <div>
           <div>
             <div>
-              <HaikuChecker />
               <div className="m-3 p-3">
               <p>
         <strong>Syllable Counter</strong> is a utility that counts the number of syllables in a given word or text. Syllables are the individual units of sound in a word, and counting them can be useful for various purposes, including poetry, linguistics, and language learning.
