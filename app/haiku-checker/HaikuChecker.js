@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 
-function HaikuChecker() {
+const HaikuChecker = () => {
   const [inputText, setInputText] = useState('');
   const [isHaiku, setIsHaiku] = useState(false);
   const [loading, setLoading] = useState(false);
