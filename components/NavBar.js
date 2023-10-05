@@ -21,7 +21,8 @@ function Navbar() {
         <nav className={`${styles.navbar}`}>
 
           {/* logo */}
-          <a href='/' className={`${styles.logo}`}>WordPapa
+          <a href='/' className={`${styles.logo}`}><img
+          src="/logo192.png" alt="Wordpapa Logo" width="192" height="192"/>WordPapa
           </a>
 
           <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
