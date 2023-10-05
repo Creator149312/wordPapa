@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react';
 import styles from '@public/styles/NavBar.module.css';
+import logo from '@public/logo192.png'
+import Image from 'next/image';
 
 function Navbar() {
 
@@ -21,8 +23,8 @@ function Navbar() {
         <nav className={`${styles.navbar}`}>
 
           {/* logo */}
-          <a href='/' className={`${styles.logo}`}><img
-          src="/logo192.png" alt="Wordpapa Logo" width="192" height="192"/>WordPapa
+          <a href='/' className={`${styles.logo}`}><Image
+          src={logo} alt="WordPapa Logo" width="32" height="32"/>WordPapa
           </a>
 
           <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
