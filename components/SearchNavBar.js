@@ -8,6 +8,7 @@ const SearchBarNav = () => {
     { value: "/adjectives/", label: "Find Adjectives" },
     { value: "/rhyming-words/", label: "Find Rhyming Words" },
     { value: "/synonyms/", label: "Find Synonyms" },
+    { value: "/syllables/", label: "Count Syllables in" },
     { value: "/homophones/", label: "Find Homophones" },
   ];
 
@@ -38,7 +39,7 @@ const SearchBarNav = () => {
         <input
           className="input-lg search-input"
           type="text"
-          placeholder="Type Your Word or Phrase"
+          placeholder="Type Your Word Here..."
           onChange={(e) => setWord(e.target.value)}
         />
         <button onClick={handleLoadUrl} className="search-button">

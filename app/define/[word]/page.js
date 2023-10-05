@@ -14,12 +14,12 @@ export function generateStaticParams() {
 let rhymingWords = [];
 export default async function Page({ params }) {
 
-    const { word } = params;
-  
+    const { word } = params; 
     try {
       rhymingWords = [];
-      const response = await axios.get(`https://api.datamuse.com/words?rel_rhy=${word}`);
-      rhymingWords = response.data.map((item) => item.word);
+      const response = await axios.get(`https://api.datamuse.com/words?sp=${word}&qe=sp&md=dpsr&max=1&ipa=1`);
+      console.log(response.data[0]);
+      rhymingWords = response.data[0].defs;
     } catch (error) {
       console.error(error);
       return {
@@ -29,7 +29,7 @@ export default async function Page({ params }) {
 
     return (
       <div>
-        <h1>Rhyming words for "{word}"</h1>
+        <h1>Definition of "{word}"</h1>
         <ul>
           {rhymingWords.map((word, index) => (
             <li key={index}>{word}</li>
