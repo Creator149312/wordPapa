@@ -1,4 +1,4 @@
-import haikuChecker from "./haikuChecker";
+import HaikuChecker from "./HaikuChecker";
 
 export const metadata = {
   title: "Haiku Syllable Counter for Japense Poems",
@@ -12,7 +12,7 @@ function HaikuPage() {
         <div>
           <div>
             <div>
-              <haikuChecker />
+              <HaikuChecker />
               <div className="m-3 p-3">
                 <p>
                   <strong>HaikuChecker</strong> is a tool used to validate
