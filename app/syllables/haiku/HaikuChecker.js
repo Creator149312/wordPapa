@@ -1,34 +1,32 @@
 "use client"
 import React, { useState } from 'react';
+import axios from "axios";
 
 function HaikuChecker() {
   const [inputText, setInputText] = useState('');
   const [isHaiku, setIsHaiku] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Function to count syllables in a word
-  function countSyllables(word) {
-    word = word.toLowerCase();
-    let count = 0;
-    const vowels = "aeiouy";
-    if (word[0] in vowels) {
-      count += 1;
-    }
-    for (let i = 1; i < word.length; i++) {
-      if (word[i] in vowels && word[i - 1] !== vowels) {
-        count += 1;
+  const countSyllables = async (word) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Simulate an asynchronous API request (replace with your actual API call)
+      const response = await axios.get(`https://api.datamuse.com/words?sp=${word}&qe=sp&md=s&max=1`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      const data = await response.data[0];
+      setData(data);
+      setLoading(false);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
     }
-    if (word.endsWith("e")) {
-      count -= 1;
-    }
-    if (word.endsWith("le") && word.length > 2 && word[word.length - 3] !== vowels) {
-      count += 1;
-    }
-    if (count === 0) {
-      count = 1;
-    }
-    return count;
-  }
+  };
 
   // Function to check if a line is a Haiku line (5, 7, or 5 syllables)
   function isHaikuLine(line) {
