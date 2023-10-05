@@ -6,7 +6,7 @@ import SearchNavBar from '@components/SearchNavBar';
 
 export const metadata = {
   title: {
-    default: "My Papa's App",
+    default: "WordPapa",
     template: '%s - WordPapa'
   },
   description: "WordPapa is a enriching vocabulary and word tools hub to find words for games and language learning. Dive into a world of words and become a confident English speaker and writer."

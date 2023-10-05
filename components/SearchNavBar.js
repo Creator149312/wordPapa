@@ -38,7 +38,7 @@ const SearchBarNav = () => {
         </select>
         <input
           className="input-lg search-input"
-          type="text"
+          type="text" 
           placeholder="Type Your Word Here..."
           onChange={(e) => setWord(e.target.value)}
         />
