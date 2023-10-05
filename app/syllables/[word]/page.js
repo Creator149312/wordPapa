@@ -32,10 +32,9 @@ export default async function Page({ params }) {
     rhymingWords = [];
     
     const response = await axios.get(
-      `https://api.datamuse.com/words?sp=${word}&qe=sp&md=psr&max=1&ipa=1`
+      `https://api.datamuse.com/words?sp=${word}&qe=sp&md=sr&max=1&ipa=1`
     );
 
-    console.log(response.data[0]);
     rhymingWords = response.data[0];
   } catch (error) {
     console.error(error);
@@ -53,9 +52,10 @@ export default async function Page({ params }) {
         <h2>{word.charAt(0).toUpperCase() + word.slice(1)}</h2>
         <p><strong>Number of Syllables:</strong> {rhymingWords.numSyllables}</p>
         {/* <p><strong>Divide {rhymingWords.word} in Syllables: </strong></p> */}
-        <p><strong>Part of Speech: </strong>{rhymingWords.tags[1]}</p>
-        <p><strong>ARPAnet Pronounciation:</strong> {rhymingWords.tags[2].split(":")[1]}</p>
-        <p><strong>IPA Pronounciation: </strong>{rhymingWords.tags[3].split(":")[1]}</p>
+        {/* <p><strong>Part of Speech: </strong>{rhymingWords.tags[1]}</p> */}
+      <p><strong>ARPAnet Pronounciation:</strong> {rhymingWords.tags[1].split(":")[1]}</p> 
+        <p><strong>IPA Notation: </strong>{rhymingWords.tags[2].split(":")[1]}</p>
+        <p><strong>Number of Characters: </strong>{word.length}</p>
       </div>
       <div className="p-4 m-4">
         <p>

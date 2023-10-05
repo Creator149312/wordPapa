@@ -1,3 +1,5 @@
+import SyllableFinder from "./SyllableFinder";
+
 export const metadata = {
   title: "Syllable Counter: Check Number of Syllables in Word",
   description: "Use our Syllable Checker is used validate a text based on traditional structure of a syllable pattern of 5-7-5 a Haiku poems and count syllables in them."
@@ -11,6 +13,7 @@ function SyllableCounterPage() {
           <div>
             <div>
               <div className="m-3 p-3">
+                <SyllableFinder />
               <p>
         <strong>Syllable Counter</strong> is a utility that counts the number of syllables in a given word or text. Syllables are the individual units of sound in a word, and counting them can be useful for various purposes, including poetry, linguistics, and language learning.
     </p>

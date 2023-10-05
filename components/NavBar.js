@@ -24,13 +24,16 @@ function Navbar() {
 
           {/* logo */}
           <a href='/' className={`${styles.logo}`}><Image
-          src={logo} alt="WordPapa Logo" width="32" height="32"/>WordPapa
+          src={logo} alt="WordPapa Logo" width="30" height="30"/>WordPapa
           </a>
 
           <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
             {/* <li onClick={removeActive}>
               <a href='/define/' className={`${styles.navLink}`}>Dictionary</a>
             </li> */}
+             <li onClick={removeActive}>
+              <a href='/syllables/' className={`${styles.navLink}`}>Syllable Counter</a>
+            </li>
             <li onClick={removeActive}>
               <a href='/adjectives/' className={`${styles.navLink}`}>Adjectives Finder</a>
             </li>
