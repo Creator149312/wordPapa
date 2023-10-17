@@ -1,6 +1,6 @@
 import axios from "axios";
-import Link from "next/link";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
+import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -26,8 +26,9 @@ export async function generateMetadata({ params }, parent) {
 
 let rhymingWords = [];
 export default async function Page({ params }) {
-  const { word } = params;
-
+  const { word } = params; //this one gives the best results
+  //const word = params.word.split('-').join(' ');
+  
   try {
     rhymingWords = [];
     const response = await axios.get(
@@ -51,26 +52,7 @@ export default async function Page({ params }) {
         rhyme with {word}:
       </p>
       <DataFilterDisplay words={rhymingWords} />
-      <div className="p-4 m-4">
-        <p>
-          <strong>Related Links:</strong>
-        </p>
-        <ol>
-          <li>
-            <Link href={`/adjectives/${word}/`}>
-              Adjectives for {word}
-            </Link>
-          </li>
-          <li>
-            <Link href={`/synonyms/${word}/`}>Synonyms for {word}</Link>
-          </li>
-          <li>
-            <Link href={`/homophones/${word}/`}>
-              Homophones for {word}
-            </Link>
-          </li>
-        </ol>
-      </div>
+      {rhymingWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
     </div>
   );
 }

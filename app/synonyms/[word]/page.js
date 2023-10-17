@@ -1,18 +1,22 @@
+import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import axios from "axios";
-import Link from "next/link";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-
-  const {word} = params;
+  const { word } = params;
   // read route params
-  titleStr = "Synonyms and Antonyms for " + (word.charAt(0).toUpperCase() + word.slice(1));
-  const descriptionStr = "Explore an extensive list of synonyms and antonyms for " + params.word + " and choose another word that suits you the best";
+  titleStr =
+    "Synonyms and Antonyms for " +
+    (word.charAt(0).toUpperCase() + word.slice(1));
+  const descriptionStr =
+    "Explore an extensive list of synonyms and antonyms for " +
+    params.word +
+    " and choose another word that suits you the best";
   return {
     title: titleStr,
-    description: descriptionStr ,
-  }
+    description: descriptionStr,
+  };
 }
 
 // export function generateStaticParams() {
@@ -20,38 +24,36 @@ export async function generateMetadata({ params }, parent) {
 //   //   return {word: w};
 //   // });
 
-//   // return words; 
+//   // return words;
 //   return [{word: "apple"}, {word: "card"}, {word: "papa"}];
 // }
 
-let rhymingWords = [];
+let synonymWords = [];
 export default async function Page({ params }) {
-    const { word } = params;
-  
-    try {
-      rhymingWords = [];
-      const response = await axios.get(`https://api.datamuse.com/words?ml=${word}`
-      );
-      rhymingWords = response.data.map((item) => item.word);
-    } catch (error) {
-      console.error(error);
-      return {
-        notFound: true,
-      };
-    }
+  const { word } = params;
 
-    return (
-      <div>
-      <h1>{titleStr}</h1>
-      <p> Following is a list of {rhymingWords.length} synonym words and phrases that are related to {word}.</p>
-      <DataFilterDisplay words={rhymingWords} />
-      <div className='p-4 m-4'>
-          <p><strong>Related Links:</strong></p>
-        <ol>
-          <li><Link href={`/adjectives/${word}/`}>Adjectives for {word}</Link></li>
-          <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
-        </ol>
-        </div> </div>
+  try {
+    synonymWords = [];
+    const response = await axios.get(
+      `https://api.datamuse.com/words?ml=${word}`
     );
+    synonymWords = response.data.map((item) => item.word);
+  } catch (error) {
+    console.error(error);
+    return {
+      notFound: true,
+    };
   }
 
+  return (
+    <div>
+      <h1>{titleStr}</h1>
+      <p>
+        Following is a list of {synonymWords.length} synonym words and phrases
+        that are related to {word}.
+      </p>
+      <DataFilterDisplay words={synonymWords} />
+      {synonymWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
+    </div>
+  );
+}

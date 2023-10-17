@@ -1,6 +1,6 @@
+import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import axios from "axios";
-import Link from "next/link";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -27,8 +27,8 @@ export async function generateMetadata({ params }, parent) {
 let rhymingWords = [];
 
 export default async function Page({ params }) {
-  const { word } = params;
-
+  //const word = params.word.split('-').join(' ');
+  const  {word} = params;
   try {
     rhymingWords = [];
     const response = await axios.get(
@@ -47,14 +47,7 @@ export default async function Page({ params }) {
       <h1>{titleStr}</h1>
       <p> Following is a list of {rhymingWords.length} adjective words and phrases used for describing {word} in writing. </p>
       <DataFilterDisplay words={rhymingWords} />
-      <div className='p-4 m-4'>
-          <p><strong>Related Links:</strong></p>
-        <ol>
-        <li><Link href={`/rhyming-words/${word}/`}>Rhyming Words for {word}</Link></li>
-         <li><Link href={`/synonyms/${word}/`}>Synonyms for {word}</Link></li>
-        <li><Link href={`/homophones/${word}/`}>Homophones for {word}</Link></li>
-        </ol>
-        </div>
+      {rhymingWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 a.navLink {
   text-decoration: none;
-  color: black;
+  color: #4e5768;
   font-size: 18px;
 }
 
@@ -11,8 +11,6 @@ a.navLink {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 40px;
-  min-height: 70px;
 }
 
 /* logo  */

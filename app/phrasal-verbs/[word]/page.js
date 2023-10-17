@@ -1,8 +1,11 @@
 import axios from "axios";
+import Link from "next/link";
+import DataFilterDisplay from "@utils/DataFilterDisplay";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-  const word = params.word.split('-').join(' ');
+
+  const {word} = params;
   // read route params
   titleStr = "How many syllables in " + (word.charAt(0).toUpperCase() + word.slice(1)) + "?";
   const descriptionStr = "Explore list of common words that rhyme with " + params.word + " to use in creative writing and poetry.";
@@ -21,19 +24,20 @@ export async function generateMetadata({ params }, parent) {
 //   return [{word: "apple"}, {word: "card"}, {word: "papa"}];
 // }
 
-let syllableWords = [];
+let rhymingWords = [];
 export default async function Page({ params }) {
-  //const { word } = params;
-  const word = params.word.split('-').join(' ');
+  const { word } = params;
 
   try {
-    syllableWords = [];
+    rhymingWords = [];
     
     const response = await axios.get(
-      `https://api.datamuse.com/words?sp=${word}&qe=sp&md=sr&max=1&ipa=1`
+      `https://api.datamuse.com/words?ml=verb&max=20`
     );
 
-    syllableWords = response.data[0];
+    console.log(response.data);
+    rhymingWords = response.data;
+
   } catch (error) {
     console.error(error);
     return {
@@ -48,12 +52,31 @@ export default async function Page({ params }) {
       </h1>
       <div className="card m-3 p-4">
         <h2>{word.charAt(0).toUpperCase() + word.slice(1)}</h2>
-        <p><strong>Number of Syllables:</strong> {syllableWords.numSyllables}</p>
-        {/* <p><strong>Divide {syllableWords.word} in Syllables: </strong></p> */}
-        {/* <p><strong>Part of Speech: </strong>{syllableWords.tags[1]}</p> */}
-      <p><strong>ARPAnet Pronounciation:</strong> {syllableWords.tags[syllableWords.tags.length - 2].split(":")[1]}</p> 
-        <p><strong>IPA Notation: </strong>{syllableWords.tags[syllableWords.tags.length - 1].split(":")[1]}</p>
-        <p><strong>Number of Characters: </strong>{word.length}</p>
+        <p>
+          {
+            console.log(rhymingWords)
+          }
+        </p>
+      </div>
+      <div className="p-4 m-4">
+        <p>
+          <strong>Related Links:</strong>
+        </p>
+        <ol>
+          <li>
+            <Link href={`/adjectives/${word}/`}>
+              Adjectives for {word}
+            </Link>
+          </li>
+          <li>
+            <Link href={`/synonyms/${word}/`}>Synonyms for {word}</Link>
+          </li>
+          <li>
+            <Link href={`/define/${word}/`}>
+              Homophones for {word}
+            </Link>
+          </li>
+        </ol>
       </div>
     </div>
   );

@@ -603,7 +603,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Style for list items (<li>) */
 li {
   margin-bottom: 10px; /* Add spacing between list items */
-  padding-left: 20px; /* Add left padding for indentation */
+  /* padding-left: 20px; Add left padding for indentation */
   position: relative; /* Position relative for list item markers */
 }
 
@@ -719,4 +719,22 @@ li {
 /* Style for active (open) accordion items */
 .accordion-item.active .accordion-content {
   display: block;
+}
+
+.top-pageLinks{
+  font-size: large;
+  padding: 10px;
+  margin: 5px;
+  background-color: lightgreen;
+  display: inline-block;
+  text-align: center;
+  color: #5c8c8c;
+  line-height: 0.75;
+  box-shadow: 2px 3px lightgreen;
+  font-family: "Belanosima", sans-serif;
+  cursor:pointer;
+}
+
+.ipa{
+  font-size: 18px;
 }
