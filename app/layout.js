@@ -1,18 +1,20 @@
-import SideBar from '@components/SideBar';
-import '@public/styles/globals.css'
-import NavbarComponent from '@components/NavBar';
-import Footer from '@components/Footer';
-import SearchNavBar from '@components/SearchNavBar';
+import SideBar from "@components/SideBar";
+import "@public/styles/globals.css";
+import NavbarComponent from "@components/NavBar";
+import Footer from "@components/Footer";
+import SearchNavBar from "@components/SearchNavBar";
+import AlphabetLinks from "@components/AlphabetLinks";
 
 export const metadata = {
   title: {
     default: "WordPapa",
-    template: '%s - WordPapa'
+    template: "%s - WordPapa",
   },
-  description: "WordPapa is a enriching vocabulary and word tools hub to find words for games and language learning. Dive into a world of words and become a confident English speaker and writer."
-}
+  description:
+    "WordPapa is a enriching vocabulary and word tools hub to find words for games and language learning. Dive into a world of words and become a confident English speaker and writer.",
+};
 
-const layout = ({children}) => {
+const layout = ({ children }) => {
   return (
     <html lang="en">
       <head>
@@ -20,10 +22,10 @@ const layout = ({children}) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="favicon.ico" />
       </head>
-      <body className='font-responsive'>
-        <header className='card'>
-          <NavbarComponent />
-          <SearchNavBar />
+      <body className="font-responsive">
+        <header className="card">
+            <NavbarComponent />
+            <SearchNavBar />
         </header>
         <main>
           <div className="container m-2">
@@ -32,10 +34,11 @@ const layout = ({children}) => {
               {/** All the main content goes here */}
             </div>
             <div className="right-column card m-2 p-2">
-                <SideBar />
+              <SideBar />
             </div>
           </div>
         </main>
+        {/* <AlphabetLinks /> */}
         <Footer />
       </body>
     </html>

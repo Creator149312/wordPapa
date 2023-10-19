@@ -24,17 +24,17 @@ export async function generateMetadata({ params }, parent) {
 //    return [{ word: "apple" }, { word: "card" }, { word: "papa" }];
 // }
 
-let rhymingWords = [];
+let adjectiveWords = [];
 
 export default async function Page({ params }) {
   //const word = params.word.split('-').join(' ');
   const  {word} = params;
   try {
-    rhymingWords = [];
+    adjectiveWords = [];
     const response = await axios.get(
       `https://api.datamuse.com/words?rel_jjb=${word}`
     );
-    rhymingWords = response.data.map((item) => item.word);
+    adjectiveWords = response.data.map((item) => item.word);
   } catch (error) {
     console.error(error);
     return {
@@ -45,9 +45,9 @@ export default async function Page({ params }) {
   return (
     <div>
       <h1>{titleStr}</h1>
-      <p> Following is a list of {rhymingWords.length} adjective words and phrases used for describing {word} in writing. </p>
-      <DataFilterDisplay words={rhymingWords} />
-      {rhymingWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
+      <p> Following is a list of {adjectiveWords.length} adjective words and phrases used for describing {word} in writing. </p>
+      <DataFilterDisplay words={adjectiveWords} />
+      {adjectiveWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
     </div>
   );
 }

@@ -1,9 +1,9 @@
-'use client';
-import {useState } from "react";
-import AdvancedInputs from "@utils/AdvancedInputs";
-import { displayWords } from "@utils/HelperFunctions";
+"use client";
+import { useState } from "react";
 import axios from "axios";
+import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import ErrorBox from "@utils/ErrorBox";
+import commonLinks from "@utils/commonLinks";
 
 const Page = () => {
   const [selectedOption, setSelectedOption] = useState("adjectives");
@@ -34,7 +34,7 @@ const Page = () => {
       apiEndpoint = `https://api.datamuse.com/words?rel_hom=${inputLetters}&max=5`;
     } else if (selectedOption === "rhyming-words") {
       apiEndpoint = `https://api.datamuse.com/words?rel_rhy=${inputLetters}&max=15`;
-    }else if (selectedOption === "consonants") {
+    } else if (selectedOption === "consonants") {
       apiEndpoint = `https://api.datamuse.com/words?rel_cns=${inputLetters}&max=15`;
     }
 
@@ -64,10 +64,9 @@ const Page = () => {
             <div>
               <div className="p-3 text-center mb-2">
                 <h1 className="mb-3">
-                <strong>WordPapa</strong><sub className="p-1"> by</sub>
-                  <sub className="p-1">
-                    EnglishBix
-                  </sub>
+                  <strong>WordPapa</strong>
+                  <sub className="p-1"> by</sub>
+                  <sub className="p-1">EnglishBix</sub>
                 </h1>
                 <p>
                   An enriching vocabulary hub, where language mastery begins.
@@ -77,20 +76,88 @@ const Page = () => {
                   Our comprehensive dictionary is your key to unlocking the
                   depth of the English language. Explore meanings, discover
                   synonyms, unravel antonyms, and delve into the intricacies of
-                  adjectives.{" "}
+                  adjectives.
                 </p>
               </div>
-              <div className="p-3 mb-2">
-                <h2>How to Use</h2>
-                <ol>
-                  <li>Select want you want to find</li>
-                  <li>Type your word</li>
-                  <li>Click on Search</li>
-                </ol>
+              <p className="text-center large-text">I am looking for....</p>
+              <div className="row">
+                <div className="card col-6 text-center">
+                  <div className="m-2 p-2">
+                <p>
+                    A dictionary to find new words along with their definitions and examples
+                    </p>
+                  </div>
+                  <div className="p-2">
+                    <a  href={commonLinks.definition} className="custom-button medium-text">
+                      Word Dictionary <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                    </a>
+                  </div>
+                </div>
+                <div className="card col-6 text-center">
+                  <div className="m-2 p-2">
+                  <p>
+                  Tool to find Adjective words to describe a Noun or Object  </p>
+                  </div>
+                  <div className="p-2">
+                    <a  href={commonLinks.adjectives} className="custom-button medium-text">
+                      Adjectives Finder <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+              <div className="card col-6 text-center">
+                  <div className="m-2">
+                  <p>
+                    Synonyms and antonyms of a word that I know
+                  </p>
+                  </div>
+                  <div className="p-2">
+                    <a  href={commonLinks.thesaurus} className="custom-button medium-text">
+                      Thesaurus <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                    </a>
+                  </div>
+                </div>
+                <div className="card col-6 text-center">
+                  <div className="m-2">
+                  <p>
+                  rhyming words that rhyme with a word that I know</p>
+                  </div>
+                  <div className="p-2">
+                    <a  href={commonLinks.rhyming} className="custom-button medium-text">
+                      Rhyming Dictionary <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+              <div className="card col-6 text-center">
+                  <div className="m-2 p-2">
+                  <p>
+                    a tool to find number of syllables in a given word
+                  </p>
+                  </div>
+                  <div className="p-2">
+                    <a href={commonLinks.syllables} className="custom-button medium-text">
+                      Syllable Counter <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                    </a>
+                  </div>
+                </div>
+                <div className="card col-6 text-center">
+                  <div className="m-2 p-2">
+                  <p>
+                  a tool to generate all possible words with given letters (coming soon....)</p>
+                  </div>
+                  <div className="p-2">
+                    <a href="#" className="custom-button medium-text">
+                      Word Finder <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                    </a>
+                  </div>
+                </div>
               </div>
               <h2>Explore Our Word Tools Crafted For You</h2>
               <div>
-              {/* <p>
+                {/* <p>
                 <strong>
                   1. <a href="/word-cloud">Word Cloud Generator</a>:
                 </strong>
@@ -101,35 +168,35 @@ const Page = () => {
                 visualization, or identifying prominent themes within a text
                 corpus.
               </p> */}
-              <p>
-                <strong>
-                 <a href="/synonyms/">Synonyms Generator</a>:
-                </strong> {" "}
-                It is a linguistic tool designed to provide alternative words or
-                phrases with similar meanings to a given word. It helps writers,
-                content creators, and language enthusiasts to choose from
-                diverse vocabulary, and finally enhancing the clarity and
-                richness of their writing.
-              </p>
-              <p>
-                <strong>
-                 <a href="/rhyming-words/">Rhyming Words Generator</a>:
-                </strong> {" "}
-                A Rhyming Words Generator is a utility for teachers, poets,
-                lyricists, and anyone looking to create rhyming verses or
-                content. It generates words that rhyme with a given input word,
-                assisting in crafting poetry, song lyrics, or creative writing
-                with consistent rhyme schemes.{" "}
-              </p>
-              <p>
-                <strong>
-                  <a href="/adjectives/">Describing Words Generator</a>:
-                </strong> {" "}
-                A Describing Words Generator, also known as an adjective
-                generator, assists writers and content creators in finding
-                adjectives or describing words to enhance the details and
-                imagery in their writing.
-              </p>
+                <p>
+                  <strong>
+                    <a href="/synonyms/">Synonyms Generator</a>:
+                  </strong>{" "}
+                  It is a linguistic tool designed to provide alternative words
+                  or phrases with similar meanings to a given word. It helps
+                  writers, content creators, and language enthusiasts to choose
+                  from diverse vocabulary, and finally enhancing the clarity and
+                  richness of their writing.
+                </p>
+                <p>
+                  <strong>
+                    <a href="/rhyming-words/">Rhyming Words Generator</a>:
+                  </strong>{" "}
+                  A Rhyming Words Generator is a utility for teachers, poets,
+                  lyricists, and anyone looking to create rhyming verses or
+                  content. It generates words that rhyme with a given input
+                  word, assisting in crafting poetry, song lyrics, or creative
+                  writing with consistent rhyme schemes.{" "}
+                </p>
+                <p>
+                  <strong>
+                    <a href="/adjectives/">Describing Words Generator</a>:
+                  </strong>{" "}
+                  A Describing Words Generator, also known as an adjective
+                  generator, assists writers and content creators in finding
+                  adjectives or describing words to enhance the details and
+                  imagery in their writing.
+                </p>
               </div>
             </div>
           </div>

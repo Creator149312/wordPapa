@@ -1,6 +1,6 @@
 export const metadata = {
-    title: "Word Dictionary - Find Homophones for English Words",
-    description: "Homophones Generator is a linguistic tool designed to produce a list of all the homophones associated with an English word."
+    title: "Word Dictionary - Find Defintion and Example Sentences",
+    description: "This simple word dictionary provides a simple and intuitive interface for users to look up the definitions of words or phrases and access example sentences."
   }
 
 function WordsPage() {
@@ -15,26 +15,16 @@ function WordsPage() {
               {/* Your content here */}
               {/* Continue adding content */}
               <div className="m-3 p-3">
-                <p>
-                  A Homophones Generator is a linguistic tool designed to take
-                  an input English word and produce a list of all the homophones
-                  associated with that word.
-                </p>
-                <p>
-                  As you all know, Homophones are words that sound the same but
-                  have different meanings and spellings. Our tool is valuable
-                  for writers, editors, and language enthusiasts as it helps
-                  them identify and differentiate between words that share
-                  identical or similar pronunciations but have distinct
-                  interpretations or uses in written or spoken language.
-                </p>
-                <p>
-                  By generating a comprehensive list of homophones for a given
-                  word, It helps us avoid confusion thereby enhancing
-                  communication, reducing spelling and usage errors, and
-                  improving the overall quality of written and spoken content.
-                </p>
-              </div>
+    <p>
+        This web page serves as a user-friendly word dictionary. It provides a simple and intuitive interface for users to look up the definitions of words or phrases and access example sentences. To find the definition and sentence examples for a specific word or phrase, enter the word in the input field and click the "Search" button. The page will then display the word's definition and a list of sentence examples, providing users with a clear understanding of its usage.
+    </p>
+    <p>
+        This dictionary page can be connected to an external dictionary API service, allowing it to fetch accurate and up-to-date definitions and sentences for a wide range of words and phrases. Users can quickly and conveniently access word information for learning, reference, or writing purposes.
+    </p>
+    <p>
+        The user interface is clean and easy to navigate, making it suitable for students, writers, or anyone looking to enhance their vocabulary and language comprehension.
+    </p>
+</div>
           </div>
         </div>
       </div>

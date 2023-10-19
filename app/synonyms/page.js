@@ -1,8 +1,8 @@
 import SimilarWords from "./SimilarWords";
 
 export const metadata = {
-  title: "Synonyms Finder: Get Similar Meaning Words",
-  description: "Our Synonyms Generator is a versatile linguistic tool designed to find synonym and other related words that share semantic similarities with a given input word."
+  title: "Thesaurus - Find Synonyms and Antonyms of Word",
+  description: "EnglishBix thesaurus is a reference tool that generates synonyms and antonyms for words and phrases. It assists writers, speakers, and students by offering alternative words with similar or opposite meanings, enhancing their ability to convey thoughts and ideas more effectively."
 }
 
 function SimilarWordsPage() {

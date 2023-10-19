@@ -1,15 +1,16 @@
 "use client";
+import commonLinks from "@utils/commonLinks";
 import { useState } from "react";
 const SearchBarNav = () => {
   const [selectedOption, setSelectedOption] = useState("/define/");
   const [word, setWord] = useState("");
 
   const urlOptions = [
-    { value: "/define/", label: "Definition and Examples" },
-    { value: "/adjectives/", label: "Find Adjectives" },
-    { value: "/rhyming-words/", label: "Find Rhyming Words" },
-    { value: "/synonyms/", label: "Find Synonyms" },
-    { value: "/syllables/", label: "Count Syllables in" },
+    { value: commonLinks.definition, label: "Definition and Examples" },
+    { value: commonLinks.adjectives, label: "Find Adjectives" },
+    { value: commonLinks.rhyming, label: "Find Rhyming Words" },
+    { value: commonLinks.thesaurus, label: "Find Synonyms" },
+    { value: commonLinks.syllables, label: "Count Syllables in" },
     // { value: "/homophones/", label: "Find Homophones" },
   ];
 
@@ -39,7 +40,7 @@ const SearchBarNav = () => {
           ))}
         </select>
         <input
-          className="input-lg search-input"
+          className="input-xlg search-input"
           type="text" 
           placeholder="Type Your Word Here..."
           onChange={(e) => setWord(e.target.value)}
