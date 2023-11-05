@@ -1,35 +1,36 @@
 /* Reset default margin and padding for all elements */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Quicksand", sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
+}
 
-  body{
-    background-color: #f2f2f2; /* Set background color for right container */
-  }
-  
-  /* Apply mobile-first styles */
-  .container {
-    display: flex;
-    flex-direction: column; /* Stack columns vertically on small screens */
-  }
-  
-  .left-column {
-    flex: 9; /* Occupy 9 out of 12 columns on large screens */
-    padding: 10px; /* Add padding for content separation */
-  }
-  
-  .right-column {
-    flex: 3; /* Occupy 3 out of 12 columns on large screens */
-    padding: 10px; /* Add padding for content separation */
-  }
+body {
+  background-color: #f2f2f2; /* Set background color for right container */
+}
 
-  /* Define a container for the row */
+/* Apply mobile-first styles */
+.container {
+  display: flex;
+  flex-direction: column; /* Stack columns vertically on small screens */
+}
+
+.left-column {
+  flex: 9; /* Occupy 9 out of 12 columns on large screens */
+  padding: 10px; /* Add padding for content separation */
+}
+
+.right-column {
+  flex: 3; /* Occupy 3 out of 12 columns on large screens */
+  padding: 10px; /* Add padding for content separation */
+}
+
+/* Define a container for the row */
 .row {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 /* Define columns within the row */
@@ -37,7 +38,7 @@
   flex-basis: calc(8.33% - 20px); /* Adjust for column padding */
   margin: 10px; /* Add column padding */
 }
- 
+
 .col-2 {
   flex-basis: calc(16.66% - 20px);
   margin: 10px;
@@ -97,68 +98,70 @@
 
 /* Define a CSS class to clear floats (optional) */
 .clearfix::after {
-  content: '';
+  content: "";
   display: table;
   clear: both;
 }
 
-  /* Media query for larger screens */
-  @media (min-width: 768px) {
-    .container {
-      flex-direction: row; /* Lay out columns side by side on large screens */
-    }
-
-
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row; /* Lay out columns side by side on large screens */
   }
-  /* card.css */
+
+  .row {
+    flex-direction: row;
+  }
+}
+/* card.css */
 
 /* Define a card class */
 .card {
-    background-color: #ffffff; /* Card background color */
-    border: 1px solid #e1e1e1; /* Card border */
-    border-radius: 8px; /* Rounded corners for the card */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
-    padding: 16px; /* Padding inside the card */
+  background-color: #ffffff; /* Card background color */
+  border: 1px solid #e1e1e1; /* Card border */
+  border-radius: 8px; /* Rounded corners for the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
+  padding: 16px; /* Padding inside the card */
+}
+
+/* Card title */
+.card-title {
+  font-size: 1.5rem; /* Title font size */
+  font-weight: bold; /* Title font weight */
+  margin-bottom: 8px; /* Spacing below the title */
+}
+
+/* Card content */
+.card-content {
+  font-size: 1rem; /* Content font size */
+  line-height: 1.4; /* Line height for content */
+}
+
+/* Card footer */
+.card-footer {
+  margin-top: 16px; /* Spacing above the footer */
+}
+
+/* Card image */
+.card-image {
+  max-width: 100%; /* Ensure the image doesn't exceed the card width */
+  border-top-left-radius: 8px; /* Rounded corners for the top-left */
+  border-top-right-radius: 8px; /* Rounded corners for the top-right */
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .card {
+    padding: 12px; /* Decrease padding for smaller screens */
   }
-  
-  /* Card title */
   .card-title {
-    font-size: 1.5rem; /* Title font size */
-    font-weight: bold; /* Title font weight */
-    margin-bottom: 8px; /* Spacing below the title */
+    font-size: 1.3rem; /* Decrease title font size */
   }
-  
-  /* Card content */
   .card-content {
-    font-size: 1rem; /* Content font size */
-    line-height: 1.4; /* Line height for content */
+    font-size: 0.9rem; /* Decrease content font size */
   }
-  
-  /* Card footer */
-  .card-footer {
-    margin-top: 16px; /* Spacing above the footer */
-  }
-  
-  /* Card image */
-  .card-image {
-    max-width: 100%; /* Ensure the image doesn't exceed the card width */
-    border-top-left-radius: 8px; /* Rounded corners for the top-left */
-    border-top-right-radius: 8px; /* Rounded corners for the top-right */
-  }
-  
-  /* Responsive styles for smaller screens */
-  @media (max-width: 768px) {
-    .card {
-      padding: 12px; /* Decrease padding for smaller screens */
-    }
-    .card-title {
-      font-size: 1.3rem; /* Decrease title font size */
-    }
-    .card-content {
-      font-size: 0.9rem; /* Decrease content font size */
-    }
-  }
-  
+}
+
 /* Navbar.css */
 
 /* Define the .text-center class */
@@ -509,6 +512,20 @@
   transition: background-color 0.3s, box-shadow 0.3s; /* Add transition effects */
 }
 
+/* with lesser padding*/
+.custom-button-small {
+  background-color: #75c32c;
+  color: #fff; /* Text color */
+  border: none;
+  border-radius: 4px; /* Rounded corners */
+  margin: 2px;
+  padding: 10px; /* Adjust padding as needed */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+  cursor: pointer; /* Add pointer cursor */
+  transition: background-color 0.3s, box-shadow 0.3s; /* Add transition effects */
+  display: inline-block;
+}
+
 /* Hover effect - change background color and shadow on hover */
 .custom-button:hover {
   background-color: #64ab27; /* Change background color on hover */
@@ -522,7 +539,7 @@
   box-shadow: none; /* Remove shadow for disabled state */
 }
 
-.wordSpan{
+.wordSpan {
   font-size: large;
   padding: 10px;
   margin: 5px;
@@ -532,14 +549,14 @@
   line-height: 0.75;
   box-shadow: 2px 3px lightgreen;
   font-family: "Belanosima", sans-serif;
-  cursor:pointer;
+  cursor: pointer;
 }
 
-.words-container{
+.words-container {
   border: 34px lightgreen;
-padding: 10px;
-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
-margin: 20px 20px;
+  padding: 10px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+  margin: 20px 20px;
 }
 
 /* Default font size for all screens */
@@ -561,7 +578,6 @@ margin: 20px 20px;
   }
 }
 
-
 /* Paragraph related Properties */
 p {
   line-height: 1.5; /* Adjust line height for proper spacing between lines */
@@ -577,7 +593,12 @@ a {
 }
 
 /* General heading styles */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: bold; /* Make headings bold */
   color: #4f4f4f; /* Set a color for headings */
   margin-top: 20px; /* Add spacing above headings */
@@ -585,21 +606,37 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Default style for all headings */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-size: 24px; /* Default font size for all headings */
 }
 
 /* Media query for screens wider than 768px (typical tablet and desktop screens) */
 @media (min-width: 768px) {
   /* Increase font size for headings on larger screens */
-  h1 { font-size: 36px; }
-  h2 { font-size: 30px; }
-  h3 { font-size: 26px; }
-  h4 { font-size: 22px; }
-  h5 { font-size: 20px; }
-  h6 { font-size: 18px; }
+  h1 {
+    font-size: 36px;
+  }
+  h2 {
+    font-size: 30px;
+  }
+  h3 {
+    font-size: 26px;
+  }
+  h4 {
+    font-size: 22px;
+  }
+  h5 {
+    font-size: 20px;
+  }
+  h6 {
+    font-size: 18px;
+  }
 }
-
 
 /* Style for list items (<li>) */
 li {
@@ -608,8 +645,8 @@ li {
   position: relative; /* Position relative for list item markers */
 }
 
-.no-style-list{
-  list-style:none;
+.no-style-list {
+  list-style: none;
   padding-left: 0px;
 }
 
@@ -625,7 +662,7 @@ li {
   flex-grow: 3; /* Grow to take available space */
   padding: 10px; /* Add padding for input */
   border: 1px solid #ccc; /* Add border for input */
-  border-radius: 4px 0px 0px 4px;; /* Add border radius */
+  border-radius: 4px 0px 0px 4px; /* Add border radius */
 }
 
 /* Style for the select box */
@@ -658,18 +695,17 @@ li {
     width: 100%;
   }
 
- 
   .search-select {
     width: 100%; /* Set width to 50% for larger screens */
     border-radius: 4px; /* Add border radius */
     margin-right: 0px;
   }
 
-  .search-input{
+  .search-input {
     width: 80%; /* Set width to 50% for larger screens */
   }
 
-  .search-button{
+  .search-button {
     width: 20%;
   }
 }
@@ -679,7 +715,6 @@ li {
   padding: 5px 10px; /* Adjust padding for a larger input */
   font-size: 18px; /* Increase font size for a larger input */
 }
-
 
 /* Large Input */
 .input-xlg {
@@ -723,7 +758,7 @@ li {
   display: block;
 }
 
-.top-pageLinks{
+.top-pageLinks {
   font-size: large;
   padding: 10px;
   margin: 5px;
@@ -733,10 +768,10 @@ li {
   color: whitesmoke;
   line-height: 0.75;
   box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
-  cursor:pointer;
+  cursor: pointer;
 }
 
-.ipa{
+.ipa {
   font-size: 18px;
 }
 
@@ -746,13 +781,13 @@ li {
   box-shadow: 1px 1px 2px #888888;
 }
 
-.quick-links{
+.quick-links {
   text-align: center;
   color: #75c330;
   background-color: rgba(117, 195, 48, 0.08);
 }
 
-.react-icons{
+.react-icons {
   font-size: large;
 }
 
@@ -779,4 +814,17 @@ li {
 
 .xx-large-text {
   font-size: 40px;
+}
+
+.font-white {
+  color: whitesmoke;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 10px;
+  padding: 10px;
 }

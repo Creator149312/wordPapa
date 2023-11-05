@@ -32,7 +32,7 @@ export default async function Page({ params }) {
   try {
     rhymingWords = [];
     const response = await axios.get(
-      `https://api.datamuse.com/words?rel_rhy=${word}`
+      `https://api.datamuse.com/words?rel_rhy=${word}&max=200`
     );
     rhymingWords = response.data.map((item) => item.word);
   } catch (error) {

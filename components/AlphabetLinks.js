@@ -4,9 +4,9 @@ const AlphabetLinks = () => {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   return (
-    <div>
+    <div className='text-center'>
       {alphabet.split('').map((letter, index) => (
-        <a key={index} href={`#${letter}`}>{letter}{letter.toLowerCase()}</a>
+        <a key={index} href={`/browse/${letter.toLowerCase()}`} className='custom-button-small'>{letter}{letter.toLowerCase()}</a>
       ))}
     </div>
   );

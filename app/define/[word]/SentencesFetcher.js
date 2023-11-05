@@ -2,16 +2,17 @@ import React from "react";
 import axios from "axios";
 import { sortStringArrayinASC } from "@utils/HelperFunctions";
 
-let errorWorknick = null;
+let errorWordNick = null;
 let errorTwinWord = null;
+let regex = null;
 
-function joinSentenceArrays(sWordNick, sTwinWord, word) {
-  const wordNicksSentences = sWordNick.map(
-    (sent) => sent.includes(word) && sent
-  );
+//  function joinSentenceArrays(sWordNick, sTwinWord, word) {
+//   const wordNicksSentences = sWordNick.map(
+//     (sent) => sent.includes(word) && sent
+//   );
 
-  return sortStringArrayinASC([...wordNicksSentences, ...sTwinWord]);
-}
+//   return sortStringArrayinASC([...wordNicksSentences, ...sTwinWord]);
+// }
 
 /*
 examples: [
@@ -39,8 +40,8 @@ async function getSentencesUsingWordnik(word) {
       },
     });
 
-    // console.log(response.data.examples);
-    if (response.data.examples !== null) {
+    console.log(response.data.examples);
+    if (response.data.examples !== null && response.data.examples.length > 0) {
       return sortStringArrayinASC(
         response.data.examples.map((sent) => {
           return sent.text;
@@ -50,11 +51,11 @@ async function getSentencesUsingWordnik(word) {
       throw new Error();
     }
   } catch (e) {
-    errorWorknick = e;
+    errorWordNick = e;
   }
 }
 
-async function getSentencesUsingTwinWord(word) {
+async function getSentencesUsingTwinWord(word, regex) {
   try {
     const options = {
       method: "GET",
@@ -67,9 +68,13 @@ async function getSentencesUsingTwinWord(word) {
     };
 
     const response = await axios.request(options);
-    // console.log(response.data);
-    if (response.data.example !== null) {
-      return sortStringArrayinASC(response.data.example);
+    console.log(response.data.example);
+     // Create a regular expression with the 'i' flag for case-insensitive search
+
+    if (response.data.example !== null && response.data.example.length > 0) {
+      return sortStringArrayinASC(
+        response.data.example.filter((sent) => sent.match(regex) && sent)
+      );
     } else {
       throw new Error();
     }
@@ -79,10 +84,15 @@ async function getSentencesUsingTwinWord(word) {
 }
 
 const SentencesFetcher = async ({ word }) => {
+  //console.log(errorTwinWord + " ?? " + errorWordNick);
+  //if no sentences found return empty jsx element
+
+ regex = new RegExp(word, 'i'); //to match all cases of word in a sentence
+
   if (!word.includes("%20")) {
     //if it is word not a phrase or
     //if there is only one word in input text
-    const sentencesDataofTwinWord = getSentencesUsingTwinWord(word);
+    const sentencesDataofTwinWord = getSentencesUsingTwinWord(word, regex);
     const sentencesDataofWordNick = getSentencesUsingWordnik(word);
 
     const [sentencesTwinWord, sentencesWordNick] = await Promise.all([
@@ -90,28 +100,47 @@ const SentencesFetcher = async ({ word }) => {
       sentencesDataofWordNick,
     ]);
 
-    if (errorWorknick && errorTwinWord) {
-      errorWorknick = null;
+    console.log("We are inside");
+    console.log(sentencesTwinWord);
+    console.log(sentencesWordNick);
+    console.log(errorWordNick + " "+  errorTwinWord);
+
+
+    if (errorWordNick && errorTwinWord) {
+      errorWordNick = null;
       errorTwinWord = null;
-      return <></>; //if there is error in fetching sentences return nothing
+      return <></>;
     }
 
     return (
       <div className="card m-2" id="examples">
-        <h1>Examples of "{word}"</h1>
-        <ul className="m-2  p-2">
-          {/* Join sentences array and sort them in the order of length and display them */}
-          {errorTwinWord
-            ? sentencesWordNick.map(
-                (sent, index) => sent.includes(word) && <li key={index}>{sent}</li>
+        <h1>Examples of "{word}" in Sentences</h1>
+        <ul className="m-2 p-2">
+          {
+            // if there is an error in fetching Sentences using Twinword API
+            errorTwinWord && ( sentencesWordNick.length > 0 ? 
+              sentencesWordNick.map(
+                (sent, index) =>
+                  sent.match(regex) && <li key={index}>{sent}</li>
+              ) : <p>No Sentences Found for {word}</p>
+            )
+          }
+          {
+            //if there is an error fetching sentences using WordNick API
+            errorWordNick && ( sentencesTwinWord.length > 0 ?
+              sentencesTwinWord.map(
+                (sent, index) =>
+                  sent.match(regex) && <li key={index}>{sent}</li>
+              ) : <p>No Sentences Found for {word}</p>)
+          }
+          {
+            /* If no errors are found Join sentences array and sort them in the order of length and display them */
+            !errorTwinWord &&
+              !errorWordNick &&
+              sortStringArrayinASC([...sentencesWordNick, ...sentencesTwinWord]).map((sent, index) =>
+                sent.match(regex) ? <li key={index}>{sent}</li> : ""
               )
-            : joinSentenceArrays(
-                sentencesWordNick,
-                sentencesTwinWord,
-                word
-              ).map((sent, index) =>
-                sent.includes(word) ? <li key={index}>{sent}</li> : ""
-              )}
+          }
         </ul>
       </div>
     );
@@ -124,8 +153,8 @@ const SentencesFetcher = async ({ word }) => {
 
     word = word.replace("%20", "-");
 
-    if (errorWorknick !== null) {
-      errorWorknick = null;
+    if (errorWordNick !== null) {
+      errorWordNick = null;
       return <></>; //if there is error in fetching sentences return nothing
     }
 

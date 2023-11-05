@@ -7,7 +7,7 @@ import AlphabetLinks from "@components/AlphabetLinks";
 
 export const metadata = {
   title: {
-    default: "WordPapa",
+    default: "WordPapa: Master Vocabulary Words with Ease",
     template: "%s - WordPapa",
   },
   description:
@@ -38,7 +38,7 @@ const layout = ({ children }) => {
             </div>
           </div>
         </main>
-        {/* <AlphabetLinks /> */}
+         <AlphabetLinks />
         <Footer />
       </body>
     </html>

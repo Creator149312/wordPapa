@@ -20,7 +20,7 @@ const SearchBarNav = () => {
 
   const handleLoadUrl = () => {
     if (selectedOption && word) {
-      let encodedWord = word.toLowerCase().split(' ').join('-');
+      let encodedWord = decodeURIComponent(word.toLowerCase()).split(' ').join('-');
       window.location.href = selectedOption + encodedWord + "/";
     }
   };

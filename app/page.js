@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { BsFillArrowRightSquareFill } from "react-icons/bs";
+import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import ErrorBox from "@utils/ErrorBox";
 import commonLinks from "@utils/commonLinks";
 
@@ -68,7 +68,8 @@ const Page = () => {
                   <sub className="p-1"> by</sub>
                   <sub className="p-1">EnglishBix</sub>
                 </h1>
-                <p>
+                <h3>The free, fun, and effective way to master a word!</h3>
+                <p className="large-text">
                   An enriching vocabulary hub, where language mastery begins.
                   Dive into a world of words and their nuances.
                 </p>
@@ -81,53 +82,45 @@ const Page = () => {
               </div>
               <p className="text-center large-text">I am looking for....</p>
               <div className="row">
-                <div className="card col-6 text-center">
+                <div className="card col-6 text-center" href={commonLinks.definition}>
                   <div className="m-2 p-2">
                 <p>
                     A dictionary to find new words along with their definitions and examples
                     </p>
                   </div>
-                  <div className="p-2">
-                    <a  href={commonLinks.definition} className="custom-button medium-text">
-                      Word Dictionary <span className="react-icons"><BsFillArrowRightSquareFill /></span>
-                    </a>
-                  </div>
+                  <button className="p-2 custom-button medium-text">
+                 <a href={commonLinks.definition} className="medium-text font-white" > Word Dictionary <BsFillArrowRightCircleFill />
+                 </a> </button>
                 </div>
-                <div className="card col-6 text-center">
+                <div className="card col-6 text-center" >
                   <div className="m-2 p-2">
                   <p>
                   Tool to find Adjective words to describe a Noun or Object  </p>
                   </div>
-                  <div className="p-2">
-                    <a  href={commonLinks.adjectives} className="custom-button medium-text">
-                      Adjectives Finder <span className="react-icons"><BsFillArrowRightSquareFill /></span>
-                    </a>
+                  <button className="custom-button medium-text">
+                     <a href={commonLinks.adjectives} className="medium-text font-white">Adjectives Finder <span className="react-icons"><BsFillArrowRightCircleFill /></span>
+                     </a>  </button>
                   </div>
-                </div>
               </div>
               <div className="row">
-              <div className="card col-6 text-center">
+              <div className="card col-6 text-center" >
                   <div className="m-2">
                   <p>
                     Synonyms and antonyms of a word that I know
                   </p>
                   </div>
-                  <div className="p-2">
-                    <a  href={commonLinks.thesaurus} className="custom-button medium-text">
-                      Thesaurus <span className="react-icons"><BsFillArrowRightSquareFill /></span>
-                    </a>
-                  </div>
+                    <button className="custom-button p-2">
+                      <a href={commonLinks.thesaurus}  className="medium-text font-white">Thesaurus <span className="react-icons"><BsFillArrowRightCircleFill /></span></a>
+                    </button>
                 </div>
                 <div className="card col-6 text-center">
                   <div className="m-2">
                   <p>
                   rhyming words that rhyme with a word that I know</p>
                   </div>
-                  <div className="p-2">
-                    <a  href={commonLinks.rhyming} className="custom-button medium-text">
-                      Rhyming Dictionary <span className="react-icons"><BsFillArrowRightSquareFill /></span>
-                    </a>
-                  </div>
+                    <button className="custom-button p-2">
+                      <a href={commonLinks.rhyming}  className="medium-text font-white"> Rhyming Dictionary <span className="react-icons"><BsFillArrowRightCircleFill /></span></a>
+                    </button>
                 </div>
               </div>
               <div className="row">
@@ -137,22 +130,22 @@ const Page = () => {
                     a tool to find number of syllables in a given word
                   </p>
                   </div>
-                  <div className="p-2">
-                    <a href={commonLinks.syllables} className="custom-button medium-text">
-                      Syllable Counter <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                  <button className="custom-button p-2">
+                    <a href={commonLinks.syllables} className="medium-text font-white">
+                      Syllable Counter <span className="react-icons"><BsFillArrowRightCircleFill /></span>
                     </a>
-                  </div>
+                  </button>
                 </div>
                 <div className="card col-6 text-center">
                   <div className="m-2 p-2">
                   <p>
                   a tool to generate all possible words with given letters (coming soon....)</p>
                   </div>
-                  <div className="p-2">
-                    <a href="#" className="custom-button medium-text">
-                      Word Finder <span className="react-icons"><BsFillArrowRightSquareFill /></span>
+                  <button className="p-2 custom-button">
+                    <a href="#" className="medium-text font-white">
+                      Word Finder <span className="react-icons"><BsFillArrowRightCircleFill /></span>
                     </a>
-                  </div>
+                  </button>
                 </div>
               </div>
               <h2>Explore Our Word Tools Crafted For You</h2>

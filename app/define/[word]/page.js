@@ -1,6 +1,7 @@
 import axios from "axios";
 import SentencesFetcher from "./SentencesFetcher";
 import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
+import { redirect } from 'next/navigation';
 
 let titleStr = "";
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }, parent) {
   titleStr =
     word.charAt(0).toUpperCase() +
     word.slice(1) +
-    " Definition and Sentence Examples";
+    " Definition & Meaning with Sentence Examples";
   const descriptionStr =
     "Find what does " +
     params.word +
@@ -50,9 +51,9 @@ export async function generateMetadata({ params }, parent) {
 * [{"word":"kjxluaydoaiu","score":2147483647,"tags":["query"]}]
 */
 async function getDefinitions(word) {
-  let endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1`;
+  let endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
   const res = await axios.get(endpoint);
-  console.log(res.data[0]);
+  //console.log(res.data[0]);
   return res.data[0];
 }
 
@@ -68,7 +69,10 @@ async function splitDefsbyPOS(defs) {
   });
 }
 
-async function displayDefs() {
+/*
+* Display Definitions under different Parts of Speech 
+*/
+async function displayDefs() { 
   return (
     <div>
       {Object.keys(defTypes).map(
@@ -105,7 +109,7 @@ async function getRelatedWordsUsingML(word) {
 // }
 
 export default async function WordSpecificPage({ params }) {
-  let word = params.word; //in this form there will be - in word in place of spaces
+  let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
   let decodedWord = word.split('-').join(' '); //This is the original word typed by User
 
   if (!word.includes(".ico")) {
@@ -115,6 +119,11 @@ export default async function WordSpecificPage({ params }) {
 
     // Wait for the promises to resolve
     const [definitions] = await Promise.all([definitionsData]);
+
+    if(definitions.hasOwnProperty("defHeadword")){
+      if(definitions.defHeadword.toLowerCase() !== word.toLowerCase()) //check if defHeadword is not same as the typed word
+      redirect("/define/" + definitions.defHeadword + "/");
+    }
 
     //if we have found definitions for a word
     if (definitions.hasOwnProperty("defs")) {
@@ -126,7 +135,8 @@ export default async function WordSpecificPage({ params }) {
             <h1>{decodedWord}</h1>
             </div>
             <div className="card-body">
-            <p className="ipa">IPA: {definitions.tags[2].split(":")[1]}</p>
+            <p className="ipa">IPA: {definitions.tags[definitions.tags.length - 1].split(":")[1]}</p>
+            {definitions.hasOwnProperty("defHeadword") && <p>Root Word: <a href={definitions.defHeadword}>{definitions.defHeadword}</a></p>}
             {/* {console.log(definitions)} */}
             {await displayDefs()}
             </div>
