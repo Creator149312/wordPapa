@@ -16,7 +16,7 @@ const types = {
 };
 
 export async function generateMetadata({ params }, parent) {
-  const { word } = params;
+  const word  = decodeURIComponent(params.word);
   // read route params
   titleStr =
     word.charAt(0).toUpperCase() +

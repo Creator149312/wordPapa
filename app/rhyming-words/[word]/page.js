@@ -4,8 +4,7 @@ import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-
-  const {word} = params;
+  const word  = decodeURIComponent(params.word);
   // read route params
   titleStr = "Rhyming Words and Phrases for " + (word.charAt(0).toUpperCase() + word.slice(1));
   const descriptionStr = "Explore list of common words that rhyme with " + params.word + " to use in creative writing and poetry.";
@@ -26,7 +25,7 @@ export async function generateMetadata({ params }, parent) {
 
 let rhymingWords = [];
 export default async function Page({ params }) {
-  const { word } = params; //this one gives the best results
+  const word  = decodeURIComponent(params.word); //this one gives the best results
   //const word = params.word.split('-').join(' ');
   
   try {

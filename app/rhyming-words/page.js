@@ -2,6 +2,8 @@ import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import RhymingWords from "./RhymingWords";
 import commonLinks from "@utils/commonLinks";
 
+const ptitle = "Rhyming Words Generator: Get Perfect Rhymes";
+
 const mostSearchedWordsList = [
   "you",
   "me",
@@ -23,7 +25,7 @@ const mostSearchedWordsList = [
 ];
 
 export const metadata = {
-  title: "Rhyming Words Generator: Get Pefect Rhymes",
+  title: ptitle,
   description:
     "Use our Rhyming Words to find delightful array of words and phrases that rhyme with it. Use it craft engaging poems, songs, and activities that inspire kids to discover the beauty of language.",
 };
@@ -35,8 +37,9 @@ function RhymingWordsPage() {
         <div>
           <div>
             <div>
-              <RhymingWords />
+              {/* <RhymingWords /> */}
               <div className="m-3 p-3">
+                <h1>{ptitle}</h1>
                 <p>
                   Introducing the Rhyming Words Generator, an easy to use tool
                   designed to make learning fun and engaging for kids.{" "}

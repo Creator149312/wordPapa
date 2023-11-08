@@ -4,8 +4,7 @@ import axios from "axios";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-
-  const {word} = params;
+  const word  = decodeURIComponent(params.word);
   // read route params
   titleStr = "Adjective Words to Describe " + (word.charAt(0).toUpperCase() + word.slice(1));
   const descriptionStr = "Explore list of commonly used adjective words for describing " + params.word + " in writing.";
@@ -28,7 +27,7 @@ let adjectiveWords = [];
 
 export default async function Page({ params }) {
   //const word = params.word.split('-').join(' ');
-  const  {word} = params;
+  const word  = decodeURIComponent(params.word);
   try {
     adjectiveWords = [];
     const response = await axios.get(

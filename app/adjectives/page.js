@@ -2,6 +2,8 @@ import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import AdjectivesExtractor from "./AdjectivesExtractor";
 import commonLinks from "@utils/commonLinks";
 
+const ptitle = "Adjectives Finder: Get Describing Words for Nouns";
+
 const mostSearchedWordsList =[
   "socks",
   "turtle",
@@ -101,7 +103,7 @@ const mostSearchedWordsList =[
 ];
 
 export const metadata = {
-  title: "Adjectives Finder: Get Describing Words for Nouns",
+  title: ptitle,
   description: "Use our Adjectives Finder to find perfect describing words for Nouns or Objects to enhance the quality of your writings and make communications engaging."
 }
 
@@ -112,8 +114,9 @@ function AdjectivesExtractorPage() {
         <div>
           <div>
             <div >
-              <AdjectivesExtractor />
+              {/* <AdjectivesExtractor /> */}
               <div className="m-2 p-2">
+              <h1>{ptitle}</h1>
                 <p>
                   Introducing our Adjectives Finder is a handy resource for word
                   enthusiasts, writers, and language lovers. Also known as an
@@ -140,7 +143,9 @@ function AdjectivesExtractorPage() {
                   breeze to find the perfect word for your expression.
                 </p>
               </div>
+              <div className="m-2 p-2">
               <MostSearchedWordsList wordList={mostSearchedWordsList} preText={"describing words for "} postText={""} slug={commonLinks.adjectives}/>
+              </div>
             </div>
           </div>
         </div>

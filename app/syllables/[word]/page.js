@@ -2,7 +2,8 @@ import axios from "axios";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-  const word = params.word.split('-').join(' ');
+  //const word = params.word.split('-').join(' ');
+  const word  = decodeURIComponent(params.word);
   // read route params
   titleStr = "How many syllables in " + (word.charAt(0).toUpperCase() + word.slice(1)) + "?";
   const descriptionStr = "Explore list of common words that rhyme with " + params.word + " to use in creative writing and poetry.";
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }, parent) {
 let syllableWords = [];
 export default async function Page({ params }) {
   //const { word } = params;
-  const word = params.word.split('-').join(' ');
+  //const word = params.word.split('-').join(' ');
+  const word  = decodeURIComponent(params.word);
 
   try {
     syllableWords = [];

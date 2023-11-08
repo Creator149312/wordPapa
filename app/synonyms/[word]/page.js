@@ -4,7 +4,7 @@ import axios from "axios";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-  const { word } = params;
+  const word  = decodeURIComponent(params.word);
   // read route params
   titleStr =
     "Synonyms and Antonyms for " +
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }, parent) {
 
 let synonymWords = [];
 export default async function Page({ params }) {
-  const { word } = params;
+  const word  = decodeURIComponent(params.word);
 
   try {
     synonymWords = [];

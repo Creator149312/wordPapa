@@ -1,7 +1,9 @@
 import SimilarWords from "./SimilarWords";
 
+const ptitle = "Thesaurus - Find Synonyms and Antonyms of Word";
+
 export const metadata = {
-  title: "Thesaurus - Find Synonyms and Antonyms of Word",
+  title: ptitle,
   description: "EnglishBix thesaurus is a reference tool that generates synonyms and antonyms for words and phrases. It assists writers, speakers, and students by offering alternative words with similar or opposite meanings, enhancing their ability to convey thoughts and ideas more effectively."
 }
 
@@ -12,9 +14,10 @@ function SimilarWordsPage() {
         <div>
           <div>
             <div>
-              <SimilarWords />
+              {/* <SimilarWords /> */}
               {/* Continue adding content */}
               <div className="m-3 p-3">
+                <h1>{ptitle}</h1>
                 <p>
                   The <strong>Synonyms Generator</strong> is a versatile
                   linguistic tool designed to help users explore and discover
