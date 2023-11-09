@@ -40,7 +40,7 @@ async function getSentencesUsingWordnik(word) {
       },
     });
 
-    console.log(response.data.examples);
+   // console.log(response.data.examples);
     if (response.data.examples !== null && response.data.examples.length > 0) {
       return sortStringArrayinASC(
         response.data.examples.map((sent) => {
@@ -68,7 +68,7 @@ async function getSentencesUsingTwinWord(word, regex) {
     };
 
     const response = await axios.request(options);
-    console.log(response.data.example);
+    //console.log(response.data.example);
      // Create a regular expression with the 'i' flag for case-insensitive search
 
     if (response.data.example !== null && response.data.example.length > 0) {
@@ -100,10 +100,10 @@ const SentencesFetcher = async ({ word }) => {
       sentencesDataofWordNick,
     ]);
 
-    console.log("We are inside");
-    console.log(sentencesTwinWord);
-    console.log(sentencesWordNick);
-    console.log(errorWordNick + " "+  errorTwinWord);
+    // console.log("We are inside");
+    // console.log(sentencesTwinWord);
+    // console.log(sentencesWordNick);
+    // console.log(errorWordNick + " "+  errorTwinWord);
 
 
     if (errorWordNick && errorTwinWord) {

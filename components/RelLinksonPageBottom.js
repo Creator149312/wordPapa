@@ -1,12 +1,13 @@
 'use client'
-import commonLinks from "@utils/commonLinks";
+import commonLinks from "@utils/commonLinks"; 
+import { usePathname } from 'next/navigation';
 
 function displayLinK(link, AnchorText) {
     return <a className="m-2 top-pageLinks" href={link}>{AnchorText}</a>;
   }  
 
 const RelLinksonPageBottom = ({ word, pos}) => {
-  let slug = window.location.pathname.split('/')[1];
+  const slug = usePathname().split('/')[1];
 
   return (
     <div className="p-2 m-2">
