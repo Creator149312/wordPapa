@@ -39,7 +39,7 @@ export default async function Page({ params }) {
     );
     synonymWords = response.data.map((item) => item.word);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return {
       notFound: true,
     };

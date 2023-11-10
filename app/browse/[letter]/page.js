@@ -8,7 +8,7 @@ async function getWords(l) {
   try {
     const fileContent =  await fs.readFile(filePath, 'utf8');
     const linksArray = fileContent.split("\n");
-    console.log("Total Words = " + linksArray.length);
+    // console.log("Total Words = " + linksArray.length);
     return linksArray.filter((word) => word.charAt(1) === l);
   } catch (error) {
     throw new Error(`Error reading the file: ${error.message}`);

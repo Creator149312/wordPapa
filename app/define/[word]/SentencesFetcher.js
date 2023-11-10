@@ -102,16 +102,16 @@ const SentencesFetcher = async ({ word }) => {
       sentencesDataofWordNick,
     ]);
 
-    console.log("We are inside");
-    console.log(sentencesTwinWord);
-    console.log(sentencesWordNick);
-    console.log(errorWordNick + " "+  errorTwinWord);
+    // console.log("We are inside");
+    // console.log(sentencesTwinWord);
+    // console.log(sentencesWordNick);
+    // console.log(errorWordNick + " "+  errorTwinWord);
 
 
     if (errorWordNick && errorTwinWord) {
       errorWordNick = null;
       errorTwinWord = null;
-      console.log("Nothing is rendered")
+      // console.log("Nothing is rendered")
       return <></>;
     }
 

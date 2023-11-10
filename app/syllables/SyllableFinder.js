@@ -36,7 +36,7 @@ const SyllableFinder = () => {
       setSyllableCount(response.data[0].numSyllables);
       setLoading(false);
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       setLoading(false);
     }
   };

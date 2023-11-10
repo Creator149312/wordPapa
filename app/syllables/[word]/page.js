@@ -37,7 +37,7 @@ export default async function Page({ params }) {
 
     syllableWords = response.data[0];
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return {
       notFound: true,
     };
