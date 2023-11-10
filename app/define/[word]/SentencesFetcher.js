@@ -31,6 +31,7 @@ examples: [
 */
 
 async function getSentencesUsingWordnik(word) {
+  errorWordNick = null;
   try {
     const endpoint = `https://api.wordnik.com/v4/word.json/${word}/examples`;
     const apiKey = "e0d094e089e87c411680f08f6ab0e7be39143f84626e8c9e4"; // Replace with your Wordnik API key
@@ -56,6 +57,7 @@ async function getSentencesUsingWordnik(word) {
 }
 
 async function getSentencesUsingTwinWord(word, regex) {
+  errorTwinWord = null;
   try {
     const options = {
       method: "GET",
@@ -100,15 +102,16 @@ const SentencesFetcher = async ({ word }) => {
       sentencesDataofWordNick,
     ]);
 
-    // console.log("We are inside");
-    // console.log(sentencesTwinWord);
-    // console.log(sentencesWordNick);
-    // console.log(errorWordNick + " "+  errorTwinWord);
+    console.log("We are inside");
+    console.log(sentencesTwinWord);
+    console.log(sentencesWordNick);
+    console.log(errorWordNick + " "+  errorTwinWord);
 
 
     if (errorWordNick && errorTwinWord) {
       errorWordNick = null;
       errorTwinWord = null;
+      console.log("Nothing is rendered")
       return <></>;
     }
 
@@ -137,7 +140,7 @@ const SentencesFetcher = async ({ word }) => {
             /* If no errors are found Join sentences array and sort them in the order of length and display them */
             !errorTwinWord &&
               !errorWordNick &&
-              sortStringArrayinASC([...sentencesWordNick, ...sentencesTwinWord]).map((sent, index) =>
+              sortStringArrayinASC(sentencesWordNick.concat(sentencesTwinWord)).map((sent, index) =>
                 sent.match(regex) ? <li key={index}>{sent}</li> : ""
               )
           }
