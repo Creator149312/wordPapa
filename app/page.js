@@ -148,49 +148,6 @@ const Page = () => {
                   </button>
                 </div>
               </div>
-              <h2>Explore Our Word Tools Crafted For You</h2>
-              <div>
-                {/* <p>
-                <strong>
-                  1. <a href="/word-cloud">Word Cloud Generator</a>:
-                </strong>
-                It is a visual representation tool that transforms a set of text
-                data into an artistic display of words, with their size
-                indicating their frequency in the input text. It is commonly
-                used for data analysis, presentations, and content
-                visualization, or identifying prominent themes within a text
-                corpus.
-              </p> */}
-                <p>
-                  <strong>
-                    <a href="/synonyms/">Synonyms Generator</a>:
-                  </strong>{" "}
-                  It is a linguistic tool designed to provide alternative words
-                  or phrases with similar meanings to a given word. It helps
-                  writers, content creators, and language enthusiasts to choose
-                  from diverse vocabulary, and finally enhancing the clarity and
-                  richness of their writing.
-                </p>
-                <p>
-                  <strong>
-                    <a href="/rhyming-words/">Rhyming Words Generator</a>:
-                  </strong>{" "}
-                  A Rhyming Words Generator is a utility for teachers, poets,
-                  lyricists, and anyone looking to create rhyming verses or
-                  content. It generates words that rhyme with a given input
-                  word, assisting in crafting poetry, song lyrics, or creative
-                  writing with consistent rhyme schemes.{" "}
-                </p>
-                <p>
-                  <strong>
-                    <a href="/adjectives/">Describing Words Generator</a>:
-                  </strong>{" "}
-                  A Describing Words Generator, also known as an adjective
-                  generator, assists writers and content creators in finding
-                  adjectives or describing words to enhance the details and
-                  imagery in their writing.
-                </p>
-              </div>
             </div>
           </div>
         </div>

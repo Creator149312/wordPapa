@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import commonLinks from '@utils/commonLinks';
 import Pagination from './Pagination';
+import Link from 'next/link';
 
 function customLink(word){
-  let wordwithoutQuotes = word.substring(1, word.length-1)
-  let slug = commonLinks.definition + wordwithoutQuotes;
-  return <a href={slug} target="_blank" rel="noopener noreferrer">{wordwithoutQuotes}</a>;
+  let wordwithHyphens = word.toLowerCase().replace(/ /g, '-');
+  let slug = commonLinks.definition + wordwithHyphens;
+  
+  return <Link href={slug} target="_blank" rel="noopener noreferrer">{word}</Link>;
 }
 
 function LinkPagination({ links, linksPerPage, pagenumber, letter }) {

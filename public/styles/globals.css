@@ -519,7 +519,7 @@ body {
   border: none;
   border-radius: 4px; /* Rounded corners */
   margin: 2px;
-  padding: 10px; /* Adjust padding as needed */
+  padding: 9px; /* Adjust padding as needed */
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
   cursor: pointer; /* Add pointer cursor */
   transition: background-color 0.3s, box-shadow 0.3s; /* Add transition effects */

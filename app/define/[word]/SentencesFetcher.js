@@ -71,8 +71,7 @@ async function getSentencesUsingTwinWord(word, regex) {
 
     const response = await axios.request(options);
     //console.log(response.data.example);
-     // Create a regular expression with the 'i' flag for case-insensitive search
-
+    
     if (response.data.example !== null && response.data.example.length > 0) {
       return sortStringArrayinASC(
         response.data.example.filter((sent) => sent.match(regex) && sent)
@@ -87,11 +86,12 @@ async function getSentencesUsingTwinWord(word, regex) {
 
 const SentencesFetcher = async ({ word }) => {
   //console.log(errorTwinWord + " ?? " + errorWordNick);
-  //if no sentences found return empty jsx element
-
+ // Create a regular expression with the 'i' flag for case-insensitive search
  regex = new RegExp(word, 'i'); //to match all cases of word in a sentence
 
-  if (!word.includes("%20")) {
+  if (!(word.includes(" ") || word.includes("-"))) {
+
+    console.log("inside single words block");
     //if it is word not a phrase or
     //if there is only one word in input text
     const sentencesDataofTwinWord = getSentencesUsingTwinWord(word, regex);
@@ -106,8 +106,8 @@ const SentencesFetcher = async ({ word }) => {
     // console.log(sentencesTwinWord);
     // console.log(sentencesWordNick);
     // console.log(errorWordNick + " "+  errorTwinWord);
-
-
+    
+  //if no sentences found return empty jsx element
     if (errorWordNick && errorTwinWord) {
       errorWordNick = null;
       errorTwinWord = null;
@@ -149,13 +149,14 @@ const SentencesFetcher = async ({ word }) => {
     );
   } else {
     //if word is a compound word or a phrase
-    word = word.replace("%20", "-");
+    //word = word.replace("%20", "-");
     const sentencesDataofWordNick = getSentencesUsingWordnik(word);
 
     const [sentencesWordNick] = await Promise.all([sentencesDataofWordNick]);
 
-    word = word.replace("%20", "-");
+    //word = word.replace("%20", "-");
 
+    console.log("Word inside WordNick Block: " + word);
     if (errorWordNick !== null) {
       errorWordNick = null;
       return <></>; //if there is error in fetching sentences return nothing
@@ -164,7 +165,7 @@ const SentencesFetcher = async ({ word }) => {
     return (
       <div className="card m-2">
         <h1>Examples of "{word}" in Sentences</h1>
-        {/* {console.log(sentencesWordNick)} */}
+        { console.log(sentencesWordNick)}
         <ul className="m-2">
           {sentencesWordNick.map((sent, index) =>
             sent.includes(word) ? <li key={index}>{sent}</li> : ""

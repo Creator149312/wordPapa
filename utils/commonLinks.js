@@ -9,5 +9,5 @@ const commonLinks = {
     // Add more links as needed
 };
   
-  export default commonLinks;
+export default commonLinks;
   
