@@ -169,7 +169,7 @@ export default async function WordSpecificPage({ params }) {
                   </p>
                 )}
                 {/* {console.log(definitions)} */}
-                <p>Following are different meanings of {decodedWord} depending on the part of speech:</p>
+                {/* <p>Following are different meanings of {decodedWord} depending on the part of speech:</p> */}
                 {await displayDefs()}
               </div>
             </div>
