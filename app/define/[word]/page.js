@@ -21,8 +21,7 @@ export async function generateMetadata({ params }, parent) {
   if(word.includes("-")) word = word.replace("-", " ");
   // read route params
   titleStr =
-    word.charAt(0).toUpperCase() +
-    word.slice(1) +
+    word.toUpperCase()  +
     " Definition & Meaning with Sentence Examples";
   const descriptionStr =
     "Find what does " +
@@ -158,7 +157,7 @@ export default async function WordSpecificPage({ params }) {
                   {definitions.tags[definitions.tags.length - 1].split(":")[1]}
                 </p>
                 {definitions.hasOwnProperty("defHeadword") && (
-                  <p>
+                  <p className="normal-text">
                     Root Word:{" "}
                     <Link
                       href={definitions.defHeadword
@@ -170,6 +169,7 @@ export default async function WordSpecificPage({ params }) {
                   </p>
                 )}
                 {/* {console.log(definitions)} */}
+                <p>Following are different meanings of {decodedWord} depending on the part of speech:</p>
                 {await displayDefs()}
               </div>
             </div>

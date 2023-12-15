@@ -69,7 +69,7 @@ const Page = () => {
                   <sub className="p-1">EnglishBix</sub>
                 </h1>
                 <h3>The free, fun, and effective way to master a word!</h3>
-                <p className="large-text">
+                <p>
                   An enriching vocabulary hub, where language mastery begins.
                   Dive into a world of words and their nuances.
                 </p>

@@ -164,7 +164,7 @@ const SentencesFetcher = async ({ word }) => {
 
     return (
       <div className="card m-2">
-        <h1>Examples of "{word}" in Sentences</h1>
+        <h2>Examples of "{word}" in Sentences</h2>
         { console.log(sentencesWordNick)}
         <ul className="m-2">
           {sentencesWordNick.map((sent, index) =>
