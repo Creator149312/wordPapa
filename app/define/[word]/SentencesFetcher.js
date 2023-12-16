@@ -91,7 +91,7 @@ const SentencesFetcher = async ({ word }) => {
 
   if (!(word.includes(" ") || word.includes("-"))) {
 
-    console.log("inside single words block");
+    // console.log("inside single words block");
     //if it is word not a phrase or
     //if there is only one word in input text
     const sentencesDataofTwinWord = getSentencesUsingTwinWord(word, regex);
@@ -156,7 +156,7 @@ const SentencesFetcher = async ({ word }) => {
 
     //word = word.replace("%20", "-");
 
-    console.log("Word inside WordNick Block: " + word);
+    // console.log("Word inside WordNick Block: " + word);
     if (errorWordNick !== null) {
       errorWordNick = null;
       return <></>; //if there is error in fetching sentences return nothing
@@ -165,7 +165,7 @@ const SentencesFetcher = async ({ word }) => {
     return (
       <div className="card m-2">
         <h2>Examples of "{word}" in Sentences</h2>
-        { console.log(sentencesWordNick)}
+        {/* { console.log(sentencesWordNick)} */}
         <ul className="m-2">
           {sentencesWordNick.map((sent, index) =>
             sent.includes(word) ? <li key={index}>{sent}</li> : ""

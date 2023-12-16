@@ -36,7 +36,7 @@ function Navbar() {
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/synonyms/" className={`${styles.navLink}`}>
+          <a href="/thesaurus/" className={`${styles.navLink}`}>
             Thesaurus
           </a>
         </li>
