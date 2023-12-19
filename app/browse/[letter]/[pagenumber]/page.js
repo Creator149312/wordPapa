@@ -7,7 +7,7 @@ export async function generateMetadata({ params }, parent) {
   const L  = decodeURIComponent(params.letter);
   let pagenumber = params.pagenumber;
   // read route params
-   titleStr = `Dictionary of Letter ${L} Words - Page ${pagenumber}`;
+   titleStr = `Dictionary of Letter ${L} Words : Page ${pagenumber}`;
   const descriptionStr = `Browse definitions and meanings of words that begin with the letter ${L} at WordPapa - Page ${pagenumber}`;
   return {
     title: titleStr,
