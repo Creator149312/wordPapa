@@ -4,6 +4,7 @@ import NavbarComponent from "@components/NavBar";
 import Footer from "@components/Footer";
 import SearchNavBar from "@components/SearchNavBar";
 import AlphabetLinks from "@components/AlphabetLinks";
+import GAnalytics from "./GAnalytics";
 
 export const metadata = {
   title: {
@@ -18,6 +19,7 @@ const layout = ({ children }) => {
   return (
     <html lang="en">
       <head>
+        <GAnalytics />
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="favicon.ico" />
