@@ -17,13 +17,13 @@ async function getWords() {
 const Page = async () => {
   let words = await getWords();
 
-  console.log("Total hyphenated Words = " + words.length);
+  console.log("Total Single Words = " + words.length);
   let someWords = [];
-  for(let i = 0; i < 100; i++){
-    someWords.push(words[i]);
-  }
+  // for(let i = 0; i < 100; i++){
+  //   someWords.push(words[i]);
+  // }
 
-  console.log(someWords);
+  // console.log(someWords);
 };
 
 export default Page;
