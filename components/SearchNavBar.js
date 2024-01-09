@@ -1,12 +1,14 @@
 "use client";
+
 import commonLinks from "@utils/commonLinks";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from 'next/navigation'
 
+//usage of SessionStore is causing website to load slowly
 const SearchBarNav = () => {
   const [selectedOption, setSelectedOption] = useState("/define/");
   const [word, setWord] = useState("");
-  const [path, setPath] = usePathname();
+  const pathname = usePathname();
 
   const urlOptions = [
     { value: commonLinks.definition, label: "Word Dictionary" },
@@ -14,11 +16,39 @@ const SearchBarNav = () => {
     { value: commonLinks.rhyming, label: "Find Rhyming Words" },
     { value: commonLinks.thesaurus, label: "Thesaurus" },
     { value: commonLinks.syllables, label: "Count Syllables in" },
-    // { value: "/homophones/", label: "Find Homophones" },
+    { value: commonLinks.wordfinder, label: "Word Finder" },
   ];
 
+  function checkOptionInSearch(obj, stringA) {
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (obj[key] === stringA) {
+          return true; // Found a match
+        }
+      }
+    }
+    return false; // No match found
+  }
+
+  // set selected Option based on page URL after page has loaded
+  useEffect(() => {
+    let path = pathname.split("/")[1];
+    let ifOptionInSearchBar = checkOptionInSearch(commonLinks, "/"+path+"/")
+    if(path != "" && ifOptionInSearchBar){
+      setSelectedOption(`/${path}/`);
+    }
+  }, [pathname]);
+
+  //this is used to facilitate Enter key press 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleLoadUrl();
+    }
+  };
+
   const handleOptionChange = (e) => {
-    setSelectedOption(e.target.value);
+    const value = e.target.value;
+    setSelectedOption(value);
   };
 
   const handleLoadUrl = () => {
@@ -58,6 +88,7 @@ const SearchBarNav = () => {
           type="text"
           placeholder="Type Your Word Here..."
           onChange={(e) => setWord(e.target.value)}
+          onKeyPress={handleKeyPress}
         />
         <button onClick={handleLoadUrl} className="search-button">
           Search

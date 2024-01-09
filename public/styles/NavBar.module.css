@@ -31,7 +31,7 @@ a.navLink {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 60px;
+  gap: 50px;
 }
 
 /* media queries */

@@ -3,6 +3,7 @@ import { useState } from "react";
 import styles from "@public/styles/NavBar.module.css";
 import logo from "@public/logo192.png";
 import Image from "next/image";
+import UserInfo from "./UserInfo";
 
 function Navbar() {
   // adding the states
@@ -31,30 +32,32 @@ function Navbar() {
               <a href='/define/' className={`${styles.navLink}`}>Dictionary</a>
             </li> */}
         <li onClick={removeActive}>
-          <a href="/define/" className={`${styles.navLink}`}>
-            Word Dictionary
+          <a href="/define/" className={`${styles.navLink}`}>Word Dictionary
+          </a>
+        </li>
+        {/* <li onClick={removeActive}>
+          <a href="/word-finder/" className={`${styles.navLink}`}>Word Finder
+          </a>
+        </li> */}
+        <li onClick={removeActive}>
+          <a href="/thesaurus/" className={`${styles.navLink}`}>Thesaurus
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/thesaurus/" className={`${styles.navLink}`}>
-            Thesaurus
+          <a href="/syllables/" className={`${styles.navLink}`}>Syllable Counter
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/syllables/" className={`${styles.navLink}`}>
-            Syllable Counter
+          <a href="/adjectives/" className={`${styles.navLink}`}>Adjectives Finder
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/adjectives/" className={`${styles.navLink}`}>
-            Adjectives Finder
+          <a href="/rhyming-words/" className={`${styles.navLink}`}>Rhyming Dictionary
           </a>
         </li>
-        <li onClick={removeActive}>
-          <a href="/rhyming-words/" className={`${styles.navLink}`}>
-            Rhyming Dictionary
-          </a>
-        </li>
+        {/* <li>
+            <UserInfo />
+          </li> */}
       </ul>
 
       <div

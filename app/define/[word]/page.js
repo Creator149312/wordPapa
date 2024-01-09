@@ -2,6 +2,7 @@ import axios from "axios";
 import SentencesFetcher from "./SentencesFetcher";
 import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
 import { redirect } from "next/navigation";
+import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
 
 let titleStr = "";
@@ -148,8 +149,9 @@ export default async function WordSpecificPage({ params }) {
           <>
             {await splitDefsbyPOS(definitions.defs)}
             <div className="card m-2">
-              <div className="card-header">
+              <div className="card-header list-heading-container">
                 <h1>{decodedWord}</h1>
+                {/* <AddToMyListsButton /> */}
               </div>
               <div className="card-body">
                 <p className="ipa">
@@ -265,6 +267,7 @@ const uniqueObjects = Array.from(new Set(mergedArray.map(obj => JSON.stringify(o
               <div className="card m-2">
                 <div className="card-header">
                   <h2>{finalMatches[i].word}</h2>
+               
                 </div>
                 <div className="card-body">
                   <p className="ipa">

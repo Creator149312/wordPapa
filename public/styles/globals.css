@@ -828,3 +828,85 @@ li {
   margin: 10px;
   padding: 10px;
 }
+
+
+/* styles for user profile drop down menu */
+.dropdown-menu{
+  position: absolute;
+  /* top: 100px; */
+  right: 10px;
+  background-color: #f9f9fb;
+  border-radius: var(--border-radius);
+  padding: 10px 20px;
+  width: 240px;
+}
+
+.dropdown-menu::before{
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 20px;
+  height: 20px;
+  width: 20px;
+  background: var(--secondary-bg);
+  transform: rotate(45deg);
+}
+
+.dropdown-menu.active{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: var(--speed) ease;
+}
+
+.dropdown-menu.inactive{
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: var(--speed) ease;
+}
+
+.dropdown-menu ul li{
+  padding: 10px  0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-menu ul li:hover a{
+  color: rgb(212, 33, 9);
+  cursor: pointer;
+}
+
+.dropdownItem{
+  display: flex;
+  margin: 10px auto;
+}
+
+.dropdownItem a{
+  max-width: 160px;
+  margin-left: 10px;
+  transition: var(--speed);
+}
+
+.display-flex{
+  display: flex;
+}
+
+/* General styling for the form */
+.form-50 {
+  max-width: 50%; /* Set initial width to 50% */
+  margin: 0 auto; /* Center the form horizontally */
+  /* Add other styling as needed */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 767px) {
+  .form-50 {
+    max-width: 100%; /* Set width to 100% on screens smaller than 768px */
+  }
+}
+
+.list-heading-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

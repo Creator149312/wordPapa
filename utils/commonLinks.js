@@ -5,9 +5,9 @@ const commonLinks = {
     rhyming: "/rhyming-words/",
     thesaurus: "/thesaurus/",
     syllables: "/syllables/",
-    homophones: "/homophones/"
+    homophones: "/homophones/",
+    wordfinder: "/word-finder/"
     // Add more links as needed
 };
   
 export default commonLinks;
-  

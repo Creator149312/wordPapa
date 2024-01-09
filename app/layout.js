@@ -5,6 +5,7 @@ import Footer from "@components/Footer";
 import SearchNavBar from "@components/SearchNavBar";
 import AlphabetLinks from "@components/AlphabetLinks";
 import GAnalytics from "./GAnalytics";
+import { NextAuthProvider } from "./Providers";
 
 export const metadata = {
   title: {
@@ -25,6 +26,7 @@ const layout = ({ children }) => {
         <link rel="icon" href="favicon.ico" />
       </head>
       <body className="font-responsive">
+        <NextAuthProvider>
         <header className="card">
             <NavbarComponent />
             <SearchNavBar />
@@ -42,6 +44,7 @@ const layout = ({ children }) => {
         </main>
          <AlphabetLinks />
         <Footer />
+        </NextAuthProvider>
       </body>
     </html>
   );

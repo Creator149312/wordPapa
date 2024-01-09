@@ -66,7 +66,7 @@ export const displayWords = (wordsArr, startsWith, endsWith, contains, length) =
   return result;
 };
 
-export const sortStringArrayinASC = (StrArray) =>{
+export const sortStringArrayinASC = (StrArray) => {
   return StrArray.sort((a, b) => a.length - b.length).filter((value, index, self) => {
     // Return true for the first occurrence of each unique element
     return self.indexOf(value) === index;
