@@ -2,6 +2,7 @@
 
 import { HiOutlineTrash } from "react-icons/hi";
 import { useRouter } from "next/navigation";
+import apiConfig from "@utils/apiUrlConfig";
 
 export default function RemoveListBtn({id}){
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function RemoveListBtn({id}){
     const confirmed = confirm("Are you sure?");
 
     if (confirmed) {
-      const res = await fetch(`https://fictional-space-sniffle-jj99r9vggv4fj55g-3000.app.github.dev/api/list?id=${id}`, {
+      const res = await fetch(`${apiConfig.apiUrl}/list?id=${id}`, {
         method: "DELETE",
       });
 

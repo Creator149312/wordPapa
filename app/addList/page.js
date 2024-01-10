@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import apiConfig from "@utils/apiUrlConfig";
 
 export default function AddList() {
   const [title, setTitle] = useState("");
@@ -31,7 +32,7 @@ export default function AddList() {
     }
 
     try {
-      const res = await fetch("https://fictional-space-sniffle-jj99r9vggv4fj55g-3000.app.github.dev/api/list", {
+      const res = await fetch(`${apiConfig.apiUrl}/list`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

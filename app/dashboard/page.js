@@ -15,7 +15,7 @@ export default function UserInfo() {
           <h2>My Lists</h2>
           <Link href={'./addList'} className="custom-button">Create List + </Link>
         </div>
-        <WordLists />
+        <WordLists createdBy={session?.user?.email}/>
       </div>
     );
   } else {

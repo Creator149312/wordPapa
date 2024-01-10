@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import {useState, useEffect}  from "react";
 import { usePathname } from 'next/navigation';
-import { HiCheckCircle } from "react-icons/hi";
+import apiConfig from "@utils/apiUrlConfig";
 
 export default function AddToMyListsButton() {
 const [wordToAdd, setWordToAdd] = useState("");
@@ -21,7 +21,7 @@ const [wordToAdd, setWordToAdd] = useState("");
     //fetch lists data from DB
     const fetchData = async () => {
       try {
-        const response = await fetch('https://fictional-space-sniffle-jj99r9vggv4fj55g-3000.app.github.dev/api/list', { cache: "no-store" }); // Replace with your actual API endpoint
+        const response = await fetch(`${apiConfig.apiUrl}/list`, { cache: "no-store" }); // Replace with your actual API endpoint
 
         if (!response.ok) {
           throw new Error("Failed to fetch lists");
@@ -47,7 +47,7 @@ const [wordToAdd, setWordToAdd] = useState("");
     let newWords = [...itemToAdd.words, wordToAdd];
     
     try {
-        const res = await fetch(`https://fictional-space-sniffle-jj99r9vggv4fj55g-3000.app.github.dev/api/list/${itemToAdd._id}`, {
+        const res = await fetch(`${apiConfig.apiUrl}/list/${itemToAdd._id}`, {
           method: "PUT",
           headers: {
             "Content-type": "application/json",

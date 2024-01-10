@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import apiConfig from "@utils/apiUrlConfig";
 
 export default function EditTopicForm({ id, title, description, words }) {
   const [newTitle, setNewTitle] = useState(title);
@@ -17,7 +18,7 @@ export default function EditTopicForm({ id, title, description, words }) {
     e.preventDefault();
 
     try {
-      const res = await fetch(`https://fictional-space-sniffle-jj99r9vggv4fj55g-3000.app.github.dev/api/list/${id}`, {
+      const res = await fetch(`${apiConfig.apiUrl}/list/${id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",
