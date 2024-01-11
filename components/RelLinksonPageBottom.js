@@ -15,7 +15,7 @@ const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
       <h3>Related Links</h3>
       {slug !== 'define' && displayLinK(commonLinks.definition + wordforhref+"/", 'meaning of ' + word)}
       {slug !== 'syllables' && displayLinK(commonLinks.syllables+ wordforhref+"/", 'syllables in '+ word)}
-      {slug !== 'synonyms' && displayLinK(commonLinks.thesaurus +wordforhref+"/", 'synonyms for ' + word)}
+      {slug !== 'thesaurus' && displayLinK(commonLinks.thesaurus +wordforhref+"/", 'synonyms for ' + word)}
       {(slug !== 'rhyming-words' && !isCompound ) && displayLinK(commonLinks.rhyming +wordforhref+"/", 'rhymes for ' + word)}
       {(slug !== 'adjectives'&& !isCompound && (pos !== null && pos.n.length > 0)) && displayLinK(commonLinks.adjectives +wordforhref+"/", 'describing words for ' + word)}
     </div>

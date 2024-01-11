@@ -10,16 +10,17 @@ export default function AddList() {
   const [description, setDescription] = useState("");
   const [words, setWords] = useState([]);
   const createdBy = useSession().data?.user?.email;
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const router = useRouter();
 
-  const handleWordsChange = (e) =>{
-      const textareaValue = e.target.value;
-      const lines = textareaValue.split(/\s+/).filter(Boolean);
-      setWords(lines);
+  const handleWordsChange = (e) => {
+    const textareaValue = e.target.value;
+    const lines = textareaValue.split(/\s+/).filter(Boolean);
+    let uniqueSet = new Set(lines);
+    setWords(Array.from(uniqueSet));
   };
 
   const handleSubmit = async (e) => {
@@ -47,7 +48,7 @@ export default function AddList() {
       }
     } catch (error) {
       setError(error);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -69,7 +70,7 @@ export default function AddList() {
         type="text"
         placeholder="Topic Description"
       />
-       <textarea
+      <textarea
         onChange={handleWordsChange}
         className="form-control m-2"
         rows="5"

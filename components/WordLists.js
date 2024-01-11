@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import apiConfig from "@utils/apiUrlConfig";
 
-export default function WordLists({createdBy}) {
+export default function WordLists({ createdBy }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ export default function WordLists({createdBy}) {
     const fetchData = async () => {
       try {
         const response = await fetch(`${apiConfig.apiUrl}/list/user/${createdBy}`, { cache: "no-store" }); // Replace with your actual API endpoint
-      
+
         if (!response.ok) {
           throw new Error("Failed to fetch lists");
         }
@@ -31,7 +31,8 @@ export default function WordLists({createdBy}) {
       }
     };
 
-    fetchData();
+    if (createdBy !== undefined)
+      fetchData();
   }, [createdBy]);
 
   return (
@@ -56,6 +57,7 @@ export default function WordLists({createdBy}) {
           </div>
         ))
       )}
+      {data.length === 0 && <p className="text-center">No Lists Found. Create Your Lists and Starting Learning!</p>}
     </div>
   );
 }

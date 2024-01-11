@@ -57,7 +57,6 @@ async function getWords(letters) {
           matchingWords.push(word);
       }
     }
-    
     return matchingWords;
   } catch (error) {
     throw new Error(`Error reading the file: ${error.message}`);
