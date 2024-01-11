@@ -36,11 +36,11 @@ function Navbar() {
             Word Dictionary
           </a>
         </li>
-        <li onClick={removeActive}>
+        {/* <li onClick={removeActive}>
           <a href="/word-finder/" className={`${styles.navLink}`}>
             Word Finder
           </a>
-        </li>
+        </li> */}
         <li onClick={removeActive}>
           <a href="/thesaurus/" className={`${styles.navLink}`}>
             Thesaurus
@@ -61,9 +61,9 @@ function Navbar() {
             Rhyming Dictionary
           </a>
         </li>
-        <li>
+        {/* <li>
           <UserInfo />
-        </li>
+        </li> */}
       </ul>
 
       <div
