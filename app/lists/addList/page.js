@@ -16,6 +16,7 @@ export default function AddList() {
 
   const router = useRouter();
 
+  //creating a unique set of Words when words data is updated
   const handleWordsChange = (e) => {
     const textareaValue = e.target.value;
     const lines = textareaValue.split(/\s+/).filter(Boolean);

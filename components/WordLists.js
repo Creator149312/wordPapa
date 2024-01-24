@@ -13,6 +13,7 @@ export default function WordLists({ createdBy }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //fetch data for Dashboard display
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -39,6 +40,7 @@ export default function WordLists({ createdBy }) {
     <div>
       {isLoading && <p>Fetching Your Lists ...</p>}
       {error && <p>Failed to Load Your Lists</p>}
+      {/* do the following if data is found */}
       {data.length > 0 && (
         data.map((item, index) => (
           <div key={index} className="card p-2 m-3"
@@ -48,8 +50,8 @@ export default function WordLists({ createdBy }) {
               <div>{item.description}</div>
             </div>
             <div className="card-footer">
-              <Link href={`/lists/${item._id}`}><HiOutlineEye size={24} /></Link>
-              <Link href={`/editList/${item._id}`}>
+              <Link href={`./lists/${item._id}`}><HiOutlineEye size={24} /></Link>
+              <Link href={`./lists/editList/${item._id}`}>
                 <HiPencilAlt size={24} />
               </Link>
               <RemoveListBtn id={item._id} />
@@ -57,7 +59,8 @@ export default function WordLists({ createdBy }) {
           </div>
         ))
       )}
-      {data.length === 0 && <p className="text-center">No Lists Found. Create Your Lists and Starting Learning!</p>}
+      {/* if data is loaded and data array is empty  */}
+      {(!isLoading && data.length === 0) && <p className="text-center">No Lists Found. Create Your Lists and Starting Learning!</p>} 
     </div>
   );
 }

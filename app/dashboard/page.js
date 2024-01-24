@@ -13,7 +13,7 @@ export default function UserInfo() {
       <div className="m-3">
         <div className="list-heading-container">
           <h2>My Lists</h2>
-          <Link href={'./addList'} className="custom-button">Create List + </Link>
+          <Link href={'./lists/addList'} className="custom-button">Create List + </Link>
         </div>
         <WordLists createdBy={session?.user?.email} />
       </div>
