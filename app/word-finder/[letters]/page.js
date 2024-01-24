@@ -25,6 +25,7 @@ async function getWords(letters) {
   try {
     const fileContent = await fs.readFile(filePath, 'utf8');
     const linksArray = fileContent.split("\n");
+
     let alphabetObject = {};
     for (let charCode = 97; charCode <= 122; charCode++) {
       const letter = String.fromCharCode(charCode);
@@ -35,16 +36,12 @@ async function getWords(letters) {
       alphabetObject[letters[i]]++;
     }
 
-    // console.log(alphabetObject);
-
     let matchingWords = [];
     for (let j = 0; j < linksArray.length; j++) {
       let word = linksArray[j];
       if (word.length > 1 && word.length <= letters.length) {
         let sequenceObject = { ...alphabetObject };
         let isScramble = true;
-        //console.log(sequenceObject);
-        //console.log(word + "    " + letters);
         for (let i = 0; i < word.length; i++) {
             if (sequenceObject[word[i]] > 0) {
               sequenceObject[word[i]]--;
