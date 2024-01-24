@@ -113772,7 +113772,6 @@ s.c.
 s.d.
 s.t.p.
 s.u.v.
-s/n
 sa
 sa node
 saale
