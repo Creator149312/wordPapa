@@ -50,8 +50,8 @@ export default function WordLists({ createdBy }) {
               <div>{item.description}</div>
             </div>
             <div className="card-footer">
-              <Link href={`./lists/${item._id}`}><HiOutlineEye size={24} /></Link>
-              <Link href={`./lists/editList/${item._id}`}>
+              <Link href={`/lists/${item._id}`}><HiOutlineEye size={24} /></Link>
+              <Link href={`/lists/editList/${item._id}`}>
                 <HiPencilAlt size={24} />
               </Link>
               <RemoveListBtn id={item._id} />

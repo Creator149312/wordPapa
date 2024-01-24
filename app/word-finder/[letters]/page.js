@@ -67,7 +67,7 @@ export default async function Page({ params }) {
   return (
     <div>
       <h1>{titleStr}</h1>
-      <p> Following is a list of {wordsWithLetters.length} words you can form using letters {ltUp}. </p>
+      <p> Following is a list of {wordsWithLetters.length} English words you can form using letters {ltUp} when unscrambled. </p>
       <DataFilterDisplay words={wordsWithLetters} />
       </div>
   );
