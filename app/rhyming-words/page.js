@@ -2,7 +2,7 @@ import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import RhymingWords from "./RhymingWords";
 import commonLinks from "@utils/commonLinks";
 
-const ptitle = "Rhyming Words Generator: Get Perfect Rhymes";
+const ptitle = "Rhyming Dictionary: Find Rhyming Words of a Word";
 
 const mostSearchedWordsList = [
   "you",
@@ -21,13 +21,18 @@ const mostSearchedWordsList = [
   "friend",
   "up",
   "back",
-  "with"
+  "with",
+  "free",
+  "top",
+  "run",
+  "bob",
+  "eleven"
 ];
 
 export const metadata = {
   title: ptitle,
   description:
-    "Use our Rhyming Words to find delightful array of words and phrases that rhyme with it. Use it craft engaging poems, songs, and activities that inspire kids to discover the beauty of language.",
+    "Use Rhyming Dictionary Words to find delightful array of words and phrases that rhyme with your word. Use it craft engaging poems, songs, and activities that inspire kids to discover the beauty of language.",
 };
 
 function RhymingWordsPage() {
@@ -37,54 +42,23 @@ function RhymingWordsPage() {
         <div>
           <div>
             <div>
-              {/* <RhymingWords /> */}
               <div className="m-3 p-3">
                 <h1>{ptitle}</h1>
                 <p>
-                  Introducing the Rhyming Words Generator, an easy to use tool
-                  designed to make learning fun and engaging for kids.{" "}
+                  A rhyming dictionary is a valuable tool for poets, lyricists, and anyone working with language and verse. Its primary function is to assist users in finding words that rhyme with a given input word. Unlike traditional dictionaries that provide definitions and meanings, a rhyming dictionary focuses on words that share similar end sounds, facilitating the creation of rhymes and enhancing the rhythm and musicality of written or spoken expression.
                 </p>
                 <p>
-                  Users input a word, and the tool provides a list of words that
-                  share similar end sounds or phonetic patterns, aiding in the
-                  composition of engaging and rhythmically pleasing content.
+                  To use a rhyming dictionary effectively, you have to select "<strong>Find Rhyming Words</strong>" from the dropdown and input the word of your choice to receive a list of words that share a similar phonetic ending. The rhyming words can be organized by letter and syllable count and often include near rhymes or slant rhymes, offering creative flexibility in language use. Users can explore various options, allowing them to choose the most suitable words based on the desired rhyme scheme, tone, or thematic context of their writing.
                 </p>
                 <p>
-                  This digital wizard is every teacher's secret weapon in the
-                  quest to nurture a love for language and rhyme in young minds.
+                  You have the option to refine results based on based on specific criteria. Users can filter words by starting prefixes, narrowing down selections that commence with a designated set of letters. Similarly, the tool allows filtering by ending suffixes, facilitating the identification of words ending with specified character sequences. Additionally, users can employ substring filtering, refining the list based on the presence of specific sequences within the words. This dynamic functionality caters to a range of linguistic needs, from crafting precise rhymes to streamlining searches for words that fit specific structural patterns, providing a tailored and efficient approach to word selection.
                 </p>
-                <p>
-                  With our Rhymes Generator, teaching becomes an enchanting
-                  journey. You simply input a word, and like magic, it produces
-                  a delightful array of words and phrases that rhyme with it.
-                  From short, snappy rhymes to longer, lyrical ones, it offers a
-                  treasure trove of possibilities, all at your fingertips.
-                </p>
-                <p>
-                  Imagine the joy on a child's face as they explore words that
-                  dance to the same rhythmic beat.{" "}
-                </p>
-                <p>
-                  This tool transforms ordinary lessons into captivating
-                  adventures, helping teachers instill the magic of language in
-                  their students. It's not just about learning words; it's about
-                  nurturing creativity, building vocabulary, and fostering a
-                  lifelong love for reading and writing.
-                </p>
-                <p>
-                  It is more than a tool; it's a bridge to imagination. It
-                  unlocks the doors to a world of wordplay, where learning feels
-                  like a game. Parents can use it to craft engaging poems,
-                  songs, and activities that inspire kids to discover the beauty
-                  of language, one rhyme at a time.
-                </p>
-                <p>
-                  In a classroom It's a tool that empowers educators to plant
-                  the seeds of literacy, imagination, and self-expression in the
-                  hearts of their students, one rhyming word at a time.
-                </p>
-              </div>
-              <MostSearchedWordsList wordList={mostSearchedWordsList} preText={"words that rhyme with "} postText={""} slug={commonLinks.rhyming}/>
+                <p>For students, A rhyming dictionary is like a helpful friend for learning new words and having fun with language. It can help you understand how words sound and why they rhyme. When you explore rhyming words, it's like discovering a secret code that makes language exciting!
+                </p><p>
+                  In classrooms, teachers use the rhyming dictionary to make lessons super fun. They create activities that make learning about words and rhymes feel like an awesome adventure. This special tool is like a magical bridge that connects learning and imagination, making it easy and joyful for kids to explore words, be creative, and love reading and writing forever!
+                </p> 
+                <p>For rappers, a rhyming dictionary is like a lyrical treasure chest, helping them find perfect rhymes, craft catchy verses, and elevate their wordplay. Rappers can unleash their creativity, ensuring every rhyme hits the right beat, making their rap memorable and impactful. </p></div>
+                <MostSearchedWordsList wordList={mostSearchedWordsList} preText={"words that rhyme with "} postText={""} slug={commonLinks.rhyming} />
             </div>
           </div>
         </div>

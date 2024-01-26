@@ -4,6 +4,7 @@ import styles from "@public/styles/NavBar.module.css";
 import logo from "@public/logo192.png";
 import Image from "next/image";
 import UserInfo from "./UserInfo";
+import WordFindersListDropDown from "./WordFindersListDropDown";
 
 function Navbar() {
   // adding the states
@@ -28,35 +29,24 @@ function Navbar() {
       </a>
 
       <ul className={`${styles.navMenu} ${isActive ? styles.active : ""}`}>
-        <li onClick={removeActive}>
-          <a href="/define/" className={`${styles.navLink}`}>
-            Word Dictionary
+        <li onClick={removeActive} >
+          <a href="/define/" className={`${styles.navLink}`}>Word Dictionary
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/word-finder/" className={`${styles.navLink}`}>
-            Word Finder
+          <a href="/thesaurus/" className={`${styles.navLink}`}>Thesaurus
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/thesaurus/" className={`${styles.navLink}`}>
-            Thesaurus
+          <a href="/syllables/" className={`${styles.navLink}`}> Syllable Counter
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/syllables/" className={`${styles.navLink}`}>
-            Syllable Counter
+          <a href="/rhyming-words/" className={`${styles.navLink}`}>Rhyming Dictionary
           </a>
         </li>
         <li onClick={removeActive}>
-          <a href="/adjectives/" className={`${styles.navLink}`}>
-            Adjectives Finder
-          </a>
-        </li>
-        <li onClick={removeActive}>
-          <a href="/rhyming-words/" className={`${styles.navLink}`}>
-            Rhyming Dictionary
-          </a>
+          <WordFindersListDropDown name={"Word Finders"}/>
         </li>
         <li>
           <UserInfo />

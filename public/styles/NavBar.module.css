@@ -9,15 +9,15 @@ a.navLink {
   background-color: #ffffff;
   padding: 10px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 /* logo  */
 .logo {
   font-size: 28px;
   display: flex;
-  text-align: center;
+  text-align: left;
   color: #333333;
 }
 
@@ -31,8 +31,9 @@ a.navLink {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 50px;
+  gap: 10px;
 }
+
 
 /* media queries */
 

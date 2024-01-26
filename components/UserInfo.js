@@ -16,6 +16,6 @@ export default function UserInfo() {
       </div>
     );
   } else {
-    return <a  className="cursor-pointer" href="/login">Login</a>;
+    return <a className="cursor-pointer custom-button" href="/login">Login</a>;
   }
 }

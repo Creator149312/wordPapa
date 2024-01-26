@@ -169,6 +169,10 @@ body {
   text-align: center;
 }
 
+.center-align{
+  align-items: center;
+}
+
 /* Define the .form-control class for standard size */
 .form-control {
   width: 100%; /* Full width by default */
@@ -835,10 +839,12 @@ li {
   position: absolute;
   /* top: 100px; */
   right: 10px;
-  background-color: #f9f9fb;
+  background-color: #ffffff;
   border-radius: var(--border-radius);
-  padding: 10px 20px;
   width: 240px;
+  border-width: 3px 1px 1px 1px; /* top right bottom left */
+  border-color: #75c32c;
+  border-style: solid;
 }
 
 .dropdown-menu::before{
@@ -866,9 +872,8 @@ li {
   transition: var(--speed) ease;
 }
 
-.dropdown-menu ul li{
-  padding: 10px  0;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+.dropdown-menu-border-gap{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .dropdown-menu ul li:hover a{
@@ -879,6 +884,7 @@ li {
 .dropdownItem{
   display: flex;
   margin: 10px auto;
+  padding: 10px  0;
 }
 
 .dropdownItem a{
