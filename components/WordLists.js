@@ -45,11 +45,17 @@ export default function WordLists({ createdBy }) {
         data.map((item, index) => (
           <div key={index} className="card p-2 m-3"
           >
-            <div className="card-content m-2">
+            <div className="card-content m-2 list-heading-container">
+              <div>
               <h2 className="card-title">{item.title}</h2>
-              <div>{item.description}</div>
+              <p>{item.description}</p>
+              </div>
+              <div>
+                {item.words.length} Words
+                </div>
             </div>
             <div className="card-footer">
+
               <Link href={`/lists/${item._id}`}><HiOutlineEye size={24} /></Link>
               <Link href={`/lists/editList/${item._id}`}>
                 <HiPencilAlt size={24} />
@@ -60,7 +66,7 @@ export default function WordLists({ createdBy }) {
         ))
       )}
       {/* if data is loaded and data array is empty  */}
-      {(!isLoading && data.length === 0) && <p className="text-center">No Lists Found. Create Your Lists and Starting Learning!</p>} 
+      {(!isLoading && data.length === 0) && <p className="text-center">No Lists Found. Create Your Lists and Starting Learning!</p>}
     </div>
   );
 }
