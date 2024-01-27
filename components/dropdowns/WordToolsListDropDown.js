@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { HiChevronDown } from "react-icons/hi";
 
-function WordFindersListDropDown(props) {
+function WordToolsListDropDown(props) {
 
   const [open, setOpen] = useState(false);
 
@@ -13,7 +13,6 @@ function WordFindersListDropDown(props) {
     let handler = (e) => {
       if (!menuRef.current.contains(e.target)) {
         setOpen(false);
-        // console.log(menuRef.current);
       }
     };
 
@@ -27,17 +26,19 @@ function WordFindersListDropDown(props) {
   });
 
   return (
-    <div className='menu-container' ref={menuRef}>
+    <div className='menu-container cursor-pointer' ref={menuRef}>
       <div className='menu-trigger' onClick={() => { setOpen(!open) }}>
         <div className='display-flex center-align'>{props.name} <HiChevronDown /></div>
       </div>
+
       <div className={`dropdown-menu ${open ? 'active' : 'inactive'}`} >
         <ul>
-          <DropdownItem url={"/word-finder"} text={"Word Unscrambler"} />
-          <DropdownItem url={"/adjectives"} text={"Adjectives Finder"} />
+          <DropdownItem url={"/rhyming-words"} text={"Rhyming Dictionary"} />
+          <DropdownItem url={"/syllables"} text={"Syllable Counter"} />
         </ul>
       </div>
     </div>
+
   );
 }
 
@@ -49,4 +50,4 @@ function DropdownItem(props) {
   );
 }
 
-export default WordFindersListDropDown;
+export default WordToolsListDropDown;

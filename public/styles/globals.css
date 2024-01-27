@@ -7,23 +7,29 @@
 }
 
 body {
-  background-color: #f2f2f2; /* Set background color for right container */
+  background-color: #f2f2f2;
+  /* Set background color for right container */
 }
 
 /* Apply mobile-first styles */
 .container {
   display: flex;
-  flex-direction: column; /* Stack columns vertically on small screens */
+  flex-direction: column;
+  /* Stack columns vertically on small screens */
 }
 
 .left-column {
-  flex: 9; /* Occupy 9 out of 12 columns on large screens */
-  padding: 10px; /* Add padding for content separation */
+  flex: 9;
+  /* Occupy 9 out of 12 columns on large screens */
+  padding: 10px;
+  /* Add padding for content separation */
 }
 
 .right-column {
-  flex: 3; /* Occupy 3 out of 12 columns on large screens */
-  padding: 10px; /* Add padding for content separation */
+  flex: 3;
+  /* Occupy 3 out of 12 columns on large screens */
+  padding: 10px;
+  /* Add padding for content separation */
 }
 
 /* Define a container for the row */
@@ -35,8 +41,10 @@ body {
 
 /* Define columns within the row */
 .col-1 {
-  flex-basis: calc(8.33% - 20px); /* Adjust for column padding */
-  margin: 10px; /* Add column padding */
+  flex-basis: calc(8.33% - 20px);
+  /* Adjust for column padding */
+  margin: 10px;
+  /* Add column padding */
 }
 
 .col-2 {
@@ -106,59 +114,80 @@ body {
 /* Media query for larger screens */
 @media (min-width: 768px) {
   .container {
-    flex-direction: row; /* Lay out columns side by side on large screens */
+    flex-direction: row;
+    /* Lay out columns side by side on large screens */
   }
 
   .row {
     flex-direction: row;
   }
 }
+
 /* card.css */
 
 /* Define a card class */
 .card {
-  background-color: #ffffff; /* Card background color */
-  border: 1px solid #e1e1e1; /* Card border */
-  border-radius: 8px; /* Rounded corners for the card */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
-  padding: 16px; /* Padding inside the card */
+  background-color: #ffffff;
+  /* Card background color */
+  border: 1px solid #e1e1e1;
+  /* Card border */
+  border-radius: 8px;
+  /* Rounded corners for the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Card shadow */
+  padding: 16px;
+  /* Padding inside the card */
 }
 
 /* Card title */
 .card-title {
-  font-size: 1.5rem; /* Title font size */
-  font-weight: bold; /* Title font weight */
-  margin-bottom: 8px; /* Spacing below the title */
+  font-size: 1.5rem;
+  /* Title font size */
+  font-weight: bold;
+  /* Title font weight */
+  margin-bottom: 8px;
+  /* Spacing below the title */
 }
 
 /* Card content */
 .card-content {
-  font-size: 1rem; /* Content font size */
-  line-height: 1.4; /* Line height for content */
+  font-size: 1rem;
+  /* Content font size */
+  line-height: 1.4;
+  /* Line height for content */
 }
 
 /* Card footer */
 .card-footer {
-  margin-top: 16px; /* Spacing above the footer */
+  margin-top: 16px;
+  /* Spacing above the footer */
 }
 
 /* Card image */
 .card-image {
-  max-width: 100%; /* Ensure the image doesn't exceed the card width */
-  border-top-left-radius: 8px; /* Rounded corners for the top-left */
-  border-top-right-radius: 8px; /* Rounded corners for the top-right */
+  max-width: 100%;
+  /* Ensure the image doesn't exceed the card width */
+  border-top-left-radius: 8px;
+  /* Rounded corners for the top-left */
+  border-top-right-radius: 8px;
+  /* Rounded corners for the top-right */
 }
 
 /* Responsive styles for smaller screens */
 @media (max-width: 768px) {
   .card {
-    padding: 12px; /* Decrease padding for smaller screens */
+    padding: 12px;
+    /* Decrease padding for smaller screens */
   }
+
   .card-title {
-    font-size: 1.3rem; /* Decrease title font size */
+    font-size: 1.3rem;
+    /* Decrease title font size */
   }
+
   .card-content {
-    font-size: 0.9rem; /* Decrease content font size */
+    font-size: 0.9rem;
+    /* Decrease content font size */
   }
 }
 
@@ -169,29 +198,38 @@ body {
   text-align: center;
 }
 
-.center-align{
+.center-align {
   align-items: center;
 }
 
 /* Define the .form-control class for standard size */
 .form-control {
-  width: 100%; /* Full width by default */
-  padding: 10px; /* Padding for input elements */
-  font-size: 16px; /* Default font size */
-  border: 1px solid #ccc; /* Default border style */
-  border-radius: 4px; /* Rounded corners */
+  width: 100%;
+  /* Full width by default */
+  padding: 10px;
+  /* Padding for input elements */
+  font-size: 16px;
+  /* Default font size */
+  border: 1px solid #ccc;
+  /* Default border style */
+  border-radius: 4px;
+  /* Rounded corners */
 }
 
 /* Define a smaller size variation */
 .form-control-sm {
-  font-size: 14px; /* Smaller font size */
-  padding: 8px; /* Smaller padding */
+  font-size: 14px;
+  /* Smaller font size */
+  padding: 8px;
+  /* Smaller padding */
 }
 
 /* Define a larger size variation */
 .form-control-lg {
-  font-size: 18px; /* Larger font size */
-  padding: 12px; /* Larger padding */
+  font-size: 18px;
+  /* Larger font size */
+  padding: 12px;
+  /* Larger padding */
 }
 
 /* Margin classes */
@@ -507,40 +545,57 @@ body {
 /* Define a button class with background color and shadow */
 .custom-button {
   background-color: #75c32c;
-  color: #fff; /* Text color */
+  color: #fff;
+  /* Text color */
   border: none;
-  border-radius: 4px; /* Rounded corners */
-  padding: 10px 20px; /* Adjust padding as needed */
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
-  cursor: pointer; /* Add pointer cursor */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Add transition effects */
+  border-radius: 4px;
+  /* Rounded corners */
+  padding: 10px 20px;
+  /* Adjust padding as needed */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  /* Add shadow */
+  cursor: pointer;
+  /* Add pointer cursor */
+  transition: background-color 0.3s, box-shadow 0.3s;
+  /* Add transition effects */
 }
 
 /* with lesser padding*/
 .custom-button-small {
   background-color: #75c32c;
-  color: #fff; /* Text color */
+  color: #fff;
+  /* Text color */
   border: none;
-  border-radius: 4px; /* Rounded corners */
+  border-radius: 4px;
+  /* Rounded corners */
   margin: 2px;
-  padding: 9px; /* Adjust padding as needed */
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
-  cursor: pointer; /* Add pointer cursor */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Add transition effects */
+  padding: 9px;
+  /* Adjust padding as needed */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  /* Add shadow */
+  cursor: pointer;
+  /* Add pointer cursor */
+  transition: background-color 0.3s, box-shadow 0.3s;
+  /* Add transition effects */
   display: inline-block;
 }
 
 /* Hover effect - change background color and shadow on hover */
 .custom-button:hover {
-  background-color: #64ab27; /* Change background color on hover */
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3); /* Change shadow on hover */
+  background-color: #64ab27;
+  /* Change background color on hover */
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  /* Change shadow on hover */
 }
 
 /* Optional: Disabled state */
 .custom-button:disabled {
-  background-color: #ccc; /* Change background color for disabled state */
-  cursor: not-allowed; /* Change cursor for disabled state */
-  box-shadow: none; /* Remove shadow for disabled state */
+  background-color: #ccc;
+  /* Change background color for disabled state */
+  cursor: not-allowed;
+  /* Change cursor for disabled state */
+  box-shadow: none;
+  /* Remove shadow for disabled state */
 }
 
 .wordSpan {
@@ -559,41 +614,51 @@ body {
 .words-container {
   border: 34px lightgreen;
   padding: 10px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  /* Add shadow */
   margin: 20px 20px;
 }
 
 /* Default font size for all screens */
 .font-responsive {
-  font-size: 16px; /* Adjust this to your desired base font size */
+  font-size: 16px;
+  /* Adjust this to your desired base font size */
 }
 
 /* Media query for screens wider than 768px (typical tablet and desktop screens) */
 @media (min-width: 768px) {
   .font-responsive {
-    font-size: 18px; /* Adjust this to your desired font size for larger screens */
+    font-size: 18px;
+    /* Adjust this to your desired font size for larger screens */
   }
 }
 
 /* Media query for screens wider than 1200px (typical desktop screens) */
 @media (min-width: 1200px) {
   .font-responsive {
-    font-size: 20px; /* Adjust this to your desired font size for even larger screens */
+    font-size: 20px;
+    /* Adjust this to your desired font size for even larger screens */
   }
 }
 
 /* Paragraph related Properties */
 p {
-  line-height: 1.5; /* Adjust line height for proper spacing between lines */
-  margin: 10px 0; /* Add vertical margin to separate paragraphs */
-  hyphens: auto; /* Enable automatic hyphenation for improved word wrapping */
+  line-height: 1.5;
+  /* Adjust line height for proper spacing between lines */
+  margin: 10px 0;
+  /* Add vertical margin to separate paragraphs */
+  hyphens: auto;
+  /* Enable automatic hyphenation for improved word wrapping */
 }
 
 /* Styling the default link appearance */
 a {
-  text-decoration: none; /* Remove underlines */
-  color: #75c32c; /* Set the link color to #75c32c */
-  padding: 2px 6px; /* Add padding for better spacing around the link text */
+  text-decoration: none;
+  /* Remove underlines */
+  color: #75c32c;
+  /* Set the link color to #75c32c */
+  padding: 2px 6px;
+  /* Add padding for better spacing around the link text */
 }
 
 /* General heading styles */
@@ -603,10 +668,14 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: bold; /* Make headings bold */
-  color: #4f4f4f; /* Set a color for headings */
-  margin-top: 20px; /* Add spacing above headings */
-  margin-bottom: 10px; /* Add spacing below headings */
+  font-weight: bold;
+  /* Make headings bold */
+  color: #4f4f4f;
+  /* Set a color for headings */
+  margin-top: 20px;
+  /* Add spacing above headings */
+  margin-bottom: 10px;
+  /* Add spacing below headings */
 }
 
 /* Default style for all headings */
@@ -616,27 +685,34 @@ h3,
 h4,
 h5,
 h6 {
-  font-size: 24px; /* Default font size for all headings */
+  font-size: 24px;
+  /* Default font size for all headings */
 }
 
 /* Media query for screens wider than 768px (typical tablet and desktop screens) */
 @media (min-width: 768px) {
+
   /* Increase font size for headings on larger screens */
   h1 {
     font-size: 36px;
   }
+
   h2 {
     font-size: 30px;
   }
+
   h3 {
     font-size: 26px;
   }
+
   h4 {
     font-size: 22px;
   }
+
   h5 {
     font-size: 20px;
   }
+
   h6 {
     font-size: 18px;
   }
@@ -644,9 +720,11 @@ h6 {
 
 /* Style for list items (<li>) */
 li {
-  margin-bottom: 10px; /* Add spacing between list items */
+  margin-bottom: 10px;
+  /* Add spacing between list items */
   /* padding-left: 20px; Add left padding for indentation */
-  position: relative; /* Position relative for list item markers */
+  position: relative;
+  /* Position relative for list item markers */
 }
 
 .no-style-list {
@@ -663,32 +741,50 @@ li {
 
 /* Style for the search input */
 .search-input {
-  flex-grow: 3; /* Grow to take available space */
-  padding: 10px; /* Add padding for input */
-  border: 1px solid #ccc; /* Add border for input */
-  border-radius: 4px 0px 0px 4px; /* Add border radius */
+  flex-grow: 3;
+  /* Grow to take available space */
+  padding: 10px;
+  /* Add padding for input */
+  border: 1px solid #ccc;
+  /* Add border for input */
+  border-radius: 4px 0px 0px 4px;
+  /* Add border radius */
 }
 
 /* Style for the select box */
 .search-select {
-  flex-grow: 1; /* Grow to take available space */
-  margin-right: 10px; /* Add spacing between elements */
-  padding: 10px; /* Add padding for select box */
-  border: 1px solid #ccc; /* Add border for select box */
-  border-radius: 4px; /* Add border radius */
-  background-color: #fff; /* Background color for select box */
-  color: #333; /* Text color for select box */
+  flex-grow: 1;
+  /* Grow to take available space */
+  margin-right: 10px;
+  /* Add spacing between elements */
+  padding: 10px;
+  /* Add padding for select box */
+  border: 1px solid #ccc;
+  /* Add border for select box */
+  border-radius: 4px;
+  /* Add border radius */
+  background-color: #fff;
+  /* Background color for select box */
+  color: #333;
+  /* Text color for select box */
 }
 
 /* Style for the search button */
 .search-button {
-  flex-grow: 1; /* Grow to take available space */
-  padding: 10px; /* Add padding for button */
-  background-color: #75c32c; /* Button background color */
-  color: #fff; /* Button text color */
-  border: none; /* Remove button border */
-  border-radius: 0px 4px 4px 0px; /* Add border radius */
-  cursor: pointer; /* Add pointer cursor */
+  flex-grow: 1;
+  /* Grow to take available space */
+  padding: 10px;
+  /* Add padding for button */
+  background-color: #75c32c;
+  /* Button background color */
+  color: #fff;
+  /* Button text color */
+  border: none;
+  /* Remove button border */
+  border-radius: 0px 4px 4px 0px;
+  /* Add border radius */
+  cursor: pointer;
+  /* Add pointer cursor */
   font-size: 18px;
 }
 
@@ -700,13 +796,16 @@ li {
   }
 
   .search-select {
-    width: 100%; /* Set width to 50% for larger screens */
-    border-radius: 4px; /* Add border radius */
+    width: 100%;
+    /* Set width to 50% for larger screens */
+    border-radius: 4px;
+    /* Add border radius */
     margin-right: 0px;
   }
 
   .search-input {
-    width: 80%; /* Set width to 50% for larger screens */
+    width: 80%;
+    /* Set width to 50% for larger screens */
   }
 
   .search-button {
@@ -716,20 +815,26 @@ li {
 
 /* Large Input */
 .input-lg {
-  padding: 5px 10px; /* Adjust padding for a larger input */
-  font-size: 18px; /* Increase font size for a larger input */
+  padding: 5px 10px;
+  /* Adjust padding for a larger input */
+  font-size: 18px;
+  /* Increase font size for a larger input */
 }
 
 /* Large Input */
 .input-xlg {
-  padding: 8px 15px; /* Adjust padding for a larger input */
-  font-size: 22px; /* Increase font size for a larger input */
+  padding: 8px 15px;
+  /* Adjust padding for a larger input */
+  font-size: 22px;
+  /* Increase font size for a larger input */
 }
 
 /* Small Input */
 .input-sm {
-  padding: 5px 10px; /* Adjust padding for a smaller input */
-  font-size: 14px; /* Decrease font size for a smaller input */
+  padding: 5px 10px;
+  /* Adjust padding for a smaller input */
+  font-size: 14px;
+  /* Decrease font size for a smaller input */
 }
 
 /* Style for the accordion container */
@@ -771,7 +876,8 @@ li {
   text-align: center;
   color: whitesmoke;
   line-height: 0.75;
-  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+  /* Card shadow */
   cursor: pointer;
 }
 
@@ -835,19 +941,20 @@ li {
 
 
 /* styles for user profile drop down menu */
-.dropdown-menu{
+.dropdown-menu {
   position: absolute;
-  /* top: 100px; */
+  margin-top: 15px;
   right: 10px;
   background-color: #ffffff;
   border-radius: var(--border-radius);
   width: 240px;
-  border-width: 3px 1px 1px 1px; /* top right bottom left */
+  border-width: 3px 1px 1px 1px;
+  /* top right bottom left */
   border-color: #75c32c;
   border-style: solid;
 }
 
-.dropdown-menu::before{
+.dropdown-menu::before {
   content: '';
   position: absolute;
   top: -5px;
@@ -858,65 +965,75 @@ li {
   transform: rotate(45deg);
 }
 
-.dropdown-menu.active{
+.dropdown-menu.active {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
   transition: var(--speed) ease;
 }
 
-.dropdown-menu.inactive{
+.dropdown-menu.inactive {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-20px);
   transition: var(--speed) ease;
 }
 
-.dropdown-menu-border-gap{
+.dropdown-menu-border-gap {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.dropdown-menu ul li:hover a{
+.dropdown-menu ul li:hover a {
   color: rgb(212, 33, 9);
   cursor: pointer;
 }
 
+/* Previous  
 .dropdownItem{
   display: flex;
   margin: 10px auto;
   padding: 10px  0;
+} */
+
+.dropdownItem {
+  margin: 10px auto;
+  padding: 10px 0;
+  list-style: none;
 }
 
-.dropdownItem a{
+.dropdownItem a {
   max-width: 160px;
   margin-left: 10px;
   transition: var(--speed);
 }
 
-.display-flex{
+.display-flex {
   display: flex;
 }
 
 /* General styling for the form */
 .form-50 {
-  max-width: 50%; /* Set initial width to 50% */
-  margin: 0 auto; /* Center the form horizontally */
+  max-width: 50%;
+  /* Set initial width to 50% */
+  margin: 0 auto;
+  /* Center the form horizontally */
   /* Add other styling as needed */
 }
 
 /* Media query for mobile devices */
 @media (max-width: 767px) {
   .form-50 {
-    max-width: 100%; /* Set width to 100% on screens smaller than 768px */
+    max-width: 100%;
+    /* Set width to 100% on screens smaller than 768px */
   }
 }
 
-.list-heading-container{
+.list-heading-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.cursor-pointer{
-  cursor: pointer; 
+.cursor-pointer {
+  cursor: pointer;
 }

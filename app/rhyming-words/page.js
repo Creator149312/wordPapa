@@ -2,6 +2,9 @@ import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import RhymingWords from "./RhymingWords";
 import commonLinks from "@utils/commonLinks";
 
+/**
+ * In future : we'll create another tool called AI Rhymes Generator which will generate poems, songs and lyrics 
+ */
 const ptitle = "Rhyming Dictionary: Find Rhyming Words of a Word";
 
 const mostSearchedWordsList = [
@@ -56,9 +59,10 @@ function RhymingWordsPage() {
                 <p>For students, A rhyming dictionary is like a helpful friend for learning new words and having fun with language. It can help you understand how words sound and why they rhyme. When you explore rhyming words, it's like discovering a secret code that makes language exciting!
                 </p><p>
                   In classrooms, teachers use the rhyming dictionary to make lessons super fun. They create activities that make learning about words and rhymes feel like an awesome adventure. This special tool is like a magical bridge that connects learning and imagination, making it easy and joyful for kids to explore words, be creative, and love reading and writing forever!
-                </p> 
-                <p>For rappers, a rhyming dictionary is like a lyrical treasure chest, helping them find perfect rhymes, craft catchy verses, and elevate their wordplay. Rappers can unleash their creativity, ensuring every rhyme hits the right beat, making their rap memorable and impactful. </p></div>
-                <MostSearchedWordsList wordList={mostSearchedWordsList} preText={"words that rhyme with "} postText={""} slug={commonLinks.rhyming} />
+                </p>
+                <p> Rhyming dictionaries are vital for rappers, aiding in precise rhyme selection, creative wordplay, and rhythmic flow. They elevate lyrics with slang, ensuring authenticity and uniqueness in expression. Rappers can unleash their creativity, ensuring every rhyme hits the right beat, making their rap memorable and impactful. </p></div>
+
+              <MostSearchedWordsList wordList={mostSearchedWordsList} preText={"words that rhyme with "} postText={""} slug={commonLinks.rhyming} />
             </div>
           </div>
         </div>

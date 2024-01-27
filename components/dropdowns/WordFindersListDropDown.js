@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { HiChevronDown } from "react-icons/hi";
-import SignOut from './user/SignOut';
 
-function UserProfileDropDown(props) {
+function WordFindersListDropDown(props) {
 
   const [open, setOpen] = useState(false);
 
@@ -14,7 +13,6 @@ function UserProfileDropDown(props) {
     let handler = (e) => {
       if (!menuRef.current.contains(e.target)) {
         setOpen(false);
-        // console.log(menuRef.current);
       }
     };
 
@@ -28,22 +26,17 @@ function UserProfileDropDown(props) {
   });
 
   return (
-    <div className='menu-container' ref={menuRef}>
+    <div className='menu-container cursor-pointer' ref={menuRef}>
       <div className='menu-trigger' onClick={() => { setOpen(!open) }}>
         <div className='display-flex center-align'>{props.name} <HiChevronDown /></div>
       </div>
-
       <div className={`dropdown-menu ${open ? 'active' : 'inactive'}`} >
         <ul>
-          <DropdownItem url={"/dashboard"} text={"Dashboard"} />
-          <DropdownItem url={"/lists/addList"} text={"New List +"} />
-          <li className='dropdownItem'>
-            <SignOut />
-          </li>
+          <DropdownItem url={"/word-finder"} text={"Word Unscrambler"} />
+          <DropdownItem url={"/adjectives"} text={"Adjectives Finder"} />
         </ul>
       </div>
     </div>
-
   );
 }
 
@@ -55,4 +48,4 @@ function DropdownItem(props) {
   );
 }
 
-export default UserProfileDropDown;
+export default WordFindersListDropDown;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import UserProfileDropdown from "./UserProfileDropDown";
+import UserProfileDropdown from "./dropdowns/UserProfileDropDown";
 
 export default function UserInfo() {
   const { status, data: session } = useSession();
