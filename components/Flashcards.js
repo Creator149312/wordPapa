@@ -3,13 +3,16 @@
 import React from 'react';
 import { Flashcard, FlashcardArray } from "react-quizlet-flashcard";
 
-const Flashcards = ({words}) => {
-    const flashcards = [];
-   for(let i = 0; i < words.length; i++){
-    flashcards.push({ frontHTML: words[i], backHTML:  `Back of Card ${i}`});
-   } 
+const Flashcards = ({ words }) => {
+  // console.log("Words inside Flashcards");
+  // console.log(words);
+  const flashcards = [];
+  for (let i = 0; i < words.length; i++) {
+    flashcards.push( {frontHTML : words[i].word, backHTML: words[i].wordData});
+  }
 
-   console.log(flashcards);
+  console.log("What data flashcards store");
+  console.log(flashcards);
 
   return (
     <div>

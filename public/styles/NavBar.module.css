@@ -7,7 +7,7 @@ a.navLink {
 /* navbar */
 .navbar {
   background-color: #ffffff;
-  padding: 10px 20px;
+  padding: 10px 20px 10px 0px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,10 +15,12 @@ a.navLink {
 
 /* logo  */
 .logo {
-  font-size: 28px;
+  font-size: 26px;
+  font-weight: bold;
   display: flex;
   text-align: left;
-  color: #333333;
+  color: #4f4f4f;
+  align-items: center;
 }
 
 .logo img{
@@ -31,7 +33,7 @@ a.navLink {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 

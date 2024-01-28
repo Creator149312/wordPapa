@@ -17,10 +17,9 @@ const ListDisplay = ({ title, description, words }) => {
       {practice ? (<Flashcards words={words}/>) : (<><p>{description}</p>
         <ul className="card-content m-3">
           {words.map((word, index) => (
-            <li key={index}><h3><Link href={`/define/${word}`}>{word}</Link></h3></li>
+            <li key={index}><h3><Link href={`/define/${word.word}`}>{word.word} - {word.wordData}</Link></h3></li>
           ))}
         </ul></>)}
-
     </div>
   );
 };

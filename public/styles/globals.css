@@ -628,7 +628,7 @@ body {
 /* Media query for screens wider than 768px (typical tablet and desktop screens) */
 @media (min-width: 768px) {
   .font-responsive {
-    font-size: 18px;
+    font-size: 16px;
     /* Adjust this to your desired font size for larger screens */
   }
 }
@@ -636,7 +636,7 @@ body {
 /* Media query for screens wider than 1200px (typical desktop screens) */
 @media (min-width: 1200px) {
   .font-responsive {
-    font-size: 20px;
+    font-size: 18px;
     /* Adjust this to your desired font size for even larger screens */
   }
 }

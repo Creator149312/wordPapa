@@ -1,5 +1,11 @@
 import mongoose, { Schema, models } from "mongoose";
 
+// Define the schema for the object inside the array
+const wordDataObject = new mongoose.Schema({
+  word: String,
+  wordData: String,
+});
+
 const listSchema = new Schema(
   {
     title: {
@@ -11,9 +17,9 @@ const listSchema = new Schema(
       required: true
     },
     words:  {
-      type: [String],
+      type: [wordDataObject],
       default: []
-    }, // Array of strings
+    }, // Array of wordDataObjects
     createdBy: {
       type: String,
       required: true

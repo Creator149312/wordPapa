@@ -25,37 +25,38 @@ function Navbar() {
     <nav className={`${styles.navbar}`}>
       {/* logo */}
       <a href="/" className={`${styles.logo}`}>
-        <Image src={logo} alt="WordPapa Logo" width="30" height="30" />
+        <Image src={logo} alt="WordPapa Logo" width="35" height="35" />
         WordPapa
       </a>
+      <div>
+        <ul className={`${styles.navMenu} ${isActive ? styles.active : ""}`}>
+          <li onClick={removeActive}>
+            <a href="/thesaurus/" className={`${styles.navLink}`}>Thesaurus
+            </a>
+          </li>
+          <li onClick={removeActive}>
+            <a href="/define/" className={`${styles.navLink}`}>Dictionary
+            </a>
+          </li>
+          <li onClick={removeActive}>
+            <WordToolsListDropDown name={"Word Tools"} />
+          </li>
+          <li onClick={removeActive}>
+            <WordFindersListDropDown name={"Word Finders"} />
+          </li>
+          <li>
+            <UserInfo />
+          </li>
+        </ul>
 
-      <ul className={`${styles.navMenu} ${isActive ? styles.active : ""}`}>
-      <li onClick={removeActive}>
-          <a href="/thesaurus/" className={`${styles.navLink}`}>Thesaurus
-          </a>
-        </li>
-        <li onClick={removeActive}>
-          <a href="/define/" className={`${styles.navLink}`}>Dictionary
-          </a>
-        </li>
-      <li onClick={removeActive}>
-          <WordToolsListDropDown name={"Word Tools"}/>
-        </li>
-        <li onClick={removeActive}>
-          <WordFindersListDropDown name={"Word Finders"}/>
-        </li>
-        <li>
-          <UserInfo />
-        </li>
-      </ul>
-
-      <div
-        className={`${styles.hamburger} ${isActive ? styles.active : ""}`}
-        onClick={toggleActiveClass}
-      >
-        <span className={`${styles.bar}`}></span>
-        <span className={`${styles.bar}`}></span>
-        <span className={`${styles.bar}`}></span>
+        <div
+          className={`${styles.hamburger} ${isActive ? styles.active : ""}`}
+          onClick={toggleActiveClass}
+        >
+          <span className={`${styles.bar}`}></span>
+          <span className={`${styles.bar}`}></span>
+          <span className={`${styles.bar}`}></span>
+        </div>
       </div>
     </nav>
   );
