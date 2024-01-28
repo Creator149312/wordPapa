@@ -4,7 +4,7 @@ import { HiOutlineTrash } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import apiConfig from "@utils/apiUrlConfig";
 
-export default function RemoveListBtn({id}){
+export default function RemoveListBtn({ id }) {
   const router = useRouter();
 
   const handleRemoveList = async (e) => {
@@ -21,7 +21,8 @@ export default function RemoveListBtn({id}){
       });
 
       if (res.ok) {
-       router.refresh();
+        // Refresh the page
+        location.reload();
       }
     }
   };

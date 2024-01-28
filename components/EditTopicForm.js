@@ -49,9 +49,9 @@ export default function EditTopicForm({ id, title, description, words }) {
     let txtAreaValue = "";
     for (let i = 0; i < words.length; i++) {
       if (i != words.length - 1)
-        txtAreaValue += words[i] + "\n";
+        txtAreaValue += words[i].word + "\n";
       else
-        txtAreaValue += words[i];
+        txtAreaValue += words[i].word;
     }
     return txtAreaValue;
   }
