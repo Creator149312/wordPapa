@@ -139,10 +139,10 @@ const Page = () => {
                 <div className="card col-6 text-center">
                   <div className="m-2 p-2">
                   <p>
-                  a tool to generate all possible words with given letters (coming soon....)</p>
+                  a tool to generate all possible words with given letters</p>
                   </div>
                   <button className="p-2 custom-button">
-                    <a href="#" className="medium-text font-white">
+                    <a href="/word-finder" className="medium-text font-white">
                       Word Finder <span className="react-icons"><BsFillArrowRightCircleFill /></span>
                     </a>
                   </button>
