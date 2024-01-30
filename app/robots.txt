@@ -1,0 +1,8 @@
+# Block all crawlers for
+User-agent: *
+Disallow: /dataValidator
+Disallow: /wildcard
+
+# Allow all crawlers
+User-agent: *
+Allow: /
