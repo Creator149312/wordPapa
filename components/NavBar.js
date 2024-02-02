@@ -44,9 +44,9 @@ function Navbar() {
           <li onClick={removeActive}>
             <WordFindersListDropDown name={"Word Finders"} />
           </li>
-          {/* <li>
+          <li>
             <UserInfo />
-          </li> */}
+          </li>
         </ul>
 
         <div

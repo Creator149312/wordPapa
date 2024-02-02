@@ -1037,3 +1037,27 @@ li {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.user-list-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  padding: 10px;
+}
+
+.user-list-item-word {
+  flex-basis: 20%;
+  flex-grow: 0; /* Prevent this div from growing beyond its initial width */
+}
+
+.user-list-item-worddata {
+  flex-basis: 80%;
+  flex-grow: 0; /* Prevent this div from growing beyond its initial width */
+}
+
+.flashcard-container{
+  display: flex;
+  justify-content: center; /* horizontally center */
+  align-items: center; /* vertically center */
+}

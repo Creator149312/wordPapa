@@ -1,6 +1,9 @@
-import React from "react";
 import LinkPagination from "./LinkPagination";
 import { promises as fs } from 'fs';
+
+/*
+* this file will include browsing of all words like nouns, adjectives, adverbs
+*/
 
 async function getWords() {
   const filePath = process.cwd() + '/app/browse/a.txt' // Replace with the actual path to your file.

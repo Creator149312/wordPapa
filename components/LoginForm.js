@@ -15,6 +15,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   const handleSubmit = async (e) => {
+    setError(false);
     setIsSigning(true);
     e.preventDefault();
 
@@ -64,6 +65,7 @@ export default function LoginForm() {
             </div>
           )}
           {isSigning && <p>Checking Your Credentials....</p>}
+          {error && <p>Username or Password is incorrect...</p>}
           <div>
             <Link className="m-4 p-3" href={"/register"}>
               Don't have an account? <span className="underline">Register</span>

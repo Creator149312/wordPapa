@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState } from "react";
 import Link from "next/link";
 import Flashcards from "./Flashcards";
@@ -12,15 +12,31 @@ const ListDisplay = ({ title, description, words }) => {
   };
 
   return (
-    <div className="card">
-      <div className="list-heading-container"><h1 className="card-title">{title}</h1><button onClick={(showPractice)} className="custom-button">Practice</button></div>
-      {practice ? (<Flashcards words={words}/>) : (<><p>{description}</p>
-        <ul className="card-content m-3">
-          {words.map((word, index) => (
-            <li key={index}><h3><Link href={`/define/${word.word}`}>{word.word} - {word.wordData}</Link></h3></li>
-          ))}
-        </ul></>)}
-    </div>
+    <>
+      <div className="">
+        <div className="list-heading-container">
+          <h1 className="card-title">{title}</h1>
+          <button onClick={showPractice} className="custom-button">
+            {practice ? 'Show List': 'Flashcards'}
+          </button>
+        </div>
+        {practice ? (
+          <Flashcards words={words} />
+        ) : (
+          <>
+            <p>{description}</p>
+            <ul className="card-content m-3">
+              {words.map((word, index) => (
+                <li key={index} className="card user-list-item">
+                  <Link href={`/define/${word.word}`} className="medium-text user-list-item-word">{word.word}</Link>
+                  <div className="user-list-item-worddata">{word.wordData}</div>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

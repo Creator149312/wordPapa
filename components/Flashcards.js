@@ -1,7 +1,22 @@
 'use client'
 
-import React from 'react';
-import { Flashcard, FlashcardArray } from "react-quizlet-flashcard";
+import { FlashcardArray } from "react-quizlet-flashcard";
+
+const frontContentCSS = {
+  fontSize: '28px',
+  display: 'flex',
+  justifyContent: 'center', /* horizontally center */
+  alignItems: 'center', /* vertically center */
+  padding: '15px',
+}
+
+const backContentCSS = {
+  fontSize: '20px',
+  display: 'flex',
+  justifyContent: 'center', /* horizontally center */
+  alignItems: 'center', /* vertically center */
+  padding: '20px',
+}
 
 const Flashcards = ({ words }) => {
   // console.log("Words inside Flashcards");
@@ -11,15 +26,12 @@ const Flashcards = ({ words }) => {
     flashcards.push( {frontHTML : words[i].word, backHTML: words[i].wordData});
   }
 
-  console.log("What data flashcards store");
-  console.log(flashcards);
-
   return (
-    <div>
+    <div className='flashcard-container p-4 m-3'>
       {/* {flashcards.map((flashcard, index) => (
         <Flashcard key={index} frontHTML={flashcard.front} backHTML={flashcard.back} />
       ))} */}
-      <FlashcardArray cards={flashcards} />
+      <FlashcardArray cards={flashcards} frontContentStyle={frontContentCSS} backContentStyle={backContentCSS}/>
     </div>
   );
 };

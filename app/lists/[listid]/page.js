@@ -1,16 +1,46 @@
 import ListDisplay from "@components/ListDisplay";
 
 let titleStr = "";
-// export async function generateMetadata({ params }, parent) {
-//   const word  = decodeURIComponent(params.word);
-//   // read route params
-//   titleStr = "Adjective Words to Describe " + (word.charAt(0).toUpperCase() + word.slice(1));
-//   const descriptionStr = "Explore list of commonly used adjective words for describing " + params.word + " in writing.";
-//   return {
-//     title: titleStr,
-//     description: descriptionStr ,
-//   }
-// }
+let listerror = null;
+export async function generateMetadata({ params }, parent) {
+  let listdata = null;
+  if (params.listid !== "favicon.ico") {
+    const id = params.listid;
+    try {
+      const response = await fetch(`http://localhost:3000/api/list/${id}`, {
+        cache: "no-store",
+      }); // Replace with your actual API endpoint
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch lists");
+      }
+
+      listdata = (await response.json()).list;
+    } catch (error) {
+      listerror = error;
+    } finally {
+      if (listdata === null) {
+        listerror = {message: "No records Found"};
+      }
+    }
+  }
+
+  if (listdata !== null) {
+    // read route params
+    titleStr = listdata.title + " Learning Flashcards";
+    const descriptionStr =
+      "Explore list of " + listdata.title + " and practice using flashcards.";
+    return {
+      title: titleStr,
+      description: descriptionStr,
+    };
+  }else{
+    return {
+      title: "No List Found",
+      description: "No List Found",
+    };
+  }
+}
 
 let wordsList = null;
 
@@ -18,7 +48,9 @@ export default async function Page({ params }) {
   if (params.listid !== "favicon.ico") {
     const id = params.listid;
     try {
-      const response = await fetch(`http://localhost:3000/api/list/${id}`, { cache: "no-store" }); // Replace with your actual API endpoint
+      const response = await fetch(`http://localhost:3000/api/list/${id}`, {
+        cache: "no-store",
+      }); // Replace with your actual API endpoint
 
       if (!response.ok) {
         throw new Error("Failed to fetch lists");
@@ -27,16 +59,25 @@ export default async function Page({ params }) {
       const data = await response.json();
       wordsList = data.list;
     } catch (error) {
-      console.log(error)
+      listerror = error;
     } finally {
-      // console.log("data loaded");
+      if (wordsList === null) {
+        listerror = {message: "No records Found"};
+      }
     }
   }
 
   return (
     <div>
-      {(wordsList !== null) && (
-        <ListDisplay title={wordsList.title} description={wordsList.description} words={wordsList.words} />
+      {wordsList !== null && listerror == null && (
+        <ListDisplay
+          title={wordsList.title}
+          description={wordsList.description}
+          words={wordsList.words}
+        />
+      )}
+      {listerror && (
+        <div>We can't find the list. This has been deleted by the creator.</div>
       )}
     </div>
   );

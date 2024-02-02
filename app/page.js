@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
-import ErrorBox from "@utils/ErrorBox";
+// import ErrorBox from "@utils/ErrorBox";
 import commonLinks from "@utils/commonLinks";
 
 const Page = () => {
