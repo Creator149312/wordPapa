@@ -1034,6 +1034,12 @@ li {
   align-items: center;
 }
 
+.left-right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -1060,4 +1066,9 @@ li {
   display: flex;
   justify-content: center; /* horizontally center */
   align-items: center; /* vertically center */
+}
+
+.error{
+  color: red;
+  
 }

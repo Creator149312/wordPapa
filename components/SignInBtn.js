@@ -7,10 +7,10 @@ export default function SignInBtn() {
   return (
     <button
       onClick={() => signIn("google")}
-      className="m-2 p-2 text-center"
+      className="m-2 p-2 custom-button"
     >
-      <Image src="/google-logo.png" alt="google logo" height={30} width={30} />
-      <span className="bg-blue-500 text-white px-4 py-3">
+      <Image src="/google-logo.png" alt="google logo" height={25} width={25} />
+      <span className="normal-text">
         Sign in with Google
       </span>
     </button>

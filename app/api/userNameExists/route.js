@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     await connectMongoDB();
-    const { email, name } = await req.json();
-    const user = await User.findOne({ email }).select("_id");
-    
-    return NextResponse.json({ user });
+    const { name } = await req.json();
+    const userName = await User.findOne({ name }).select("_id");
+
+    return NextResponse.json({ userName });
   } catch (error) {
     console.log(error);
   }

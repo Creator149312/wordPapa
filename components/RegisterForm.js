@@ -65,32 +65,38 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="">
-      <div className="">
-        <h1 className="">Register</h1>
+    <div className="text-center">
+      <div className="card form-50">
+        <h1 className="card-title">Register</h1>
         <form onSubmit={handleSubmit} className="">
           <input
             onChange={(e) => setName(e.target.value)}
             type="text"
             placeholder="Full Name"
+            className="form-control m-2"
+            required
           />
           <input
             onChange={(e) => setEmail(e.target.value)}
-            type="text"
+            type="email"
             placeholder="Email"
+            className="form-control m-2"
+            required
           />
           <input
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             placeholder="Password"
+            className="form-control m-2"
+            required
           />
-          <button className="bg-green-600 text-white font-bold cursor-pointer px-6 py-2">
+          <button className="custom-button p-2">
             Register
           </button>
 
           {error && (
-            <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
-              {error}
+            <div>
+              Registration failed!
             </div>
           )}
           {isRegistering && <p>Checking Details and Creating Your Account...</p>}

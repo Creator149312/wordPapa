@@ -21,7 +21,7 @@ export default function RemoveListBtn({ id }) {
       });
 
       if (res.ok) {
-        // Refresh the page
+        // Refresh the page after list is deleted
         location.reload();
       }
     }
