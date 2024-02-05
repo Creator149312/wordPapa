@@ -2,6 +2,7 @@
 User-agent: *
 Disallow: /dataValidator
 Disallow: /wildcard
+Disallow: /api
 
 # Allow all crawlers
 User-agent: *

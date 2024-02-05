@@ -5,7 +5,6 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SignInBtn from "./SignInBtn";
-
 import Notification from "./Notification";
 
 export default function LoginFormAdv() {
@@ -23,6 +22,8 @@ export default function LoginFormAdv() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    //clear errors when user is typing
     setErrors({ ...errors, [name]: "" });
     setError("");
   };
