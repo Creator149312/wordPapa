@@ -24,7 +24,8 @@ export async function GET(request, { params }) {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   } else {
-    if (createdBy === session.user.email) { //if user abc is requesting for data of user abc
+    if (createdBy === session.user.email) {
+      //if user abc is requesting for data of user abc
       await connectMongoDB();
       const lists = await List.find({ createdBy: createdBy });
       return NextResponse.json({ lists }, { status: 200 });
