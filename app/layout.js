@@ -6,6 +6,7 @@ import SearchNavBar from "@components/SearchNavBar";
 import AlphabetLinks from "@components/AlphabetLinks";
 import GAnalytics from "./GAnalytics";
 import { NextAuthProvider } from "./Providers";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: {
@@ -45,6 +46,7 @@ const layout = ({ children }) => {
         </main>
          <AlphabetLinks />
         <Footer />
+        <Toaster position="top-right"/>
         </NextAuthProvider>
       </body>
     </html>

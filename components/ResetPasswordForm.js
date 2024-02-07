@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { updateNewPassword } from "./actions/actions";
+import { toast } from "react-hot-toast";
+import { signOut } from "next-auth/react";
 
 const ResetPasswordForm = () => {
   const [formValues, setformValues] = useState({
@@ -34,24 +36,24 @@ const ResetPasswordForm = () => {
         "New password and retyped password do not match";
     }
 
-    console.log(error);
-
     if (Object.keys(error).length !== 0) {
-      console.log("I am inside errors");
       setErrors(error);
     } else {
-    //if there are no errors
-    console.log("I am inside formData");
-    await updateNewPassword(formData);
+      let results = await updateNewPassword(formData);
+      if (results?.error) {
+        //show error
+        toast.error(results.error);
+      } else {
+        toast.success("Password successfully changed!");
+        signOut({ callbackUrl: "/login" })
+      }
     }
   };
 
   return (
     <div className="mt-3 card">
       <h2>Change Your Password</h2>
-      <form
-        action={validateForm}
-      >
+      <form action={validateForm}>
         <div>
           <label htmlFor="currentPassword">Current Password:</label>
           <input

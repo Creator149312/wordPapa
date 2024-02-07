@@ -560,6 +560,10 @@ body {
   /* Add transition effects */
 }
 
+.custom-red-button{
+  background-color: red;
+}
+
 /* with lesser padding*/
 .custom-button-small {
   background-color: #75c32c;

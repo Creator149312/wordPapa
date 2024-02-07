@@ -1,12 +1,11 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { HiOutlineUserCircle } from "react-icons/hi";
 
-import SignOut from '../user/SignOut';
+import SignOut from "../user/SignOut";
 
 function UserProfileDropDown(props) {
-
   const [open, setOpen] = useState(false);
 
   let menuRef = useRef();
@@ -20,36 +19,41 @@ function UserProfileDropDown(props) {
 
     document.addEventListener("mousedown", handler);
 
-
     return () => {
       document.removeEventListener("mousedown", handler);
-    }
-
+    };
   });
 
   return (
-    <div className='menu-container' ref={menuRef}>
-      <div className='menu-trigger' onClick={() => { setOpen(!open) }}>
-        <div className='display-flex center-align x-large-text'><HiOutlineUserCircle /></div>
+    <div className="menu-container" ref={menuRef}>
+      <div
+        className="menu-trigger"
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
+        <div className="display-flex center-align x-large-text">
+          <HiOutlineUserCircle />
+        </div>
       </div>
 
-      <div className={`dropdown-menu ${open ? 'active' : 'inactive'}`} >
+      <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
         <ul>
-          <DropdownItem url={"/dashboard"} text={"Dashboard"} />
           <DropdownItem url={"/lists/addList"} text={"New List +"} />
-          <li className='dropdownItem'>
+          <DropdownItem url={"/dashboard"} text={"Dashboard"} />
+          <DropdownItem url={"/settings"} text={"Settings"} />
+          <li className="dropdownItem">
             <SignOut />
           </li>
         </ul>
       </div>
     </div>
-
   );
 }
 
 function DropdownItem(props) {
   return (
-    <li className='dropdownItem dropdown-menu-border-gap'>
+    <li className="dropdownItem dropdown-menu-border-gap">
       <a href={props.url}> {props.text} </a>
     </li>
   );
