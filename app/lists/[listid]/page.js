@@ -1,26 +1,29 @@
 import ListDisplay from "@components/ListDisplay";
+import { connectMongoDB } from "@lib/mongodb";
+import List from "@models/list";
+import { validateObjectID } from "@utils/Validator";
 
 let titleStr = "";
 let listerror = null;
+
 export async function generateMetadata({ params }, parent) {
   let listdata = null;
-  if (params.listid !== "favicon.ico") {
+  //check if ID is valid
+  if (validateObjectID(params.listid)) {
     const id = params.listid;
     try {
       const response = await fetch(`http://localhost:3000/api/list/${id}`, {
         cache: "no-store",
       }); // Replace with your actual API endpoint
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch lists");
-      }
+      if (!response.ok) throw new Error("Failed to fetch lists");
 
       listdata = (await response.json()).list;
     } catch (error) {
       listerror = error;
     } finally {
       if (listdata === null) {
-        listerror = {message: "No records Found"};
+        listerror = { message: "No records Found" };
       }
     }
   }
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }, parent) {
       title: titleStr,
       description: descriptionStr,
     };
-  }else{
+  } else {
     return {
       title: "No List Found",
       description: "No List Found",
@@ -45,7 +48,8 @@ export async function generateMetadata({ params }, parent) {
 let wordsList = null;
 
 export default async function Page({ params }) {
-  if (params.listid !== "favicon.ico") {
+  let IfIdValid = validateObjectID(params.listid);
+  if (IfIdValid) {
     const id = params.listid;
     try {
       const response = await fetch(`http://localhost:3000/api/list/${id}`, {
@@ -58,11 +62,14 @@ export default async function Page({ params }) {
 
       const data = await response.json();
       wordsList = data.list;
+
+      // await connectMongoDB();
+      // wordsList = await List.findOne({ _id: id });
     } catch (error) {
       listerror = error;
     } finally {
       if (wordsList === null) {
-        listerror = {message: "No records Found"};
+        listerror = { message: "No records Found" };
       }
     }
   }

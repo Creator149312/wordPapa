@@ -3,6 +3,7 @@ import { useState } from "react";
 import { updateNewPassword } from "./actions/actions";
 import { toast } from "react-hot-toast";
 import { signOut } from "next-auth/react";
+import { validatePassword } from "@utils/Validator";
 
 const ResetPasswordForm = () => {
   const [formValues, setformValues] = useState({
@@ -22,30 +23,32 @@ const ResetPasswordForm = () => {
 
   const validateForm = async (formData) => {
     let error = {};
-    if (formValues.currentPassword.length < 8)
-      error.currentPassword = "Password must be at least 8 characters long";
-    if (formValues.newPassword.length < 8)
-      error.newPassword = "Password must be at least 8 characters long";
-    if (formValues.retypeNewPassword.length < 8) {
-      error.retypeNewPassword = "Password must be at least 8 characters long";
-    }
 
-    // Client-side validation
+    let cp = validatePassword(formValues.currentPassword);
+    let np = validatePassword(formValues.newPassword);
+    let rtp = validatePassword(formValues.retypeNewPassword);
+
+    if (cp.length !== 0) error.currentPassword = cp;
+    if (np.length !== 0) error.newPassword = np;
+    if (rtp.length !== 0) error.retypeNewPassword = rtp;
+
     if (formValues.newPassword !== formValues.retypeNewPassword) {
       error.retypeNewPassword =
         "New password and retyped password do not match";
     }
 
     if (Object.keys(error).length !== 0) {
+      console.log("Inside errors")
       setErrors(error);
     } else {
+      console.log("inside success")
       let results = await updateNewPassword(formData);
       if (results?.error) {
         //show error
         toast.error(results.error);
       } else {
+        // signOut({ callbackUrl: "/login" });
         toast.success("Password successfully changed!");
-        signOut({ callbackUrl: "/login" })
       }
     }
   };

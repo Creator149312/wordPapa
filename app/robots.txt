@@ -4,7 +4,3 @@ Disallow: /dataValidator
 Disallow: /wildcard
 Disallow: /api
 Disallow: /lists
-
-# Allow all crawlers
-User-agent: *
-Allow: /

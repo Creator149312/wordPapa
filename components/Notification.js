@@ -7,7 +7,7 @@ const Notification = ({ message, state}) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-      // onClose(); // Call onClose after notification disappears
+      onClose(); 
     }, 5000); // Disappear after 5 seconds
 
     return () => clearTimeout(timer); // Clear timer on component unmount

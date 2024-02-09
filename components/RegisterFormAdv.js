@@ -4,6 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Notification from "./Notification";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "@utils/Validator";
+import { registerUser } from "./actions/actions";
+import toast from "react-hot-toast";
 
 export default function RegisterFormAdv() {
   const [formData, setFormData] = useState({
@@ -27,85 +34,29 @@ export default function RegisterFormAdv() {
     setError("");
   };
 
-  const validateForm = (data) => {
+  const validateFormAdv = async (dataFromFrom) => {
     let errors = {};
-
-    // Validate username
-    const usernameRegex = /^[a-zA-Z0-9]+$/;
-    if (!data.username.trim()) {
-      errors.username = "Username is required";
-    } else if (!usernameRegex.test(data.username)) {
-      errors.username = "Username must contain only letters and digits";
-    }
-
-    // Validate email address
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      errors.email = "Invalid email address";
-    }
-
-    // Validate password
-    if (data.password.length < 8) {
-      errors.password = "Password must be at least 8 characters long";
-    }
-
-    return errors;
-  };
-
-  const handleSubmit = async (e) => {
     setErrors({});
     setError("");
-    e.preventDefault();
 
-    const validationErrors = validateForm(formData);
-    if (Object.keys(validationErrors).length === 0) {
+    let vu = validateUsername(formData.username);
+    let ve = validateEmail(formData.email);
+    let vp = validatePassword(formData.password);
+
+    if (vu.length !== 0) errors.username = vu;
+    if (ve.length !== 0) errors.email = ve;
+    if (vp.length !== 0) errors.password = vp;
+
+    if (Object.keys(errors).length === 0) {
       setIsRegistering(true);
       try {
-        //check if email exists
-        const resUserExists = await fetch("api/userExists", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: formData.email }),
-        });
+        console.log("Form Data in Client, ", dataFromFrom);
+        let results = await registerUser(dataFromFrom);
 
-        //check if username exists
-        const resUserNameExists = await fetch("api/userNameExists", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: formData.username }),
-        });
-
-        const { user } = await resUserExists.json();
-        const { userName } = await resUserNameExists.json();
-
-        if (user) {
-          setError("User already exists!");
-          return;
-        } else if (userName) {
-          setError("Username already taken!");
-          return;
-        }
-
-        const res = await fetch("api/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.username,
-            email: formData.email,
-            password: formData.password,
-          }),
-        });
-
-        if (res.ok) {
-          router.push("/login");
+        if (results?.error) {
+          toast.error(results.error);
         } else {
-          setError("User registration failed.");
+          toast.success("User registration successful!");
         }
       } catch (error) {
         setError("Registration Failed!");
@@ -113,17 +64,15 @@ export default function RegisterFormAdv() {
         setIsRegistering(false);
       }
     } else {
-      setErrors(validationErrors);
+      setErrors(errors);
     }
   };
-
-  console.log(errors);
 
   return (
     <div className="">
       <h1 className="card-title text-center">Register</h1>
       <div className="card form-50">
-        <form onSubmit={handleSubmit} className="">
+        <form action={validateFormAdv} className="">
           <div>
             <label htmlFor="username">Username:</label>
             <input
@@ -161,7 +110,7 @@ export default function RegisterFormAdv() {
             {errors.password && <p className="error">{errors.password}</p>}
           </div>
           <button className="custom-button p-3">Register</button>
-          {error && <Notification message={error} state={"failed"} />}
+          {/* {error && <Notification message={error} state={"failed"} />} */}
           {isRegistering && (
             <p>Checking Details and Creating Your Account...</p>
           )}

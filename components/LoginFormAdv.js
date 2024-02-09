@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SignInBtn from "./SignInBtn";
 import Notification from "./Notification";
+import { validateEmail, validatePasswordLength } from "@utils/Validator";
 
 export default function LoginFormAdv() {
   const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ export default function LoginFormAdv() {
 
   const router = useRouter();
 
+  // whenever input changes in input fields 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -31,19 +33,12 @@ export default function LoginFormAdv() {
   const validateForm = (data) => {
     let err = {};
 
-    // Validate email address
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!data.email.trim()) {
-      err.email = "Email address is required";
-    } else if (!emailRegex.test(data.email)) {
-      err.email = "Invalid email address";
-    }
+    let ve = validateEmail(data.email);
+    let vp = validatePasswordLength(data.password);
 
-    // Validate password
-    if (data.password.length < 8) {
-      err.password = "Password must be at least 8 characters long";
-    }
-
+    if(ve.length !== 0) err.email = ve;
+    if(vp.length !== 0) err.password = vp;
+    
     return err;
   };
 

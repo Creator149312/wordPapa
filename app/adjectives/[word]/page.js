@@ -14,15 +14,6 @@ export async function generateMetadata({ params }, parent) {
   }
 }
 
-// export function generateStaticParams() {
-// //   // let words = allWords.map((w)=>{
-// //   //   return {word: w};
-// //   // });
-
-// //   // return words;
-//    return [{ word: "apple" }, { word: "card" }, { word: "papa" }];
-// }
-
 let adjectiveWords = [];
 
 export default async function Page({ params }) {

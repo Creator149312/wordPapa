@@ -4,37 +4,58 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { validateEmail, validatePasswordLength } from "@utils/Validator";
+
+const validateForm = async (data) => {
+  let err = {};
+  // Validate email address
+  let ve = validateEmail(data.email);
+  let vp = validatePasswordLength(data.password);
+
+  if (ve.length !== 0) err.email = ve;
+  if (vp.length !== 0) err.password = vp;
+
+  return err;
+};
+
+const checkLogin = async (email, password) => {
+  await connectMongoDB();
+  const user = await User.findOne({ email }); // Include fields you need explicitly;
+
+  if (!user) {
+    return null;
+  }
+
+  const passwordsMatch = await bcrypt.compare(password, user.password);
+
+  if (!passwordsMatch) {
+    return null;
+  }
+
+  return user;
+};
 
 export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }), 
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {},
 
       async authorize(credentials) {
         const { email, password } = credentials;
+        let validationError = await validateForm({ email, password });
+
+        if (Object.keys(validationError).length !== 0) return null;
 
         try {
-          await connectMongoDB();
-          const user = await User.findOne({ email }); // Include fields you need explicitly;
-
-          if (!user) {
-            return null;
-          }
-
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-
-          if (!passwordsMatch) {
-            return null;
-          }
-
-          return user;
+          let userData = await checkLogin(email, password);
+          return userData;
         } catch (error) {
-          console.log("Error: ", error);
+          return null;
         }
       },
     }),
@@ -71,7 +92,7 @@ export const authOptions = {
             }
           }
         } catch (error) {
-          console.log(error);
+          return null;
         }
       }
 

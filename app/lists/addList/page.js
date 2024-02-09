@@ -218,6 +218,7 @@ export default function AddList() {
     );
   };
 
+  // Run the validity check whenever the input word changes
   useEffect(() => {
     getValidWords().then((validWords) => {
       setFinalWords(validWords);
@@ -225,9 +226,9 @@ export default function AddList() {
       setInvalidWords(invalidWordsArray);
       setOmittedWords(omittedWordsArray);
     });
-  }, [wordsToCheck]); // Run the validity check whenever the input word changes
+  }, [wordsToCheck]); 
 
-  //start of code to check valid words
+  //code to check valid words which have definitions
   async function isWordValid(word) {
     // Trim input word and convert to lowercase before checking
     const trimmedWord = word.trim().toLowerCase();
@@ -372,7 +373,7 @@ export default function AddList() {
           Create List
         </button>
       )}
-      {finalWords.length > 0 && console.log(finalWords)}
+      {/* {finalWords.length > 0 && console.log(finalWords)} */}
       {omittedWords.length > 0 && renderArray(omittedWords, "Omitted Words")}
       {invalidWords.length > 0 && renderArray(invalidWords, "Invalid Words")}
       {isLoading && <p>Adding Your List ...</p>}

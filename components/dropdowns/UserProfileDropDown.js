@@ -39,6 +39,7 @@ function UserProfileDropDown(props) {
 
       <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
         <ul>
+          <li>{props.name}</li>
           <DropdownItem url={"/lists/addList"} text={"New List +"} />
           <DropdownItem url={"/dashboard"} text={"Dashboard"} />
           <DropdownItem url={"/settings"} text={"Settings"} />
