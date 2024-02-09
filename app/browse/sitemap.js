@@ -27,7 +27,7 @@ async function getWords(l) {
       });
     }
   } catch (error) {
-    throw new Error(`Error reading the file: ${error.message}`);
+    console.log(`Error reading the file: ${error.message}`);
   }
 }
 
