@@ -4,6 +4,7 @@ const BASE_URL = "https://words.englishbix.com";
 /**
  * This file is used to generate multiple sitemaps
  */
+export const revalidate = 60;
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/actualWords.txt"; // Replace with the actual path to your file.

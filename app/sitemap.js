@@ -1,85 +1,30 @@
-import { promises as fs } from "fs";
-const BASE_URL = "https://words.englishbix.com";
-
-/**
- * This file is used to generate multiple sitemaps
- */
-
-async function getWords(l) {
-  const filePath = process.cwd() + "/app/browse/actualWords.txt"; // Replace with the actual path to your file.
-  const regex = /^[a-zA-Z]+$/;
-  const pluralSuffixes = ["s", "es", "ies", "ves"]; // Plural suffixes
-
-  try {
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const linksArray = fileContent.split("\n");
-    if (l === "0") {
-      return linksArray.filter(
-        (word) => !/[a-zA-Z]/.test(word.charAt(0)) === true
-      );
-    } else {
-      // we want only those words which have length > 1 and are not plurals or with spaces or other special characters
-      return linksArray.filter((word) => {
-        word = word.trim();
-        if (word.charAt(0) === l && regex.test(word) && word.length > 1) {
-          return !pluralSuffixes.some((suffix) => word.endsWith(suffix));
-        }
-      });
-    }
-  } catch (error) {
-    console.log(`Error reading the file: ${error.message}`);
-  }
-}
-
-// export async function generateSitemaps() {
-//   // calculate the number of sitemaps needed
-//   return [
-//     { id: "a-words" },
-//     { id: "b-words" },
-//     { id: "c-words" },
-//     { id: "d-words" },
-//     { id: "e-words" },
-//     { id: "f-words" },
-//     { id: "g-words" },
-//     { id: "h-words" },
-//     { id: "i-words" },
-//     { id: "j-words" },
-//     { id: "k-words" },
-//     { id: "l-words" },
-//     { id: "m-words" },
-//     { id: "n-words" },
-//     { id: "o-words" },
-//     { id: "p-words" },
-//     { id: "q-words" },
-//     { id: "r-words" },
-//     { id: "s-words" },
-//     { id: "t-words" },
-//     { id: "u-words" },
-//     { id: "v-words" },
-//     { id: "w-words" },
-//     { id: "x-words" },
-//     { id: "y-words" },
-//     { id: "z-words" },
-//   ];
-// }
-
-export async function generateSitemaps() {
-  const arrayOfObjects = [];
-
-  for (let i = 0; i <= 25; i++) {
-    const obj = { id: i };
-    arrayOfObjects.push(obj);
-  }
-
-  return arrayOfObjects;
-}
-
-export default async function sitemap({ id }) {
-  // Google's limit is 50,000 URLs per sitemap
-  const products = await getWords(String.fromCharCode(id + 97));
-
-  return products.map((product) => ({
-    url: `${BASE_URL}/define/${product}`.trim(),
-    lastModified: new Date(),
-  }));
-}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://words.englishbix.com</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+<url>
+<loc>https://words.englishbix.com/adjectives</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+<url>
+<loc>https://words.englishbix.com/define</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+<url>
+<loc>https://words.englishbix.com/rhyming-words</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+<url>
+<loc>https://words.englishbix.com/syllables</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+<url>
+<loc>https://words.englishbix.com/thesaurus</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+<url>
+<loc>https://words.englishbix.com/word-finder</loc>
+<lastmod>2024-02-09T03:27:42.448Z</lastmod>
+</url>
+</urlset>
