@@ -1,60 +1,8 @@
-"use client";
-import { useState } from "react";
-import axios from "axios";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
-// import ErrorBox from "@utils/ErrorBox";
 import commonLinks from "@utils/commonLinks";
 
+
 const Page = () => {
-  const [selectedOption, setSelectedOption] = useState("adjectives");
-  const [responseData, setResponseData] = useState([]);
-  const [error, setError] = useState(null);
-  const [inputLetters, setInputLetters] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [startsWith, handleStartsWith] = useState("");
-  const [endsWith, handleEndsWith] = useState("");
-  const [contains, handleContains] = useState("");
-  const [length, handleLength] = useState("");
-
-  const handleChange = (e) => {
-    setSelectedOption(e.target.value);
-  };
-
-  const extractData = async () => {
-    setError(null);
-    setLoading(true);
-    // Define your API endpoints based on the selected option
-    let apiEndpoint = "";
-
-    if (selectedOption === "adjectives") {
-      apiEndpoint = `https://api.datamuse.com/words?rel_jjb=${inputLetters}&max=15`;
-    } else if (selectedOption === "synonyms") {
-      apiEndpoint = `https://api.datamuse.com/words?ml=${inputLetters}&max=15`;
-    } else if (selectedOption === "homophones") {
-      apiEndpoint = `https://api.datamuse.com/words?rel_hom=${inputLetters}&max=5`;
-    } else if (selectedOption === "rhyming-words") {
-      apiEndpoint = `https://api.datamuse.com/words?rel_rhy=${inputLetters}&max=15`;
-    } else if (selectedOption === "consonants") {
-      apiEndpoint = `https://api.datamuse.com/words?rel_cns=${inputLetters}&max=15`;
-    }
-
-    try {
-      const response = await axios.get(apiEndpoint);
-      const extractedData = response.data.map((item) => item.word);
-
-      if (extractedData.length > 0) {
-        setResponseData(extractedData);
-      } else {
-        throw new Error(`No Words found for '${inputLetters}'`);
-      }
-    } catch (error) {
-      setResponseData(null);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div>
       <div className="row">

@@ -1,4 +1,6 @@
-/** @type {import('next').NextConfig} */
+const dotenv = require('dotenv');
+dotenv.config({ path: '.env.github' });
+
 const nextConfig = {
   // output: 'export',
   images: {
