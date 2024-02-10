@@ -7,6 +7,8 @@ import AlphabetLinks from "@components/AlphabetLinks";
 import GAnalytics from "./GAnalytics";
 import { NextAuthProvider } from "./Providers";
 import { Toaster } from "react-hot-toast";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@app/api/auth/[...nextauth]/route";
 
 export const metadata = {
   title: {
@@ -16,6 +18,8 @@ export const metadata = {
   description:
     "WordPapa is a enriching vocabulary and word tools hub to find words for games and language learning. Dive into a world of words and become a confident English speaker and writer.",
 };
+
+// const SESSION = await getServerSession(authOptions);
 
 const layout = ({ children }) => {
   return (
@@ -29,24 +33,24 @@ const layout = ({ children }) => {
       </head>
       <body className="font-responsive">
         <NextAuthProvider>
-        <header className="card">
+          <header className="card">
             <NavbarComponent />
             <SearchNavBar />
-        </header>
-        <main>
-          <div className="container m-2">
-            <div className="left-column card m-2 p-3">
-              {children}
-              {/** All the main content goes here */}
+          </header>
+          <main>
+            <div className="container m-2">
+              <div className="left-column card m-2 p-3">
+                {children}
+                {/** All the main content goes here */}
+              </div>
+              <div className="right-column card m-2 p-2">
+                <SideBar />
+              </div>
             </div>
-            <div className="right-column card m-2 p-2">
-              <SideBar />
-            </div>
-          </div>
-        </main>
-         <AlphabetLinks />
-        <Footer />
-        <Toaster position="top-right"/>
+          </main>
+          <AlphabetLinks />
+          <Footer />
+          <Toaster position="top-right" />
         </NextAuthProvider>
       </body>
     </html>

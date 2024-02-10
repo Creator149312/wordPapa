@@ -1,5 +1,4 @@
 import MostSearchedWordsList from "@components/MostSearchedWordsList";
-import AdjectivesExtractor from "./AdjectivesExtractor";
 import commonLinks from "@utils/commonLinks";
 
 const ptitle = "Adjectives Finder: Get Describing Words for Nouns";

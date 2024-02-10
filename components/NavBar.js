@@ -6,10 +6,12 @@ import Image from "next/image";
 import UserInfo from "./UserInfo";
 import WordFindersListDropDown from "./dropdowns/WordFindersListDropDown";
 import WordToolsListDropDown from "./dropdowns/WordToolsListDropDown";
+import { useSession } from "next-auth/react";
 
 function Navbar() {
   // adding the states
   const [isActive, setIsActive] = useState(false);
+  const { status, data: session } = useSession();
 
   //add the active class
   const toggleActiveClass = () => {
@@ -45,7 +47,7 @@ function Navbar() {
             <WordFindersListDropDown name={"Word Finders"} />
           </li>
           <li >
-            <UserInfo />
+            <UserInfo name={session?.user?.name} status={status}/>
           </li>
         </ul>
 
