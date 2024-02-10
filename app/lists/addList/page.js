@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import apiConfig from "@utils/apiUrlConfig";
-import WordChecker from "@app/dataValidator/WordChecker";
+import { validateListDescription, validateListTitle } from "@utils/Validator";
+import toast from "react-hot-toast";
 
 // Define the array of stop words
 const stopWordsAll = [
@@ -218,7 +219,7 @@ export default function AddList() {
     );
   };
 
-  // Run the validity check whenever the input word changes
+  // Run the validity check whenever the input word changes and user clicks "check Words" button
   useEffect(() => {
     getValidWords().then((validWords) => {
       setFinalWords(validWords);
@@ -226,7 +227,7 @@ export default function AddList() {
       setInvalidWords(invalidWordsArray);
       setOmittedWords(omittedWordsArray);
     });
-  }, [wordsToCheck]); 
+  }, [wordsToCheck]);
 
   //code to check valid words which have definitions
   async function isWordValid(word) {
@@ -293,20 +294,30 @@ export default function AddList() {
   //creating a unique set of Words when words data is updated
   const handleWordsChange = (e) => {
     const textareaValue = removeSpecialCharacters(e.target.value.toLowerCase());
-    console.log(textareaValue);
+    if (textareaValue.length > 1000) {
+      setError("Text can only be of atmost 1000 characters long.")
+      return;
+    }
     const lines = textareaValue.split(/\s+/).filter(Boolean);
     let uniqueSet = new Set(lines);
     setWords(Array.from(uniqueSet));
   };
 
   const handleSubmit = async (e) => {
+    setError("");
     e.preventDefault();
     setIsLoading(true);
 
     if (!title || !description || !words) {
-      alert("Title and description are required.");
+      setError("Title and description are required.");
       return;
     }
+
+    let vlt = validateListTitle(title)
+    let vld = validateListDescription(description);
+
+    if (vlt.length !== 0) { setError(vlt); return; }
+    if (vld.length !== 0) { setError(vld); return; }
 
     try {
       const res = await fetch(`${apiConfig.apiUrl}/list`, {
@@ -317,13 +328,19 @@ export default function AddList() {
         body: JSON.stringify({ title, description, words, createdBy }),
       });
 
-      if (res.ok) {
-        router.push("/dashboard");
+      let resObj = await res.json()
+      console.log(resObj);
+
+      if (resObj?.error) { //if there is error
+        console.log("error in frontend", res);
+        toast.error("Failed to Create List");
+        setError("Failed to create a List"); 
       } else {
-        throw new Error("Failed to create a List");
+        console.log("Redirecting to Dashboard...")
+        router.push("/dashboard");
       }
     } catch (error) {
-      setError(error);
+      setError(error); 
     } finally {
       setIsLoading(false);
     }
@@ -336,9 +353,13 @@ export default function AddList() {
     return text.replace(regex, '');
   }
 
+  //to check if all words are valid
   const verifyWords = (e) => {
+    setError("");
+    setWordsToCheck([]);
+    setOmittedWords([]);
+    setInvalidWords([]);
     e.preventDefault();
-
     setWordsToCheck(words);
   };
 
@@ -377,7 +398,7 @@ export default function AddList() {
       {omittedWords.length > 0 && renderArray(omittedWords, "Omitted Words")}
       {invalidWords.length > 0 && renderArray(invalidWords, "Invalid Words")}
       {isLoading && <p>Adding Your List ...</p>}
-      {error && <p>Error: {error.message}</p>}
+      {error && <p>Error: {error}</p>}
     </form>
   );
 }

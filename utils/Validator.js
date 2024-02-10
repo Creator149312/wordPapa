@@ -21,7 +21,7 @@ export const validatePassword = (password) => {
     err = "Password must contain at least one digit (0 to 9)";
 
   let epl = validatePasswordLength(password);
-  if(epl.length !== 0) err = epl;
+  if (epl.length !== 0) err = epl;
 
   return err.length === 0 ? "" : err;
 };
@@ -44,7 +44,42 @@ export const validateUsername = (username) => {
 
   if (!username.trim()) {
     err = "Username is required";
-  } 
+  }
+  return err.length === 0 ? "" : err;
+};
+
+export const validateListTitle = (input) => {
+  let err = "";
+
+  const inputRegex = /[^a-zA-Z0-9\s-]/;
+
+  console.log("validating description")
+  if (!input.trim()) {
+    err = "List name is required!";
+  } else if (inputRegex.test(input)) {
+    err = "Invalid list name please remove invalid characters!";
+  }
+
+
+  if (input.length < 4) err = "List title must be at least 4 characters long";
+  if (input.length > 256) err = "List title be of atmost 256 characters long";
+
+  return err.length === 0 ? "" : err;
+};
+
+export const validateListDescription = (input) => {
+  let err = "";
+
+  const inputRegex = /[^a-zA-Z0-9.\s-]/;
+  if (!input.trim()) {
+    err = "List description is required!";
+  } else if (inputRegex.test(input)) {
+    err = "Invalid list description, Please remove invalid characters!";
+  }
+
+  if (input.length < 8) err = "List description must be at least 8 characters long";
+  if (input.length > 512) err = "List description be of atmost 256 characters long";
+
   return err.length === 0 ? "" : err;
 };
 
