@@ -4,3 +4,4 @@ Disallow: /dataValidator
 Disallow: /wildcard
 Disallow: /api
 Disallow: /lists
+Disallow: /dashboard
