@@ -1,5 +1,5 @@
-const dotenv = require('dotenv');
-dotenv.config({ path: '.env.github' });
+// const dotenv = require('dotenv');
+// dotenv.config({ path: '.env.github' });
 
 const nextConfig = {
   // output: 'export',
