@@ -75,7 +75,6 @@ export async function generateSitemaps() {
 }
 
 export default async function sitemap({ id }) {
-  // Google's limit is 50,000 URLs per sitemap
   const products = await getWords(String.fromCharCode(id + 97));
 
   return products.map((product) => ({
