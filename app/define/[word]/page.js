@@ -140,7 +140,7 @@ export default async function WordSpecificPage({ params }) {
         const hw = definitions.defHeadword.toLowerCase();
         if (hw !== word.toLowerCase())
           //check if defHeadword is not same as the typed word
-          redirect("/define/" + hw + "/");
+          redirect("/define/" + hw);
       }
 
       //if we have found definitions for a word

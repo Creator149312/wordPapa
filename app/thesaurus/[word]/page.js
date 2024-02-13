@@ -4,7 +4,7 @@ import axios from "axios";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-  const word  = decodeURIComponent(params.word);
+  const word = decodeURIComponent(params.word);
   // read route params
   titleStr =
     "Synonyms and Antonyms for " +
@@ -19,27 +19,17 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 
-// export function generateStaticParams() {
-//   // let words = allWords.map((w)=>{
-//   //   return {word: w};
-//   // });
-
-//   // return words;
-//   return [{word: "apple"}, {word: "card"}, {word: "papa"}];
-// }
-
 let synonymWords = [];
 export default async function Page({ params }) {
-  const word  = decodeURIComponent(params.word);
+  const word = decodeURIComponent(params.word);
 
   try {
     synonymWords = [];
     const response = await axios.get(
-      `https://api.datamuse.com/words?ml=${word}`
+      `https://api.datamuse.com/words?ml=${word}&max=300`
     );
     synonymWords = response.data.map((item) => item.word);
   } catch (error) {
-    // console.error(error);
     return {
       notFound: true,
     };
@@ -53,7 +43,9 @@ export default async function Page({ params }) {
         that are related to {word}.
       </p>
       <DataFilterDisplay words={synonymWords} />
-      {synonymWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
+      {synonymWords.length > 0 && (
+        <RelLinksonPageBottom word={word} pos={null} />
+      )}
     </div>
   );
 }

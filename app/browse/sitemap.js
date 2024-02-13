@@ -4,7 +4,7 @@ const BASE_URL = "https://words.englishbix.com";
 /**
  * This file is used to generate multiple sitemaps
  */
-export const revalidate = 3600;
+export const revalidate = 13600;
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/actualWords.txt"; // Replace with the actual path to your file.
@@ -31,38 +31,6 @@ async function getWords(l) {
     console.log(`Error reading the file: ${error.message}`);
   }
 }
-
-// export async function generateSitemaps() {
-//   // calculate the number of sitemaps needed
-//   return [
-//     { id: "a-words" },
-//     { id: "b-words" },
-//     { id: "c-words" },
-//     { id: "d-words" },
-//     { id: "e-words" },
-//     { id: "f-words" },
-//     { id: "g-words" },
-//     { id: "h-words" },
-//     { id: "i-words" },
-//     { id: "j-words" },
-//     { id: "k-words" },
-//     { id: "l-words" },
-//     { id: "m-words" },
-//     { id: "n-words" },
-//     { id: "o-words" },
-//     { id: "p-words" },
-//     { id: "q-words" },
-//     { id: "r-words" },
-//     { id: "s-words" },
-//     { id: "t-words" },
-//     { id: "u-words" },
-//     { id: "v-words" },
-//     { id: "w-words" },
-//     { id: "x-words" },
-//     { id: "y-words" },
-//     { id: "z-words" },
-//   ];
-// }
 
 export async function generateSitemaps() {
   const arrayOfObjects = [];
