@@ -105,7 +105,7 @@ function printWordsByAlphabetByLength(groupedWords) {
 }
 
 const Page = async () => {
-  await getWords();
+  // await getWords();
 
 //   let groupedWords = groupWordsByAlphabet(finalWords);
 

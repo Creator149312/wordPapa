@@ -107,7 +107,7 @@ const Page = async () => {
 
   return (
     <div>
-        { printWordsByAlphabetByLength(groupedWords)}
+        {/* { printWordsByAlphabetByLength(groupedWords)} */}
     </div>
   );
 };

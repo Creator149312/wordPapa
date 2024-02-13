@@ -112,28 +112,29 @@ const findInvalidandValidWords = async (allWords) => {
 };
 
 const Page = async () => {
-  let getXWords = await getWords(String.fromCharCode(109));
+  // let getXWords = await getWords(String.fromCharCode(109));
 
-  console.log("Total Words", getXWords.length);
+  // console.log("Total Words", getXWords.length);
 
-  await iterateOverChunks(getXWords);
+  // await iterateOverChunks(getXWords);
 
-  console.log("Invalid Words = ", finalInValidWords.length);
-  console.log("Valid Words", finalValidWords.length);
+  // console.log("Invalid Words = ", finalInValidWords.length);
+  // console.log("Valid Words", finalValidWords.length);
 
-  return (
-    <div>
-      <p>All Valid Words</p>
-      {finalValidWords.map((word, index) => {
-        return <li key={index}>{word}</li>;
-      })}
-      <br />
-      <p>All InValid Words</p>
-      {finalInValidWords.map((word, index) => {
-        return <li key={index}>{word}</li>;
-      })}
-    </div>
-  );
+  // return (
+  //   <div>
+  //     <p>All Valid Words</p>
+  //     {finalValidWords.map((word, index) => {
+  //       return <li key={index}>{word}</li>;
+  //     })}
+  //     <br />
+  //     <p>All InValid Words</p>
+  //     {finalInValidWords.map((word, index) => {
+  //       return <li key={index}>{word}</li>;
+  //     })}
+  //   </div>
+  // );
+  return <></>
 };
 
 export default Page;

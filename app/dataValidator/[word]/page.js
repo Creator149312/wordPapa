@@ -23,9 +23,10 @@ export default async function Page({ params }) {
     }
 
     return (
-      <div>
-        <h1>{word} is {rhymingWords > 0 ? 'Valid': 'Invalid'}</h1>
-      </div>
+      // <div>
+      //   <h1>{word} is {rhymingWords > 0 ? 'Valid': 'Invalid'}</h1>
+      // </div>
+      <></>
     );
   }
 

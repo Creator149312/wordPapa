@@ -102,7 +102,7 @@ export default function MyPage() {
   return (
     <div>
       <h1>Filter Words</h1>
-      <WordFilter words={words} />
+      {/* <WordFilter words={words} /> */}
     </div>
   );
 }
