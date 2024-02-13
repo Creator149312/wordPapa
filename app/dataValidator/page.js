@@ -3,7 +3,7 @@ import WordChecker from "./WordChecker";
 import { promises as fs } from "fs";
 
 const chunkSize = 200;
-const delay = 15000; // 1 minute in milliseconds
+const delay = 100; // 1 minute in milliseconds
 
 let finalInValidWords = [];
 let finalValidWords = [];
@@ -81,8 +81,6 @@ const processChunkWithDelay = async (chunk, delay) => {
     finalInValidWords.push(item);
   });
 
-  console.log("Final Valid Words = ", finalValidWords.length);
-  console.log("Final Invalid Words", finalInValidWords.length);
   // Simulating delay
   await new Promise((resolve) => setTimeout(resolve, delay));
 };
@@ -112,7 +110,7 @@ const findInvalidandValidWords = async (allWords) => {
 };
 
 const Page = async () => {
-  // let getXWords = await getWords(String.fromCharCode(109));
+  // let getXWords = await getWords("0");
 
   // console.log("Total Words", getXWords.length);
 
@@ -124,9 +122,9 @@ const Page = async () => {
   // return (
   //   <div>
   //     <p>All Valid Words</p>
-  //     {finalValidWords.map((word, index) => {
+  //     {/* {finalValidWords.map((word, index) => {
   //       return <li key={index}>{word}</li>;
-  //     })}
+  //     })}  */}
   //     <br />
   //     <p>All InValid Words</p>
   //     {finalInValidWords.map((word, index) => {
@@ -134,7 +132,7 @@ const Page = async () => {
   //     })}
   //   </div>
   // );
-  return <></>
+ 
 };
 
 export default Page;

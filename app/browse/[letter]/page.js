@@ -15,7 +15,7 @@ export async function generateMetadata({ params }, parent) {
 }
 
 async function getWords(l) {
-  const filePath = process.cwd() + "/app/browse/actualWords.txt"; // Replace with the actual path to your file.
+  const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
 
   try {
     const fileContent = await fs.readFile(filePath, "utf8");

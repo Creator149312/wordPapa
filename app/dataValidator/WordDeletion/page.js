@@ -5,13 +5,19 @@ const wordsToRemove = ["live"];
 let finalWords = [];
 async function getWords() {
   const filePath =
-    process.cwd() + "/app/dataValidator/WordDeletion/worddata.txt"; // Replace with the actual path to your file.
+    process.cwd() + "/app/dataValidator/allwordnetwords.txt"; // Replace with the actual path to your file.
+
+  const filePathforWordstoDelete =   process.cwd() + "/app/dataValidator/wordstoremove.txt";
 
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const wordsArray = fileContent.split("\n");
 
-    console.log("Total Words Read", wordsArray.length);
+    const fileContentRemove = await fs.readFile(filePathforWordstoDelete, "utf8");
+    const wordsArrayRemove = fileContentRemove.split("\n");
+
+    console.log("Total Words Rea - ", wordsArray.length);
+    console.log("Total Words to delete - ", wordsArrayRemove.length)
 
     // Extract words from each line
     const extractedWords = wordsArray.map((line) => {
@@ -19,15 +25,24 @@ async function getWords() {
       return word.trim(); // Remove leading/trailing whitespace
     });
 
+    // Extract words from delete file
+    const wordsToDelete = wordsArrayRemove.map((line) => {
+      const [word] = line.split("\t"); // Assuming words are separated by a tab character
+      return word.trim(); // Remove leading/trailing whitespace
+    });
+
     const result = extractedWords.filter(
-      (item) => !wordsToRemove.includes(item)
+      (item) => !wordsToDelete.includes(item)
     );
 
-    console.log("final list", result);
-    // // Create a new file and write the extracted words to it
-    // const creationPath =
-    //   process.cwd() + "/app/dataValidator/allwordnetwords.txt"; // Replace with the actual path to your file.
-    // fs.writeFile(creationPath, extractedWords.join("\n"), "utf8");
+    const wordsSet = new Set(result);
+    const cleanWordsArray = [...wordsSet];
+
+    console.log("Total File Length After Deletion: ", cleanWordsArray.length);
+    // Create a new file and write the extracted words to it
+    const creationPath =
+      process.cwd() + "/app/dataValidator/cleanwords.txt"; // Replace with the actual path to your file.
+    fs.writeFile(creationPath, cleanWordsArray.join("\n"), "utf8");
   } catch (error) {
     console.log(`Error reading the file: ${error.message}`);
   }
