@@ -4,7 +4,7 @@ const BASE_URL = "https://words.englishbix.com";
 /**
  * This file is used to generate multiple sitemaps
  */
-export const revalidate = 136000;
+// export const revalidate = 13600;
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
@@ -35,12 +35,41 @@ async function getWords(l) {
 }
 
 export async function generateSitemaps() {
-  const arrayOfObjects = [];
+  const arrayOfObjects = [
+    { id: 0 },
+    { id: 1 },
+    { id: 2 },
+    { id: 3 },
+    { id: 4 },
+    { id: 5 },
+    { id: 6 },
+    { id: 7 },
+    { id: 8 },
+    { id: 9 },
+    { id: 10 },
+    { id: 11 },
+    { id: 12 },
+    { id: 13 },
+    { id: 14 },
+    { id: 15 },
+    { id: 16 },
+    { id: 17 },
+    { id: 18 },
+    { id: 19 },
+    { id: 20 },
+    { id: 21 },
+    { id: 22 },
+    { id: 23 },
+    { id: 24 },
+    { id: 25 },
+    { id: 26 }
+  ]
 
-  for (let i = 0; i <= 26; i++) {
-    const obj = { id: i };
-    arrayOfObjects.push(obj);
-  }
+
+  // for (let i = 0; i <= 26; i++) {
+  //   const obj = { id: i };
+  //   arrayOfObjects.push(obj);
+  // }
 
   return arrayOfObjects;
 }
