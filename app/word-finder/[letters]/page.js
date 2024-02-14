@@ -37,7 +37,7 @@ async function getWords(letters) {
       alphabetObject[letters[i]]++;
     }
 
-    const questionMarks = (letters.match(/\?/g) || []).length;
+    const questionMarks = (letters.match(/\_/g) || []).length;
 
     let matchingWords = [];
 
