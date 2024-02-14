@@ -3,6 +3,7 @@
 import commonLinks from "@utils/commonLinks";
 import { useState, useEffect } from "react";
 import { usePathname } from 'next/navigation'
+import { encode } from "next-auth/jwt";
 
 //usage of SessionStore is causing website to load slowly
 const SearchBarNav = () => {
@@ -57,14 +58,15 @@ const SearchBarNav = () => {
       let encodedWord = "";
 
       try {
-        encodedWord = decodeURIComponent(word.toLowerCase());
+        encodedWord = decodeURIComponent(word.toLowerCase().replace(/\?/g, '_'));
+     
       } catch (error) {
         // Handle the error
         // You might choose to assign a default value in case of an error
         encodedWord = "";
       }
 
-      window.location.href = selectedOption + encodedWord + "/";
+      window.location.href = selectedOption + encodedWord;
     }
   };
 
