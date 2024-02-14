@@ -35,13 +35,13 @@ async function getWords(l) {
 }
 
 export default async function sitemap(parent) {
-    console.log(parent);
-    const products = await getWords(params.letter);
+    // console.log(parent);
+    // const products = await getWords(params.letter);
 
-    console.log("Total Products found - ", products.length);
+    // console.log("Total Products found - ", products.length);
 
-    return products.map((product) => ({
-        url: `${BASE_URL}/define/${product}`.trim(),
-        lastModified: new Date(),
-    }));
+    // return products.map((product) => ({
+    //     url: `${BASE_URL}/define/${product}`.trim(),
+    //     lastModified: new Date(),
+    // }));
 }
