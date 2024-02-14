@@ -130,7 +130,7 @@ async function getWords(letters) {
     //     }
     //   }
 
-    return matchingWords;
+    return matchingWords.filter(str => str.length > 1);
   } catch (error) {
     return {
       notFound: true,
