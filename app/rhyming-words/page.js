@@ -1,5 +1,4 @@
 import MostSearchedWordsList from "@components/MostSearchedWordsList";
-import RhymingWords from "./RhymingWords";
 import commonLinks from "@utils/commonLinks";
 
 /**
@@ -35,7 +34,7 @@ const mostSearchedWordsList = [
 export const metadata = {
   title: ptitle,
   description:
-    "Use Rhyming Dictionary Words to find delightful array of words and phrases that rhyme with your word. Use it craft engaging poems, songs, and activities that inspire kids to discover the beauty of language.",
+    "Use Rhyming Dictionary to find delightful array of words and phrases that rhyme with your word. Use it craft engaging poems, songs, and activities that inspire kids to discover the beauty of language.",
 };
 
 function RhymingWordsPage() {
