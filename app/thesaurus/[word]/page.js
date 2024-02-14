@@ -39,15 +39,19 @@ export default async function Page({ params }) {
     // const synresponse = await axios.get(
     //   `https://api.datamuse.com/words?rel_syn=${word}`
     // );
+    const allData = response.data;
 
-    AllRelatedWords = response.data.map((item) => item.word);
-    const synresponse = response.data.filter(obj => obj.tags.includes('syn'));
+    AllRelatedWords = allData.map((item) => item.word);
+    const synresponse = allData.filter((obj) => {
+      if (obj.hasOwnProperty("tags")) return obj.tags.includes("syn");
+    });
+
     // console.log(response.data);
     // console.log(synresponse);
     // console.log(antresponse.data);
 
-    synonymWords = synresponse.map(item => item.word);
-    antonymWords = antresponse.data.map(item => item.word);
+    synonymWords = synresponse.map((item) => item.word);
+    antonymWords = antresponse.data.map((item) => item.word);
   } catch (error) {
     return {
       notFound: true,
@@ -58,10 +62,14 @@ export default async function Page({ params }) {
     <div>
       <h1>{titleStr}</h1>
       <p>
-        Following is a list of {AllRelatedWords.length} synonym words and phrases
-        that are related to {word}:
+        Following is a list of {AllRelatedWords.length} synonym words and
+        phrases that are related to {word}:
       </p>
-      <ToggleView allWords={AllRelatedWords} synWords={synonymWords} antWords={antonymWords}/>
+      <ToggleView
+        allWords={AllRelatedWords}
+        synWords={synonymWords}
+        antWords={antonymWords}
+      />
       {AllRelatedWords.length > 0 && (
         <RelLinksonPageBottom word={word} pos={null} />
       )}
