@@ -3,7 +3,7 @@ import commonLinks from "@utils/commonLinks";
 import { usePathname } from 'next/navigation';
 
 function displayLinK(link, AnchorText) {
-    return <a className="m-2 top-pageLinks" href={link}>{AnchorText}</a>;
+    return <a className="m-2 bottom-pageLinks" href={link}>{AnchorText}</a>;
   }  
 
 const RelLinksonPageBottom = ({ word, pos, isCompound}) => {

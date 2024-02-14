@@ -560,6 +560,10 @@ body {
   /* Add transition effects */
 }
 
+.custom-button-gray{
+  background-color: #888888;
+}
+
 .custom-red-button{
   background-color: red;
 }
@@ -884,6 +888,21 @@ li {
   /* Card shadow */
   cursor: pointer;
 }
+
+.bottom-pageLinks {
+  font-size: large;
+  padding: 10px;
+  margin: 5px;
+  background-color: #75c32c;
+  display: inline-block;
+  text-align: center;
+  color: whitesmoke;
+  line-height: 0.75;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+  /* Card shadow */
+  cursor: pointer;
+}
+
 
 .ipa {
   font-size: 18px;

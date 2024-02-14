@@ -11,7 +11,7 @@ const DataFilterDisplay = ({words}) => {
 
   return (
     <div>
-      <div>
+      <div >
         <AdvancedFilter
           startsWith={startsWith}
           handleStartsWith={setStartsWith}
