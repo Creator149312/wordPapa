@@ -4,7 +4,10 @@ const BASE_URL = "https://words.englishbix.com";
 /**
  * This file is used to generate multiple sitemaps
  */
-export const revalidate = 0;
+
+//Opting out of Full Route Cache, or in other words, dynamically render components for every incoming request, by:
+//Using the dynamic = 'force-dynamic' or revalidate = 0 route segment
+export const revalidate = 0; 
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
@@ -64,12 +67,6 @@ export async function generateSitemaps() {
     { id: 25 },
     { id: 26 }
   ]
-
-
-  // for (let i = 0; i <= 26; i++) {
-  //   const obj = { id: i };
-  //   arrayOfObjects.push(obj);
-  // }
 
   return arrayOfObjects;
 }
