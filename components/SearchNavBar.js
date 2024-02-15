@@ -10,14 +10,42 @@ const SearchBarNav = () => {
   const [word, setWord] = useState("");
   const pathname = usePathname();
   const [inputError, setInputError] = useState(false);
+  const [placeholder, setPlaceHolder] = useState(
+    "Enter Word to Find Definitions"
+  );
 
+  //add placeholder key also in this
   const urlOptions = [
-    { value: commonLinks.definition, label: "Word Dictionary" },
-    { value: commonLinks.adjectives, label: "Find Adjectives" },
-    { value: commonLinks.rhyming, label: "Find Rhyming Words" },
-    { value: commonLinks.thesaurus, label: "Thesaurus" },
-    { value: commonLinks.syllables, label: "Count Syllables in" },
-    { value: commonLinks.wordfinder, label: "Word Finder" },
+    {
+      value: commonLinks.definition,
+      label: "Word Dictionary",
+      placeholder: "Enter Word to Find Definitions",
+    },
+    {
+      value: commonLinks.wordfinder,
+      label: "Word Finder",
+      placeholder: "Enter Letters to Unscramble",
+    },
+    {
+      value: commonLinks.thesaurus,
+      label: "Thesaurus",
+      placeholder: "Enter Word to Find Synonyms",
+    },
+    {
+      value: commonLinks.rhyming,
+      label: "Rhyming Dictionary",
+      placeholder: "Enter Word to Find Rhyming Words",
+    },
+    {
+      value: commonLinks.syllables,
+      label: "Syllable Counter",
+      placeholder: "Enter Word to Count Syllables",
+    },
+    {
+      value: commonLinks.adjectives,
+      label: "Adjectives Finder",
+      placeholder: "Enter Word to Find Adjectives",
+    },
   ];
 
   function checkOptionInSearch(obj, stringA) {
@@ -31,6 +59,14 @@ const SearchBarNav = () => {
     return false; // No match found
   }
 
+  function findPlaceholder(selectedValue) {
+    for (let i = 0; i < urlOptions.length; i++) {
+      if (urlOptions[i].value === selectedValue) {
+        setPlaceHolder(urlOptions[i].placeholder);
+      }
+    }
+  }
+
   // set selected Option based on page URL after page has loaded
   useEffect(() => {
     let path = pathname.split("/")[1];
@@ -41,6 +77,8 @@ const SearchBarNav = () => {
     if (path != "" && ifOptionInSearchBar) {
       setSelectedOption(`/${path}/`);
     }
+
+    findPlaceholder(`/${path}/`);
   }, [pathname]);
 
   //this is used to facilitate Enter key press
@@ -55,6 +93,7 @@ const SearchBarNav = () => {
   const handleOptionChange = (e) => {
     const value = e.target.value;
     setSelectedOption(value);
+    findPlaceholder(value);
   };
 
   const handleLoadUrl = () => {
@@ -85,9 +124,19 @@ const SearchBarNav = () => {
     if (input.length > 0) {
       // Check if the input matches the regular expression
       if (regex.test(input)) {
+        if (input.includes("?")) {
+          const questionMarks = (input.match(/\?/g) || []).length;
+          if (questionMarks <= 3) {
+            return input;
+          } else {
+            // return "Only 3 Wildcards are allowed";
+            return null;
+          }
+        }
         return input; // Return the input if it's valid
       } else {
-        return null; // Return null if the input is invalid
+        //  return "Enter a Valid Word"; // Return null if the input is invalid
+        return null;
       }
     }
   }
@@ -114,7 +163,7 @@ const SearchBarNav = () => {
               : "input-xlg search-input"
           }
           type="text"
-          placeholder="Type Your Word Here..."
+          placeholder={placeholder}
           onChange={(e) => {
             let isInputGood = sanitizeInput(e.target.value);
             if (isInputGood !== null) {
