@@ -29,7 +29,7 @@ const SyllableFinder = () => {
       setLoading(true);
       setError("");
 
-      if(countWords(text) > 100){
+      if(await countWords(text) > 100){
         setError("Max: 100 words are allowed.");
         return;
       }

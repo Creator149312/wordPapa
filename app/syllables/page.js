@@ -29,7 +29,7 @@ function SyllableCounterPage() {
                 <h1 className="text-center">
                   Syllable Counter - Count Number of Syllables in Word
                 </h1>
-                <SyllableFinder />
+                {/* <SyllableFinder /> */}
                 <p>
                   <strong>Syllable Counter</strong> is a an online tool designed
                   to determine the count of syllables in a word or sentence.
@@ -63,12 +63,12 @@ function SyllableCounterPage() {
                   indicators to further aid in language comprehension.
                 </p>
                 <div className="m-2 p-2">
-                  {/* <MostSearchedWordsList
+                  <MostSearchedWordsList
                     wordList={mostSearchedWordsList}
                     preText={"count syllables in "}
                     postText={""}
                     slug={commonLinks.syllables}
-                  /> */}
+                  />
                 </div>
               </div>
             </div>
