@@ -8,11 +8,6 @@ const SyllableFinder = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Function to handle errors
-  const handleError = (errorMsg) => {
-    setError(errorMsg);
-  };
-
   function countWords(text) {
     // Remove leading and trailing white spaces
     text = text.trim();
@@ -29,7 +24,7 @@ const SyllableFinder = () => {
       setLoading(true);
       setError("");
 
-      if(await countWords(text) > 100){
+      if ((await countWords(text)) > 100) {
         setError("Max: 100 words are allowed.");
         return;
       }
@@ -64,7 +59,7 @@ const SyllableFinder = () => {
       <div>
         {loading && <p>Loading...</p>}
         {error && <p className="error"> {error}</p>}
-        {(syllableCount !== null && !error) (
+        {(syllableCount !== null && !error)(
           <div className="card text-center">
             <p>Syllable Count: {syllableCount}</p>
             <p>Number of Words: {countWords(text)}</p>
