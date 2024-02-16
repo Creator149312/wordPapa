@@ -1,9 +1,22 @@
+import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import SyllableFinder from "./SyllableFinder";
+import commonLinks from "@utils/commonLinks";
 
 export const metadata = {
   title: "Syllable Counter: Check Number of Syllables in Word",
-  description: "Use our Syllable Checker is used validate a text based on traditional structure of a syllable pattern of 5-7-5 a Haiku poems and count syllables in them."
-}
+  description:
+    "Our Syllable Counter is a tool to count number of syllables in a word or sentence, by identifying vowel sounds and syllable boundaries within a text.",
+};
+
+const mostSearchedWordsList = [
+  "very",
+  "music",
+  "reading",
+  "family",
+  "teacher",
+  "telemarketing",
+  "ladybug",
+];
 
 function SyllableCounterPage() {
   return (
@@ -13,23 +26,50 @@ function SyllableCounterPage() {
           <div>
             <div>
               <div className="m-3 p-3">
+                <h1 className="text-center">
+                  Syllable Counter - Count Number of Syllables in Word
+                </h1>
                 <SyllableFinder />
-              <p>
-        <strong>Syllable Counter</strong> is a utility that counts the number of syllables in a given word or text. Syllables are the individual units of sound in a word, and counting them can be useful for various purposes, including poetry, linguistics, and language learning.
-    </p>
-
-    <h2>Why Syllable Counter is Used?</h2>
-    <ul>
-        <li><strong>Poetry and Creative Writing:</strong> Poets and writers often use syllable counting to create rhythmic and structured compositions, such as haikus, sonnets, and limericks.</li>
-        <li><strong>Linguistics and Phonetics:</strong> Linguists and phoneticians use syllable analysis to study the phonological structure of languages and dialects.</li>
-        <li><strong>Language Learning:</strong> Language learners may use syllable counting to improve pronunciation and develop a deeper understanding of word structures in a new language.</li>
-        <li><strong>Education and Literacy:</strong> Teachers and educators use syllable counters as educational tools to teach phonetics, spelling, and word recognition to students.</li>
-        <li><strong>Content Creation:</strong> Content creators, including copywriters and marketers, use syllable counting to create catchy slogans, brand names, and memorable content.</li>
-    </ul>
-
-    <p>
-        Syllable Counter simplifies the process of counting syllables, making it a valuable tool for a wide range of applications related to language, communication, and creative expression.
-    </p>
+                <p>
+                  <strong>Syllable Counter</strong> is a an online tool designed
+                  to determine the count of syllables in a word or sentence.
+                  Counting syllables is useful for various purposes such as
+                  linguistic analysis, poetry writing, or English language
+                  learning.
+                </p>
+                <p>
+                  Our Syllable checker typically work by analyzing the phonetic
+                  structure of words. It takes into account factors such as
+                  vowel combinations, consonant clusters, and stress patterns to
+                  accurately determine syllable counts.
+                </p>
+                <p>
+                  You simply input the word or sentence you want to analyze, and
+                  the tool will provide the corresponding syllable count. Use it
+                  you can quickly assess the syllabic structure of text.
+                </p>
+                <p>
+                  You can use it to create rhythmic and structured compositions,
+                  such as haikus, sonnets, and limericks.
+                </p>
+                <p>
+                  Teachers and educators use syllable counters as educational
+                  tools to teach <a href="https://www.englishbix.com/types-of-syllables-in-english/">types of syllables</a>, phonetics, spelling, and
+                  word recognition to students.
+                </p>
+                <p>
+                  For future updates, We are working to offer additional
+                  features such as pronunciation guides or syllable stress
+                  indicators to further aid in language comprehension.
+                </p>
+                <div className="m-2 p-2">
+                  <MostSearchedWordsList
+                    wordList={mostSearchedWordsList}
+                    preText={"count syllables in "}
+                    postText={""}
+                    slug={commonLinks.syllables}
+                  />
+                </div>
               </div>
             </div>
           </div>

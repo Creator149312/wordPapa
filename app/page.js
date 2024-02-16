@@ -1,6 +1,4 @@
-import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import commonLinks from "@utils/commonLinks";
-
 
 const Page = () => {
   return (
@@ -37,7 +35,7 @@ const Page = () => {
                     </p>
                   </div>
                   <button className="p-2 custom-button medium-text">
-                 <a href={commonLinks.definition} className="medium-text font-white" > Word Dictionary <BsFillArrowRightCircleFill />
+                 <a href={commonLinks.definition} className="medium-text font-white" > Word Dictionary
                  </a> </button>
                 </div>
                 <div className="card col-6 text-center" >
@@ -46,7 +44,7 @@ const Page = () => {
                   Tool to find Adjective words to describe a Noun or Object  </p>
                   </div>
                   <button className="custom-button medium-text">
-                     <a href={commonLinks.adjectives} className="medium-text font-white">Adjectives Finder <span className="react-icons"><BsFillArrowRightCircleFill /></span>
+                     <a href={commonLinks.adjectives} className="medium-text font-white">Adjectives Finder
                      </a>  </button>
                   </div>
               </div>
@@ -58,7 +56,7 @@ const Page = () => {
                   </p>
                   </div>
                     <button className="custom-button p-2">
-                      <a href={commonLinks.thesaurus}  className="medium-text font-white">Thesaurus <span className="react-icons"><BsFillArrowRightCircleFill /></span></a>
+                      <a href={commonLinks.thesaurus}  className="medium-text font-white">Thesaurus</a>
                     </button>
                 </div>
                 <div className="card col-6 text-center">
@@ -67,7 +65,7 @@ const Page = () => {
                   rhyming words that rhyme with a word that I know</p>
                   </div>
                     <button className="custom-button p-2">
-                      <a href={commonLinks.rhyming}  className="medium-text font-white"> Rhyming Dictionary <span className="react-icons"><BsFillArrowRightCircleFill /></span></a>
+                      <a href={commonLinks.rhyming}  className="medium-text font-white"> Rhyming Dictionary </a>
                     </button>
                 </div>
               </div>
@@ -80,7 +78,7 @@ const Page = () => {
                   </div>
                   <button className="custom-button p-2">
                     <a href={commonLinks.syllables} className="medium-text font-white">
-                      Syllable Counter <span className="react-icons"><BsFillArrowRightCircleFill /></span>
+                      Syllable Counter
                     </a>
                   </button>
                 </div>
@@ -91,7 +89,7 @@ const Page = () => {
                   </div>
                   <button className="p-2 custom-button">
                     <a href="/word-finder" className="medium-text font-white">
-                      Word Finder <span className="react-icons"><BsFillArrowRightCircleFill /></span>
+                      Word Finder
                     </a>
                   </button>
                 </div>

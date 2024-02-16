@@ -27,6 +27,12 @@ const SyllableFinder = () => {
   const countSyllables = async () => {
     try {
       setLoading(true);
+      setError("");
+
+      if(countWords(text) > 100){
+        setError("Max: 100 words are allowed.");
+        return;
+      }
 
       // Make a GET request to the WordsAPI to count syllables
       const response = await axios.get(
@@ -34,18 +40,15 @@ const SyllableFinder = () => {
       );
 
       setSyllableCount(response.data[0].numSyllables);
-      setLoading(false);
     } catch (error) {
-      // console.error("Error:", error);
+      setError("Error calculating syllable count!");
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div>
-      <h1 className="text-center">
-        Syllable Counter - Count Number of Syllables in Word
-      </h1>
       <div className="input-container text-center m-2">
         <textarea
           rows="7"
@@ -60,7 +63,8 @@ const SyllableFinder = () => {
       </div>
       <div>
         {loading && <p>Loading...</p>}
-        {syllableCount !== null && (
+        {error && <p className="error"> {error}</p>}
+        {(syllableCount !== null && !error) (
           <div className="card text-center">
             <p>Syllable Count: {syllableCount}</p>
             <p>Number of Words: {countWords(text)}</p>
