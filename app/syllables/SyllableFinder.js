@@ -59,7 +59,7 @@ const SyllableFinder = () => {
       <div>
         {loading && <p>Loading...</p>}
         {error && <p className="error"> {error}</p>}
-        {(syllableCount !== null && !error)(
+        {(syllableCount !== null && !error) && (
           <div className="card text-center">
             <p>Syllable Count: {syllableCount}</p>
             <p>Number of Words: {countWords(text)}</p>
