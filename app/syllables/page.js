@@ -15,7 +15,7 @@ const mostSearchedWordsList = [
   "family",
   "teacher",
   "telemarketing",
-  "ladybug",
+  "ladybug"
 ];
 
 function SyllableCounterPage() {
@@ -63,12 +63,12 @@ function SyllableCounterPage() {
                   indicators to further aid in language comprehension.
                 </p>
                 <div className="m-2 p-2">
-                  <MostSearchedWordsList
+                  {/* <MostSearchedWordsList
                     wordList={mostSearchedWordsList}
                     preText={"count syllables in "}
                     postText={""}
                     slug={commonLinks.syllables}
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
