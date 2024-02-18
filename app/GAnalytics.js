@@ -2,7 +2,7 @@ import Script from 'next/script'
 
 export default function GAnalytics() {
   return (<>
-    <Script src="https://www.googletagmanager.com/gtag/js?id=G-X136WTSXEM" />
+    <Script src="https://www.googletagmanager.com/gtag/js?id=G-X136WTSXEM" strategy="afterInteractive"/>
       <Script id="google-analytics">
         {`
           window.dataLayer = window.dataLayer || [];

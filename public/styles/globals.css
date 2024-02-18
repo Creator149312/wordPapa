@@ -577,7 +577,7 @@ body {
   border-radius: 4px;
   /* Rounded corners */
   margin: 2px;
-  padding: 9px;
+  padding: 10px;
   /* Adjust padding as needed */
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   /* Add shadow */
@@ -586,6 +586,14 @@ body {
   transition: background-color 0.3s, box-shadow 0.3s;
   /* Add transition effects */
   display: inline-block;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .custom-button-small{
+    padding: 12px; 
+    margin: 3px;
+  }
 }
 
 /* Hover effect - change background color and shadow on hover */
