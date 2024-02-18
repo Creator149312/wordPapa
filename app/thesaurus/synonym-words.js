@@ -1438,6 +1438,7 @@ const synonymWordsArray = [
   "finally in an essay",
   "financial",
   "find",
+  "finder",
   "find out",
   "find out information",
   "findand",

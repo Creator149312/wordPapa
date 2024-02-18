@@ -17,12 +17,14 @@ function WordFinderPage() {
               Word Finder is a powerful tool that helps unscramble jumbled
               letters and find all the words you can form with given letters.
               It's super handy because it quickly sorts out the mixed-up
-              letters, saving you time and effort.
+              letters, saving you time and effort. You can even find words with
+              missing letters just use (?) in place of unknown letter as a
+              wildcard.
             </p>
             <p>
               Ever found yourself scratching your head over a mess of jumbled
-              letters, desperately trying to solve them into coherent words?
-              If so, let me introduce you to your new best friend: Word Finder!
+              letters, desperately trying to solve them into coherent words? If
+              so, let me introduce you to your new best friend: Word Finder!
               This free tool is like having a super-smart sidekick who can
               unscramble words faster than you can say "alphabet soup," saving
               you heaps of time and frustration.
@@ -34,8 +36,8 @@ function WordFinderPage() {
               filter words based on length, pattern, or even known letters, it's
               like having a Swiss army knife for wordplay at your fingertips.
               Whether you're a word nerd looking to expand your vocabulary or a
-              student trying to ace your next spelling test, Word Finder has got
-              you covered.
+              student trying to find words using given letters, Word Finder has
+              got you covered.
             </p>
             <p>
               And let's not forget about the fun factor! When you're not busy

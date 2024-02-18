@@ -1,6 +1,4 @@
-import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
-import axios from "axios";
 import { promises as fs, link } from "fs";
 
 let titleStr = "";
