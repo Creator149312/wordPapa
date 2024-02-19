@@ -1,5 +1,6 @@
+import englishUSWordsArray from "../english-wordlist";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
-import { promises as fs, link } from "fs";
+// import { promises as fs, link } from "fs";
 
 let titleStr = "";
 let ltUp = "";
@@ -19,11 +20,11 @@ export async function generateMetadata({ params }, parent) {
 let wordsWithLetters = [];
 
 async function getWords(letters) {
-  const filePath = process.cwd() + "/app/word-finder/english-wordlist.txt"; // Replace with the actual path to your file.
+  // const filePath = process.cwd() + "/app/word-finder/english-wordlist.txt"; // Replace with the actual path to your file.
 
   try {
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const linksArray = fileContent.split("\n");
+    // const fileContent = await fs.readFile(filePath, "utf8");
+    // const linksArray = fileContent.split("\n");
 
     let alphabetObject = {};
     for (let charCode = 97; charCode <= 122; charCode++) {
@@ -39,9 +40,9 @@ async function getWords(letters) {
 
     let matchingWords = [];
 
-    if (questionMarks > 0) { 
-      for (let j = 0; j < linksArray.length; j++) {
-        let word = linksArray[j];
+    if (questionMarks > 0) {
+      for (let j = 0; j < englishUSWordsArray.length; j++) {
+        let word = englishUSWordsArray[j];
 
         if (word.length <= questionMarks) {
           matchingWords.push(word);
@@ -68,8 +69,8 @@ async function getWords(letters) {
         }
       }
     } else {
-      for (let j = 0; j < linksArray.length; j++) {
-        let word = linksArray[j];
+      for (let j = 0; j < englishUSWordsArray.length; j++) {
+        let word = englishUSWordsArray[j];
 
         let sequenceObject = { ...alphabetObject };
         let isScramble = true;
@@ -85,50 +86,7 @@ async function getWords(letters) {
       }
     }
 
-    // for (let j = 0; j < linksArray.length; j++) {
-    //   let word = linksArray[j];
-    //   if (word.length > 1 && word.length <= letters.length) {
-    //       if (word.length <= questionMarks) {
-    //         matchingWords.push(word);
-    //       } else {
-    //         let matchedChars = 0;
-    //         let e = letters.split("");
-    //         for (let i = 0; i < word.length; i++) {
-    //           for (let j = 0; j < e.length; j++) {
-    //             if (e[j] === word[i]) {
-    //               matchedChars++;
-    //               //   word.splice(i, 1);
-    //               e[j] = "0";
-    //               // console.log("Word : ", word);
-    //               // console.log("Expression : ", e);
-    //             }
-    //           }
-    //         }
-
-    //         // console.log("Total Matched Chars", matchedChars);
-    //         // console.log("Final Expression", e);
-
-    //         if (matchedChars + questionMarks >= word.length) {
-    //           matchingWords.push(word);
-    //           console.log("Added Word: ", word);
-    //         }
-    //       }
-    //     } else {
-    //       let sequenceObject = { ...alphabetObject };
-    //       let isScramble = true;
-    //       for (let i = 0; i < word.length; i++) {
-    //         if (sequenceObject[word[i]] > 0) {
-    //           sequenceObject[word[i]]--;
-    //         } else {
-    //           isScramble = false;
-    //           break;
-    //         }
-    //       }
-    //       if (isScramble) matchingWords.push(word);
-    //     }
-    //   }
-
-    return matchingWords.filter(str => str.length > 1);
+    return matchingWords.filter((str) => str.length > 1);
   } catch (error) {
     return {
       notFound: true,
@@ -139,13 +97,16 @@ async function getWords(letters) {
 export default async function Page({ params }) {
   const letters = params.letters;
   wordsWithLetters = await getWords(params.letters);
+  const letterinUppercase = letters.toUpperCase();
+  // read route params
+  const pageHeading = "Unscramble " + letterinUppercase + " | Find Words with letters in " + letterinUppercase;
 
   return (
     <div>
-      <h1>{titleStr}</h1>
+      <h1>{pageHeading}</h1>
       <p>
         Following is a list of {wordsWithLetters.length} English words you can
-        form using letters {ltUp} when unscrambled.
+        form using letters {letterinUppercase} when unscrambled.
       </p>
       <DataFilterDisplay words={wordsWithLetters} />
     </div>
