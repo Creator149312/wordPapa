@@ -621,10 +621,14 @@ body {
   background-color: lightgreen;
   display: inline-block;
   text-align: center;
-  line-height: 0.75;
+  line-height: 1;
   box-shadow: 2px 3px lightgreen;
   font-family: "Belanosima", sans-serif;
   cursor: pointer;
+}
+
+.wordSpan a{
+  color: black;
 }
 
 .words-container {
@@ -661,10 +665,24 @@ body {
 p {
   line-height: 1.5;
   /* Adjust line height for proper spacing between lines */
-  margin: 10px 0;
+  margin: 24px 0;
   /* Add vertical margin to separate paragraphs */
-  hyphens: auto;
+  hyphens: none;
   /* Enable automatic hyphenation for improved word wrapping */
+}
+
+/* Styles for desktop */
+@media only screen and (min-width: 768px) {
+  p {
+    margin-bottom: 24px;
+  }
+}
+
+/* Styles for mobile */
+@media only screen and (max-width: 767px) {
+  p {
+    margin-bottom: 16px;
+  }
 }
 
 /* Styling the default link appearance */

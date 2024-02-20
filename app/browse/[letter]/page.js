@@ -6,7 +6,7 @@ let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L  = decodeURIComponent(params.letter);
   // read route params
-  titleStr = `Dictionary of Letter ${L} Words`;
+  titleStr = `Dictionary of Letter ${L.toUpperCase()} Words in English`;
   const descriptionStr = `Browse definitions and meanings of words that begin with the letter ${L} at WordPapa`;
   return {
     title: titleStr,
