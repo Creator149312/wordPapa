@@ -2,8 +2,8 @@ let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
   // read route params
-  titleStr = `The Complete List of Adjective Words in English`;
-  const descriptionStr = `Browse all 21000+ adjective words which are commonly used in English language to describe person, place or thing.`;
+  titleStr = `Adjective Dictionary: List of All Adjectives in English`;
+  const descriptionStr = `Browse the Ultimate Adjective Dictionary of 21000+ adjective words in alphabetically sorted order which are commonly used in English language to describe person, place or thing.`;
   return {
     title: titleStr,
     description: descriptionStr,
@@ -43,10 +43,10 @@ const Page = async () => {
       <div className="row">
         {/* Left side: 9-column scrollable content */}
         <div className="m-2 p-3">
-          <h1>The Complete List of Adjective Words in English</h1>
+          <h1>Adjective Dictionary: List of All Adjectives in English</h1>
           <p>
-            Welcome to the page where you can find all the describing words in
-            English. Here, you'll discover a rich collection of descriptive
+            Welcome to the adjectives dictionary page where you can find all the describing words in
+            English. Here, you'll discover a rich vocabulary of descriptive
             words that capture a myriad of sentiments and characteristics.
           </p>
           <p>
@@ -55,9 +55,8 @@ const Page = async () => {
             here.
           </p>
           <p>
-            There are around 21,000 frequently used adjective words in the
-            English language, available for describing nouns. We've organized
-            them into lists of adjectives, each starting with a specific letter.
+            There are approximately 21,000 uncommon and common adjectives in English, used to describe nouns. We've organized
+            them into sorted lists of adjectives from a to z, each starting with a specific letter.
           </p>
           {adjLinks.map((linkdata) => linkdata)}
           <p>

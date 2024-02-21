@@ -1,7 +1,6 @@
 import NOUN from "@app/browse/NOUNS";
 import Link from "next/link";
 import commonLinks from "@utils/commonLinks";
-import DataFilterDisplay from "@utils/DataFilterDisplay";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -41,12 +40,11 @@ const Page = async ({ params }) => {
         Explore the list of {words.length} nouns starting with letter {L} and
         see how they represent names of person, place, thing or concept.
       </p>
-      {/* {words.map((link, index) => (
+      {words.map((link, index) => (
         <div key={index} className="wordSpan">
           {customLink(link)}
         </div>
-      ))} */}
-       <DataFilterDisplay words={words} />
+      ))}
     </>
   );
 };

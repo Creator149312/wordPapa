@@ -2,8 +2,8 @@ let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
   // read route params
-  titleStr = `Noun Dictionary: List of All Nouns in English`;
-  const descriptionStr = `Browse all 80000+ nouns in alphabetically sorted order which are commonly used in English language for naming person, place, thing or idea.`;
+  titleStr = `The Complete List of Nouns in English - A to Z`;
+  const descriptionStr = `Browse all 80000+ nouns which are commonly used in English language for naming person, place, thing or idea.`;
   return {
     title: titleStr,
     description: descriptionStr,

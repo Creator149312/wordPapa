@@ -10,7 +10,7 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 
-const generateNounLinks = async () => {
+const generateVerbLinks = async () => {
   let nounsJsx = [];
 
   for (let i = 0; i < 26; i += 2) {
@@ -20,12 +20,12 @@ const generateNounLinks = async () => {
       <div className="row" key={i}>
         <div className="card col-6 text-center">
           <a href={`/browse/nouns/${firstChar}`}>
-            <div className="medium-text">Nouns beginning with {firstChar}</div>
+            <div className="medium-text">Verbs with Letter {firstChar}</div>
           </a>
         </div>
         <div className="card col-6 text-center">
           <a href={`/browse/nouns/${secondChar}`}>
-            <div className="medium-text">Nouns beginning with {secondChar}</div>
+            <div className="medium-text">Verbs with Letter {secondChar}</div>
           </a>
         </div>
       </div>
@@ -36,7 +36,7 @@ const generateNounLinks = async () => {
 };
 
 const Page = async () => {
-  let nounsLinks = await generateNounLinks();
+  let nounsLinks = await generateVerbLinks();
 
   return (
     <div>
