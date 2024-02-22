@@ -43,9 +43,9 @@ const Page = async () => {
       <div className="row">
         {/* Left side: 9-column scrollable content */}
         <div className="m-2 p-3">
-          <h1>The Complete List of Nouns in English from A to Z</h1>
+          <h1>Noun Dictionary: List of All Nouns in English</h1>
           <p>
-            Welcome to the page where you can find all the noun words in
+            Welcome to the noun dictionary page where you can find all the noun words in
             English from A to Z. Here, you'll explore the vast array of words that name people,
             places, things, and ideas!
           </p>
@@ -56,7 +56,7 @@ const Page = async () => {
           <p>
             There are around 80,000 plus frequently used nouns in the
             English language, available for naming. We've organized
-            them into lists of nouns, each beginning with a specific letter.
+            them into alphabetically sorted lists of nouns, each beginning with a specific letter.
           </p>
           {nounsLinks.map((linkdata) => linkdata)}
           <p>

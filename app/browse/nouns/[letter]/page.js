@@ -6,9 +6,11 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
+
+  const phraseSearch = L.length > 1 ? '' : 'Letter';
   // read route params
-  titleStr = `Nouns Starting with Letter ${L.toUpperCase()}`;
-  const descriptionStr = `Browse all nouns that begin with the letter ${L} to and use them in naming person, place or thing.`;
+  titleStr = `Nouns Starting with ${phraseSearch} ${L.toUpperCase()}`;
+  const descriptionStr = `Browse all nouns that begin with ${phraseSearch} ${L} to and see how they name a person, place or thing.`;
   return {
     title: titleStr,
     description: descriptionStr,
@@ -28,17 +30,19 @@ const Page = async ({ params }) => {
   }
 
   let L = params.letter;
+
+  const phraseSearch = L.length > 1 ? '' : 'Letter';
   const regex = /^[a-zA-Z0-9]+$/;
   let words = NOUN.filter(
     (adj) => adj.length > 1 && adj.startsWith(L) && regex.test(adj)
   );
-  let titleString = `Nouns Starting with Letter ${L.toUpperCase()}`;
+  let titleString = `Nouns Starting with ${phraseSearch} ${L.toUpperCase()}`;
 
   return (
     <>
       <h1>{titleString}</h1>
       <p>
-        Explore the list of {words.length} nouns starting with letter {L} and
+        Explore the list of {words.length} nouns starting with {phraseSearch} {L} and
         see how they represent names of person, place, thing or concept.
       </p>
       {/* {words.map((link, index) => (
