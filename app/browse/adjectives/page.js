@@ -59,6 +59,54 @@ const Page = async () => {
             them into sorted lists of adjectives from a to z, each starting with a specific letter.
           </p>
           {adjLinks.map((linkdata) => linkdata)}
+          <div className="row">
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/al`}>
+                <div className="medium-text">Adjectives that starts with al</div>
+              </a>
+            </div>
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/th`}>
+                <div className="medium-text">Adjectives that starts with th</div>
+              </a>
+            </div>
+          </div>
+          <div className="row">
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/un`}>
+                <div className="medium-text">Adjectives that starts with un</div>
+              </a>
+            </div>
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/in`}>
+                <div className="medium-text">Adjectives that starts with in</div>
+              </a>
+            </div>
+          </div>
+          <div className="row">
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/ch`}>
+                <div className="medium-text">Adjectives that starts with ch</div>
+              </a>
+            </div>
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/ab`}>
+                <div className="medium-text">Adjectives that starts with ab</div>
+              </a>
+            </div>
+          </div>
+          <div className="row">
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/de`}>
+                <div className="medium-text">Adjectives that starts with de</div>
+              </a>
+            </div>
+            <div className="card col-6 text-center">
+              <a href={`/browse/adjectives/gr`}>
+                <div className="medium-text">Adjectives that starts with gr</div>
+              </a>
+            </div>
+          </div>
           <p>
             Whether you're a writer seeking inspiration or a language
             enthusiast, this page offers an exploration of the diverse and

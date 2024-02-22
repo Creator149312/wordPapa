@@ -49,18 +49,25 @@ const Page = async () => {
             English. Here, you'll discover a rich collection of words to articulate various actions, experiences, and sentiments.
           </p>
           <p>
-            It helps people find verbs for talking about things they do, feel, and think. 
+            It helps people find verbs for talking about things they do, feel, and think.
             From verbs that denote positive actions like helping and winning, to words that
             help you convey negative actions, like hurting and struggling, you'll find them all
             here.
           </p>
           <p>
-            There are around 11,000 verbs in English language, available for describing actions. 
+            There are around 11,000 verbs in English language, available for describing actions.
             We've organized them into lists of verbs, each starting with a specific letter.
           </p>
           {verbLinks.map((linkdata) => linkdata)}
+          <div className="row">
+            <div className="card col-6 text-center">
+              <a href={`/browse/verbs/re`}>
+                <div className="medium-text">Verbs Starting with re</div>
+              </a>
+            </div>
+          </div>
           <p>
-            With this Verb dictionary, people can find the right words to say what they mean. 
+            With this Verb dictionary, people can find the right words to say what they mean.
             Whether they want to talk about happy times or tough times, this dictionary has words to help them say it clearly.
             It easy to express positive and negative ideas in clear and simple language.
           </p>
