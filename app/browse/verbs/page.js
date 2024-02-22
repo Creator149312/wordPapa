@@ -2,8 +2,8 @@ let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
   // read route params
-  titleStr = `A to Z Complete List of Verbs in English`;
-  const descriptionStr = `Browse all 11000+ verbs which are commonly used in English language to describe actions of a person, place or thing.`;
+  titleStr = `Verb Dictionary: List of All Verbs in English`;
+  const descriptionStr = `Browse Verb Dictionary of 11000+ verbs which are commonly used in English language to describe positve and negative actions of a person, place or thing.`;
   return {
     title: titleStr,
     description: descriptionStr,
@@ -19,12 +19,12 @@ const generateVerbLinks = async () => {
     nounsJsx.push(
       <div className="row" key={i}>
         <div className="card col-6 text-center">
-          <a href={`/browse/nouns/${firstChar}`}>
+          <a href={`/browse/verbs/${firstChar}`}>
             <div className="medium-text">Verbs with Letter {firstChar}</div>
           </a>
         </div>
         <div className="card col-6 text-center">
-          <a href={`/browse/nouns/${secondChar}`}>
+          <a href={`/browse/verbs/${secondChar}`}>
             <div className="medium-text">Verbs with Letter {secondChar}</div>
           </a>
         </div>
@@ -36,46 +36,33 @@ const generateVerbLinks = async () => {
 };
 
 const Page = async () => {
-  let nounsLinks = await generateVerbLinks();
+  let verbLinks = await generateVerbLinks();
 
   return (
     <div>
       <div className="row">
         {/* Left side: 9-column scrollable content */}
         <div className="m-2 p-3">
-          <h1>The Complete List of Nouns in English</h1><p>
-          Welcome to "The Complete List of Nouns in English," your definitive
-          resource for exploring the vast array of words that name people,
-          places, things, and ideas! Dive into this comprehensive catalog, where
-          you'll find nouns spanning every aspect of human experience. From
-          common objects like "table" and "chair" to abstract concepts like
-          "love" and "justice," this list encompasses the richness and diversity
-          of the English language. Whether you're a student expanding your
-          vocabulary, a writer seeking inspiration, or simply curious about
-          language, this exhaustive compilation is your gateway to understanding
-          the fundamental building blocks of communication. Embark on a journey
-          through the endless possibilities of nouns and discover the beauty of
-          linguistic expression.</p>
+          <h1>Verb Dictionary: List of All Verbs in English</h1>
           <p>
-            Welcome to the page where you can find all the describing words in
-            English. Here, you'll discover a rich collection of descriptive
-            words that capture a myriad of sentiments and characteristics.
+            Welcome to Verb Dictionary where you can find all the action words in
+            English. Here, you'll discover a rich collection of words to articulate various actions, experiences, and sentiments.
           </p>
           <p>
-            From words that show how things look, feel, or act, to words that
-            help you express your thoughts and feelings, you'll find them all
+            It helps people find verbs for talking about things they do, feel, and think. 
+            From verbs that denote positive actions like helping and winning, to words that
+            help you convey negative actions, like hurting and struggling, you'll find them all
             here.
           </p>
           <p>
-            There are around 21,000 frequently used adjective words in the
-            English language, available for describing nouns. We've organized
-            them into lists of adjectives, each starting with a specific letter.
+            There are around 11,000 verbs in English language, available for describing actions. 
+            We've organized them into lists of verbs, each starting with a specific letter.
           </p>
-          {nounsLinks.map((linkdata) => linkdata)}
+          {verbLinks.map((linkdata) => linkdata)}
           <p>
-            Whether you're a writer seeking inspiration or a language
-            enthusiast, this page offers an exploration of the diverse and
-            nuanced world of adjectives.
+            With this Verb dictionary, people can find the right words to say what they mean. 
+            Whether they want to talk about happy times or tough times, this dictionary has words to help them say it clearly.
+            It easy to express positive and negative ideas in clear and simple language.
           </p>
         </div>
       </div>

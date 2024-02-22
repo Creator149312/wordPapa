@@ -1,13 +1,16 @@
 import VERB from "@app/browse/VERBS";
 import Link from "next/link";
 import commonLinks from "@utils/commonLinks";
+import DataFilterDisplay from "@utils/DataFilterDisplay";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
+
+  const phraseSearch = L.length > 1 ? '' : 'Letter';
   // read route params
-  titleStr = `Verbs Starting with Letter ${L.toUpperCase()}`;
-  const descriptionStr = `Browse all verbs that begin with the letter ${L} to and use them in naming person, place or thing.`;
+  titleStr = `Verbs Starting with ${phraseSearch} ${L.toUpperCase()}`;
+  const descriptionStr = `Browse all verbs that begin with ${phraseSearch} ${L} to describe positive or negative actions of a noun.`;
   return {
     title: titleStr,
     description: descriptionStr,
@@ -27,24 +30,26 @@ const Page = async ({ params }) => {
   }
 
   let L = params.letter;
+
+  const phraseSearch = L.length > 1 ? '' : 'Letter';
   const regex = /^[a-zA-Z0-9]+$/;
-  let words = NOUN.filter(
+  let words = VERB.filter(
     (adj) => adj.length > 1 && adj.startsWith(L) && regex.test(adj)
   );
-  let titleString = `Nouns Starting with Letter ${L.toUpperCase()}`;
+  let titleString = `Verbs Starting with ${phraseSearch} ${L.toUpperCase()}`;
 
   return (
     <>
       <h1>{titleString}</h1>
       <p>
-        Explore the list of {words.length} nouns starting with letter {L} and
-        use them in naming person, place or thing.
+        Explore the list of {words.length} verbs starting with {phraseSearch} {L} to describe postive or negative actions of a noun.
       </p>
-      {words.map((link, index) => (
+      {/* {words.map((link, index) => (
         <div key={index} className="wordSpan">
           {customLink(link)}
         </div>
-      ))}
+      ))} */}
+       <DataFilterDisplay words={words} />
     </>
   );
 };
