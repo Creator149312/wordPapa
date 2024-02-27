@@ -51,7 +51,7 @@ const Page = async () => {
           </p>
           <p>
             From words that show how things look, feel, or act, to words that
-            help you express your thoughts and feelings, you'll find them all
+            help you <a href="https://www.englishbix.com/words-to-describe-feeling-and-emotions/">express your emotions and feelings</a>, you'll find them all
             here.
           </p>
           <p>
