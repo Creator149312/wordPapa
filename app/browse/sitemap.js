@@ -72,10 +72,10 @@ export async function generateSitemaps() {
 }
 
 export default async function sitemap({ id }) {
-  const products = await getWords(String.fromCharCode(id + 97));
+  const Fetchedwords = await getWords(String.fromCharCode(id + 97));
 
-  return products.map((product) => ({
-    url: `${BASE_URL}/define/${product}`.trim(),
+  return Fetchedwords.map((word) => ({
+    url: `${BASE_URL}/define/${word}`.trim(),
     lastModified: new Date(),
   }));
 }
