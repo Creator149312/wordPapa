@@ -9,7 +9,7 @@ export async function generateMetadata({ params }, parent) {
 
   const phraseSearch = L.length > 1 ? '' : 'Letter';
   // read route params
-  titleStr = `Nouns Starting with ${phraseSearch} ${L.toUpperCase()}`;
+  titleStr = `Nouns Ending with ${phraseSearch} ${L.toUpperCase()}`;
   const descriptionStr = `Browse all singular and plural nouns that end with ${phraseSearch} ${L} to and see how they name a person, place or thing.`;
   return {
     title: titleStr,
