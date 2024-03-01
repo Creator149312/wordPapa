@@ -7,6 +7,17 @@ import Link from "next/link";
 * this file will include browsing of all words like nouns, adjectives, adverbs
 */
 
+export async function generateMetadata({ params }, parent) {
+  // read route params
+  const titleStr = `WordPapa English Dictionaries`;
+  const descriptionStr = `Browse the Ultimate List of Dictionaries in English to find the words you want.`;
+  return {
+    title: titleStr,
+    description: descriptionStr,
+  };
+}
+
+
 const Page = async () => {
 
   const working = false;
@@ -23,9 +34,10 @@ const Page = async () => {
                   <h1 className="mb-3">
                     WordPapa English Dictionaries
                   </h1>
-                  <p>Ever wondered what kind of word that is? Explore the building blocks of language and master the different parts of speech! Dive into the world of nouns, verbs, adjectives, adverbs, and more.
-                    Find definitions, examples, and fun exercises to strengthen your vocabulary and become a confident communicator.
+                  <p>Ever wondered what kind of word that is? Explore the building blocks of language and master the different parts of speech! 
                   </p>
+                  <p>
+                    This page is your one-stop shop for exploring the rich tapestry of the English language! Dive into separate dictionaries dedicated to adjectives, adverbs, nouns, and verbs, your essential tools for crafting vibrant and expressive sentences.</p>
                 </div>
                 <div className="row">
                   <div className="card col-6 text-center">
@@ -50,21 +62,20 @@ const Page = async () => {
                   <div className="card col-6 text-center" >
                     <div className="m-2 p-2">
                       <p>
-                        Explore 80000+ Nouns in English </p>
+                        Explore 80000+ Noun words in English language</p>
                     </div>
                     <button className="custom-button medium-text">
                       <a href="/browse/nouns" className="medium-text font-white">Noun Dictionary
                       </a></button>
                   </div>
                   <div className="card col-6 text-center" >
-                    <div className="m-2">
+                    <div className="m-2 p-2">
                       <p>
-                        Explore 21000+ Adjective words in English
-                      </p>
+                        Explore 21000+ Adjective words in English </p>
                     </div>
-                    <button className="custom-button p-2">
-                      <a href="/browse/adjectives" className="medium-text font-white">Adjectives Dictionary </a>
-                    </button>
+                    <button className="custom-button medium-text">
+                      <a href="/browse/adjectives" className="medium-text font-white">Adjectives Dictionary
+                      </a></button>
                   </div>
                 </div>
                 <div className="row">

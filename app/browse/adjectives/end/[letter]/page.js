@@ -42,11 +42,6 @@ const Page = async ({ params }) => {
         Explore the list of {words.length} positive and negative adjective words
         ending with {phraseSearch} {L} to describe person, place or thing.
       </p>
-      {/* {words.map((link, index) => (
-        <div key={index} className="wordSpan">
-          {customLink(link)}
-        </div>
-      ))} */}
       <DataFilterDisplay words={words} />
     </>
   );

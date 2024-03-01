@@ -35,8 +35,35 @@ const generateAdjectiveLinks = async () => {
   return adjJsx;
 };
 
+const generateAdjectiveEndingLinks = async () => {
+  let adjJsx = [];
+  let endingPhrases = ["y", "ly", "ful", "less", "e", "a", "al", "er"];
+
+  for (let i = 0; i < endingPhrases.length; i += 2) {
+    let firstChar = endingPhrases[i];
+    let secondChar = endingPhrases[i + 1];
+    adjJsx.push(
+      <div className="row" key={i}>
+        <div className="card col-6 text-center">
+          <a href={`/browse/adjectives/end/${firstChar}`}>
+            <div className="medium-text">Adjectives Ending with {firstChar}</div>
+          </a>
+        </div>
+        <div className="card col-6 text-center">
+          <a href={`/browse/adjectives/end/${secondChar}`}>
+            <div className="medium-text">Adjectives Ending with {secondChar}</div>
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return adjJsx;
+};
+
 const Page = async () => {
   let adjLinks = await generateAdjectiveLinks();
+  let adjEndingLinks = await generateAdjectiveEndingLinks();
 
   return (
     <div>
@@ -55,9 +82,11 @@ const Page = async () => {
             here.
           </p>
           <p>
-            There are approximately 21,000 uncommon and common adjectives in English, used to describe nouns. We've organized
-            them into sorted lists of adjectives from a to z, each starting with a specific letter.
+            There are approximately 21,000 uncommon and common adjectives in English, used to describe nouns.
           </p>
+          <h2>Adjectives the Start With </h2>
+          <p> We've organized
+            them into sorted lists of adjectives from a to z, each starting with a specific letter or group of letters.</p>
           {adjLinks.map((linkdata) => linkdata)}
           <div className="row">
             <div className="card col-6 text-center">
@@ -107,10 +136,12 @@ const Page = async () => {
               </a>
             </div>
           </div>
+          <h2>Adjectives that End With</h2>
+          <p> The following lists offer a glimpse into the vocabulary of adjective words each ending with the letter or sequence of letters.</p>
+          {adjEndingLinks.map((linkdata) => linkdata)}
           <p>
             Whether you're a writer seeking inspiration or a language
-            enthusiast, this page offers an exploration of the diverse and
-            nuanced world of adjectives.
+            enthusiast, this page offers an a spectrum of words to describe and enhance your nouns, painting vivid pictures with words that express quality, size, shape, and more.
           </p>
         </div>
       </div>

@@ -10,7 +10,7 @@ export async function generateMetadata({ params }, parent) {
   const phraseSearch = L.length > 1 ? '' : 'Letter';
   // read route params
   titleStr = `Nouns Starting with ${phraseSearch} ${L.toUpperCase()}`;
-  const descriptionStr = `Browse all nouns that end with ${phraseSearch} ${L} to and see how they name a person, place or thing.`;
+  const descriptionStr = `Browse all singular and plural nouns that end with ${phraseSearch} ${L} to and see how they name a person, place or thing.`;
   return {
     title: titleStr,
     description: descriptionStr,
@@ -42,14 +42,9 @@ const Page = async ({ params }) => {
     <>
       <h1>{titleString}</h1>
       <p>
-        Explore the list of {words.length} nouns ending with {phraseSearch} {L} and
+        Explore the list of {words.length} singular and plural nouns ending with {phraseSearch} {L} and
         see how they represent names of person, place, thing or concept.
       </p>
-      {/* {words.map((link, index) => (
-        <div key={index} className="wordSpan">
-          {customLink(link)}
-        </div>
-      ))} */}
        <DataFilterDisplay words={words} />
     </>
   );

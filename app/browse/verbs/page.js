@@ -35,8 +35,35 @@ const generateVerbLinks = async () => {
   return nounsJsx;
 };
 
+const generateVerbEndingLinks = async () => {
+  let nounsJsx = [];
+  let endingPhrases = ["ed", "ch", "sh", "e", "s", "y", "x", "o", "z", "ee", "d", "en", "es", "ie", "ss", "ch", "ing", "ir"];
+
+  for (let i = 0; i < endingPhrases.length; i += 2) {
+    let firstChar = endingPhrases[i];
+    let secondChar = endingPhrases[i + 1];
+    nounsJsx.push(
+      <div className="row" key={i}>
+        <div className="card col-6 text-center">
+          <a href={`/browse/verbs/end/${firstChar}`}>
+            <div className="medium-text">Verbs Ending with {firstChar}</div>
+          </a>
+        </div>
+        <div className="card col-6 text-center">
+          <a href={`/browse/verbs/end/${secondChar}`}>
+            <div className="medium-text">Verbs Ending with {secondChar}</div>
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return nounsJsx;
+};
+
 const Page = async () => {
   let verbLinks = await generateVerbLinks();
+  let verbEndingLinks = await generateVerbEndingLinks();
 
   return (
     <div>
@@ -52,12 +79,14 @@ const Page = async () => {
             It helps people find verbs for talking about things they do, feel, and think.
             From verbs that denote positive actions like helping and winning, to words that
             help you convey negative actions, like hurting and struggling, you'll find them all
-            here.
+            here to breathe life into your sentences.
           </p>
           <p>
             There are around 11,000 verbs in English language, available for describing actions.
-            We've organized them into lists of verbs, each starting with a specific letter.
           </p>
+          <h2>Verbs that Begin With</h2>
+          <p>
+            We've organized them into alphabetically sorted lists of verbs, each starting with a specific letter or group of letters.</p>
           {verbLinks.map((linkdata) => linkdata)}
           <div className="row">
             <div className="card col-6 text-center">
@@ -66,10 +95,11 @@ const Page = async () => {
               </a>
             </div>
           </div>
+          <h2>Verbs that End With</h2>
+          <p>The following lists offer a glimpse into the vocabulary of verbs that end with the letter or sequence of letters.</p>
+          {verbEndingLinks.map((linkdata) => linkdata)}
           <p>
-            With this Verb dictionary, people can find the right words to say what they mean.
-            Whether they want to talk about happy times or tough times, this dictionary has words to help them say it clearly.
-            It easy to express positive and negative ideas in clear and simple language.
+            With this Verb dictionary, people can find the wealth of verbs to express actions, states of being, and occurrences.
           </p>
         </div>
       </div>

@@ -35,8 +35,35 @@ const generateNounLinks = async () => {
   return nounsJsx;
 };
 
+const generateNounEndLinks = async () => {
+  let nounsJsx = [];
+  let endingPhrases = ["o", "s", "f", "z", "fe", "ment", "ss", "ies", "sh", "ing", "us", "y", "es", "ves"]
+
+  for (let i = 0; i < endingPhrases.length; i += 2) {
+    let firstChar = endingPhrases[i];
+    let secondChar = endingPhrases [i + 1];
+    nounsJsx.push(
+      <div className="row" key={i}>
+        <div className="card col-6 text-center">
+          <a href={`/browse/nouns/end/${firstChar}`}>
+            <div className="medium-text">Nouns Ending with {firstChar}</div>
+          </a>
+        </div>
+        <div className="card col-6 text-center">
+          <a href={`/browse/nouns/end/${secondChar}`}>
+            <div className="medium-text">Nouns Ending with {secondChar}</div>
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return nounsJsx;
+};
+
 const Page = async () => {
   let nounsLinks = await generateNounLinks();
+  let nounsEndLinks = await generateNounEndLinks();
 
   return (
     <div>
@@ -55,10 +82,15 @@ const Page = async () => {
           </p>
           <p>
             There are around 80,000 plus frequently used nouns in the
-            English language, available for naming. We've organized
-            them into alphabetically sorted lists of nouns, each beginning with a specific letter.
+            English language, available for naming.
           </p>
+          <h2>Nouns that Begin With</h2>
+          <p>We've organized
+            them into alphabetically sorted lists of nouns, each beginning with a specific letter or group of letters.</p>
           {nounsLinks.map((linkdata) => linkdata)}
+          <h2>Nouns that End With</h2>
+          <p>The following lists offer a glimpse into the diverse vocabulary of noun words that end with the letter or sequence of letters.</p>
+          {nounsEndLinks.map((linkdata) => linkdata)}
           <p>
             Whether you're a student expanding your vocabulary, a writer seeking inspiration, this exhaustive noun compilation gives you endless possibilities of naming person, place or thing and discover the beauty of
             linguistic expression.
