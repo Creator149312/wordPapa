@@ -1,13 +1,15 @@
-import NOUN from "@app/browse/NOUNS";
+import ALLCLEANWORDS from "@app/browse/ALLCLEANWORDS";
 import Link from "next/link";
 import commonLinks from "@utils/commonLinks";
+import DataFilterDisplay from "@utils/DataFilterDisplay";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
+  const phraseSearch = L.length > 1 ? '' : 'Letter';
   // read route params
-  titleStr = `Nouns Starting with Letter ${L.toUpperCase()}`;
-  const descriptionStr = `Browse all nouns that begin with the letter ${L} to and use them in naming person, place or thing.`;
+  titleStr = `Words Starting with ${phraseSearch} ${L.toUpperCase()} in English `;
+  const descriptionStr = `Browse all English words that begin with ${phraseSearch} ${L} as a prefix`;
   return {
     title: titleStr,
     description: descriptionStr,
@@ -19,6 +21,7 @@ const Page = async ({ params }) => {
     let wordwithHyphens = word.toLowerCase().replace(/ /g, "-");
     let slug = commonLinks.definition + wordwithHyphens;
 
+
     return (
       <Link href={slug} target="_blank" rel="noopener noreferrer">
         {word}
@@ -27,24 +30,19 @@ const Page = async ({ params }) => {
   }
 
   let L = params.letter;
+  const phraseSearch = L.length > 1 ? '' : 'Letter';
   const regex = /^[a-zA-Z0-9]+$/;
-  let words = NOUN.filter(
-    (adj) => adj.length > 1 && adj.startsWith(L) && regex.test(adj)
-  );
-  let titleString = `Nouns Starting with Letter ${L.toUpperCase()}`;
+  let words = ALLCLEANWORDS.filter((w) => (w.length > 1 && w.startsWith(L) && regex.test(w)));
+  let titleString = `Words Starting with ${phraseSearch} ${L.toUpperCase()} in English`;
 
   return (
     <>
       <h1>{titleString}</h1>
       <p>
-        Explore the list of {words.length} nouns starting with letter {L} and
-        see how they represent names of person, place, thing or concept.
+        Explore the list of {words.length} English words
+        starting with {phraseSearch} {L} as a prefix.
       </p>
-      {words.map((link, index) => (
-        <div key={index} className="wordSpan">
-          {customLink(link)}
-        </div>
-      ))}
+      <DataFilterDisplay words={words} />
     </>
   );
 };

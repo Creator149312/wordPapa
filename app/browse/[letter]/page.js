@@ -1,16 +1,25 @@
 import React from "react";
 import LinkPagination from "../LinkPagination";
+import { redirect } from "next/navigation";
 import { promises as fs } from "fs";
 
 let titleStr = "";
+
+function checkLengthandLetter(l) {
+  return (l.length === 1 && (l.charCodeAt(0) >= 97 && l.charCodeAt(0) <= 122));
+}
+
 export async function generateMetadata({ params }, parent) {
-  const L  = decodeURIComponent(params.letter);
-  // read route params
-  titleStr = `Dictionary of Letter ${L.toUpperCase()} Words in English`;
-  const descriptionStr = `Browse definitions and meanings of words that begin with the letter ${L} at WordPapa`;
-  return {
-    title: titleStr,
-    description: descriptionStr ,
+  const L = decodeURIComponent(params.letter);
+
+  if (checkLengthandLetter(L)) {
+    // read route params
+    titleStr = `Letter ${L.toUpperCase()} Dictionary`;
+    const descriptionStr = `Browse letter ${L} Dictionary at WordPapa`;
+    return {
+      title: titleStr,
+      description: descriptionStr,
+    }
   }
 }
 
@@ -39,19 +48,23 @@ async function getWords(l) {
 }
 
 const Page = async ({ params }) => {
-  let words = await getWords(params.letter);
+  if (checkLengthandLetter(params.letter)) {
+    let words = await getWords(params.letter);
 
-  return (
-    <div>
-    <h1>{titleStr}</h1>
-    <LinkPagination
-      links={words}
-      linksPerPage={100}
-      pagenumber={1}
-      letter={params.letter}
-    />
-    </div>
-  );
+    return (
+      <div>
+        <h1>{titleStr}</h1>
+        <LinkPagination
+          links={words}
+          linksPerPage={100}
+          pagenumber={1}
+          letter={params.letter}
+        />
+      </div>
+    )
+  } else {
+    redirect("/browse");
+  };
 };
 
 export default Page;
