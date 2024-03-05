@@ -35,7 +35,7 @@ const Page = () => {
                     </p>
                   </div>
                   <button className="p-2 custom-button medium-text">
-                 <a href={commonLinks.definition} className="medium-text font-white" > Word Dictionary
+                 <a href="/define" className="medium-text font-white" > Word Dictionary
                  </a> </button>
                 </div>
                 <div className="card col-6 text-center" >
@@ -44,7 +44,7 @@ const Page = () => {
                   Tool to find Adjective words to describe a Noun or Object  </p>
                   </div>
                   <button className="custom-button medium-text">
-                     <a href={commonLinks.adjectives} className="medium-text font-white">Adjectives Finder
+                     <a href="/adjectives" className="medium-text font-white">Adjectives Finder
                      </a>  </button>
                   </div>
               </div>
@@ -56,7 +56,7 @@ const Page = () => {
                   </p>
                   </div>
                     <button className="custom-button p-2">
-                      <a href={commonLinks.thesaurus}  className="medium-text font-white">Thesaurus</a>
+                      <a href="/thesaurus"  className="medium-text font-white">Thesaurus</a>
                     </button>
                 </div>
                 <div className="card col-6 text-center">
@@ -65,7 +65,7 @@ const Page = () => {
                   rhyming words that rhyme with a word that I know</p>
                   </div>
                     <button className="custom-button p-2">
-                      <a href={commonLinks.rhyming}  className="medium-text font-white"> Rhyming Dictionary </a>
+                      <a href="/rhyming-words"  className="medium-text font-white"> Rhyming Dictionary </a>
                     </button>
                 </div>
               </div>
@@ -77,7 +77,7 @@ const Page = () => {
                   </p>
                   </div>
                   <button className="custom-button p-2">
-                    <a href={commonLinks.syllables} className="medium-text font-white">
+                    <a href="/syllables" className="medium-text font-white">
                       Syllable Counter
                     </a>
                   </button>
