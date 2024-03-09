@@ -6,7 +6,7 @@ import { promises as fs } from "fs";
 let titleStr = "";
 
 function checkLengthandLetter(l) {
-  return (l.length === 1 && (l.charCodeAt(0) >= 97 && l.charCodeAt(0) <= 122));
+  return (l.length === 1 && (l === '0' || (l.charCodeAt(0) >= 97 && l.charCodeAt(0) <= 122)));
 }
 
 export async function generateMetadata({ params }, parent) {
