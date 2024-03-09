@@ -33,11 +33,11 @@ function Navbar() {
       <div>
         <ul className={`${styles.navMenu} ${isActive ? styles.active : ""}`}>
           <li onClick={removeActive}>
-            <a href="/thesaurus/" className={`${styles.navLink}`}>Thesaurus
+            <a href="/thesaurus" className={`${styles.navLink}`}>Thesaurus
             </a>
           </li>
           <li onClick={removeActive}>
-            <a href="/define/" className={`${styles.navLink}`}>Dictionary
+            <a href="/define" className={`${styles.navLink}`}>Dictionary
             </a>
           </li>
           <li onClick={removeActive}>
