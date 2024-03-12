@@ -28,10 +28,10 @@ async function getWords(l) {
       );
     } else {
       return linksArray.filter((word) => {
-        if (word.charAt(0) === l) {
-          if (word.includes("-") || word.includes(" ")) return false; //exclude the compound words and words with hyphes or spaces
-          else return true;
-        }
+        if (word.charAt(0) === l) { return true; }
+        //   if (word.includes("-") || word.includes(" ")) return false; //exclude the compound words and words with hyphes or spaces
+        //   else return true;
+        // }
       });
     }
   } catch (error) {

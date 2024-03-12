@@ -4,6 +4,7 @@ import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
 import { redirect } from "next/navigation";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
+import { WORDMAP } from "../WORDMAP";
 
 let titleStr = "";
 
@@ -19,11 +20,10 @@ const types = {
 
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
-  if(word.includes("-")) word = word.replace("-", " ");
+  if (word.includes("-")) word = word.replace("-", " ");
   // read route params
   titleStr =
-    word.toUpperCase()  +
-    " Definition & Meaning with Sentence Examples";
+    word.toUpperCase() + " Definition & Meaning with Sentence Examples";
   const descriptionStr =
     "Find what does " +
     params.word +
@@ -52,19 +52,37 @@ export async function generateMetadata({ params }, parent) {
 * returned data in every case
 * [{"word":"kjxluaydoaiu","score":2147483647,"tags":["query"]}]
 */
+// This is previous getDefinitions Function using axios
+// async function getDefinitions(word, iscompound) {
+//   let endpoint = "";
+//   if (iscompound) {
+//     endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
+//     const res = await axios.get(endpoint);
+//     // console.log(res.data);
+//     return res.data;
+//   } else {
+//     endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
+
+//     const res = await axios.get(endpoint);
+//     //console.log(res.data[0]);
+//     return res.data[0];
+//   }
+// }
+
 async function getDefinitions(word, iscompound) {
   let endpoint = "";
   if (iscompound) {
     endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
-    const res = await axios.get(endpoint);
-    //console.log(res.data);
-    return res.data;
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    // console.log(data);
+    return data;
   } else {
     endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
-
-    const res = await axios.get(endpoint);
-    //console.log(res.data[0]);
-    return res.data[0];
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    // console.log(data[0]);
+    return data[0];
   }
 }
 
@@ -111,27 +129,56 @@ async function getRelatedWordsUsingML(word) {
   return res.data;
 }
 
-// async function getSynonymsUsingSYN(word){
-//   const endpoint = `https://api.datamuse.com/words?rel_syn=${word}`;
-//   const res = await axios.get(endpoint);
-//   console.log("Endpoint for Synonyms: " + endpoint);
-//   console.log(res.data);
-//   return res.data === null ? [] : res.data;
-// }
+async function printRelatedWordsSection(word) {
+  //if no definitions found
+  const relatedWordsData = getRelatedWordsUsingML(word);
+
+  // Wait for the promises to resolve
+  const [relatedWords] = await Promise.all([relatedWordsData]);
+
+  if (relatedWords.length === 0 || relatedWords === null) {
+    return (
+      <>
+        <div className="card m-2">
+          <h2>We couldn't find any matches for "{word}" in the dictionary.</h2>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="card m-2">
+        <h1>Words like "{word}"</h1>
+        {/* {console.log("Related Words" + relatedWords + " is this")} */}
+        <ul className="m-2">
+          {relatedWords.map((data, index) => (
+            <li key={index}>{data.word}</li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+}
 
 export default async function WordSpecificPage({ params }) {
   let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
   //let decodedWord = word.split('-').join(' ') //This is the original word typed by User
+  let key = word.replace(/[ -]/g, "");
+  let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
 
-  let decodedWord = word;
-  //console.log("Decoded Word " + decodedWord);
+  if (word !== decodedWord) {
+    redirect("/define/" + decodedWord);
+  }
+
+  // console.log("Decoded Word = " + decodedWord);
 
   if (!word.includes(".ico")) {
-    if (!word.includes("-")) {
+    if (!(word.includes("-") || word.includes(" "))) {
       //if word is made up of only 1 set of letters without spaces or hyphes
       // Initiate both requests in parallel
       const definitionsData = getDefinitions(decodedWord, false);
-      // const wordsLike = getSynonymsUsingSYN(word);
+      // console.log("Definitions Data -", definitionsData);
 
       // Wait for the promises to resolve
       const [definitions] = await Promise.all([definitionsData]);
@@ -177,15 +224,6 @@ export default async function WordSpecificPage({ params }) {
             </div>
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
-            {/* <div className="card m-2">
-              <h1>Words like "{word}"</h1>
-              {console.log(wordsLike)}
-              <ul className="m-2">
-                {wordsLike.map((data, index) => (
-                  <li key={index}>{data.word}</li>
-                ))}
-              </ul>
-            </div> */}
           </>
         );
       } else {
@@ -223,19 +261,28 @@ export default async function WordSpecificPage({ params }) {
       }
     } else {
       // Initiate both requests in parallel
-      const wordsData = await getDefinitions(decodedWord, true);
-      const wordsDatawithSpaces = await getDefinitions(
-        decodedWord.replace(" ", "-"),
-        true
-      );
-  
+      const searchWord = decodedWord.replace(/[ -]/g, "*"); //replace all spaces and hyphes with * for searching all instances and variations
+
+      const wordsData = await getDefinitions(searchWord, true);
+      // const wordsDatawithSpaces = await getDefinitions(
+      //   decodedWord.replace(" ", "-"),
+      //   true
+      // );
+
+      // const wordsDatawithSpaces = await getDefinitions(
+      //   decodedWord.replace(/-/g, "*"),
+      //   true
+      // );
+
       // Merge arrays
-      const mergedArray = wordsData.concat(wordsDatawithSpaces);
+      // const mergedArray = wordsData.concat(wordsDatawithSpaces);
+      const mergedArray = wordsData;
 
       // Filter duplicates based on the 'id' property
-     // Use Set to remove duplicates based on object properties
-const uniqueObjects = Array.from(new Set(mergedArray.map(obj => JSON.stringify(obj))))
-.map(str => JSON.parse(str));
+      // Use Set to remove duplicates based on object properties
+      const uniqueObjects = Array.from(
+        new Set(mergedArray.map((obj) => JSON.stringify(obj)))
+      ).map((str) => JSON.parse(str));
       // Constructing a regex pattern to match the characters in the search word
       const pattern = decodedWord.replace(/[\s-]/g, "").split("").join("\\s*");
 
@@ -251,77 +298,122 @@ const uniqueObjects = Array.from(new Set(mergedArray.map(obj => JSON.stringify(o
         regex.test(dataObj.word.replace(/[\s-]/g, ""))
       );
 
-      //console.log("Data after filtration");
-      //console.log(finalMatches);
-
       let AllDataforPage = [];
       let defsForWord = [];
       let sentencesForWord = [];
       let relLinkForWord = [];
+      let doIneedCheckingforHyphenated = true;
 
-      for (let i = 0; i < finalMatches.length; i++) {
-        if (finalMatches[i].hasOwnProperty("defs")) {
-          await splitDefsbyPOS(finalMatches[i].defs);
-          defsForWord.push(
+      if (finalMatches.length > 0) {
+        for (let i = 0; i < finalMatches.length; i++) {
+          if (finalMatches[i].hasOwnProperty("defs")) {
+            await splitDefsbyPOS(finalMatches[i].defs);
+            defsForWord.push(
+              <>
+                <div className="card m-2">
+                  <div className="card-header">
+                    <h1>{finalMatches[i].word}</h1>
+                  </div>
+                  <div className="card-body">
+                    <p className="ipa">
+                      IPA:{" "}
+                      {
+                        finalMatches[i].tags[
+                          finalMatches[i].tags.length - 1
+                        ].split(":")[1]
+                      }
+                    </p>
+                    {finalMatches[i].hasOwnProperty("defHeadword") && (
+                      <p>
+                        Root Word:{" "}
+                        <Link
+                          href={finalMatches[i].defHeadword
+                            .toLowerCase()
+                            .replace(/ /g, "-")}
+                        >
+                          {finalMatches[i].defHeadword}
+                        </Link>
+                      </p>
+                    )}
+                    {/* {console.log(definitions)} */}
+                    {await displayDefs()}
+                  </div>
+                </div>
+              </>
+            );
+
+            if (relLinkForWord.length === 0) {
+              relLinkForWord.push(
+                <RelLinksOnPageTop
+                  word={finalMatches[i].word}
+                  pos={defTypes}
+                  isCompound={true}
+                />
+              );
+            } //isCompound is true if word is compound and we don't want to display related links for describing words and rhyming words
+          }
+          sentencesForWord.push(
+            <SentencesFetcher word={finalMatches[i].word} />
+          );
+
+          if (
+            doIneedCheckingforHyphenated &&
+            finalMatches[i].word === decodedWord
+          )
+            doIneedCheckingforHyphenated = false;
+        }
+
+        if (doIneedCheckingforHyphenated) {
+          // console.log("checking hyphenated...");
+          sentencesForWord.push(<SentencesFetcher word={decodedWord} />);
+        }
+
+        return (
+          <>
+            {defsForWord.map((part, index) => (
+              <div key={index}>{part}</div>
+            ))}
+            {sentencesForWord.map((sen) => (
+              <div>{sen}</div>
+            ))}
+            {relLinkForWord.map((rel) => (
+              <div>{rel}</div>
+            ))}
+          </>
+        );
+      } else {
+        //if no definitions found
+        const relatedWordsData = getRelatedWordsUsingML(word);
+
+        // Wait for the promises to resolve
+        const [relatedWords] = await Promise.all([relatedWordsData]);
+
+        if (relatedWords.length === 0 || relatedWords === null) {
+          return (
             <>
               <div className="card m-2">
-                <div className="card-header">
-                  <h2>{finalMatches[i].word}</h2>
-               
-                </div>
-                <div className="card-body">
-                  <p className="ipa">
-                    IPA:{" "}
-                    {
-                      finalMatches[i].tags[
-                        finalMatches[i].tags.length - 1
-                      ].split(":")[1]
-                    }
-                  </p>
-                  {finalMatches[i].hasOwnProperty("defHeadword") && (
-                    <p>
-                      Root Word:{" "}
-                      <Link
-                        href={finalMatches[i].defHeadword
-                          .toLowerCase()
-                          .replace(/ /g, "-")}
-                      >
-                        {finalMatches[i].defHeadword}
-                      </Link>
-                    </p>
-                  )}
-                  {/* {console.log(definitions)} */}
-                  {await displayDefs()}
-                </div>
+                <h2>
+                  We couldn't find any matches for "{word}" in the dictionary.
+                </h2>
               </div>
             </>
           );
-
-          relLinkForWord.push(
-            <RelLinksOnPageTop
-              word={finalMatches[i].word}
-              pos={defTypes}
-              isCompound={true}
-            />
-          ); //isCompound is true if word is compound and we don't want to display related links for describing words and rhyming words
         }
 
-        sentencesForWord.push(<SentencesFetcher word={finalMatches[i].word} />);
+        return (
+          <>
+            <div className="card m-2">
+              <h1>Words like "{word}"</h1>
+              {/* {console.log("Related Words" + relatedWords + " is this")} */}
+              <ul className="m-2">
+                {relatedWords.map((data, index) => (
+                  <li key={index}>{data.word}</li>
+                ))}
+              </ul>
+            </div>
+          </>
+        );
       }
-
-      return (
-        <>
-          {defsForWord.map((part, index) => (
-            <div key={index}>{part}</div>
-          ))}
-          {sentencesForWord.map((sen) => (
-            <div>{sen}</div>
-          ))}
-          {relLinkForWord.map((rel) => (
-            <div>{rel}</div>
-          ))}
-        </>
-      );
     }
   }
 }
