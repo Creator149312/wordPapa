@@ -3,13 +3,15 @@ import ALLCLEANWORDS from '@app/browse/ALLCLEANWORDS';
 //with words containing spaces and -
 const findWordsWithSameLetters = (words) => {
     const wordMap = {};
+    words.forEach((word) => {
+        const key = word.replace(/[ \-]/g, '').toLowerCase(); // Remove spaces and dashes, convert to lowercase
+          wordMap[key] = [];
+     });
 
     words.forEach((word) => {
-      if (/\s|-/.test(word)) { // Check if the word contains space or dash
+      if (!/\d/.test(word)) { //
         const key = word.replace(/[ \-]/g, '').toLowerCase(); // Remove spaces and dashes, convert to lowercase
-        if (!wordMap[key]) {
-          wordMap[key] = [];
-        }
+        if(wordMap[key])
         wordMap[key].push(word);
       }
     });

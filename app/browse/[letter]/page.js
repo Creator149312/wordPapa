@@ -5,6 +5,12 @@ import { promises as fs } from "fs";
 
 let titleStr = "";
 
+function countSpacesAndHyphens(word) {
+  const regex = /[\s-]/g;
+  const matches = word.match(regex);
+  return matches ? matches.length : 0;
+}
+
 function checkLengthandLetter(l) {
   return (l.length === 1 && (l === '0' || (l.charCodeAt(0) >= 97 && l.charCodeAt(0) <= 122)));
 }
@@ -25,21 +31,33 @@ export async function generateMetadata({ params }, parent) {
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
+  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits 
 
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const linksArray = fileContent.split("\n");
-    // console.log("Total Words = " + linksArray.length);
+    //console.log("Total Words = " + linksArray.length);
     if (l === "0") {
       return linksArray.filter(
-        (word) => !/[a-zA-Z]/.test(word.charAt(0)) === true
+        (word) => {
+          if (!/[a-zA-Z]/.test(word.charAt(0))) {
+            if (regex.test(word) && word.length > 1) {
+              //checking if word is a word or compound words with maximum of two words.
+              if (countSpacesAndHyphens(word) <= 1) return true;
+              else return false;
+            }
+          }
+        }
       );
     } else {
       return linksArray.filter((word) => {
-        if (word.charAt(0) === l) { return true;}
-        //   if (word.includes("-") || word.includes(" ")) return false; //exclude the compound words and words with hyphes or spaces
-        //   else return true;
-        // }
+        if (word.charAt(0) === l) {
+          if (regex.test(word) && word.length > 1) {
+            //checking if word is a word or compound words with maximum of two words.
+            if (countSpacesAndHyphens(word) <= 1) return true;
+            else return false;
+          }
+        }
       });
     }
   } catch (error) {
