@@ -4,7 +4,8 @@ import ToggleView from "../ToggleView";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
-  const word = decodeURIComponent(params.word);
+  let word = decodeURIComponent(params.word);
+  word = word.replace(/-/g, " ");
   // read route params
   titleStr =
     "Synonyms and Antonyms for " +
@@ -24,7 +25,8 @@ let synonymWords = [];
 let antonymWords = [];
 
 export default async function Page({ params }) {
-  const word = decodeURIComponent(params.word);
+  let word = decodeURIComponent(params.word);
+  word = word.replace(/-/g, " ");
 
   try {
     AllRelatedWords = [];
@@ -63,16 +65,17 @@ export default async function Page({ params }) {
       <h1>{titleStr}</h1>
       <p>
         Following is a list of {AllRelatedWords.length} synonym words and
-        phrases that are related to {word}:
+        phrases that are related to "{word}":
       </p>
       <ToggleView
         allWords={AllRelatedWords}
         synWords={synonymWords}
         antWords={antonymWords}
       />
+       <p>Take your writing to the next level with these similar words and pick the best synonyms to use in place of "{word}" in your sentences.</p>
       {AllRelatedWords.length > 0 && (
         <RelLinksonPageBottom word={word} pos={null} />
       )}
-    </div>
+        </div>
   );
 }
