@@ -1,6 +1,5 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
-import axios from "axios";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -49,8 +48,11 @@ export default async function Page({ params }) {
   return (
     <div>
       <h1>{titleStr}</h1>
-      <p> Following is a list of {adjectiveWords.length} adjective words and phrases used for describing {word} in writing. </p>
+      <p> Following is a list of {adjectiveWords.length} adjective words and phrases used for describing <strong>{word}</strong> in writing. </p>
       <DataFilterDisplay words={adjectiveWords} />
+      <p>With these adjectives you can choose the one that perfectly describes {word} in your writing.
+       Don't be afraid to experiment with various combinations and push the boundaries of your descriptions to elevate it from good to great. 
+       </p>
       {adjectiveWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
     </div>
   );

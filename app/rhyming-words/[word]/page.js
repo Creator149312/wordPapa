@@ -1,4 +1,3 @@
-import axios from "axios";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 
@@ -57,6 +56,7 @@ export default async function Page({ params }) {
         rhyme with {word}:
       </p>
       <DataFilterDisplay words={rhymingWords} />
+      <p>With all these rhyming words at your disposal, you'll surely find the perfect word to match with {word} in your writing.</p>
       {rhymingWords.length > 0 && <RelLinksonPageBottom word={word} pos={null} />}
     </div>
   );
