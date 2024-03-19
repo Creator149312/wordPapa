@@ -47,10 +47,6 @@ export default async function Page({ params }) {
   //     if (obj.hasOwnProperty("tags")) return obj.tags.includes("syn");
   //   });
 
-  //   // console.log(response.data);
-  //   // console.log(synresponse);
-  //   // console.log(antresponse.data);
-
   //   synonymWords = synresponse.map((item) => item.word);
   //   antonymWords = antresponse.data.map((item) => item.word);
   // } catch (error) {
@@ -58,7 +54,6 @@ export default async function Page({ params }) {
   //     notFound: true,
   //   };
   // }
-
 
   try {
     AllRelatedWords = [];
@@ -86,20 +81,20 @@ export default async function Page({ params }) {
     };
   }
 
-
   return (
     <div>
       <h1>{titleStr}</h1>
       <p>
         Following is a list of {AllRelatedWords.length} synonym words and
-        phrases that are related to "{word}":
+        phrases that are related to <strong>{word}</strong>:
       </p>
       <ToggleView
         allWords={AllRelatedWords}
         synWords={synonymWords}
         antWords={antonymWords}
       />
-      <p>Take your writing to the next level with these similar words and pick the best synonyms to use in place of "{word}" in your sentences.</p>
+      <p>Using this list of similar-meaning words, you can choose the best synonyms to replace <strong>{word}</strong> in your sentences.</p>
+      <p>Additionally, you'll find antonyms included, perfect for when you need the complete opposite meaning of <strong>{word}</strong> in your writing. </p>
       {AllRelatedWords.length > 0 && (
         <RelLinksonPageBottom word={word} pos={null} />
       )}
