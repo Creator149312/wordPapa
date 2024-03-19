@@ -10,7 +10,7 @@ export async function generateMetadata({ params }, parent) {
   // read route params
   titleStr = "Unscramble " + ltUp + " | Find Words with letters in " + ltUp;
   const descriptionStr =
-    "Explore list of words you can make using letters in " + ltUp + " after you unscramble";
+    "Explore list of words you can make using letters in " + ltUp + " when you unscramble";
   return {
     title: titleStr,
     description: descriptionStr,
@@ -106,7 +106,7 @@ export default async function Page({ params }) {
       <h1>{pageHeading}</h1>
       <p>
         Following is a list of {wordsWithLetters.length} English words you can
-        form using letters {letterinUppercase} when unscrambled.
+        form using letters in {letterinUppercase} when unscrambled.
       </p>
       <DataFilterDisplay words={wordsWithLetters} />
     </div>
