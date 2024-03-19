@@ -33,6 +33,8 @@ const IndexPage = () => {
     //         </ul>
     //     </div>
     // );
+
+    return <></>;
 };
 
 export default IndexPage;

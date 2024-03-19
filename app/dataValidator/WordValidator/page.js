@@ -37,15 +37,15 @@ const WordValidator = async () => {
   //   await handleCheckValidity(word);
   // }
 
-  // return (
-  //   <>
-  //     <ul>
-  //       {validWords.map((item, index) => (
-  //         <li key={index}>{item}</li>
-  //       ))}
-  //     </ul>
-  //   </>
-  // );
+  return (
+    <>
+      {/* <ul>
+        {validWords.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul> */}
+    </>
+  );
 };
 
 export default WordValidator;
