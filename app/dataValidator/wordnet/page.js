@@ -99,11 +99,11 @@ function printWordsByAlphabetByLength(groupedWords) {
 }
 
 const Page = async () => {
- await getWords();
+//  await getWords();
 
-  let groupedWords = groupWordsByAlphabet(finalWords);
+//   let groupedWords = groupWordsByAlphabet(finalWords);
 
-  console.log("Total Words", finalWords.length);
+//   console.log("Total Words", finalWords.length);
 
   return (
     <div>

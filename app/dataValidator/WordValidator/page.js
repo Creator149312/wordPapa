@@ -30,22 +30,22 @@ const handleCheckValidity = async (checkWord) => {
 };
 
 const WordValidator = async () => {
-  console.log(THREELETTERWORDS.length);
+  // console.log(THREELETTERWORDS.length);
 
-  for (var i = 0; i < THREELETTERWORDS.length; i++) {
-    let word = THREELETTERWORDS[i].replace(/ /g, "-");
-    await handleCheckValidity(word);
-  }
+  // for (var i = 0; i < THREELETTERWORDS.length; i++) {
+  //   let word = THREELETTERWORDS[i].replace(/ /g, "-");
+  //   await handleCheckValidity(word);
+  // }
 
-  return (
-    <>
-      <ul>
-        {validWords.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-    </>
-  );
+  // return (
+  //   <>
+  //     <ul>
+  //       {validWords.map((item, index) => (
+  //         <li key={index}>{item}</li>
+  //       ))}
+  //     </ul>
+  //   </>
+  // );
 };
 
 export default WordValidator;

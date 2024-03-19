@@ -21,18 +21,18 @@ const findWordsWithSameLetters = (words) => {
   };
 
 const IndexPage = () => {
-    const wordsWithSameLetters = findWordsWithSameLetters(ALLCLEANWORDS);
+    // const wordsWithSameLetters = findWordsWithSameLetters(ALLCLEANWORDS);
 
-    return (
-        <div>
-            <h1>Words exactly same without space or '-' : {wordsWithSameLetters.length}</h1>
-            <ul>
-                {wordsWithSameLetters.map((word, index) => (
-                    <li key={index}>{word}</li>
-                ))}
-            </ul>
-        </div>
-    );
+    // return (
+    //     <div>
+    //         <h1>Words exactly same without space or '-' : {wordsWithSameLetters.length}</h1>
+    //         <ul>
+    //             {wordsWithSameLetters.map((word, index) => (
+    //                 <li key={index}>{word}</li>
+    //             ))}
+    //         </ul>
+    //     </div>
+    // );
 };
 
 export default IndexPage;

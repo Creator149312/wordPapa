@@ -40,7 +40,7 @@ const findWordsWithSameLetters = (words) => {
 };
 
 const IndexPage = () => {
-    const wordsWithSameLetters = findWordsWithSameLetters(ALLCLEANWORDS);
+    //const wordsWithSameLetters = findWordsWithSameLetters(ALLCLEANWORDS);
 
     return (<></>
         // <div>
