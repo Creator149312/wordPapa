@@ -10,7 +10,7 @@ export async function generateMetadata({ params }, parent) {
   // read route params
   titleStr = "Unscramble " + ltUp + " | Find Words with letters in " + ltUp;
   const descriptionStr =
-    "Explore list of words you can form using letters in " + ltUp;
+    "Explore list of words you can make using letters in " + ltUp + " after you unscramble";
   return {
     title: titleStr,
     description: descriptionStr,
