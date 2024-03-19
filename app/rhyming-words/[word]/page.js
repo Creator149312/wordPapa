@@ -19,12 +19,27 @@ export default async function Page({ params }) {
   const word  = decodeURIComponent(params.word); //this one gives the best results
   //const word = params.word.split('-').join(' ');
   
+  // try {
+  //   rhymingWords = [];
+  //   const response = await axios.get(
+  //     `https://api.datamuse.com/words?rel_rhy=${word}&max=200`
+  //   );
+  //   rhymingWords = response.data.map((item) => item.word);
+  // } catch (error) {
+  //   // console.error(error);
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
+
   try {
     rhymingWords = [];
-    const response = await axios.get(
-      `https://api.datamuse.com/words?rel_rhy=${word}&max=200`
-    );
-    rhymingWords = response.data.map((item) => item.word);
+    const endpoint = `https://api.datamuse.com/words?rel_rhy=${word}&max=200`;
+
+    const res = await fetch(endpoint);
+    const data = await res.json();
+
+    rhymingWords = data.map((item) => item.word);
   } catch (error) {
     // console.error(error);
     return {

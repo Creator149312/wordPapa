@@ -1,4 +1,3 @@
-import axios from "axios";
 import SentencesFetcher from "./SentencesFetcher";
 import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
 import { redirect } from "next/navigation";
@@ -52,22 +51,6 @@ export async function generateMetadata({ params }, parent) {
 * returned data in every case
 * [{"word":"kjxluaydoaiu","score":2147483647,"tags":["query"]}]
 */
-// This is previous getDefinitions Function using axios
-// async function getDefinitions(word, iscompound) {
-//   let endpoint = "";
-//   if (iscompound) {
-//     endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
-//     const res = await axios.get(endpoint);
-//     // console.log(res.data);
-//     return res.data;
-//   } else {
-//     endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
-
-//     const res = await axios.get(endpoint);
-//     //console.log(res.data[0]);
-//     return res.data[0];
-//   }
-// }
 
 async function getDefinitions(word, iscompound) {
   let endpoint = "";
@@ -123,42 +106,9 @@ async function displayDefs() {
 
 async function getRelatedWordsUsingML(word) {
   const endpoint = `https://api.datamuse.com/words?ml=${word}`;
-  const res = await axios.get(endpoint);
-  // console.log("Endpoint for ML: " + endpoint);
-  // console.log(res.data);
-  return res.data;
-}
-
-async function printRelatedWordsSection(word) {
-  //if no definitions found
-  const relatedWordsData = getRelatedWordsUsingML(word);
-
-  // Wait for the promises to resolve
-  const [relatedWords] = await Promise.all([relatedWordsData]);
-
-  if (relatedWords.length === 0 || relatedWords === null) {
-    return (
-      <>
-        <div className="card m-2">
-          <h2>We couldn't find any matches for "{word}" in the dictionary.</h2>
-        </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <div className="card m-2">
-        <h1>Words like "{word}"</h1>
-        {/* {console.log("Related Words" + relatedWords + " is this")} */}
-        <ul className="m-2">
-          {relatedWords.map((data, index) => (
-            <li key={index}>{data.word}</li>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
+  const res = await fetch(endpoint);
+  const data = await res.json();
+  return data;
 }
 
 export default async function WordSpecificPage({ params }) {
@@ -170,8 +120,6 @@ export default async function WordSpecificPage({ params }) {
   if (word !== decodedWord) {
     redirect("/define/" + decodedWord);
   }
-
-  // console.log("Decoded Word = " + decodedWord);
 
   if (!word.includes(".ico")) {
     if (!(word.includes("-") || word.includes(" "))) {

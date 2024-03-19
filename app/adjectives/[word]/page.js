@@ -19,12 +19,26 @@ let adjectiveWords = [];
 export default async function Page({ params }) {
   //const word = params.word.split('-').join(' ');
   const word  = decodeURIComponent(params.word);
+  // try {
+  //   adjectiveWords = [];
+  //   const response = await axios.get(
+  //     `https://api.datamuse.com/words?rel_jjb=${word}&max=200`
+  //   );
+  //   adjectiveWords = response.data.map((item) => item.word);
+  // } catch (error) {
+  //   // console.error(error);
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
+
   try {
     adjectiveWords = [];
-    const response = await axios.get(
-      `https://api.datamuse.com/words?rel_jjb=${word}&max=200`
-    );
-    adjectiveWords = response.data.map((item) => item.word);
+    const endpoint = `https://api.datamuse.com/words?rel_jjb=${word}&max=200`;
+    const res = await fetch(endpoint);
+    const data = await res.json();
+
+    adjectiveWords = data.map((item) => item.word);
   } catch (error) {
     // console.error(error);
     return {

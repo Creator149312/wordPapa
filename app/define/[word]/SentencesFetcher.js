@@ -1,4 +1,3 @@
-import axios from "axios";
 import { sortStringArrayinASC } from "@utils/HelperFunctions";
 
 let errorWordNick = null;
