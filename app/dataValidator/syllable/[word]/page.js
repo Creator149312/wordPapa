@@ -42,16 +42,16 @@ export default async function Page({ params }) {
     //console.log(data);
 
   } catch (error) {
-    //console.log(" I am inside error block with error - " + error.name);
-    //return <Error />;
+    // console.log(" I am inside error block with error - " + error.name);
+    return <Error />;
 
-    // We'll do this thing in the future if above works fine
-     syllableWords = {
-        word: word,
-        score: 100001,
-        numSyllables: 0,
-        tags: [ 'query', 'pron: ', 'ipa_pron: ' ]
-      }
+    // // We'll do this thing in the future if above works fine
+    //  syllableWords = {
+    //     word: word,
+    //     score: 100001,
+    //     numSyllables: 0,
+    //     tags: [ 'query', 'pron: ', 'ipa_pron: ' ]
+    //   }
   }
 
   return (
