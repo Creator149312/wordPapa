@@ -43,10 +43,16 @@ export default async function Page({ params }) {
     }, timeout);
 
     const endpoint = `https://api.datamuse.com/words?rel_jjb=${word}&max=200`;
-    const res = await fetch(endpoint);
+    const res = await fetch(endpoint, { signal: controller.signal });
+
+    clearTimeout(timeoutId); // Clear the timeout since the request completed
+
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
     const data = await res.json();
     adjectiveWords = data.map((item) => item.word);
-    
   } catch (error) {
     //  console.log(" I am inside error block with error - " + error.name);
     // return {

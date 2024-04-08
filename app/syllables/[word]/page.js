@@ -1,3 +1,5 @@
+import Error from "../error";
+
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
@@ -24,10 +26,15 @@ export default async function Page({ params }) {
     }, timeout);
 
     const endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=sr&max=1&ipa=1`;
-    const res = await fetch(endpoint);
-    const data = await res.json();
+    const res = await fetch(endpoint, { signal: controller.signal });
 
-    //console.log(data);
+    clearTimeout(timeoutId); // Clear the timeout since the request completed
+
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const data = await res.json();
     syllableWords = data[0];
     // const endTime = Date.now(); // Record the end time of the request
     // const elapsedTime = (endTime - startTime); // Calculate elapsed time in seconds
@@ -35,10 +42,16 @@ export default async function Page({ params }) {
     //console.log(data);
 
   } catch (error) {
-    // console.error(error);
-    return {
-      notFound: true,
-    };
+    //console.log(" I am inside error block with error - " + error.name);
+    //return <Error />;
+
+    // We'll do this thing in the future if above works fine
+     syllableWords = {
+        word: word,
+        score: 100001,
+        numSyllables: 0,
+        tags: [ 'query', 'pron: ', 'ipa_pron: ' ]
+      }
   }
 
   return (
