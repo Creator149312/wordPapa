@@ -35,9 +35,11 @@ export default async function Page({ params }) {
     adjectiveWords = [];
     const endpoint = `https://api.datamuse.com/words?rel_jjb=${word}&max=200`;
     const res = await fetch(endpoint);
+    
     const data = await res.json();
 
     adjectiveWords = data.map((item) => item.word);
+    
   } catch (error) {
     // console.error(error);
     return {

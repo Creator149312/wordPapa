@@ -1,5 +1,3 @@
-import Error from "@app/dataValidator/syllable/error";
-
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
@@ -36,19 +34,15 @@ export default async function Page({ params }) {
 
     const endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=sr&max=1&ipa=1`;
     const res = await fetch(endpoint);
-
-    if(!res.ok || syllableWords.length === 0) return <Error />
-
     const data = await res.json();
+
     //console.log(data);
     syllableWords = data[0];
   } catch (error) {
-    // // console.error(error);
-    // return {
-    //   notFound: true,
-    // };
-
-    return <Error />
+    // console.error(error);
+    return {
+      notFound: true,
+    };
   }
 
   return (
