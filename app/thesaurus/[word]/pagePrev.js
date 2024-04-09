@@ -27,43 +27,43 @@ export default async function Page({ params }) {
   let word = decodeURIComponent(params.word);
   word = word.replace(/-/g, " ");
 
-  titleStr =
-    "Synonyms and Antonyms for " +
-    (word.charAt(0).toUpperCase() + word.slice(1));
+  // try {
+  //   AllRelatedWords = [];
+  //   const response = await axios.get(
+  //     `https://api.datamuse.com/words?ml=${word}&max=200`
+  //   );
+
+  //   const antresponse = await axios.get(
+  //     `https://api.datamuse.com/words?rel_ant=${word}`
+  //   );
+
+  //   // const synresponse = await axios.get(
+  //   //   `https://api.datamuse.com/words?rel_syn=${word}`
+  //   // );
+  //   const allData = response.data;
+
+  //   AllRelatedWords = allData.map((item) => item.word);
+  //   const synresponse = allData.filter((obj) => {
+  //     if (obj.hasOwnProperty("tags")) return obj.tags.includes("syn");
+  //   });
+
+  //   synonymWords = synresponse.map((item) => item.word);
+  //   antonymWords = antresponse.data.map((item) => item.word);
+  // } catch (error) {
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
+
   try {
     AllRelatedWords = [];
 
-    const timeout = 5000; // Set timeout to 5 seconds
-    const syncontroller = new AbortController();
-    const syntimeoutId = setTimeout(() => {
-      syncontroller.abort();
-    }, timeout);
-
     let endpointSyn = `https://api.datamuse.com/words?ml=${word}&max=200`;
-    const synres = await fetch(endpointSyn, { signal: syncontroller.signal });
-
-    clearTimeout(syntimeoutId); // Clear the timeout of synonym request since the request completed
-
-    if (!synres.ok) {
-      throw new Error(`API request failed with status ${synres.status}`);
-    }
-
+    const synres = await fetch(endpointSyn);
     const syndata = await synres.json();
 
-    const antcontroller = new AbortController();
-    const anttimeoutId = setTimeout(() => {
-      antcontroller.abort();
-    }, timeout);
-
     let endpointAnt = `https://api.datamuse.com/words?rel_ant=${word}`;
-    const antres = await fetch(endpointAnt, { signal: antcontroller.signal });
-
-    clearTimeout(anttimeoutId); // Clear the timeout of synonym request since the request completed
-
-    if (!antres.ok) {
-      throw new Error(`API request failed with status ${antres.status}`);
-    }
-
+    const antres = await fetch(endpointAnt);
     const antdata = await antres.json();
 
     const allData = syndata;
@@ -76,10 +76,9 @@ export default async function Page({ params }) {
     synonymWords = synresponse.map((item) => item.word);
     antonymWords = antdata.map((item) => item.word);
   } catch (error) {
-    console.log("Error occured while getting data from api request....")
-    AllRelatedWords = [];
-    synonymWords = [];
-    antonymWords = [];
+    return {
+      notFound: true,
+    };
   }
 
   return (
