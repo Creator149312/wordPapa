@@ -1,6 +1,6 @@
 const AdsUnit = ({ w, h, slot }) => {
   return (
-    <div style={{backgroundColor: '#f0f0f0'}}>
+    <div style={{ backgroundColor: '#f0f0f0' }}>
       <ins
         className="adsbygoogle"
         style={{ display: 'inline-block', width: w, height: h }}
