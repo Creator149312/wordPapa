@@ -16,35 +16,34 @@ export async function generateMetadata({ params }, parent) {
 let rhymingWords = [];
 export default async function Page({ params }) {
   const word  = decodeURIComponent(params.word); //this one gives the best results
-  titleStr = "Rhyming Words and Phrases for " + (word.charAt(0).toUpperCase() + word.slice(1));
   //const word = params.word.split('-').join(' ');
+  
+  // try {
+  //   rhymingWords = [];
+  //   const response = await axios.get(
+  //     `https://api.datamuse.com/words?rel_rhy=${word}&max=200`
+  //   );
+  //   rhymingWords = response.data.map((item) => item.word);
+  // } catch (error) {
+  //   // console.error(error);
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
 
   try {
     rhymingWords = [];
-    const timeout = 5000; // Set timeout to 5 seconds
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, timeout);
-
     const endpoint = `https://api.datamuse.com/words?rel_rhy=${word}&max=200`;
 
-    const res = await fetch(endpoint, { signal: controller.signal });
-
-    clearTimeout(timeoutId); // Clear the timeout since the request completed
-
-    if (!res.ok) {
-      throw new Error(`API request failed with status ${res.status}`);
-    }
-
+    const res = await fetch(endpoint);
     const data = await res.json();
+
     rhymingWords = data.map((item) => item.word);
   } catch (error) {
-    // // console.error(error);
-    // return {
-    //   notFound: true,
-    // };
-    rhymingWords = [];
+    // console.error(error);
+    return {
+      notFound: true,
+    };
   }
 
   return (
@@ -53,7 +52,8 @@ export default async function Page({ params }) {
       {titleStr}
       </h1>
       <p>
-        Following is a list of {rhymingWords.length} words and phrases that rhyme with {word}:
+        Following is a list of {rhymingWords.length} words and phrases that
+        rhyme with {word}:
       </p>
       <DataFilterDisplay words={rhymingWords} />
       <p>With all these rhyming words at your disposal, you'll surely find the perfect word to match with {word} in your writing.</p>
