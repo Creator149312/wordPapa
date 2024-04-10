@@ -53,65 +53,19 @@ export async function generateMetadata({ params }, parent) {
 */
 
 async function getDefinitions(word, iscompound) {
-  const timeout = 5000; // Set timeout to 5 second
-
   let endpoint = "";
   if (iscompound) {
-    try {
-      const compoundController = new AbortController();
-      const compoundtimeoutId = setTimeout(() => {
-        compoundController.abort();
-      }, timeout);
-
-      endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
-      const res = await fetch(endpoint, { signal: compoundController.signal });
-
-      clearTimeout(compoundtimeoutId); // Clear the timeout since the request completed
-
-      if (!res.ok) {
-        throw new Error(`API request failed with status ${res.status}`);
-      }
-
-      const data = await res.json();
-      //console.log(data);
-      return data;
-    } catch (error) {
-      // console.log("Error occured in Compound trial");
-      return [{
-        word: word,
-        score: 11111111,
-        tags: ['query', 'pron:  ', 'ipa_pron: '],
-        defs: []
-      }];
-    }
+    endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    // console.log(data);
+    return data;
   } else {
-    try {
-      const simpleController = new AbortController();
-      const simpletimeoutId = setTimeout(() => {
-        simpleController.abort();
-      }, timeout);
-
-      endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
-      const res = await fetch(endpoint, { signal: simpleController.signal });
-
-      clearTimeout(simpletimeoutId); // Clear the timeout since the request completed
-
-      if (!res.ok) {
-        throw new Error(`API request failed with status ${res.status}`);
-      }
-      const data = await res.json();
-      //console.log(data[0]);
-      return data[0];
-    } catch (error) {
-      // console.log("Error occured in simple trial");
-
-      //we are not adding defs property to return object
-      return {
-        word: word,
-        score: 11111111,
-        tags: ['query', 'pron:  ', 'ipa_pron: ']
-      };
-    }
+    endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    // console.log(data[0]);
+    return data[0];
   }
 }
 
@@ -148,6 +102,13 @@ async function displayDefs() {
       )}
     </div>
   );
+}
+
+async function getRelatedWordsUsingML(word) {
+  const endpoint = `https://api.datamuse.com/words?ml=${word}`;
+  const res = await fetch(endpoint);
+  const data = await res.json();
+  return data;
 }
 
 export default async function WordSpecificPage({ params }) {
@@ -205,6 +166,7 @@ export default async function WordSpecificPage({ params }) {
                   </p>
                 )}
                 {/* {console.log(definitions)} */}
+                {/* <p>Following are different meanings of {decodedWord} depending on the part of speech:</p> */}
                 {await displayDefs()}
               </div>
             </div>
@@ -213,21 +175,37 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-        return (<>
-          <div className="card m-2">
-            <div className="card-header">
-              <h1>{word}</h1>
-            </div>
-            <div className="card-body">
-              <p className="ipa">
-                IPA:{" "}
-              </p>
-              <div>
-                <p> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
+        //if no definitions found
+        const relatedWordsData = getRelatedWordsUsingML(word);
+
+        // Wait for the promises to resolve
+        const [relatedWords] = await Promise.all([relatedWordsData]);
+
+        if (relatedWords.length === 0 || relatedWords === null) {
+          return (
+            <>
+              <div className="card m-2">
+                <h2>
+                  We couldn't find any matches for "{word}" in the dictionary.
+                </h2>
               </div>
+            </>
+          );
+        }
+
+        return (
+          <>
+            <div className="card m-2">
+              <h1>Words like "{word}"</h1>
+              {/* {console.log("Related Words" + relatedWords + " is this")} */}
+              <ul className="m-2">
+                {relatedWords.map((data, index) => (
+                  <li key={index}>{data.word}</li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </>);
+          </>
+        );
       }
     } else {
       // Initiate both requests in parallel
@@ -273,7 +251,7 @@ export default async function WordSpecificPage({ params }) {
       let sentencesForWord = [];
       let relLinkForWord = [];
       let doIneedCheckingforHyphenated = true;
-      // console.log("Final Matches length = ", finalMatches.length);
+
       if (finalMatches.length > 0) {
         for (let i = 0; i < finalMatches.length; i++) {
           if (finalMatches[i].hasOwnProperty("defs")) {
@@ -352,22 +330,37 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-        //  getDefinePageTemplate(decodedWord);
-        return (<>
-          <div className="card m-2">
-            <div className="card-header">
-              <h1>{word}</h1>
-            </div>
-            <div className="card-body">
-              <p className="ipa">
-                IPA:{" "}
-              </p>
-              <div>
-                <p> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
+        //if no definitions found
+        const relatedWordsData = getRelatedWordsUsingML(word);
+
+        // Wait for the promises to resolve
+        const [relatedWords] = await Promise.all([relatedWordsData]);
+
+        if (relatedWords.length === 0 || relatedWords === null) {
+          return (
+            <>
+              <div className="card m-2">
+                <h2>
+                  We couldn't find any matches for "{word}" in the dictionary.
+                </h2>
               </div>
+            </>
+          );
+        }
+
+        return (
+          <>
+            <div className="card m-2">
+              <h1>Words like "{word}"</h1>
+              {/* {console.log("Related Words" + relatedWords + " is this")} */}
+              <ul className="m-2">
+                {relatedWords.map((data, index) => (
+                  <li key={index}>{data.word}</li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </>);
+          </>
+        );
       }
     }
   }
