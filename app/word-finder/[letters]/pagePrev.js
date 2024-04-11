@@ -1,4 +1,4 @@
-import allUSWords from "../allUsWords";
+import englishUSWordsArray from "../english-wordlist";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 // import { promises as fs, link } from "fs";
 
@@ -10,9 +10,7 @@ export async function generateMetadata({ params }, parent) {
   // read route params
   titleStr = "Unscramble " + ltUp + " | Find Words with letters in " + ltUp;
   const descriptionStr =
-    "Explore list of words you can make using letters in " +
-    ltUp +
-    " when you unscramble";
+    "Explore list of words you can make using letters in " + ltUp + " when you unscramble";
   return {
     title: titleStr,
     description: descriptionStr,
@@ -43,60 +41,56 @@ async function getWords(letters) {
     let matchingWords = [];
 
     if (questionMarks > 0) {
-      for (let j = 0; j < allUSWords.length; j++) {
-        let word = allUSWords[j];
-        if (word.length <= (questionMarks + word.length)) {
-          if (word.length <= questionMarks) {
-            matchingWords.push(word);
-          } else {
-            let matchedChars = 0;
-            let e = letters.split("");
-            for (let i = 0; i < word.length; i++) {
-              for (let j = 0; j < e.length; j++) {
-                if (e[j] === word[i]) {
-                  matchedChars++;
-                  e[j] = "0";
-                  // console.log("Word : ", word);
-                  // console.log("Expression : ", e);
-                }
+      for (let j = 0; j < englishUSWordsArray.length; j++) {
+        let word = englishUSWordsArray[j];
+
+        if (word.length <= questionMarks) {
+          matchingWords.push(word);
+        } else {
+          let matchedChars = 0;
+          let e = letters.split("");
+          for (let i = 0; i < word.length; i++) {
+            for (let j = 0; j < e.length; j++) {
+              if (e[j] === word[i]) {
+                matchedChars++;
+                e[j] = "0";
+                // console.log("Word : ", word);
+                // console.log("Expression : ", e);
               }
             }
-            // console.log("Total Matched Chars", matchedChars);
-            // console.log("Final Expression", e);
-
-            if (matchedChars + questionMarks >= word.length) {
-              matchingWords.push(word);
-              //console.log("Added Word: ", word);
-            }
           }
-        } else {
-          break;
+          // console.log("Total Matched Chars", matchedChars);
+          // console.log("Final Expression", e);
+
+          if (matchedChars + questionMarks >= word.length) {
+            matchingWords.push(word);
+            //console.log("Added Word: ", word);
+          }
         }
       }
     } else {
-      for (let j = 0; j < allUSWords.length; j++) {
-        let word = allUSWords[j];
-        if (word.length <= letters.length) {
-          let sequenceObject = { ...alphabetObject };
-          let isScramble = true;
-          for (let i = 0; i < word.length; i++) {
-            if (sequenceObject[word[i]] > 0) {
-              sequenceObject[word[i]]--;
-            } else {
-              isScramble = false;
-              break;
-            }
+      for (let j = 0; j < englishUSWordsArray.length; j++) {
+        let word = englishUSWordsArray[j];
+
+        let sequenceObject = { ...alphabetObject };
+        let isScramble = true;
+        for (let i = 0; i < word.length; i++) {
+          if (sequenceObject[word[i]] > 0) {
+            sequenceObject[word[i]]--;
+          } else {
+            isScramble = false;
+            break;
           }
-          if (isScramble) matchingWords.push(word);
-        } else {
-          break;
         }
+        if (isScramble) matchingWords.push(word);
       }
     }
 
     return matchingWords.filter((str) => str.length > 1);
   } catch (error) {
-    return [];
+    return {
+      notFound: true,
+    };
   }
 }
 
@@ -105,11 +99,7 @@ export default async function Page({ params }) {
   wordsWithLetters = await getWords(params.letters);
   const letterinUppercase = letters.toUpperCase();
   // read route params
-  const pageHeading =
-    "Unscramble " +
-    letterinUppercase +
-    " | Find Words with letters in " +
-    letterinUppercase;
+  const pageHeading = "Unscramble " + letterinUppercase + " | Find Words with letters in " + letterinUppercase;
 
   return (
     <div>
