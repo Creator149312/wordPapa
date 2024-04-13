@@ -50,6 +50,12 @@ const Page = async ({ params }) => {
         </div>
       ))} */}
        <DataFilterDisplay words={words} />
+       <p>
+        All the action words that begin with <strong>{L}</strong> are sorted based on length for
+        easy browsing. The list also contains some conjugations in different
+        tenses (past, present, future) and moods (indicative, imperative,
+        subjunctive).
+      </p>
     </>
   );
 };
