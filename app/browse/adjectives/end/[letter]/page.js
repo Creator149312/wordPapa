@@ -40,9 +40,19 @@ const Page = async ({ params }) => {
       <h1>{titleString}</h1>
       <p>
         Explore the list of {words.length} positive and negative adjective words
-        ending with {phraseSearch} {L} to describe person, place or thing.
+        ending with {phraseSearch} <strong>{L}</strong> to describe person, place or thing.
       </p>
       <DataFilterDisplay words={words} />
+      <p>
+        With these wider range of adjectives ending with <strong>{L}</strong> you'll be able
+        to discover nuanced options related to your initial idea.
+      </p>
+      <p>
+        The list also contains some describing words that indicate the
+        grammatical role (e.g., common adjective, proper adjective) of each
+        adjective to help you find even more specific and contrasting words for
+        your writing.
+      </p>
     </>
   );
 };
