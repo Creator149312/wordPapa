@@ -46,6 +46,15 @@ const Page = async ({ params }) => {
         see how they represent names of person, place, thing or concept.
       </p>
        <DataFilterDisplay words={words} />
+       <p>
+       <strong>Note:</strong> All nouns that end with <strong>{L}</strong> are sorted based on
+        length for easy browsing.
+      </p>
+      <p>
+        This list will help you brainstorm specific categories or discover more
+        specific type of noun (e.g., common noun, proper noun, concrete noun,
+        abstract noun) you might not have known before.
+      </p>
     </>
   );
 };

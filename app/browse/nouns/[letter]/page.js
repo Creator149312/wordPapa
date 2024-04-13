@@ -7,7 +7,7 @@ let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
 
-  const phraseSearch = L.length > 1 ? '' : 'Letter';
+  const phraseSearch = L.length > 1 ? "" : "Letter";
   // read route params
   titleStr = `Nouns Starting with ${phraseSearch} ${L.toUpperCase()}`;
   const descriptionStr = `Browse all nouns that begin with ${phraseSearch} ${L} to and see how they name a person, place or thing.`;
@@ -31,7 +31,7 @@ const Page = async ({ params }) => {
 
   let L = params.letter;
 
-  const phraseSearch = L.length > 1 ? '' : 'Letter';
+  const phraseSearch = L.length > 1 ? "" : "Letter";
   const regex = /^[a-zA-Z0-9]+$/;
   let words = NOUN.filter(
     (adj) => adj.length > 1 && adj.startsWith(L) && regex.test(adj)
@@ -42,15 +42,24 @@ const Page = async ({ params }) => {
     <>
       <h1>{titleString}</h1>
       <p>
-        Explore the list of {words.length} nouns starting with {phraseSearch} {L} and
-        see how they represent names of person, place, thing or concept.
+        Explore the list of {words.length} nouns starting with {phraseSearch}{" "}
+        {L} and see how they represent names of person, place, thing or concept.
       </p>
       {/* {words.map((link, index) => (
         <div key={index} className="wordSpan">
           {customLink(link)}
         </div>
       ))} */}
-       <DataFilterDisplay words={words} />
+      <DataFilterDisplay words={words} />
+      <p>
+        <strong>Note:</strong> All nouns beginining with <strong>{L}</strong> are sorted based on
+        length for easy browsing.
+      </p>
+      <p>
+        This list will help you brainstorm specific categories or discover more
+        specific type of noun (e.g., common noun, proper noun, concrete noun,
+        abstract noun) you might not have known before.
+      </p>
     </>
   );
 };
