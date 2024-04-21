@@ -9,6 +9,8 @@ export default function Page() {
   const { status, data: session } = useSession();
   const router = useRouter();
 
+  console.log("Session Data: ", session);
+
   if (status === "authenticated" || session?.user?.email !== undefined) {
     return (
       <div className="m-3">

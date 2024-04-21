@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const { title, description, words, createdBy } = await request.json();
-    let error = "we have error";
+    let error = "";
     let vlt = validateListTitle(title);
     let vld = validateListDescription(description);
 

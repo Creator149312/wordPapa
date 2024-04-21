@@ -14,12 +14,13 @@ export default function WordLists({ createdBy }) {
 
   //fetch data for Dashboard display
   useEffect(() => {
+    console.log("Created By : ", createdBy);
     const fetchData = async () => {
       try {
         const response = await fetch(
           `${apiConfig.apiUrl}/list/user/${createdBy}`,
           { cache: "no-store" }
-        ); 
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch lists");

@@ -129,6 +129,9 @@ export const registerUser = async (formData) => {
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       let res = await User.create({ name, email, password: hashedPassword });
+
+      //TODO: send Email for verification
+
       console.log(res);
     }
   } catch (error) {
