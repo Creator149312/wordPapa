@@ -3,7 +3,9 @@ import { getServerSession } from "next-auth";
 import { connectMongoDB } from "@lib/mongodb";
 import { authOptions } from "@app/api/auth/[...nextauth]/route";
 import User from "@models/user";
+import PasswordReset from "@models/passwordreset";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { redirect } from "next/navigation";
 import {
   validatePassword,
@@ -50,6 +52,51 @@ export const updateNewPassword = async (formData) => {
           error: "Please enter the correct Password!",
         };
       }
+    } else {
+      //send error message to client
+      return {
+        error: "Please login to change Password!",
+      };
+    }
+  } catch (error) {
+    return { error: "Error resetting password" };
+  }
+
+  // if (ifPasswordsMatch) {
+  //   redirect("/login");
+  // }
+};
+
+export const updateNewPasswordbyToken = async (formData, token) => {
+  let errorData = { error: "" };
+
+  let record = await PasswordReset.findOne({ token });
+
+  console.log(record.email);
+
+  errorData.error = validatePassword(formData.get("newPassword"));
+  errorData.error = validatePassword(formData.get("retypeNewPassword"));
+
+  if (formData.get("newPassword") !== formData.get("retypeNewPassword"))
+    errorData.error = "Passwords do not match";
+
+  if (errorData.error.length !== 0) {
+    console.log("Found Errors");
+    return errorData;
+  }
+
+  try {
+    if (errorData.error.length === 0) {
+      await connectMongoDB();
+
+      const newhashedPassword = await bcrypt.hash(
+        formData.get("newPassword"),
+        10
+      );
+
+      const filter = { email: record.email };
+      const update = { password: newhashedPassword };
+      await User.findOneAndUpdate(filter, update);
     } else {
       //send error message to client
       return {
@@ -134,6 +181,51 @@ export const registerUser = async (formData) => {
 
       console.log(res);
     }
+  } catch (error) {
+    return { error: "Error Registering a User" };
+  }
+};
+
+export const generatePasswordResetLink = async (formData) => {
+  let errorData = { error: "" };
+  let token = "";
+
+  let ve = validateEmail(formData.get("email"));
+
+  if (ve.length !== 0) errorData.error = ve;
+
+  try {
+    console.log("form Data in Server,", formData);
+
+    if (errorData.error.length !== 0) {
+      console.log("Found Errors in Form Validation");
+      return errorData;
+    } else {
+      console.log("Validated");
+    }
+
+    await connectMongoDB();
+
+    let email = formData.get("email");
+
+    //const user = await PasswordReset.findOne({ email }).select("_id");
+    const user = false;
+    if (user) {
+      console.log("Existing rows found");
+
+      token = "Whalksjdl fjaldjfaidf"; // we want a unique token on 16 characters
+
+      const filter = { email: email };
+      const update = { token: token };
+      let res = await PasswordReset.findOneAndUpdate(filter, update);
+    } else {
+      token = "kjadslfjalduf9202i398239jalkdja9dj"; // we want a unique token on 16 characters
+
+      console.log("No existing rows found");
+      let res = await PasswordReset.create({ email, token });
+    }
+
+    console.log(`http://localhost:3000/new-password?token=${token}`);
   } catch (error) {
     return { error: "Error Registering a User" };
   }

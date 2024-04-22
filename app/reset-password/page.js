@@ -1,21 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   validateEmail,
-  validatePassword,
-  validateUsername,
 } from "@utils/Validator";
-import { registerUser } from "@components/actions/actions"
+import { generatePasswordResetLink } from "@components/actions/actions"
 import toast from "react-hot-toast";
 
 export default function RegisterFormAdv() {
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
-    password: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -38,32 +33,26 @@ export default function RegisterFormAdv() {
     setErrors({});
     setError("");
 
-    let vu = validateUsername(formData.username);
     let ve = validateEmail(formData.email);
-    let vp = validatePassword(formData.password);
 
-    if (vu.length !== 0) errors.username = vu;
     if (ve.length !== 0) errors.email = ve;
-    if (vp.length !== 0) errors.password = vp;
 
     if (Object.keys(errors).length === 0) {
       setIsRegistering(true);
       try {
         console.log("Form Data in Client, ", dataFromFrom);
-        let results = await registerUser(dataFromFrom);
+        let results = await generatePasswordResetLink(dataFromFrom);
 
         if (results?.error) {
           toast.error(results.error);
         } else {
-          toast.success("User registration successful!");
+          toast.success("Reset Password Link Generated successfully!");
           setFormData({
-            username: "",
             email: "",
-            password: "",
           });
         }
       } catch (error) {
-        setError("Registration Failed!");
+        setError("Invalid Failed!");
       } finally {
         setIsRegistering(false);
       }
@@ -74,21 +63,9 @@ export default function RegisterFormAdv() {
 
   return (
     <div className="">
-      <h1 className="card-title text-center">Register</h1>
+      <h1 className="card-title text-center">Verify Email</h1>
       <div className="card form-50">
         <form action={validateFormAdv} className="">
-          <div>
-            <label htmlFor="username">Username:</label>
-            <input
-              type="text"
-              id="username"
-              className="form-control mb-3 mt-2"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-            />
-            {errors.username && <p className="error">{errors.username}</p>}
-          </div>
           <div>
             <label htmlFor="email">Email Address:</label>
             <input
@@ -101,26 +78,10 @@ export default function RegisterFormAdv() {
             />
             {errors.email && <p className="error">{errors.email}</p>}
           </div>
-          <div>
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="form-control mb-3 mt-2"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {errors.password && <p className="error">{errors.password}</p>}
-          </div>
-          <button className="custom-button p-3">Register</button>
-          {/* {error && <Notification message={error} state={"failed"} />} */}
+          <button className="custom-button p-3">Verify Email</button>
           {isRegistering && (
-            <p>Checking Details and Creating Your Account...</p>
+            <p>Checking If Email is Valid...</p>
           )}
-          <Link className="text-sm mt-3 text-right" href={"/login"}>
-            Already have an account? <span className="underline">Login</span>
-          </Link>
         </form>
       </div>
     </div>

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import SignInBtn from "./SignInBtn";
-import Notification from "./Notification";
+import SignInBtn from "@components/SignInBtn"
+import Notification from "@components/Notification"
 import { validateEmail, validatePasswordLength } from "@utils/Validator";
 
 export default function LoginFormAdv() {
@@ -105,6 +105,11 @@ export default function LoginFormAdv() {
               required
             />
             {errors.password && <p className="error">{errors.password}</p>}
+            <div>
+            <Link className="m-4 p-3" href={"/reset-password"}>
+              Forgot password
+            </Link>
+            </div>
           </div>
           <div className="">
             <button className="custom-button m-3">Login</button>
