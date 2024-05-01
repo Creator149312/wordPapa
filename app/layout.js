@@ -1,14 +1,24 @@
 import SideBar from "@components/SideBar";
-import "@public/styles/globals.css";
-import NavbarComponent from "@components/NavBar";
+import "./globals.css";
+//import NavbarComponent from "@components/NavBar";
+import NavBarLatest from "@components/NavBarLatest";
 import Footer from "@components/Footer";
 import SearchNavBar from "@components/SearchNavBar";
 import AlphabetLinks from "@components/AlphabetLinks";
 import GAnalytics from "./GAnalytics";
 import { NextAuthProvider } from "./Providers";
 import { Toaster } from "react-hot-toast";
+import { Card } from "@/components/ui/card";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "@app/api/auth/[...nextauth]/route";
+
+import { Inter as FontSans } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata = {
   title: {
@@ -28,25 +38,37 @@ const layout = ({ children }) => {
         <GAnalytics />
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="google-site-verification" content="eRHE29e6-yFJJ0WUWShysLxHV_QJkOyv_ZpPc00pzYA" />
+        <meta
+          name="google-site-verification"
+          content="eRHE29e6-yFJJ0WUWShysLxHV_QJkOyv_ZpPc00pzYA"
+        />
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className="font-responsive">
-        <NextAuthProvider>
-          <header className="card">
-            <NavbarComponent />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <NextAuthProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="border-b-2">
+            {/* <NavbarComponent /> */}
+            <NavBarLatest />
             <SearchNavBar />
-          </header>
-          <main>
-            <div className="container m-2">
-              <div className="left-column card m-2 p-3">
-                {children}
-                {/** All the main content goes here */}
-              </div>
-              <div className="right-column card m-2 p-2">
-                <SideBar />
-              </div>
-            </div>
+          </div>
+          <main className="grid md:grid-cols-5 gap-x-2 m-2">
+            <Card className="m-2 p-5 md:col-span-4">
+              {children}
+              {/** All the main content goes here */}
+            </Card>
+            <Card className="m-2 md:col-span-1">
+              <SideBar />
+            </Card>
           </main>
           <AlphabetLinks />
           <Footer />

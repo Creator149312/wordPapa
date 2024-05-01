@@ -3,7 +3,7 @@ import commonLinks from "@utils/commonLinks";
 import { usePathname } from 'next/navigation';
 
 function displayLinK(link, AnchorText) {
-    return <a className="m-2 bottom-pageLinks" href={link}>{AnchorText}</a>;
+    return <a className="m-2 text-lg p-2 bg-[#75c32c] inline-block text-center shadow-md cursor-pointer" href={link}>{AnchorText}</a>;
   }  
 
 const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
@@ -12,7 +12,7 @@ const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
 
   return (
     <div className="p-2 m-2">
-      <h3>Related Links</h3>
+      <h3 className="m-2 text-xl font-bold">Related Links</h3>
       {slug !== 'define' && displayLinK(commonLinks.definition + wordforhref, 'meaning of ' + word)}
       {slug !== 'syllables' && displayLinK(commonLinks.syllables+ wordforhref, 'syllables in '+ word)}
       {slug !== 'thesaurus' && displayLinK(commonLinks.thesaurus +wordforhref, 'synonyms for ' + word)}

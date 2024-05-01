@@ -19,14 +19,14 @@ function AdvancedFilter({
     };  
 
     return (
-      <div className="accordion">
-      <div className={`accordion-item ${isActive ? 'active' : ''}`}>
-      <div className="accordion-header text-center" onClick={toggleAccordion}>Filter Results</div>
-      <div className="m-2 p-2 accordion-content">
-        <div className="row m-2">
-          <div className="col-6">
+      <div className="shadow-lg m-2 border-t">
+      <div className="cursor-pointer">
+      <div className="text-center text-lg bg-slate-100 p-2 font-bold" onClick={toggleAccordion}>Filter Results</div>
+      <div className={`m-2 p-2 ${isActive ? '' : 'hidden'}`}>
+        <div className="grid grid-cols-12 p-2 m-2">
+          <div className="col-span-6 shadow-md">
             <input
-             className="form-control"
+             className="w-full p-2 text-lg border-2 rounded-sm"
               label="Starts With"
               type="text"
               value={startsWith}
@@ -34,10 +34,10 @@ function AdvancedFilter({
               placeholder="Starts With Eg. A...."
             />
           </div>
-          <div className="col-6">
+          <div className="col-span-6 shadow-md">
             <input
               label="Ends With"
-              className="form-control"
+              className="w-full p-2 text-lg border-2 rounded-sm"
               type="text"
               value={endsWith}
               onChange={(e) => handleEndsWith(e.target.value.toLowerCase())}
@@ -45,22 +45,22 @@ function AdvancedFilter({
             />
           </div>
         </div>
-        <div className="row m-2">
-          <div className="col-6">
+        <div className="grid grid-cols-12 m-2 p-2">
+          <div className="col-span-6 shadow-md">
             <input
               label="Contains"
-              className="form-control"
+              className="w-full p-2 text-lg border-2 rounded-sm"
               type="text"
               value={contains}
               onChange={(e) => handleContains(e.target.value.toLowerCase())}
               placeholder="Contains: A....Z"
             />
           </div>
-          <div className="col-6">
+          <div className="col-span-6 shadow-md ">
             <input
               label="Length"
               type="number"
-              className="form-control"
+              className="w-full p-2 text-lg border-2 rounded-sm"
               value={length}
               onChange={(e) => handleLength(e.target.value)}
               placeholder="4"

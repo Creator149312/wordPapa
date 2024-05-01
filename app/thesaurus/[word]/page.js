@@ -1,6 +1,8 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import ToggleView from "../ToggleView";
 
+import { Card, CardContent, CardHeader } from "@components/ui/card";
+
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
@@ -83,9 +85,12 @@ export default async function Page({ params }) {
   }
 
   return (
-    <div>
-      <h1>{titleStr}</h1>
-      <p>
+    <Card>
+      <CardHeader>
+      <h1 className="text-4xl font-extrabold">{titleStr}</h1>
+      </CardHeader>
+      <CardContent>
+      <p className="mb-6 text-lg font-normal">
         Following is a list of {AllRelatedWords.length} synonym words and
         phrases that are related to <strong>{word}</strong>:
       </p>
@@ -94,11 +99,12 @@ export default async function Page({ params }) {
         synWords={synonymWords}
         antWords={antonymWords}
       />
-      <p>Using this list of similar-meaning words, you can choose the best synonyms to replace <strong>{word}</strong> in your sentences.</p>
-      <p>Additionally, you'll find antonyms included, perfect for when you need the complete opposite meaning of <strong>{word}</strong> in your writing. </p>
+      <p className="mb-6 text-lg font-normal">Using this list of similar-meaning words, you can choose the best synonyms to replace <strong>{word}</strong> in your sentences.</p>
+      <p className="mb-6 text-lg font-normal">Additionally, you'll find antonyms included, perfect for when you need the complete opposite meaning of <strong>{word}</strong> in your writing. </p>
       {AllRelatedWords.length > 0 && (
         <RelLinksonPageBottom word={word} pos={null} />
       )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }

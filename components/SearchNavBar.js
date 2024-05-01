@@ -3,6 +3,7 @@
 import commonLinks from "@utils/commonLinks";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { Button } from "@components/ui/button";
 
 //usage of SessionStore is causing website to load slowly
 const SearchBarNav = () => {
@@ -143,11 +144,11 @@ const SearchBarNav = () => {
 
   return (
     <>
-      <div className="search-bar-nav">
+      <div className="grid md:grid-cols-6 w-[100%] md:w-[60%] m-auto">
         <select
           value={selectedOption}
           onChange={handleOptionChange}
-          className="search-select input-lg"
+          className="p-2 mr-2 border-1 md:col-span-2"
           name="tool"
         >
           {urlOptions.map((option) => (
@@ -156,11 +157,12 @@ const SearchBarNav = () => {
             </option>
           ))}
         </select>
+        <div className="md:col-span-4 grid grid-cols-5">
         <input
           className={
             inputError
-              ? "input-xlg search-input error-search"
-              : "input-xlg search-input"
+              ? "px-2 py-2 text-lg  col-span-4"
+              : "text-lg px-2 py-2  col-span-4"
           }
           type="text"
           placeholder={placeholder}
@@ -173,13 +175,15 @@ const SearchBarNav = () => {
           }}
           onKeyPress={handleKeyPress}
         />
-        <button
+        <Button
+          variant="searchcustom"
           onClick={handleLoadUrl}
-          className="search-button"
+          className="cursor-pointer rounded-l-none col-span-1 w-[100%] h-[100%]"
           disabled={inputError ? true : false}
         >
           Search
-        </button>
+        </Button>
+        </div>
       </div>
     </>
   );

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
 import { WORDMAP } from "../WORDMAP";
+import { Card, CardContent, CardHeader } from "@components/ui/card";
 
 let titleStr = "";
 
@@ -132,21 +133,21 @@ async function splitDefsbyPOS(defs) {
  */
 async function displayDefs() {
   return (
-    <div>
+    <>
       {Object.keys(defTypes).map(
         (key) =>
           defTypes[key].length > 0 && (
             <div key={key}>
-              <h3>{types[key]}</h3>
-              <ul className="m-2 p-2">
+              <h3 className="mb-2 font-bold text-xl">{types[key]}</h3>
+              <ul className="list-disc m-2 p-2">
                 {defTypes[key].map((def, index) => (
-                  <li key={index}>{def}</li>
+                  <li className="p-0.5" key={index}>{def}</li>
                 ))}
               </ul>
             </div>
           )
       )}
-    </div>
+    </>
   );
 }
 
@@ -182,18 +183,18 @@ export default async function WordSpecificPage({ params }) {
         return (
           <>
             {await splitDefsbyPOS(definitions.defs)}
-            <div className="card m-2">
-              <div className="card-header list-heading-container">
-                <h1>{decodedWord}</h1>
+            <Card className="m-2">
+              <CardHeader className="list-heading-container">
+                <h1 className="text-4xl font-extrabold">{decodedWord}</h1>
                 {/* <AddToMyListsButton /> */}
-              </div>
-              <div className="card-body">
-                <p className="ipa">
-                  IPA:{" "}
+              </CardHeader>
+              <CardContent className="card-body">
+                <p className="mb-6 text-lg font-normal">
+                  <strong>IPA:</strong>{" "}
                   {definitions.tags[definitions.tags.length - 1].split(":")[1]}
                 </p>
                 {definitions.hasOwnProperty("defHeadword") && (
-                  <p className="normal-text">
+                  <p className="mb-6 text-lg font-normal">
                     Root Word:{" "}
                     <Link
                       href={definitions.defHeadword
@@ -206,8 +207,8 @@ export default async function WordSpecificPage({ params }) {
                 )}
                 {/* {console.log(definitions)} */}
                 {await displayDefs()}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>

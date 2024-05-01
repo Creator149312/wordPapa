@@ -1,12 +1,16 @@
 'use client'
 import GoogleAd from '@utils/GoogleAd';
 
+import {  CardContent, CardHeader } from "@components/ui/card";
+
 const SideBar = () => {
   return (<>
-          <div className='m-3'>
-          <h2>Related Workbooks</h2>
-          <div>
-            <ul >
+          <div className=''>
+            <CardHeader>
+          <h2 className="text-3xl font-extrabold">Related Workbooks</h2>
+          </CardHeader>
+          <CardContent>
+            <ul>
               <li className='no-style-list'>
                 <a href="https://www.englishbix.com/product/35-word-family-words-tracing-workbook/">
                   Rhyming Words Tracing Workbook
@@ -18,7 +22,7 @@ const SideBar = () => {
                 </a>
               </li>
             </ul>
-          </div>
+          </CardContent>
             {/* <div>
               <GoogleAd slotID={3722270586}/>
             </div>  */}

@@ -1,4 +1,5 @@
 import { sortStringArrayinASC } from "@utils/HelperFunctions";
+import { Card, CardContent, CardHeader } from "@components/ui/card";
 
 let errorWordNick = null;
 let errorTwinWord = null;
@@ -137,9 +138,10 @@ const SentencesFetcher = async ({ word }) => {
     }
 
     return (
-      <div className="card m-2" id="examples">
-        <h1>Examples of "{word}" in Sentences</h1>
-        <ul className="m-2 p-2">
+      <Card className="m-2" id="examples">
+        <CardHeader><h1 className="text-3xl font-extrabold">Examples of "{word}" in Sentences</h1></CardHeader>
+        <CardContent>
+        <ul className="m-2 p-2 list-disc">
           {
             // if there is an error in fetching Sentences using Twinword API
             errorTwinWord &&
@@ -147,7 +149,7 @@ const SentencesFetcher = async ({ word }) => {
               sentencesWordNick.length > 0 ? (
               sentencesWordNick.map(
                 (sent, index) =>
-                  sent.match(regex) && <li key={index}>{sent}</li>
+                  sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
               )
             ) : (
               <p>No Sentences Found for {word}</p>
@@ -160,7 +162,7 @@ const SentencesFetcher = async ({ word }) => {
               sentencesTwinWord.length > 0) ? (
               sentencesTwinWord.map(
                 (sent, index) =>
-                  sent.match(regex) && <li key={index}>{sent}</li>
+                  sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
               )
             ) : (
               <p>No Sentences Found for {word}</p>
@@ -177,10 +179,11 @@ const SentencesFetcher = async ({ word }) => {
             !errorWordNick &&
             sortStringArrayinASC(
               sentencesTwinWord.concat(sentencesWordNick)
-            ).map((sent, index) => <li key={index}>{sent}</li>)
+            ).map((sent, index) => <li className="p-0.5" key={index}>{sent}</li>)
           }
         </ul>
-      </div>
+        </CardContent>
+      </Card>
     );
   } else {
     //if word is a compound word or a phrase
@@ -202,7 +205,7 @@ const SentencesFetcher = async ({ word }) => {
         {/* { console.log(sentencesWordNick)} */}
         <ul className="m-2">
           {sentencesWordNick.map((sent, index) =>
-            sent.includes(word) ? <li key={index}>{sent}</li> : ""
+            sent.includes(word) ? <li className="p-0.5" key={index}>{sent}</li> : ""
           )}
         </ul>
       </div>

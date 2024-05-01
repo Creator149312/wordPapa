@@ -1,21 +1,33 @@
 import Error from "../error";
+import { CardContent, CardHeader } from "@components/ui/card";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
   // read route params
-  titleStr = "How many syllables in " + (word.charAt(0).toUpperCase() + word.slice(1)) + "?";
-  const descriptionStr = "Check how many syllables are in " + params.word + " and Learn to divide " + params.word + " into syllables.";
+  titleStr =
+    "How many syllables in " +
+    (word.charAt(0).toUpperCase() + word.slice(1)) +
+    "?";
+  const descriptionStr =
+    "Check how many syllables are in " +
+    params.word +
+    " and Learn to divide " +
+    params.word +
+    " into syllables.";
   return {
     title: titleStr,
     description: descriptionStr,
-  }
+  };
 }
 
 let syllableWords = [];
 export default async function Page({ params }) {
   const word = decodeURIComponent(params.word);
-  titleStr = "How many syllables in " + (word.charAt(0).toUpperCase() + word.slice(1)) + "?";
+  titleStr =
+    "How many syllables in " +
+    (word.charAt(0).toUpperCase() + word.slice(1)) +
+    "?";
 
   try {
     syllableWords = {};
@@ -40,34 +52,44 @@ export default async function Page({ params }) {
     // const elapsedTime = (endTime - startTime); // Calculate elapsed time in seconds
     // console.log(`It took ${elapsedTime} milliseconds to process request`);
     //console.log(data);
-
   } catch (error) {
     //console.log(" I am inside error block with error - " + error.name);
     //return <Error />;
 
     // We'll do this thing in the future if above works fine
-     syllableWords = {
-        word: word,
-        score: 100001,
-        numSyllables: 0,
-        tags: [ 'query', 'pron: ', 'ipa_pron: ' ]
-      }
+    syllableWords = {
+      word: word,
+      score: 100001,
+      numSyllables: 0,
+      tags: ["query", "pron: ", "ipa_pron: "],
+    };
   }
 
   return (
-    <div>
-      <h1>
-        {titleStr}
-      </h1>
-      <div className="card m-3 p-4">
-        <h2>{word.charAt(0).toUpperCase() + word.slice(1)}</h2>
-        <p><strong>Number of Syllables:</strong> {syllableWords.numSyllables}</p>
+    <>
+      <CardHeader>
+        <h1 className="text-4xl font-extrabold"> {titleStr}</h1>
+      </CardHeader>
+      <CardContent className="m-3 p-3">
+        <h2 className="text-3xl mb-6 font-semibold">{word.charAt(0).toUpperCase() + word.slice(1)}</h2>
+        <p className="mb-6 text-lg font-normal">
+          <strong>Number of Syllables:</strong> {syllableWords.numSyllables}
+        </p>
         {/* <p><strong>Divide {syllableWords.word} in Syllables: </strong></p> */}
         {/* <p><strong>Part of Speech: </strong>{syllableWords.tags[1]}</p> */}
-        <p><strong>ARPAnet Pronounciation:</strong> {syllableWords.tags[syllableWords.tags.length - 2].split(":")[1]}</p>
-        <p><strong>IPA Notation: </strong>{syllableWords.tags[syllableWords.tags.length - 1].split(":")[1]}</p>
-        <p><strong>Number of Characters: </strong>{word.length}</p>
-      </div>
-    </div>
+        <p className="mb-6 text-lg font-normal">
+          <strong>ARPAnet Pronounciation:</strong>{" "}
+          {syllableWords.tags[syllableWords.tags.length - 2].split(":")[1]}
+        </p>
+        <p className="mb-6 text-lg font-normal">
+          <strong>IPA Notation: </strong>
+          {syllableWords.tags[syllableWords.tags.length - 1].split(":")[1]}
+        </p>
+        <p className="mb-6 text-lg font-normal">
+          <strong>Number of Characters: </strong>
+          {word.length}
+        </p>
+      </CardContent>
+    </>
   );
 }
