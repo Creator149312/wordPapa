@@ -1,3 +1,5 @@
+import { Card } from "@/components/ui/card";
+
 const MostSearchedWordsList = ({ wordList, preText, postText, slug }) => {
   const columns = 3;
   const linksPerColumn = Math.ceil(wordList.length / columns);
@@ -11,16 +13,16 @@ const MostSearchedWordsList = ({ wordList, preText, postText, slug }) => {
       if (index < wordList.length) {
         const word = wordList[index];
         rowLinks.push(
-          <div key={index} className="link-box col-4">
-            <a href={`${slug}${word}`}>
+          <a href={`${slug}${word}`} className="md:col-span-4 text-center">
+            <Card key={index} className="m-2 p-2">
               {preText} {word} {postText}
-            </a>
-          </div>
+            </Card>
+          </a>
         );
       }
     }
     linkRows.push(
-      <div key={i} className="row">
+      <div key={i} className="grid md:grid-cols-12 m-2">
         {rowLinks}
       </div>
     );
@@ -28,7 +30,9 @@ const MostSearchedWordsList = ({ wordList, preText, postText, slug }) => {
 
   return (
     <>
-      <h3>Links to Commonly Searched Terms</h3>
+      <h3 className="mb-3 mt-5 text-2xl font-semibold">
+        Links to Commonly Searched Terms
+      </h3>
       <div>{linkRows}</div>
     </>
   );

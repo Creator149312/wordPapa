@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@components/ui/button";
 
+import { Card } from "@components/ui/card";
+
 //usage of SessionStore is causing website to load slowly
 const SearchBarNav = () => {
   const [selectedOption, setSelectedOption] = useState("/define/");
@@ -143,12 +145,12 @@ const SearchBarNav = () => {
   }
 
   return (
-    <>
-      <div className="grid md:grid-cols-6 w-[100%] md:w-[60%] m-auto">
+    <Card className="w-full rounded-none border-t-0 shadow-none">
+      <div className="grid md:grid-cols-6 w-[100%] md:w-[60%] m-auto p-2">
         <select
           value={selectedOption}
           onChange={handleOptionChange}
-          className="p-2 mr-2 border-1 md:col-span-2"
+          className="p-2 mr-2 border-2 md:col-span-2"
           name="tool"
         >
           {urlOptions.map((option) => (
@@ -157,7 +159,7 @@ const SearchBarNav = () => {
             </option>
           ))}
         </select>
-        <div className="md:col-span-4 grid grid-cols-5">
+        <div className="md:col-span-4 grid border-2 rounded-r-lg grid-cols-5">
         <input
           className={
             inputError
@@ -178,14 +180,14 @@ const SearchBarNav = () => {
         <Button
           variant="searchcustom"
           onClick={handleLoadUrl}
-          className="cursor-pointer rounded-l-none col-span-1 w-[100%] h-[100%]"
+          className="cursor-pointer text-lg rounded-l-none col-span-1 w-[100%] h-[100%]"
           disabled={inputError ? true : false}
         >
           Search
         </Button>
         </div>
       </div>
-    </>
+    </Card>
   );
 };
 

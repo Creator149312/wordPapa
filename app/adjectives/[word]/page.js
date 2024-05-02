@@ -73,7 +73,7 @@ export default async function Page({ params }) {
   return (
     <>
       <CardHeader>
-        <h1  className="text-4xl font-extrabold">{titleStr}</h1>
+        <h1 className="text-4xl font-extrabold">{titleStr}</h1>
       </CardHeader>
       <CardContent>
         <p className="mb-6 text-lg font-normal">

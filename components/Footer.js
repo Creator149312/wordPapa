@@ -1,19 +1,14 @@
+
+import { Card } from "@components/ui/card";
+
 const Footer = () => {
   return (
-    <footer className='card'>
-      <div style={containerStyle}>
+    <Card className='w-full rounded-none border-t-2 mt-2 p-2'>
         <div className='text-center'>
-          <p>&copy; {new Date().getFullYear()} Copyright: WordPapa</p>
+          <p className="mb-2 text-lg font-semibold">&copy; {new Date().getFullYear()} Copyright: WordPapa</p>
         </div>
-      </div>
-    </footer>
+    </Card>
   );
-};
-
-const containerStyle = {
-  maxWidth: '1200px',
-  margin: '0 auto',
-  padding: '0 20px',
 };
 
 export default Footer;
