@@ -40,8 +40,8 @@ const Page = async ({ params }) => {
 
   return (
     <>
-      <h1>{titleString}</h1>
-      <p>
+      <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
+      <p className="mb-2">
         Explore the list of {words.length} verbs starting with {phraseSearch} {L} to describe postive or negative actions of a noun.
       </p>
       {/* {words.map((link, index) => (
@@ -50,7 +50,7 @@ const Page = async ({ params }) => {
         </div>
       ))} */}
        <DataFilterDisplay words={words} />
-       <p>
+       <p className="mb-2">
         All the action words that begin with <strong>{L}</strong> are sorted based on length for
         easy browsing. The list also contains some conjugations in different
         tenses (past, present, future) and moods (indicative, imperative,

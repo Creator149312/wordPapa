@@ -36,8 +36,8 @@ const Page = async ({ params }) => {
 
   return (
     <>
-      <h1>{titleString}</h1>
-      <p>
+      <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
+      <p className="mb-2">
         Explore the complete list of {words.length} English words
         ending with {phraseSearch} {L} as a suffix.
       </p>

@@ -22,6 +22,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.1",
     "eslint-config-next": "^14.1.0",
+    "lucide-react": "^0.377.0",
     "mdb-react-ui-kit": "^6.3.0",
     "mongoose": "^8.0.3",
     "next": "^14.1.0",

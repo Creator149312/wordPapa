@@ -15,8 +15,9 @@ const Page = () => {
               <div className="p-3 text-center mb-2">
                 <h1 className="mb-3 text-4xl">
                   <strong>WordPapa</strong>
-                  <sub className="p-1"> by</sub>
-                  <sub className="p-1 text-3xl">EnglishBix</sub>
+                  <div className="z-0">
+                  <span className="p-1"> by</span>
+                  <span className="p-1 text-3xl">EnglishBix</span></div>
                 </h1>
                 <h3 className="text-2xl m-2 p-2">The free, fun, and effective way to master a word!</h3>
                 <p className="m-3 p-2 text-lg font-normal">

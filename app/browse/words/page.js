@@ -18,15 +18,15 @@ const generateWordsStartingLinks = async () => {
       let firstChar = endingPhrases[i];
       let secondChar = endingPhrases[i + 1];
       nounsJsx.push(
-        <div className="row" key={i}>
-          <div className="card col-6 text-center">
+        <div className="grid md:grid-cols-12 m-2" key={i}>
+          <div className="md:col-span-6 text-center m-2 p-2">
             <a href={`/browse/verbs/end/${firstChar}`}>
-              <div className="medium-text">Verbs Ending with {firstChar}</div>
+              <div className="text-lg">Verbs Ending with {firstChar}</div>
             </a>
           </div>
-          <div className="card col-6 text-center">
+          <div className="md:col-span-6 text-center m-2 p-2">
             <a href={`/browse/verbs/end/${secondChar}`}>
-              <div className="medium-text">Verbs Ending with {secondChar}</div>
+              <div className="text-lg">Verbs Ending with {secondChar}</div>
             </a>
           </div>
         </div>
@@ -43,15 +43,15 @@ const generateWordsLinks = async () => {
         let firstChar = String.fromCharCode(97 + i);
         let secondChar = String.fromCharCode(97 + i + 1);
         adjJsx.push(
-            <div className="row" key={i}>
-                <div className="card col-6 text-center">
+            <div className="grid md:grid-cols-12 m-2" key={i}>
+                <div className="md:col-span-6 text-center m-2 p-2">
                     <a href={`/browse/words/${firstChar}`}>
                         <div className="medium-text">Letter {firstChar} Words</div>
                     </a>
                 </div>
-                <div className="card col-6 text-center">
+                <div className="md:col-span-6 text-center m-2 p-2">
                     <a href={`/browse/words/${secondChar}`}>
-                        <div className="medium-text">Letter {secondChar} Words</div>
+                        <div className="text-lg">Letter {secondChar} Words</div>
                     </a>
                 </div>
             </div>
@@ -69,15 +69,15 @@ const generateWordsEndingLinks = async () => {
         let firstChar = endingPhrases[i];
         let secondChar = endingPhrases[i + 1];
         adjJsx.push(
-            <div className="row" key={i}>
-                <div className="card col-6 text-center">
+            <div className="grid md:grid-cols-12 m-2" key={i}>
+                <div className="md:col-span-6 text-center m-2 p-2">
                     <a href={`/browse/words/end/${firstChar}`}>
-                        <div className="medium-text">Words Ending with {firstChar}</div>
+                        <div className="text-lg">Words Ending with {firstChar}</div>
                     </a>
                 </div>
-                <div className="card col-6 text-center">
+                <div className="md:col-span-6 text-center m-2 p-2">
                     <a href={`/browse/words/end/${secondChar}`}>
-                        <div className="medium-text">Words Ending with {secondChar}</div>
+                        <div className="text-lg">Words Ending with {secondChar}</div>
                     </a>
                 </div>
             </div>
@@ -96,24 +96,24 @@ const Page = async () => {
             <div className="row">
                 {/* Left side: 9-column scrollable content */}
                 <div className="m-2 p-3">
-                    <h1>List of All English Words</h1>
-                    <p>
+                    <h1 className="mb-3 text-4xl font-bold">List of All English Words</h1>
+                    <p  className="mb-2">
                         We are here to delve into the vast and ever-evolving world of English vocabulary. You'll explore a comprehensive list of words, encompassing the richness and diversity of the English language.
                     </p>
-                    <p>This list is a treasure trove of terms which extends far beyond frequently used words, venturing into the realms of specialized terminology, rare gems, and obscure vocabulary, related to specific <a href="https://www.englishbix.com/english-vocabulary-list-for-kids/">English Vocabulary Topics</a>.</p>
-                    <p>
+                    <p  className="mb-2">This list is a treasure trove of terms which extends far beyond frequently used words, venturing into the realms of specialized terminology, rare gems, and obscure vocabulary, related to specific <a href="https://www.englishbix.com/english-vocabulary-list-for-kids/">English Vocabulary Topics</a>.</p>
+                    <p  className="mb-2">
                         There are approximately 150,000 uncommon and common words in English, used as different parts of speech.
                     </p>
-                    <p>
+                    <p  className="mb-2">
                         You can use this page to find new words and learn more about the ones you have never heard before. So, dive in, embark on your personal word-discovery adventure, and let your vocabulary flourish!</p>
-                    <h2>Words that Start With </h2>
-                    <p> We've organized them into sorted lists of words from a to z, each starting with a specific letter or group of letters.</p>
+                    <h2 className="mb-3 mt-5 text-3xl font-semibold">Words that Start With </h2>
+                    <p className="mb-2"> We've organized them into sorted lists of words from a to z, each starting with a specific letter or group of letters.</p>
                     {wordsLinks.map((linkdata) => linkdata)}
-                    <h2>Words that End With</h2>
-                    <p> The following lists offer a glimpse into the vocabulary of words each ending with the letter or sequence of letters.</p>
+                    <h2 className="mb-3 mt-5 text-3xl font-semibold">Words that End With</h2>
+                    <p className="mb-2"> The following lists offer a glimpse into the vocabulary of words each ending with the letter or sequence of letters.</p>
                     {wordsEndingLinks.map((linkdata) => linkdata)}
-                    <p>Whether you're a word enthusiast, a student seeking to expand your knowledge, or a writer looking for some fancy words.
-                    </p><p> <strong>Please note:</strong> It's important to acknowledge that compiling an exhaustive list of all English words is a near-impossible feat due to the language's constant evolution and the inclusion of slang, technical terms, and regional variations. This list strives to be as comprehensive as possible while acknowledging its limitations.
+                    <p className="mb-2">Whether you're a word enthusiast, a student seeking to expand your knowledge, or a writer looking for some fancy words.
+                    </p><p className="mb-2"> <strong>Please note:</strong> It's important to acknowledge that compiling an exhaustive list of all English words is a near-impossible feat due to the language's constant evolution and the inclusion of slang, technical terms, and regional variations. This list strives to be as comprehensive as possible while acknowledging its limitations.
                     </p>
                 </div>
             </div>

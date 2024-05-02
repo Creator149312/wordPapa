@@ -38,8 +38,8 @@ const Page = async ({ params }) => {
 
   return (
     <>
-      <h1>{titleString}</h1>
-      <p>
+      <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
+      <p className="mb-2">
         Explore the list of {words.length} positive and negative adjective words
         starting with {phraseSearch} <strong>{L}</strong> to describe person, place or thing.
       </p>
@@ -49,11 +49,11 @@ const Page = async ({ params }) => {
         </div>
       ))} */}
       <DataFilterDisplay words={words} />
-      <p>
+      <p className="mb-2">
         With these wider range of adjectives beginining with <strong>{L}</strong> you'll be able
         to discover nuanced options related to your initial idea.
       </p>
-      <p>
+      <p className="mb-2">
         The list also contains some describing words that indicate the
         grammatical role (e.g., common adjective, proper adjective) of each
         adjective to help you find even more precise and contrasting words for

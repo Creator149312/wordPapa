@@ -40,17 +40,17 @@ const Page = async ({ params }) => {
 
   return (
     <>
-      <h1>{titleString}</h1>
-      <p>
+      <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
+      <p className="mb-2">
         Explore the list of {words.length} singular and plural nouns ending with {phraseSearch} {L} and
         see how they represent names of person, place, thing or concept.
       </p>
        <DataFilterDisplay words={words} />
-       <p>
+       <p className="mb-2">
        <strong>Note:</strong> All nouns that end with <strong>{L}</strong> are sorted based on
         length for easy browsing.
       </p>
-      <p>
+      <p className="mb-2">
         This list will help you brainstorm specific categories or discover more
         specific type of noun (e.g., common noun, proper noun, concrete noun,
         abstract noun) you might not have known before.

@@ -37,8 +37,8 @@ const Page = async ({ params }) => {
 
   return (
     <>
-      <h1>{titleString}</h1>
-      <p>
+      <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
+      <p className="mb-2">
         Explore the list of {words.length} English words
         starting with {phraseSearch} {L} as a prefix.
       </p>

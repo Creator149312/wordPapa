@@ -1,5 +1,6 @@
 import WordsDisplay from "@utils/WordsDisplay";
 import { Card } from "@components/ui/card";
+import AdsUnit from "@components/AdsUnit"
 
 export const filterWord = (word, input1, input2, input3, length) => {
   // Initialize check variables
@@ -62,7 +63,9 @@ export const displayWords = (wordsArr, startsWith, endsWith, contains, length) =
     length
   );
   const result = Object.entries(groupedWords).map(([length, words], index) => {
-    return (<><div key={length}><WordsDisplay length={length} words={words} /></div>{index % 2 === 0 && (<Card key="index" className="h-[200px] text-center p-3 m-5">I am an Ad Card</Card>)}</>);
+    return (<><div key={length}><WordsDisplay length={length} words={words} /></div>{index % 2 === 0 && (<Card key={`ad${index}`} className="h-[200px] text-center p-2 mt-3 mb-3">
+      {/* <AdsUnit /> */}
+       </Card>)}</>);
   });
   return result;
 };

@@ -16,9 +16,9 @@ const WordsDisplay = ({ length, words }) => {
   };
 
   return (
-    <Card className="text-center p-3 m-5 words-container">
+    <Card className="text-center p-2 mt-3 mb-3 words-container">
       <CardTitle className="mb-2 font-bold text-xl">
-       {length} Letter Words
+        {length} Letter Words
       </CardTitle>
       <CardContent className="p-2">
         {/* {words.map((word, index) => {
@@ -27,22 +27,21 @@ const WordsDisplay = ({ length, words }) => {
         {words
           .slice(0, showAll ? words.length : maxWordsToShow)
           .map((word, index) => (
-            <span
-              className="p-2 m-1 text-base text-center shadow-lg inline-block rounded-md bg-[#75c32c]"
-              key={index}
+            <span key={index}
+              className="p-2 m-1.5 text-lg text-center font-semibold shadow-lg inline-block rounded-md bg-[#75c32c]"
             >
-              {word}{" "}
+              {word}
             </span>
           ))}
         {words.length > maxWordsToShow &&
           (!showAll ? (
-            <div>
+            <div key={`load${length}`}>
               <button onClick={handleShowAll} className="custom-button m-2">
                 Load More..
               </button>
             </div>
           ) : (
-            <div>
+            <div key={`unload${length}`}>
               <button onClick={handleShowAll} className="custom-button m-2">
                 Show Less..
               </button>

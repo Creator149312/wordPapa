@@ -14,6 +14,8 @@ import { Card } from "@/components/ui/card";
 
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
+import Navbar from "../components/navbar/Navbar";
+import AdsScriptLoader from "@components/AdsScriptLoader";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -46,7 +48,7 @@ const layout = ({ children }) => {
       </head>
       <body
         className={cn(
-          "min-h-screen bg-slate-100 font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
@@ -58,7 +60,8 @@ const layout = ({ children }) => {
         >
           <div className="border-b-2">
             {/* <NavbarComponent /> */}
-            <NavBarLatest />
+            {/* <NavBarLatest /> */}
+            <Navbar />
             <SearchNavBar />
           </div>
           <main className="grid md:grid-cols-12 gap-x-2 m-2">
@@ -74,6 +77,7 @@ const layout = ({ children }) => {
           <Footer />
           <Toaster position="top-right" />
         </NextAuthProvider>
+        {/* <AdsScriptLoader /> */}
       </body>
     </html>
   );
