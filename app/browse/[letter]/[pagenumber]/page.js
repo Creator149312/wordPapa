@@ -15,7 +15,6 @@ export async function generateMetadata({ params }, parent) {
   }
 }
 
-
 function countSpacesAndHyphens(word) {
   const regex = /[\s-]/g;
   const matches = word.match(regex);
@@ -62,15 +61,15 @@ const Page = async ({ params }) => {
   let pagenumber = params.pagenumber;
 
   return (
-    <div>
-    <h1>{titleStr}</h1>
+    <>
+    <h1 className="mb-3 text-4xl font-bold">{titleStr}</h1>
     <LinkPagination
       links={words}
       linksPerPage={100}
       pagenumber={pagenumber}
       letter={params.letter}
     />
-    </div>
+    </>
   );
 };
 

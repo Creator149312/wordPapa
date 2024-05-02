@@ -1,6 +1,7 @@
 import allUSWords from "../allUsWords";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 // import { promises as fs, link } from "fs";
+import { CardContent, CardHeader } from "@components/ui/card";
 
 let titleStr = "";
 let ltUp = "";
@@ -112,13 +113,17 @@ export default async function Page({ params }) {
     letterinUppercase;
 
   return (
-    <div>
-      <h1>{pageHeading}</h1>
-      <p>
+    <>
+    <CardHeader>
+      <h1 className="text-4xl font-extrabold">{pageHeading}</h1>
+      </CardHeader>
+      <CardContent>
+      <p className="mb-6 text-lg font-normal">
         Following is a list of {wordsWithLetters.length} English words you can
         form using letters in {letterinUppercase} when unscrambled.
       </p>
       <DataFilterDisplay words={wordsWithLetters} />
-    </div>
+      </CardContent>
+    </>
   );
 }

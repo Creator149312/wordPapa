@@ -215,19 +215,17 @@ export default async function WordSpecificPage({ params }) {
         );
       } else {
         return (<>
-          <div className="card m-2">
-            <div className="card-header">
-              <h1>{word}</h1>
-            </div>
-            <div className="card-body">
-              <p className="ipa">
-                IPA:{" "}
+          <Card className="m-2">
+            <CardHeader>
+              <h1 className="text-4xl font-extrabold">{word}</h1>
+            </CardHeader>
+            <CardContent className="card-body">
+              <p className="mb-6 text-lg font-normal">
+                <strong>IPA:</strong>{" "}
               </p>
-              <div>
-                <p> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
-              </div>
-            </div>
-          </div>
+              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
+            </CardContent>
+          </Card>
         </>);
       }
     } else {
@@ -281,13 +279,13 @@ export default async function WordSpecificPage({ params }) {
             await splitDefsbyPOS(finalMatches[i].defs);
             defsForWord.push(
               <>
-                <div className="card m-2">
-                  <div className="card-header">
-                    <h1>{finalMatches[i].word}</h1>
-                  </div>
-                  <div className="card-body">
-                    <p className="ipa">
-                      IPA:{" "}
+                <Card className="card m-2">
+                  <CardHeader >
+                    <h1 className="text-4xl font-extrabold">{finalMatches[i].word}</h1>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-6 text-lg font-normal">
+                      <strong>IPA:</strong>{" "}
                       {
                         finalMatches[i].tags[
                           finalMatches[i].tags.length - 1
@@ -295,7 +293,7 @@ export default async function WordSpecificPage({ params }) {
                       }
                     </p>
                     {finalMatches[i].hasOwnProperty("defHeadword") && (
-                      <p>
+                      <p className="mb-6 text-lg font-normal">
                         Root Word:{" "}
                         <Link
                           href={finalMatches[i].defHeadword
@@ -308,8 +306,8 @@ export default async function WordSpecificPage({ params }) {
                     )}
                     {/* {console.log(definitions)} */}
                     {await displayDefs()}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </>
             );
 
@@ -355,19 +353,17 @@ export default async function WordSpecificPage({ params }) {
       } else {
         //  getDefinePageTemplate(decodedWord);
         return (<>
-          <div className="card m-2">
-            <div className="card-header">
-              <h1>{word}</h1>
-            </div>
-            <div className="card-body">
-              <p className="ipa">
-                IPA:{" "}
+          <Card className="card m-2">
+            <CardHeader className="card-header">
+              <h1 className="text-4xl font-extrabold">{word}</h1>
+            </CardHeader>
+            <CardContent className="card-body">
+              <p className="mb-6 text-lg font-normal">
+                <strong>IPA:</strong>{" "}
               </p>
-              <div>
-                <p> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
-              </div>
-            </div>
-          </div>
+              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
+            </CardContent>
+          </Card>
         </>);
       }
     }

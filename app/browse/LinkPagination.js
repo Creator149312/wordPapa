@@ -28,14 +28,14 @@ function LinkPagination({ links, linksPerPage, pagenumber, letter }) {
   };
 
   return (
-    <div>
+    <>
       {currentLinks.map((link, index) => (
-        <div key={index} className='wordSpan'>
+        <div key={index} className='text-lg p-2 m-2 rounded-sm inline-block bg-[#90ee90] text-center shadow-md cursor-pointer'>
           {customLink(link)}
         </div>
       ))}
       <Pagination currentPage={pagenumber} totalPages={totalPages} letter={letter}/>
-    </div>
+    </>
   );
 }
 

@@ -61,12 +61,12 @@ const layout = ({ children }) => {
             <NavBarLatest />
             <SearchNavBar />
           </div>
-          <main className="grid md:grid-cols-5 gap-x-2 m-2">
-            <Card className="m-2 p-5 md:col-span-4">
+          <main className="grid md:grid-cols-12 gap-x-2 m-2">
+            <Card className="m-2 p-5 md:col-span-9">
               {children}
               {/** All the main content goes here */}
             </Card>
-            <Card className="m-2 md:col-span-1">
+            <Card className="m-2 md:col-span-3">
               <SideBar />
             </Card>
           </main>

@@ -70,15 +70,15 @@ const Page = async ({ params }) => {
     let words = await getWords(params.letter);
 
     return (
-      <div>
-        <h1>{titleStr}</h1>
+      <>
+        <h1 className="mb-3 text-4xl font-bold">{titleStr}</h1>
         <LinkPagination
           links={words}
           linksPerPage={100}
           pagenumber={1}
           letter={params.letter}
         />
-      </div>
+      </>
     )
   } else {
     redirect("/browse");

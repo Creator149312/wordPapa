@@ -1,3 +1,7 @@
+import {
+  Card,
+} from "@/components/ui/card"
+
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
@@ -17,17 +21,17 @@ const generateVerbLinks = async () => {
     let firstChar = String.fromCharCode(97 + i);
     let secondChar = String.fromCharCode(97 + i + 1);
     nounsJsx.push(
-      <div className="row" key={i}>
-        <div className="card col-6 text-center">
+      <div className="grid md:grid-cols-12 m-2" key={i}>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/verbs/${firstChar}`}>
-            <div className="medium-text">Verbs with Letter {firstChar}</div>
+            <div className="text-lg">Verbs with Letter {firstChar}</div>
           </a>
-        </div>
-        <div className="card col-6 text-center">
+        </Card>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/verbs/${secondChar}`}>
-            <div className="medium-text">Verbs with Letter {secondChar}</div>
+            <div className="text-lg">Verbs with Letter {secondChar}</div>
           </a>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -43,17 +47,17 @@ const generateVerbEndingLinks = async () => {
     let firstChar = endingPhrases[i];
     let secondChar = endingPhrases[i + 1];
     nounsJsx.push(
-      <div className="row" key={i}>
-        <div className="card col-6 text-center">
+      <div className="grid md:grid-cols-12 m-2" key={i}>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/verbs/end/${firstChar}`}>
-            <div className="medium-text">Verbs Ending with {firstChar}</div>
+            <div className="text-lg">Verbs Ending with {firstChar}</div>
           </a>
-        </div>
-        <div className="card col-6 text-center">
+        </Card>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/verbs/end/${secondChar}`}>
-            <div className="medium-text">Verbs Ending with {secondChar}</div>
+            <div className="text-lg">Verbs Ending with {secondChar}</div>
           </a>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -70,35 +74,35 @@ const Page = async () => {
       <div className="row">
         {/* Left side: 9-column scrollable content */}
         <div className="m-2 p-3">
-          <h1>Verb Dictionary: List of All Verbs in English</h1>
-          <p>
+          <h1 className="mb-3 text-4xl font-bold">Verb Dictionary: List of All Verbs in English</h1>
+          <p className="mb-2">
             Welcome to Verb Dictionary where you can find all the action words in
             English. Here, you'll discover a rich collection of words to articulate various actions, experiences, and sentiments.
           </p>
-          <p>
+          <p className="mb-2">
             It helps people find verbs for talking about things they do, feel, and think.
             From verbs that denote positive actions like helping and winning, to words that
             help you convey negative actions, like hurting and struggling, you'll find them all
             here to breathe life into your sentences.
           </p>
-          <p>
+          <p className="mb-2">
             There are around 11,000 verbs in English language, available for describing actions.
           </p>
-          <h2>Verbs that Begin With</h2>
-          <p>
+          <h2 className="mb-3 mt-5 text-3xl font-semibold">Verbs that Begin With</h2>
+          <p className="mb-2">
             We've organized them into alphabetically sorted lists of verbs, each starting with a specific letter or group of letters.</p>
           {verbLinks.map((linkdata) => linkdata)}
-          <div className="row">
-            <div className="card col-6 text-center">
+          <div className="grid md:grid-cols-12 m-2">
+            <Card className="md:col-span-6 text-center m-2 p-2">
               <a href={`/browse/verbs/re`}>
-                <div className="medium-text">Verbs Starting with re</div>
+                <div className="text-lg">Verbs Starting with re</div>
               </a>
-            </div>
+            </Card>
           </div>
-          <h2>Verbs that End With</h2>
-          <p>The following lists offer a glimpse into the vocabulary of verbs that end with the letter or sequence of letters.</p>
+          <h2 className="mb-3 mt-5 text-3xl font-semibold">Verbs that End With</h2>
+          <p className="mb-2">The following lists offer a glimpse into the vocabulary of verbs that end with the letter or sequence of letters.</p>
           {verbEndingLinks.map((linkdata) => linkdata)}
-          <p>
+          <p className="mb-2">
             With this Verb dictionary, people can find the wealth of verbs to express actions, states of being, and occurrences.
           </p>
         </div>

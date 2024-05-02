@@ -1,3 +1,7 @@
+import {
+  Card,
+} from "@/components/ui/card"
+
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
@@ -17,17 +21,17 @@ const generateNounLinks = async () => {
     let firstChar = String.fromCharCode(97 + i);
     let secondChar = String.fromCharCode(97 + i + 1);
     nounsJsx.push(
-      <div className="row" key={i}>
-        <div className="card col-6 text-center">
+      <div className="grid md:grid-cols-12 m-2" key={i}>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/nouns/${firstChar}`}>
-            <div className="medium-text">Nouns beginning with {firstChar}</div>
+            <div className="text-lg">Nouns beginning with {firstChar}</div>
           </a>
-        </div>
-        <div className="card col-6 text-center">
+        </Card>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/nouns/${secondChar}`}>
-            <div className="medium-text">Nouns beginning with {secondChar}</div>
+            <div className="text-lg">Nouns beginning with {secondChar}</div>
           </a>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -41,19 +45,19 @@ const generateNounEndLinks = async () => {
 
   for (let i = 0; i < endingPhrases.length; i += 2) {
     let firstChar = endingPhrases[i];
-    let secondChar = endingPhrases [i + 1];
+    let secondChar = endingPhrases[i + 1];
     nounsJsx.push(
-      <div className="row" key={i}>
-        <div className="card col-6 text-center">
+      <div className="grid md:grid-cols-12 m-2" key={i}>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/nouns/end/${firstChar}`}>
-            <div className="medium-text">Nouns Ending with {firstChar}</div>
+            <div className="text-lg">Nouns Ending with {firstChar}</div>
           </a>
-        </div>
-        <div className="card col-6 text-center">
+        </Card>
+        <Card className="md:col-span-6 text-center m-2 p-2">
           <a href={`/browse/nouns/end/${secondChar}`}>
-            <div className="medium-text">Nouns Ending with {secondChar}</div>
+            <div className="text-lg">Nouns Ending with {secondChar}</div>
           </a>
-        </div>
+        </Card>
       </div>
     );
   }
@@ -66,37 +70,32 @@ const Page = async () => {
   let nounsEndLinks = await generateNounEndLinks();
 
   return (
-    <div>
-      <div className="row">
-        {/* Left side: 9-column scrollable content */}
-        <div className="m-2 p-3">
-          <h1>Noun Dictionary: List of All Nouns in English</h1>
-          <p>
-            Welcome to the noun dictionary page where you can find all the noun words in
-            English from A to Z. Here, you'll explore the vast array of words that name people,
-            places, things, and ideas!
-          </p>
-          <p>
-            From common objects like "table" and "chair" to abstract concepts like
-            "love" and "justice," you'll find nouns spanning every aspect of human experience.
-          </p>
-          <p>
-            There are around 80,000 plus frequently used nouns in the
-            English language, available for naming.
-          </p>
-          <h2>Nouns that Begin With</h2>
-          <p>We've organized
-            them into alphabetically sorted lists of nouns, each beginning with a specific letter or group of letters.</p>
-          {nounsLinks.map((linkdata) => linkdata)}
-          <h2>Nouns that End With</h2>
-          <p>The following lists offer a glimpse into the diverse vocabulary of noun words that end with the letter or sequence of letters.</p>
-          {nounsEndLinks.map((linkdata) => linkdata)}
-          <p>
-            Whether you're a student expanding your vocabulary, a writer seeking inspiration, this exhaustive noun compilation gives you endless possibilities of naming person, place or thing and discover the beauty of
-            linguistic expression.
-          </p>
-        </div>
-      </div>
+    <div className="m-2 p-3">
+      <h1 className="mb-3 text-4xl font-bold">Noun Dictionary: List of All Nouns in English</h1>
+      <p className="mb-2">
+        Welcome to the noun dictionary page where you can find all the noun words in
+        English from A to Z. Here, you'll explore the vast array of words that name people,
+        places, things, and ideas!
+      </p>
+      <p className="mb-2">
+        From common objects like "table" and "chair" to abstract concepts like
+        "love" and "justice," you'll find nouns spanning every aspect of human experience.
+      </p>
+      <p className="mb-2">
+        There are around 80,000 plus frequently used nouns in the
+        English language, available for naming.
+      </p>
+      <h2 className="mb-3 mt-5 text-3xl font-semibold">Nouns that Begin With</h2>
+      <p className="mb-2">We've organized
+        them into alphabetically sorted lists of nouns, each beginning with a specific letter or group of letters.</p>
+      {nounsLinks.map((linkdata) => linkdata)}
+      <h2 className="mb-3 mt-5 text-3xl font-semibold">Nouns that End With</h2>
+      <p className="mb-2">The following lists offer a glimpse into the diverse vocabulary of noun words that end with the letter or sequence of letters.</p>
+      {nounsEndLinks.map((linkdata) => linkdata)}
+      <p className="mb-2">
+        Whether you're a student expanding your vocabulary, a writer seeking inspiration, this exhaustive noun compilation gives you endless possibilities of naming person, place or thing and discover the beauty of
+        linguistic expression.
+      </p>
     </div>
   );
 };

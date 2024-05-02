@@ -52,7 +52,7 @@ function Pagination({ currentPage, totalPages, letter }) {
     return pagination;
   };
 
-  return <div className="pagination">{renderPagination()}</div>;
+  return <div className="flex justify-center gap-3 m-3 p-3 items-center">{renderPagination()}</div>;
 }
 
 export default Pagination;

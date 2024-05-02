@@ -2,7 +2,6 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
 
-
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);

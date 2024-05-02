@@ -75,10 +75,9 @@ const wordFindersComponents = [
             </a>
           </li>
           <li onClick={removeActive}>
-            <a href="/define" className={`${styles.navLink}`}>Dictionary
+            <a href="/browse" className={`${styles.navLink}`}>Dictionaries
             </a>
           </li>
-         
           {/* <li >
             <UserInfo name={session?.user?.name} status={status}/>
           </li> */}

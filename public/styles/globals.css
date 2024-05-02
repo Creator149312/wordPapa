@@ -622,7 +622,7 @@ body {
   display: inline-block;
   text-align: center;
   line-height: 1;
-  box-shadow: 2px 3px lightgreen;
+  box-shadow: 2px 3px #90ee90;
   font-family: "Belanosima", sans-serif;
   cursor: pointer;
 }

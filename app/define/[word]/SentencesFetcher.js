@@ -69,7 +69,7 @@ async function getSentencesUsingTwinWord(word, regex) {
     const timeoutId = setTimeout(() => {
       controller.abort();
     }, timeout);
-    const signal = controller.signal ;
+    const signal = controller.signal;
 
     const url = `https://twinword-word-graph-dictionary.p.rapidapi.com/example/?entry=${word}`;
     const options = {
@@ -141,47 +141,47 @@ const SentencesFetcher = async ({ word }) => {
       <Card className="m-2" id="examples">
         <CardHeader><h1 className="text-3xl font-extrabold">Examples of "{word}" in Sentences</h1></CardHeader>
         <CardContent>
-        <ul className="m-2 p-2 list-disc">
-          {
-            // if there is an error in fetching Sentences using Twinword API
-            errorTwinWord &&
-            (sentencesWordNick !== undefined &&
-              sentencesWordNick.length > 0 ? (
-              sentencesWordNick.map(
-                (sent, index) =>
-                  sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
-              )
-            ) : (
-              <p>No Sentences Found for {word}</p>
-            ))
-          }
-          {
-            //if there is an error fetching sentences using WordNick API
-            errorWordNick &&
-            ((sentencesTwinWord !== undefined &&
-              sentencesTwinWord.length > 0) ? (
-              sentencesTwinWord.map(
-                (sent, index) =>
-                  sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
-              )
-            ) : (
-              <p>No Sentences Found for {word}</p>
-            ))
-          }
-          {
-            /* If no errors are found Join sentences array and sort them in the order of length and display them */
-            // !errorTwinWord &&
-            //   !errorWordNick &&
-            //   sortStringArrayinASC(sentencesTwinWord.concat(sentencesWordNick)).map((sent, index) =>
-            //     sent.match(regex) ? <li key={index}>{sent}</li> : ""
-            //   )
-            !errorTwinWord &&
-            !errorWordNick &&
-            sortStringArrayinASC(
-              sentencesTwinWord.concat(sentencesWordNick)
-            ).map((sent, index) => <li className="p-0.5" key={index}>{sent}</li>)
-          }
-        </ul>
+          <ul className="m-2 p-2 list-disc">
+            {
+              // if there is an error in fetching Sentences using Twinword API
+              errorTwinWord &&
+              (sentencesWordNick !== undefined &&
+                sentencesWordNick.length > 0 ? (
+                sentencesWordNick.map(
+                  (sent, index) =>
+                    sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
+                )
+              ) : (
+                <p>No Sentences Found for {word}</p>
+              ))
+            }
+            {
+              //if there is an error fetching sentences using WordNick API
+              errorWordNick &&
+              ((sentencesTwinWord !== undefined &&
+                sentencesTwinWord.length > 0) ? (
+                sentencesTwinWord.map(
+                  (sent, index) =>
+                    sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
+                )
+              ) : (
+                <p>No Sentences Found for {word}</p>
+              ))
+            }
+            {
+              /* If no errors are found Join sentences array and sort them in the order of length and display them */
+              // !errorTwinWord &&
+              //   !errorWordNick &&
+              //   sortStringArrayinASC(sentencesTwinWord.concat(sentencesWordNick)).map((sent, index) =>
+              //     sent.match(regex) ? <li key={index}>{sent}</li> : ""
+              //   )
+              !errorTwinWord &&
+              !errorWordNick &&
+              sortStringArrayinASC(
+                sentencesTwinWord.concat(sentencesWordNick)
+              ).map((sent, index) => <li className="p-0.5" key={index}>{sent}</li>)
+            }
+          </ul>
         </CardContent>
       </Card>
     );
@@ -200,15 +200,19 @@ const SentencesFetcher = async ({ word }) => {
     }
 
     return (
-      <div className="card m-2">
-        <h1>Examples of "{word}" in Sentences</h1>
-        {/* { console.log(sentencesWordNick)} */}
-        <ul className="m-2">
-          {sentencesWordNick.map((sent, index) =>
-            sent.includes(word) ? <li className="p-0.5" key={index}>{sent}</li> : ""
-          )}
-        </ul>
-      </div>
+      <Card className="m-2">
+        <CardHeader>
+          <h1 className="text-3xl font-extrabold">Examples of "{word}" in Sentences</h1>
+        </CardHeader>
+        <CardContent>
+          {/* { console.log(sentencesWordNick)} */}
+          <ul className="m-2 p-2 list-disc">
+            {sentencesWordNick.map((sent, index) =>
+              sent.includes(word) ? <li className="p-0.5" key={index}>{sent}</li> : ""
+            )}
+          </ul>
+        </CardContent>
+      </Card>
     );
   }
 };
