@@ -35,7 +35,7 @@ const Navbar = () => {
                         Wordpapa
                     </a>
                     <div className="text-3xl md:hidden" onClick={() => setOpen(!open)}>
-                        {open ? <X /> : <Menu />}
+                        {open ? <X size={35}/> : <Menu size={35}/>}
                     </div>
                 </div>
                 <ul className="md:flex hidden items-center gap-2">
