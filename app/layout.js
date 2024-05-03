@@ -48,7 +48,7 @@ const layout = ({ children }) => {
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-slate-100 dark:bg-slate-900 font-sans antialiased",
           fontSans.variable
         )}
       >
@@ -61,8 +61,10 @@ const layout = ({ children }) => {
           <div className="border-b-2">
             {/* <NavbarComponent /> */}
             {/* <NavBarLatest /> */}
-            <Navbar />
-            <SearchNavBar />
+            <Card className="rounded-none">
+              <Navbar />
+              <SearchNavBar />
+            </Card>
           </div>
           <main className="grid md:grid-cols-12 gap-x-2 m-2">
             <Card className="m-2 p-2 md:p-5 md:col-span-9">

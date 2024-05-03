@@ -2,6 +2,10 @@
 import { useState } from "react";
 import axios from "axios";
 
+import { Button } from "@components/ui/button";
+
+import { Card } from "@components/ui/card";
+
 const SyllableFinder = () => {
   const [text, setText] = useState("");
   const [syllableCount, setSyllableCount] = useState(null);
@@ -44,27 +48,31 @@ const SyllableFinder = () => {
 
   return (
     <div>
-      <div className="input-container text-center m-2">
+      <div className="text-center mt-7">
         <textarea
           rows="7"
-          className="form-control"
+          className="text-lg px-2 py-2 w-full border-2"
           placeholder="Enter text to count syllables..."
           value={text}
           onChange={(e) => setText(e.target.value)}
         ></textarea>
-        <button className="custom-button m-2" onClick={countSyllables}>
+        <Button
+          variant="searchcustom"
+          className="cursor-pointer text-lg m-2"
+          onClick={countSyllables}
+        >
           Count Syllables
-        </button>
+        </Button>
       </div>
       <div>
         {loading && <p>Loading...</p>}
         {error && <p className="error"> {error}</p>}
-        {(syllableCount !== null && !error) && (
-          <div className="card text-center">
-            <p>Syllable Count: {syllableCount}</p>
-            <p>Number of Words: {countWords(text)}</p>
-            <p>Number of Characters: {text.length}</p>
-          </div>
+        {syllableCount !== null && !error && (
+          <Card className="text-center p-2 my-3">
+            <p className="mb-2">Syllable Count: {syllableCount}</p>
+            <p className="mb-2">Number of Words: {countWords(text)}</p>
+            <p className="mb-2">Number of Characters: {text.length}</p>
+          </Card>
         )}
       </div>
     </div>

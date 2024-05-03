@@ -145,12 +145,11 @@ const SearchBarNav = () => {
   }
 
   return (
-    <Card className="w-full rounded-none border-t-0 shadow-none">
       <div className="grid md:grid-cols-6 w-[100%] md:w-[60%] m-auto p-2">
         <select
           value={selectedOption}
           onChange={handleOptionChange}
-          className="p-2 mr-2 border-2 md:col-span-2"
+          className="p-2 md:mr-2 border-2 md:col-span-2"
           name="tool"
         >
           {urlOptions.map((option) => (
@@ -159,12 +158,12 @@ const SearchBarNav = () => {
             </option>
           ))}
         </select>
-        <div className="md:col-span-4 grid border-2 rounded-r-lg grid-cols-5">
+        <div className="md:col-span-4 grid border-2 md:rounded-r-lg grid-cols-5">
         <input
           className={
             inputError
-              ? "px-2 py-2 text-lg  col-span-4"
-              : "text-lg px-2 py-2  col-span-4"
+              ? "px-2 py-2 text-lg col-span-4"
+              : "text-lg px-2 py-2 col-span-4"
           }
           type="text"
           placeholder={placeholder}
@@ -180,14 +179,13 @@ const SearchBarNav = () => {
         <Button
           variant="searchcustom"
           onClick={handleLoadUrl}
-          className="cursor-pointer text-lg rounded-l-none col-span-1 w-[100%] h-[100%]"
+          className="cursor-pointer text-lg md:rounded-l-none rounded-none col-span-1 w-[100%] h-[100%]"
           disabled={inputError ? true : false}
         >
           Search
         </Button>
         </div>
       </div>
-    </Card>
   );
 };
 

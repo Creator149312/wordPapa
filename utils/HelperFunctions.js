@@ -1,6 +1,6 @@
 import WordsDisplay from "@utils/WordsDisplay";
 import { Card } from "@components/ui/card";
-import AdsUnit from "@components/AdsUnit"
+import AdsUnit from "@components/AdsUnit";
 
 export const filterWord = (word, input1, input2, input3, length) => {
   // Initialize check variables
@@ -54,7 +54,13 @@ export const groupWordsByLength = (
 };
 
 /* It is used to Display words in sorted order according to filters after data fetching is done by API */
-export const displayWords = (wordsArr, startsWith, endsWith, contains, length) => {
+export const displayWords = (
+  wordsArr,
+  startsWith,
+  endsWith,
+  contains,
+  length
+) => {
   const groupedWords = groupWordsByLength(
     wordsArr,
     startsWith,
@@ -63,16 +69,30 @@ export const displayWords = (wordsArr, startsWith, endsWith, contains, length) =
     length
   );
   const result = Object.entries(groupedWords).map(([length, words], index) => {
-    return (<><div key={length}><WordsDisplay length={length} words={words} /></div>{index % 2 === 0 && (<Card key={`ad${index}`} className="h-[200px] text-center p-2 mt-3 mb-3">
-      {/* <AdsUnit /> */}
-       </Card>)}</>);
+    return (
+      <div key={`Index${index}`}>
+        <div key={length}>
+          <WordsDisplay length={length} words={words} />
+        </div>
+        {index % 2 === 0 && (
+          <Card
+            key={`ad${index}`}
+            className="h-[200px] text-center p-2 mt-3 mb-3"
+          >
+            {/* <AdsUnit /> */}
+          </Card>
+        )}
+      </div>
+    );
   });
   return result;
 };
 
 export const sortStringArrayinASC = (StrArray) => {
-  return StrArray.sort((a, b) => a.length - b.length).filter((value, index, self) => {
-    // Return true for the first occurrence of each unique element
-    return self.indexOf(value) === index;
-  }); //sort examples based on the length of sentences
-}
+  return StrArray.sort((a, b) => a.length - b.length).filter(
+    (value, index, self) => {
+      // Return true for the first occurrence of each unique element
+      return self.indexOf(value) === index;
+    }
+  ); //sort examples based on the length of sentences
+};

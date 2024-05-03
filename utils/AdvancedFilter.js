@@ -19,9 +19,9 @@ function AdvancedFilter({
   };
 
   return (
-    <div className="shadow-lg m-2 border-t">
+    <div className="shadow-lg border-t dark:bg-slate-800 bg-slate-100">
       <div className="cursor-pointer">
-        <div className="text-center text-lg bg-slate-100 dark:bg-slate-900 p-2 font-bold" onClick={toggleAccordion}>Filter Results</div>
+        <div className="text-center text-lg p-2 font-bold" onClick={toggleAccordion}>Filter Results</div>
         <div className={`m-2 p-2 ${isActive ? '' : 'hidden'}`}>
           <div className="grid grid-cols-12 p-2 m-2">
             <div className="col-span-6 shadow-md">
