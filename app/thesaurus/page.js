@@ -10,27 +10,27 @@ function SimilarWordsPage() {
   return (
     <div className="m-3 p-3">
       <h1 className="mb-3 text-4xl font-bold">{ptitle}</h1>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         A thesaurus is like a magical treasure chest for finding
         synonyms and antonyms of a word! Imagine you're telling a
         story, and you've used the word "happy" a lot. It is your
         friendly tool that will help you suggest other words with
         similar meanings, like "joyful," "content," or "cheerful."
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         It's not a dictionary that tells you what words mean; instead,
         it's a guide to finding another word for words or phrases.
         Just type in a word, and the thesaurus opens up a world of
         possibilities, making your writing more interesting and
         colorful.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         It's like having a map to explore a land of words where you
         can choose the perfect one that fits your story or essay. So,
         if you want your writing to sparkle and shine, a thesaurus is
         the magical tool you need!
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         You can think of a thesaurus as a versatile synonym generator
         tool designed to help users explore and discover words that
         share semantic similarities with a given input word. Whether
@@ -38,25 +38,25 @@ function SimilarWordsPage() {
         enthusiast seeking clues, or a student expanding your
         vocabulary, this tool is your perfect linguistic companion.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Therefore, Thesaurus is sometimes called a synonym dictionary
         or dictionary of synonyms. By suggesting list of words with
         similar meaning it allows users to choose the most suitable
         word to convey their intended message effectively.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         <strong>Note:</strong> Output result consits of related words,
         synonyms and antonyms. You can click "Only synonyms" to see
         synonym words, click "Only antonyms" to see opposite words,
         click "Related Words" to see all the related words.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Using our "filter results" option you can filter output based
         on length, starting and ending charcters which futher helps
         writers, content creators, and language enthusiasts to find
         extact words they need.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Finally, we can say that thesaurus helps us explore the
         richness of language and uncover words that resonate with your
         intended expression.

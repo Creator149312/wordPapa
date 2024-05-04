@@ -62,11 +62,6 @@ export default async function Page({ params }) {
     const data = await res.json();
     adjectiveWords = data.map((item) => item.word);
   } catch (error) {
-    //  console.log(" I am inside error block with error - " + error.name);
-    // return {
-    //   notFound: true,
-    // };
-
     adjectiveWords = [];
   }
 

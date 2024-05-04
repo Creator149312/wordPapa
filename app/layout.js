@@ -15,7 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Navbar from "../components/navbar/Navbar";
-import AdsScriptLoader from "@components/AdsScriptLoader";
+// import AdsScriptLoader from "@components/AdsScriptLoader";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -77,9 +77,9 @@ const layout = ({ children }) => {
           </main>
           <AlphabetLinks />
           <Footer />
-          <Toaster position="top-right" />
+          {/* <Toaster position="top-right" /> */}
         </NextAuthProvider>
-        <AdsScriptLoader />
+        {/* <AdsScriptLoader /> */}
       </body>
     </html>
   );

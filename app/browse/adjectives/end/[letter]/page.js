@@ -38,16 +38,16 @@ const Page = async ({ params }) => {
   return (
     <>
       <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Explore the list of {words.length} positive and negative adjective words
         ending with {phraseSearch} <strong>{L}</strong> to describe person, place or thing.
       </p>
       <DataFilterDisplay words={words} />
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         With these wider range of adjectives ending with <strong>{L}</strong> you'll be able
         to discover nuanced options related to your initial idea.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         The list also contains some describing words that indicate the
         grammatical role (e.g., common adjective, proper adjective) of each
         adjective to help you find even more specific and contrasting words for

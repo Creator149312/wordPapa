@@ -72,21 +72,21 @@ const Page = async () => {
   return (
     <div className="m-2 p-3">
       <h1 className="mb-3 text-4xl font-bold">Verb Dictionary: List of All Verbs in English</h1>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Welcome to Verb Dictionary where you can find all the action words in
         English. Here, you'll discover a rich collection of words to articulate various actions, experiences, and sentiments.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         It helps people find verbs for talking about things they do, feel, and think.
         From verbs that denote positive actions like helping and winning, to words that
         help you convey negative actions, like hurting and struggling, you'll find them all
         here to breathe life into your sentences.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         There are around 11,000 verbs in English language, available for describing actions.
       </p>
       <h2 className="mb-3 mt-5 text-3xl font-semibold">Verbs that Begin With</h2>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         We've organized them into alphabetically sorted lists of verbs, each starting with a specific letter or group of letters.</p>
       {verbLinks.map((linkdata) => linkdata)}
       <div className="grid md:grid-cols-12 m-2">
@@ -97,9 +97,9 @@ const Page = async () => {
         </Card>
       </div>
       <h2 className="mb-3 mt-5 text-3xl font-semibold">Verbs that End With</h2>
-      <p className="mb-2">The following lists offer a glimpse into the vocabulary of verbs that end with the letter or sequence of letters.</p>
+      <p className="mb-6 text-lg font-normal">The following lists offer a glimpse into the vocabulary of verbs that end with the letter or sequence of letters.</p>
       {verbEndingLinks.map((linkdata) => linkdata)}
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         With this Verb dictionary, people can find the wealth of verbs to express actions, states of being, and occurrences.
       </p>
     </div>

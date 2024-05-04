@@ -28,11 +28,11 @@ const Page = async ({ params }) => {
   return (
     <>
       <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Explore the list of {words.length} verbs ending with {phraseSearch} {L} to describe postive or negative actions of a noun.
       </p>
        <DataFilterDisplay words={words} />
-       <p className="mb-2">
+       <p className="mb-6 text-lg font-normal">
         All the action words that end with <strong>{L}</strong> are sorted based on length for
         easy browsing. The list also contains some conjugations in different
         tenses (past, present, future) and moods (indicative, imperative,

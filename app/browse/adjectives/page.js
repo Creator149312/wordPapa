@@ -75,21 +75,21 @@ const Page = async () => {
         {/* Left side: 9-column scrollable content */}
         <div className="m-2 p-3">
           <h1 className="mb-3 text-4xl font-bold">Adjective Dictionary: List of All Adjectives in English</h1>
-          <p className="mb-2">
+          <p className="mb-6 text-lg font-normal">
             Welcome to the adjectives dictionary page where you can find all the describing words in
             English. Here, you'll discover a rich vocabulary of descriptive
             words that capture a myriad of sentiments and characteristics.
           </p>
-          <p className="mb-2">
+          <p className="mb-6 text-lg font-normal">
             From words that show how things look, feel, or act, to words that
             help you <a href="https://www.englishbix.com/words-to-describe-feeling-and-emotions/">express your emotions and feelings</a>, you'll find them all
             here.
           </p>
-          <p className="mb-2">
+          <p className="mb-6 text-lg font-normal">
             There are approximately 21,000 uncommon and common adjectives in English, used to describe nouns.
           </p>
           <h2 className="mb-3 mt-5 text-3xl font-semibold">Adjectives the Start With </h2>
-          <p className="mb-2"> We've organized
+          <p className="mb-6 text-lg font-normal"> We've organized
             them into sorted lists of adjectives from a to z, each starting with a specific letter or group of letters.</p>
           {adjLinks.map((linkdata) => linkdata)}
           <div className="grid md:grid-cols-12 m-2">
@@ -141,9 +141,9 @@ const Page = async () => {
             </Card>
           </div>
           <h2 className="mb-3 mt-5 text-3xl font-semibold">Adjectives that End With</h2>
-          <p className="mb-2"> The following lists offer a glimpse into the vocabulary of adjective words each ending with the letter or sequence of letters.</p>
+          <p className="mb-6 text-lg font-normal"> The following lists offer a glimpse into the vocabulary of adjective words each ending with the letter or sequence of letters.</p>
           {adjEndingLinks.map((linkdata) => linkdata)}
-          <p className="mb-2">
+          <p className="mb-6 text-lg font-normal">
             Whether you're a writer seeking inspiration or a language
             enthusiast, this page offers an a spectrum of words to describe and enhance your nouns, painting vivid pictures with words that express quality, size, shape, and more.
           </p>

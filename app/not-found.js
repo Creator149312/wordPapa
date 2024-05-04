@@ -11,7 +11,7 @@ export default function NotFound() {
       <h1 className='p-3'>You are Lost!</h1>
       <p className='p-3'>Start again with some new query</p>
       <div >
-      <Link href="/" className='custom-button'>Return Home</Link>
+      <Link href="/" className='bg-[#75c32c] shadow hover:bg-accent'>Return Home</Link>
       </div>
     </div>
   )

@@ -41,7 +41,7 @@ const Page = async ({ params }) => {
   return (
     <>
       <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Explore the list of {words.length} nouns starting with {phraseSearch}{" "}
         {L} and see how they represent names of person, place, thing or concept.
       </p>
@@ -51,11 +51,11 @@ const Page = async ({ params }) => {
         </div>
       ))} */}
       <DataFilterDisplay words={words} />
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         <strong>Note:</strong> All nouns beginining with <strong>{L}</strong> are sorted based on
         length for easy browsing.
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         This list will help you brainstorm specific categories or discover more
         specific type of noun (e.g., common noun, proper noun, concrete noun,
         abstract noun) you might not have known before.

@@ -10,7 +10,7 @@ function WordsPage() {
   return (
     <div className="m-2 p-2">
       <h1 className="mb-3 text-4xl font-bold">{ptitle}</h1>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         Introducing the fantastic Word Dictionary tool designed just
         for you! Imagine having a magical guide that unravels the
         mysteries of words, helping you explore their meanings, roles
@@ -18,7 +18,7 @@ function WordsPage() {
         friendly wizard for your vocabulary journey.
       </p>
 
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         When you enter a word into the Word Dictionary, it's as if
         you're whispering a secret incantation, and the wizard opens a
         treasure trove of linguistic wonders. First and foremost, it
@@ -28,7 +28,7 @@ function WordsPage() {
         like, "A mammal having a trunk, and two large ivory tusks jutting from the upper jaw."
       </p>
 
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         But that's not all – our magical tool goes beyond just
         definitions. It's your go-to guide for understanding a word's
         role in sentences. The Word Dictionary unveils the <strong>Parts of Speech</strong>, helping you discover whether
@@ -38,7 +38,7 @@ function WordsPage() {
         language ballet.
       </p>
 
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         And just when you thought the magic couldn't get any better,
         the Word Dictionary presents <strong>Sentence Examples</strong>.
         It conjures up real-life sentences where the word plays a
@@ -47,7 +47,7 @@ function WordsPage() {
         you visualize how the word 'rocket' is put into action.
       </p>
 
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         In essence, the Word Dictionary is your linguistic companion, a
         trusty wizard that transforms the ordinary act of looking up a
         word into a magical journey of discovery. With its help, the
@@ -57,7 +57,7 @@ function WordsPage() {
         Word Dictionary – your key to unlocking the secrets of the
         written world!
       </p>
-      <p className="mb-2">
+      <p className="mb-6 text-lg font-normal">
         The user interface is clean and easy to navigate, making it
         suitable for students, writers, or anyone looking to enhance
         their vocabulary and language comprehension.

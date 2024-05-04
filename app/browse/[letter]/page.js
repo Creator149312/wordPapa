@@ -12,7 +12,10 @@ function countSpacesAndHyphens(word) {
 }
 
 function checkLengthandLetter(l) {
-  return (l.length === 1 && (l === '0' || (l.charCodeAt(0) >= 97 && l.charCodeAt(0) <= 122)));
+  return (
+    l.length === 1 &&
+    (l === "0" || (l.charCodeAt(0) >= 97 && l.charCodeAt(0) <= 122))
+  );
 }
 
 export async function generateMetadata({ params }, parent) {
@@ -25,30 +28,28 @@ export async function generateMetadata({ params }, parent) {
     return {
       title: titleStr,
       description: descriptionStr,
-    }
+    };
   }
 }
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
-  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits 
+  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
 
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const linksArray = fileContent.split("\n");
     //console.log("Total Words = " + linksArray.length);
     if (l === "0") {
-      return linksArray.filter(
-        (word) => {
-          if (!/[a-zA-Z]/.test(word.charAt(0))) {
-            if (regex.test(word) && word.length > 1) {
-              //checking if word is a word or compound words with maximum of two words.
-              if (countSpacesAndHyphens(word) <= 1) return true;
-              else return false;
-            }
+      return linksArray.filter((word) => {
+        if (!/[a-zA-Z]/.test(word.charAt(0))) {
+          if (regex.test(word) && word.length > 1) {
+            //checking if word is a word or compound words with maximum of two words.
+            if (countSpacesAndHyphens(word) <= 1) return true;
+            else return false;
           }
         }
-      );
+      });
     } else {
       return linksArray.filter((word) => {
         if (word.charAt(0) === l) {
@@ -61,7 +62,10 @@ async function getWords(l) {
       });
     }
   } catch (error) {
-    throw new Error(`Error reading the file: ${error.message}`);
+    // here we'll not throw error instead we return empty array
+    // throw new Error(`Error reading the file: ${error.message}`);
+
+    return [];
   }
 }
 
@@ -79,10 +83,10 @@ const Page = async ({ params }) => {
           letter={params.letter}
         />
       </>
-    )
+    );
   } else {
     redirect("/browse");
-  };
+  }
 };
 
 export default Page;

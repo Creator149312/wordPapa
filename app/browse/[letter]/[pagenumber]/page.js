@@ -52,7 +52,10 @@ async function getWords(l) {
       });
     }
   } catch (error) {
-    throw new Error(`Error reading the file: ${error.message}`);
+       // here we'll not throw error instead we return empty array
+    // throw new Error(`Error reading the file: ${error.message}`);
+
+    return [];
   }
 }
 
