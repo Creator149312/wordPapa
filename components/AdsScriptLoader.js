@@ -46,10 +46,10 @@ function newFunction(scriptLoaded) {
   script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
   script.crossorigin = "anonymous";
   script.async = true;
-  // script.onload = () => {
-  //   // Load the ad units once the script has fully loaded
-  //   (window.adsbygoogle = window.adsbygoogle || []).push({});
-  // };
+  script.onload = () => {
+    // Load the ad units once the script has fully loaded
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  };
   document.body.appendChild(script);
   scriptLoaded = true;
   return scriptLoaded;

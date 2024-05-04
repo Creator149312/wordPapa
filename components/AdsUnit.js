@@ -1,11 +1,11 @@
-const AdsUnit = ({ w, h, slot }) => {
+const AdsUnit = ({ w="100%", h="100%", slot }) => {
   return (
-    <div style={{ backgroundColor: '#f0f0f0' }}>
+    <div>
       <ins
         className="adsbygoogle"
         style={{ display: 'inline-block', width: w, height: h }}
         data-ad-client="ca-pub-6746947892342481"
-        data-ad-slot={{ slot }}
+        data-ad-slot={ slot }
       />
     </div>
   );
