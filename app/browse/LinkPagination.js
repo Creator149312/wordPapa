@@ -30,7 +30,7 @@ function LinkPagination({ links, linksPerPage, pagenumber, letter }) {
   return (
     <>
       {currentLinks.map((link, index) => (
-        <div key={index} className='text-lg p-2 m-2 rounded-sm inline-block bg-[#90ee90] text-center shadow-md cursor-pointer'>
+        <div key={index} className='text-lg p-2 m-2 rounded-sm inline-block bg-[#75c32c] text-center shadow-md cursor-pointer'>
           {customLink(link)}
         </div>
       ))}

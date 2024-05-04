@@ -1,7 +1,7 @@
 import SideBar from "@components/SideBar";
 import "./globals.css";
 //import NavbarComponent from "@components/NavBar";
-import NavBarLatest from "@components/NavBarLatest";
+// import NavBarLatest from "@components/NavBarLatest";
 import Footer from "@components/Footer";
 import SearchNavBar from "@components/SearchNavBar";
 import AlphabetLinks from "@components/AlphabetLinks";
