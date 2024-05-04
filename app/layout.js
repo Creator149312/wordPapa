@@ -79,7 +79,7 @@ const layout = ({ children }) => {
           <Footer />
           <Toaster position="top-right" />
         </NextAuthProvider>
-        {/* <AdsScriptLoader /> */}
+        <AdsScriptLoader />
       </body>
     </html>
   );
