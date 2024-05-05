@@ -1,6 +1,6 @@
 import WordsDisplay from "@utils/WordsDisplay";
-// import { Card } from "@components/ui/card";
-// import AdsUnit from "@components/AdsUnit";
+import { Card } from "@components/ui/card";
+import AdsUnit from "@components/AdsUnit";
 // import GoogleAd from "./GoogleAd";
 
 export const filterWord = (word, input1, input2, input3, length) => {
@@ -75,15 +75,15 @@ export const displayWords = (
         <div key={length}>
           <WordsDisplay length={length} words={words} />
         </div>
-        {/* {index % 2 === 0 && (
+        {index % 3 === 0 && (
           <Card
             key={`ad${index}`}
             className="h-[200px] text-center p-2 mt-3 mb-3"
           >
           <AdsUnit slot='7782807936'/> 
-            <GoogleAd slotID='7782807936'/>
+            {/* <GoogleAd slotID='7782807936'/> */}
           </Card>
-        )} */}
+        )}
       </div>
     );
   });
