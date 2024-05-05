@@ -76,12 +76,12 @@ export const displayWords = (
           <WordsDisplay length={length} words={words} />
         </div>
         {index % 3 === 0 && (
-          <Card
+          <div
             key={`ad${index}`}
           >
           <AdsUnit slot='7782807936'/> 
             {/* <GoogleAd slotID='7782807936'/> */}
-          </Card>
+          </div>
         )}
       </div>
     );
