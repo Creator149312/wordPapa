@@ -1,7 +1,6 @@
 import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import commonLinks from "@utils/commonLinks";
-
-import { CardContent, CardHeader } from "@components/ui/card";
+import AdsUnit from "@components/AdsUnit";
 
 const ptitle = "Adjectives Finder: Get Describing Words for Nouns";
 
@@ -128,6 +127,7 @@ function AdjectivesExtractorPage() {
           product descriptions, and creative storytelling, helping writers
           create more engaging and expressive content.
         </p>
+        <AdsUnit slot='7782807936'/> 
         <p className="mb-2">
           You simply have to give it a word, this tool will effortlessly
           generates a curated list of descriptive words related to your chosen
@@ -147,6 +147,7 @@ function AdjectivesExtractorPage() {
           slug={commonLinks.adjectives}
         />
       </div>
+      <AdsUnit slot='7782807936'/> 
     </>
   );
 }

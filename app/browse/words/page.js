@@ -104,16 +104,20 @@ const Page = async () => {
                     <p  className="mb-6 text-lg font-normal">
                         There are approximately 150,000 uncommon and common words in English, used as different parts of speech.
                     </p>
+                    <AdsUnit slot='7782807936'/> 
                     <p  className="mb-6 text-lg font-normal">
                         You can use this page to find new words and learn more about the ones you have never heard before. So, dive in, embark on your personal word-discovery adventure, and let your vocabulary flourish!</p>
                     <h2 className="mb-3 mt-5 text-3xl font-semibold">Words that Start With </h2>
                     <p className="mb-6 text-lg font-normal"> We've organized them into sorted lists of words from a to z, each starting with a specific letter or group of letters.</p>
                     {wordsLinks.map((linkdata) => linkdata)}
+                    <AdsUnit slot='7782807936'/> 
                     <h2 className="mb-3 mt-5 text-3xl font-semibold">Words that End With</h2>
                     <p className="mb-6 text-lg font-normal"> The following lists offer a glimpse into the vocabulary of words each ending with the letter or sequence of letters.</p>
                     {wordsEndingLinks.map((linkdata) => linkdata)}
                     <p className="mb-6 text-lg font-normal">Whether you're a word enthusiast, a student seeking to expand your knowledge, or a writer looking for some fancy words.
-                    </p><p className="mb-6 text-lg font-normal"> <strong>Please note:</strong> It's important to acknowledge that compiling an exhaustive list of all English words is a near-impossible feat due to the language's constant evolution and the inclusion of slang, technical terms, and regional variations. This list strives to be as comprehensive as possible while acknowledging its limitations.
+                    </p>
+                    <AdsUnit slot='7782807936'/> 
+                    <p className="mb-6 text-lg font-normal"> <strong>Please note:</strong> It's important to acknowledge that compiling an exhaustive list of all English words is a near-impossible feat due to the language's constant evolution and the inclusion of slang, technical terms, and regional variations. This list strives to be as comprehensive as possible while acknowledging its limitations.
                     </p>
                 </div>
             </div>

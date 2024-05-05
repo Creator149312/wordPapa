@@ -85,6 +85,7 @@ const Page = async () => {
             help you <a href="https://www.englishbix.com/words-to-describe-feeling-and-emotions/">express your emotions and feelings</a>, you'll find them all
             here.
           </p>
+          <AdsUnit slot='7782807936'/> 
           <p className="mb-6 text-lg font-normal">
             There are approximately 21,000 uncommon and common adjectives in English, used to describe nouns.
           </p>
@@ -140,6 +141,7 @@ const Page = async () => {
               </a>
             </Card>
           </div>
+          <AdsUnit slot='7782807936'/> 
           <h2 className="mb-3 mt-5 text-3xl font-semibold">Adjectives that End With</h2>
           <p className="mb-6 text-lg font-normal"> The following lists offer a glimpse into the vocabulary of adjective words each ending with the letter or sequence of letters.</p>
           {adjEndingLinks.map((linkdata) => linkdata)}

@@ -82,6 +82,7 @@ const Page = async () => {
         help you convey negative actions, like hurting and struggling, you'll find them all
         here to breathe life into your sentences.
       </p>
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         There are around 11,000 verbs in English language, available for describing actions.
       </p>
@@ -96,6 +97,7 @@ const Page = async () => {
           </a>
         </Card>
       </div>
+      <AdsUnit slot='7782807936'/> 
       <h2 className="mb-3 mt-5 text-3xl font-semibold">Verbs that End With</h2>
       <p className="mb-6 text-lg font-normal">The following lists offer a glimpse into the vocabulary of verbs that end with the letter or sequence of letters.</p>
       {verbEndingLinks.map((linkdata) => linkdata)}

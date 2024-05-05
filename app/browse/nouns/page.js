@@ -81,6 +81,7 @@ const Page = async () => {
         From common objects like "table" and "chair" to abstract concepts like
         "love" and "justice," you'll find nouns spanning every aspect of human experience.
       </p>
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         There are around 80,000 plus frequently used nouns in the
         English language, available for naming.
@@ -89,6 +90,7 @@ const Page = async () => {
       <p className="mb-6 text-lg font-normal">We've organized
         them into alphabetically sorted lists of nouns, each beginning with a specific letter or group of letters.</p>
       {nounsLinks.map((linkdata) => linkdata)}
+      <AdsUnit slot='7782807936'/> 
       <h2 className="mb-3 mt-5 text-3xl font-semibold">Nouns that End With</h2>
       <p className="mb-6 text-lg font-normal">The following lists offer a glimpse into the diverse vocabulary of noun words that end with the letter or sequence of letters.</p>
       {nounsEndLinks.map((linkdata) => linkdata)}
@@ -96,6 +98,7 @@ const Page = async () => {
         Whether you're a student expanding your vocabulary, a writer seeking inspiration, this exhaustive noun compilation gives you endless possibilities of naming person, place or thing and discover the beauty of
         linguistic expression.
       </p>
+      <AdsUnit slot='7782807936'/> 
     </div>
   );
 };

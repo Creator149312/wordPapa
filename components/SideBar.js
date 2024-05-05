@@ -24,7 +24,7 @@ const SideBar = () => {
             </li>
           </ul>
         </CardContent>
-        <div>
+        <div className="mb-3">
           <AdsUnit slotID={3722270586} />
         </div>
       </div>

@@ -37,6 +37,7 @@ function SyllableCounterPage() {
                   linguistic analysis, poetry writing, or English language
                   learning.
                 </p>
+                <AdsUnit slot='7782807936'/> 
                 <p className="mb-2">
                   Our Syllable checker typically work by analyzing the phonetic
                   structure of words. It takes into account factors such as
@@ -52,6 +53,7 @@ function SyllableCounterPage() {
                   You can use it to create rhythmic and structured compositions,
                   such as haikus, sonnets, and limericks.
                 </p>
+                <AdsUnit slot='7782807936'/> 
                 <p className="mb-2">
                   Teachers and educators use syllable counters as educational
                   tools to teach <a href="https://www.englishbix.com/types-of-syllables-in-english/">types of syllables</a>, phonetics, spelling, and
