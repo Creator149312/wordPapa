@@ -29,7 +29,7 @@ export default async function Page({ params }) {
   return (<>
     <div>
       <h1>Homophones words for "{word}"</h1>
-      <AdsUnit w="100%" h="100%" slot="7782807936" />
+      <AdsUnit  slot="7782807936" />
       <DataFilterDisplay words={rhymingWords} />
     </div>
     <AdsScriptLoader />
