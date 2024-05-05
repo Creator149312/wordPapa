@@ -23,15 +23,13 @@ export default async function Page({ params }) {
     rhymingWords = response.data.map((item) => item.word);
   } catch (error) {
     //console.error(error);
-    return {
-      notFound: true,
-    };
+    rhymingWords = [];
   }
 
   return (<>
     <div>
       <h1>Homophones words for "{word}"</h1>
-      <AdsUnit w="100%" h="330px" slot="7782807936" />
+      <AdsUnit w="100%" h="100%" slot="7782807936" />
       <DataFilterDisplay words={rhymingWords} />
     </div>
     <AdsScriptLoader />
