@@ -24,10 +24,10 @@ const SideBar = () => {
             </li>
           </ul>
         </CardContent>
-
-        <AdsUnit slotID={3722270586} />
-        <AdsUnit slotID={3722270586} />
       </div>
+
+      <AdsUnit slotID={3722270586} />
+      <AdsUnit slotID={3722270586} />
     </>
   );
 };
