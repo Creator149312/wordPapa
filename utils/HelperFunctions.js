@@ -78,7 +78,6 @@ export const displayWords = (
         {index % 3 === 0 && (
           <Card
             key={`ad${index}`}
-            className="h-[200px] text-center p-2 mt-3 mb-3"
           >
           <AdsUnit slot='7782807936'/> 
             {/* <GoogleAd slotID='7782807936'/> */}

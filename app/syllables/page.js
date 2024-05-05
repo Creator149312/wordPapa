@@ -1,6 +1,7 @@
 import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import SyllableFinder from "./SyllableFinder";
 import commonLinks from "@utils/commonLinks";
+import AdsUnit from "@components/AdsUnit";
 
 export const metadata = {
   title: "Syllable Counter: Check Number of Syllables in Word",

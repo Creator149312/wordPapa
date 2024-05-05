@@ -67,11 +67,11 @@ const layout = ({ children }) => {
             </Card>
           </div>
           <main className="grid md:grid-cols-12 gap-x-2 m-2">
-            <Card className="m-2 p-2 md:p-5 md:col-span-9">
+            <Card className="md:m-2 mb-2 mt-2 p-2 md:p-5 md:col-span-9">
               {children}
               {/** All the main content goes here */}
             </Card>
-            <Card className="m-2 md:col-span-3">
+            <Card className="md:m-2 mb-2 mt-2 md:col-span-3">
               <SideBar />
             </Card>
           </main>

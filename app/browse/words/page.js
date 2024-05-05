@@ -1,3 +1,5 @@
+import AdsUnit from "@components/AdsUnit";
+
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
     const L = decodeURIComponent(params.letter);
