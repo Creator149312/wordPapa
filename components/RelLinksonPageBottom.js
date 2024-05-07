@@ -11,7 +11,7 @@ const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
   const wordforhref = word.toLowerCase().replace(/ /g, "-");
 
   return (
-    <div className="p-2 m-2">
+    <div>
       <h3 className="m-2 text-xl font-bold">Related Links</h3>
       {slug !== 'define' && displayLinK(commonLinks.definition + wordforhref, 'meaning of ' + word)}
       {slug !== 'syllables' && displayLinK(commonLinks.syllables+ wordforhref, 'syllables in '+ word)}

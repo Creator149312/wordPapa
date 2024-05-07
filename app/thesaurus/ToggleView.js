@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
+import { Button } from "@components/ui/button";
 
 const ToggleView = ({ allWords, synWords, antWords }) => {
   const [allWordsButton, setallWordsButton] = useState(true);
@@ -43,18 +44,18 @@ const ToggleView = ({ allWords, synWords, antWords }) => {
 
   return (
     <>
-      <div className="left-right m-3">
-        <button onClick={handleAllWordsButtonClick} className={!allWordsButton ? 'custom-button' : 'custom-button custom-button-gray'}>
+      <div className="flex justify-between items-center m-3">
+        <Button onClick={handleAllWordsButtonClick} variant={!allWordsButton ? 'searchcustom' : 'secondary'}>
           Related Words
-        </button>
+        </Button>
         {synWords.length > 0 && (
-        <button onClick={handlesynonymButtonClick} className={!synonymButton ? 'custom-button' : 'custom-button custom-button-gray'}>
+        <Button onClick={handlesynonymButtonClick} variant={!synonymButton ? 'searchcustom' : 'secondary'}>
          Only Synonyms
-        </button>)}
+        </Button>)}
         {antWords.length > 0 && (
-          <button onClick={handleantonymButtonClick} className={!antonymButton ? 'custom-button' : 'custom-button custom-button-gray'}>
+          <Button onClick={handleantonymButtonClick} variant={!antonymButton ? 'searchcustom' : 'secondary'}>
          Only Antonyms
-          </button>
+          </Button>
         )}
       </div>
       {allWordsButton && <DataFilterDisplay words={allWords} />}
