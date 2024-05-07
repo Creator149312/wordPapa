@@ -6,9 +6,9 @@ import AdsUnit from "./AdsUnit";
 const SideBar = () => {
   return (
     <>
-      <div className="p-3">
+      <div className="">
         <CardHeader>
-          <h2 className="text-3xl font-extrabold">Related Workbooks</h2>
+          <h2 className="text-2xl font-extrabold">Workbooks</h2>
         </CardHeader>
         <CardContent>
           <ul>

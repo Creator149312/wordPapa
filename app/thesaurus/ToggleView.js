@@ -44,17 +44,20 @@ const ToggleView = ({ allWords, synWords, antWords }) => {
 
   return (
     <>
-      <div className="flex justify-between items-center m-3">
-        <Button onClick={handleAllWordsButtonClick} variant={!allWordsButton ? 'searchcustom' : 'secondary'}>
+      <div className="flex justify-between items-center mb-3 mt-3">
+        <Button className='hidden sm:block' onClick={handleAllWordsButtonClick} variant={!allWordsButton ? 'searchcustom' : 'secondary'}>
           Related Words
+        </Button>
+        <Button className='sm:hidden' onClick={handleAllWordsButtonClick} variant={!allWordsButton ? 'searchcustom' : 'secondary'}>
+          All
         </Button>
         {synWords.length > 0 && (
         <Button onClick={handlesynonymButtonClick} variant={!synonymButton ? 'searchcustom' : 'secondary'}>
-         Only Synonyms
+         Synonyms
         </Button>)}
         {antWords.length > 0 && (
           <Button onClick={handleantonymButtonClick} variant={!antonymButton ? 'searchcustom' : 'secondary'}>
-         Only Antonyms
+         Antonyms
           </Button>
         )}
       </div>
