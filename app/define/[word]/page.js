@@ -78,12 +78,14 @@ async function getDefinitions(word, iscompound) {
       return data;
     } catch (error) {
       // console.log("Error occured in Compound trial");
-      return [{
-        word: word,
-        score: 11111111,
-        tags: ['query', 'pron:  ', 'ipa_pron: '],
-        defs: []
-      }];
+      return [
+        {
+          word: word,
+          score: 11111111,
+          tags: ["query", "pron:  ", "ipa_pron: "],
+          defs: [],
+        },
+      ];
     }
   } else {
     try {
@@ -110,7 +112,7 @@ async function getDefinitions(word, iscompound) {
       return {
         word: word,
         score: 11111111,
-        tags: ['query', 'pron:  ', 'ipa_pron: ']
+        tags: ["query", "pron:  ", "ipa_pron: "],
       };
     }
   }
@@ -141,7 +143,9 @@ async function displayDefs() {
               <h3 className="mb-2 font-bold text-xl">{types[key]}</h3>
               <ul className="list-disc m-2 p-2">
                 {defTypes[key].map((def, index) => (
-                  <li className="p-0.5" key={index}>{def}</li>
+                  <li className="p-0.5" key={index}>
+                    {def}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -214,20 +218,59 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-        return (<>
-          <Card className="m-2">
-            <CardHeader>
-              <h1 className="text-4xl font-extrabold">{word}</h1>
-            </CardHeader>
-            <CardContent className="card-body">
-            <p className="mb-6 text-lg font-normal">
-                <strong>IPA:</strong> Not Found
-              </p>
-              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. </p>
-              <p className="mb-6 text-lg font-normal"> Please check your input and try again with a new word.</p>
-            </CardContent>
-          </Card>
-        </>);
+         return (
+          <>
+            <Card className="m-2">
+              <CardHeader>
+                <h1 className="text-4xl font-extrabold">{word}</h1>
+              </CardHeader>
+              <CardContent className="card-body">
+                <p className="mb-6 text-lg font-normal">
+                  Looks like we couldn't find {word} word in our dictionary yet.{" "}
+                </p>
+
+                <p className="m-2 text-lg font-normal">
+                  Don't worry, new words are added all the time! Here are some
+                  options you can try:{" "}
+                </p>
+
+                <ul className="list-disc m-2">
+                  <li className="p-0.5 list-item">
+                    Wordstruck? Don't fret! Search for a words similar to {word}{" "}
+                    in our <a href="/thesaurus" className="text-[#75c32c] p-0.5">thesaurus</a>.
+                  </li>
+                  <li className="p-0.5 list-item">
+                    Feeling fancy? Browse our{" "}
+                    <a href="/browse/adjectives" className="text-[#75c32c] p-0.5">adjective dictionary</a> to
+                    find words that describe popular nouns, then craft powerful
+                    verbs using our <a href="/browse/verbs" className="text-[#75c32c] p-0.5">verb dictionary</a>{" "}
+                    to bring your writing to life!
+                  </li>
+                </ul>
+                <p className="m-2 pt-2 text-lg font-normal">
+                  While you're here, check out some of our most popular words:{" "}
+                </p>
+                <ul className="list-disc m-2">
+                  <li>
+                    <a href="/define/ephemeral" className="text-[#75c32c] p-0.5">Ephemeral</a>
+                  </li>
+                  <li>
+                    <a href="/define/pulchritudinous" className="text-[#75c32c] p-0.5">Pulchritudinous </a>
+                  </li>
+                  <li>
+                    <a href="/define/cacophony" className="text-[#75c32c] p-0.5">Cacophony  </a>
+                  </li>
+                  <li>
+                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">Gazump  </a>
+                  </li>
+                  <li>
+                    <a href="/define/facetious" className="text-[#75c32c] p-0.5">Facetious  </a>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </>
+        );
       }
     } else {
       // Initiate both requests in parallel
@@ -281,8 +324,10 @@ export default async function WordSpecificPage({ params }) {
             defsForWord.push(
               <>
                 <Card className="card m-2">
-                  <CardHeader >
-                    <h1 className="text-4xl font-extrabold">{finalMatches[i].word}</h1>
+                  <CardHeader>
+                    <h1 className="text-4xl font-extrabold">
+                      {finalMatches[i].word}
+                    </h1>
                   </CardHeader>
                   <CardContent>
                     <p className="mb-6 text-lg font-normal">
@@ -352,21 +397,59 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-        //  getDefinePageTemplate(decodedWord);
-        return (<>
-          <Card className="card m-2">
-            <CardHeader className="card-header">
-              <h1 className="text-4xl font-extrabold">{word}</h1>
-            </CardHeader>
-            <CardContent className="card-body">
-            <p className="mb-6 text-lg font-normal">
-                <strong>IPA:</strong> Not Found
-              </p>
-              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. </p>
-              <p className="mb-6 text-lg font-normal"> Please check your input and try again with a new word.</p>
-            </CardContent>
-          </Card>
-        </>);
+        return (
+          <>
+            <Card className="m-2">
+              <CardHeader>
+                <h1 className="text-4xl font-extrabold">{word}</h1>
+              </CardHeader>
+              <CardContent className="card-body">
+                <p className="mb-6 text-lg font-normal">
+                  Looks like we couldn't find {word} word in our dictionary yet.{" "}
+                </p>
+
+                <p className="m-2 text-lg font-normal">
+                  Don't worry, new words are added all the time! Here are some
+                  options you can try:{" "}
+                </p>
+
+                <ul className="list-disc m-2">
+                  <li className="p-0.5 list-item">
+                    Wordstruck? Don't fret! Search for a words similar to {word}{" "}
+                    in our <a href="/thesaurus" className="text-[#75c32c] p-0.5">thesaurus</a>.
+                  </li>
+                  <li className="p-0.5 list-item">
+                    Feeling fancy? Browse our{" "}
+                    <a href="/browse/adjectives" className="text-[#75c32c] p-0.5">adjective dictionary</a> to
+                    find words that describe popular nouns, then craft powerful
+                    verbs using our <a href="/browse/verbs" className="text-[#75c32c] p-0.5">verb dictionary</a>{" "}
+                    to bring your writing to life!
+                  </li>
+                </ul>
+                <p className="m-2 pt-2 text-lg font-normal">
+                  While you're here, check out some of our most popular words:{" "}
+                </p>
+                <ul className="list-disc m-2">
+                  <li>
+                    <a href="/define/ephemeral" className="text-[#75c32c] p-0.5">Ephemeral</a>
+                  </li>
+                  <li>
+                    <a href="/define/pulchritudinous" className="text-[#75c32c] p-0.5">Pulchritudinous </a>
+                  </li>
+                  <li>
+                    <a href="/define/cacophony" className="text-[#75c32c] p-0.5">Cacophony  </a>
+                  </li>
+                  <li>
+                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">Gazump  </a>
+                  </li>
+                  <li>
+                    <a href="/define/facetious" className="text-[#75c32c] p-0.5">Facetious  </a>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </>
+        );
       }
     }
   }
