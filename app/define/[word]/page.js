@@ -220,10 +220,11 @@ export default async function WordSpecificPage({ params }) {
               <h1 className="text-4xl font-extrabold">{word}</h1>
             </CardHeader>
             <CardContent className="card-body">
-              <p className="mb-6 text-lg font-normal">
-                <strong>IPA:</strong>{" "}
+            <p className="mb-6 text-lg font-normal">
+                <strong>IPA:</strong> Not Found
               </p>
-              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
+              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. </p>
+              <p className="mb-6 text-lg font-normal"> Please check your input and try again with a new word.</p>
             </CardContent>
           </Card>
         </>);
@@ -358,10 +359,11 @@ export default async function WordSpecificPage({ params }) {
               <h1 className="text-4xl font-extrabold">{word}</h1>
             </CardHeader>
             <CardContent className="card-body">
-              <p className="mb-6 text-lg font-normal">
-                <strong>IPA:</strong>{" "}
+            <p className="mb-6 text-lg font-normal">
+                <strong>IPA:</strong> Not Found
               </p>
-              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. Please check your Word.</p>
+              <p className="mb-6 text-lg font-normal"> We couldn't find any matches for "{word}" in the dictionary. </p>
+              <p className="mb-6 text-lg font-normal"> Please check your input and try again with a new word.</p>
             </CardContent>
           </Card>
         </>);
