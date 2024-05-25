@@ -13,10 +13,10 @@ const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
   return (
     <div>
       <h3 className="m-2 text-xl font-bold">Related Links</h3>
-      {slug !== 'define' && displayLinK(commonLinks.definition + wordforhref, 'meaning of ' + word)}
+      { (slug !== 'define' && slug !== 'thesaurus' )&& displayLinK(commonLinks.definition + wordforhref, 'meaning of ' + word)}
       {slug !== 'syllables' && displayLinK(commonLinks.syllables+ wordforhref, 'syllables in '+ word)}
       {slug !== 'thesaurus' && displayLinK(commonLinks.thesaurus +wordforhref, 'synonyms for ' + word)}
-      {(slug !== 'rhyming-words' && !isCompound ) && displayLinK(commonLinks.rhyming +wordforhref, 'rhymes for ' + word)}
+      {(slug !== 'rhyming-words' && slug !== 'thesaurus' && !isCompound ) && displayLinK(commonLinks.rhyming +wordforhref, 'rhymes for ' + word)}
       {(slug !== 'adjectives'&& !isCompound && (pos !== null && pos.n.length > 0)) && displayLinK(commonLinks.adjectives +wordforhref, 'describing words for ' + word)}
       {slug !== 'word-finder' && displayLinK(commonLinks.wordfinder +wordforhref, 'unscramble ' + word)}
     </div>
