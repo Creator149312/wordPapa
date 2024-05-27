@@ -1,3 +1,4 @@
+import AdsUnit from "@components/AdsUnit";
 const ptitle = "Word Finder: Unscramble Letters to Make Words";
 
 export const metadata = {
@@ -24,6 +25,7 @@ function WordFinderPage() {
         like having a super-smart sidekick who can unscramble words faster than
         you can say "alphabet soup," saving you heaps of time and frustration.
       </p>
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         But wait, there's more! Word Finder isn't your run-of-the-mill word
         unscrambler—it's packed with advanced features that make it a powerhouse
@@ -50,6 +52,7 @@ function WordFinderPage() {
         loves to play with words, It is your trusty sidekick for solving the
         mysteries of scrambled letters and having a blast with language.
       </p>
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         So why wait? Give Word Finder a spin today and prepare to be amazed at
         how it transforms your wordplay game from "meh" to "marvelous" in no

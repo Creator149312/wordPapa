@@ -1,3 +1,4 @@
+import AdsUnit from "@components/AdsUnit";
 const ptitle = "Thesaurus: Find Synonyms & Antonyms of English Words";
 
 export const metadata = {
@@ -23,7 +24,7 @@ function SimilarWordsPage() {
         Just type in a word, and the thesaurus opens up a world of
         possibilities, making your writing more interesting and
         colorful.
-      </p>
+      </p> <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         It's like having a map to explore a land of words where you
         can choose the perfect one that fits your story or essay. So,
@@ -56,6 +57,7 @@ function SimilarWordsPage() {
         writers, content creators, and language enthusiasts to find
         extact words they need.
       </p>
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         Finally, we can say that thesaurus helps us explore the
         richness of language and uncover words that resonate with your

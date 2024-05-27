@@ -1,5 +1,6 @@
 import MostSearchedWordsList from "@components/MostSearchedWordsList";
 import commonLinks from "@utils/commonLinks";
+import AdsUnit from "@components/AdsUnit";
 
 /**
  * In future : we'll create another tool called AI Rhymes Generator which will generate poems, songs and lyrics 
@@ -49,6 +50,7 @@ function RhymingWordsPage() {
         <p className="mb-2">
           To use a rhyming dictionary effectively, you have to select "<strong>Find Rhyming Words</strong>" from the dropdown and input the word of your choice to receive a list of words that share a similar phonetic ending. The rhyming words can be organized by letter and syllable count and often include near rhymes or slant rhymes, offering creative flexibility in language use. Users can explore various options, allowing them to choose the most suitable words based on the desired rhyme scheme, tone, or thematic context of their writing.
         </p>
+        <AdsUnit slot='7782807936'/> 
         <p className="mb-2">
           You have the option to refine results based on based on specific criteria. Users can filter words by starting prefixes, narrowing down selections that commence with a designated set of letters. Similarly, the tool allows filtering by ending suffixes, facilitating the identification of words ending with specified character sequences. Additionally, users can employ substring filtering, refining the list based on the presence of specific sequences within the words. This dynamic functionality caters to a range of linguistic needs, from crafting precise rhymes to streamlining searches for words that fit specific structural patterns, providing a tailored and efficient approach to word selection.
         </p>
@@ -56,6 +58,7 @@ function RhymingWordsPage() {
         </p><p className="mb-2">
           In classrooms, teachers use the rhyming dictionary to make lessons super fun. They create activities that make learning about words and rhymes feel like an awesome adventure. This special tool is like a magical bridge that connects learning and imagination, making it easy and joyful for kids to explore words, be creative, and love reading and writing forever!
         </p>
+        <AdsUnit slot='7782807936'/> 
         <p className="mb-2"> Rhyming dictionaries are vital for rappers, aiding in precise rhyme selection, creative wordplay, and rhythmic flow. They elevate lyrics with slang, ensuring authenticity and uniqueness in expression. Rappers can unleash their creativity, ensuring every rhyme hits the right beat, making their rap memorable and impactful.
         </p>
         </div>

@@ -1,3 +1,4 @@
+import AdsUnit from "@components/AdsUnit";
 const ptitle = "Word Dictionary: Find Definition & Meanings of English Words";
 
 export const metadata = {
@@ -27,7 +28,7 @@ function WordsPage() {
         curious about what "elephant" means, it will say something
         like, "A mammal having a trunk, and two large ivory tusks jutting from the upper jaw."
       </p>
-
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         But that's not all – our magical tool goes beyond just
         definitions. It's your go-to guide for understanding a word's
@@ -57,6 +58,7 @@ function WordsPage() {
         Word Dictionary – your key to unlocking the secrets of the
         written world!
       </p>
+      <AdsUnit slot='7782807936'/> 
       <p className="mb-6 text-lg font-normal">
         The user interface is clean and easy to navigate, making it
         suitable for students, writers, or anyone looking to enhance
