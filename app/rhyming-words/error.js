@@ -9,7 +9,7 @@ export default function Error({ error, reset }) {
   return (
     <div className="text-center">
       <h2 className="text-3xl">Something went wrong!</h2>
-      <Button onClick={handleReloadPage} variant={searchcustom}>
+      <Button onClick={handleReloadPage} variant="searchcustom">
         Try again
       </Button>
     </div>
