@@ -16,8 +16,8 @@ const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
       { (slug !== 'define' && slug !== 'thesaurus' && slug !== 'rhyming-words')&& displayLinK(commonLinks.definition + wordforhref, 'meaning of ' + word)}
       {slug !== 'syllables' && displayLinK(commonLinks.syllables+ wordforhref, 'syllables in '+ word)}
       {slug !== 'thesaurus' && displayLinK(commonLinks.thesaurus +wordforhref, 'synonyms for ' + word)}
-      {(slug !== 'rhyming-words' && slug !== 'thesaurus' && !isCompound ) && displayLinK(commonLinks.rhyming +wordforhref, 'rhymes for ' + word)}
-      {(slug !== 'adjectives'&& !isCompound && (pos !== null && pos.n.length > 0)) && displayLinK(commonLinks.adjectives +wordforhref, 'describing words for ' + word)}
+      {(slug !== 'rhyming-words' && slug !== 'thesaurus' && slug !== 'define' && slug !== 'adjectives' && !isCompound ) && displayLinK(commonLinks.rhyming +wordforhref, 'rhymes for ' + word)}
+      {(slug !== 'adjectives' && !isCompound && (pos !== null && pos.n.length > 0)) && displayLinK(commonLinks.adjectives +wordforhref, 'describing words for ' + word)}
       {slug !== 'word-finder' && displayLinK(commonLinks.wordfinder +wordforhref, 'unscramble ' + word)}
     </div>
   );
