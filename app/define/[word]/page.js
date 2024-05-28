@@ -1,6 +1,6 @@
 import SentencesFetcher from "./SentencesFetcher";
 import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
-import { redirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
 import { WORDMAP } from "../WORDMAP";
@@ -162,7 +162,9 @@ export default async function WordSpecificPage({ params }) {
   let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
 
   if (word !== decodedWord) {
-    redirect("/define/" + decodedWord);
+    //using permanentRedirect for 301 redirect instead of temporary redirect
+    //redirect("/define/" + decodedWord);
+    permanentRedirect("/define/" + decodedWord);
   }
 
   if (!word.includes(".ico")) {
