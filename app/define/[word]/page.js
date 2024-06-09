@@ -5,6 +5,7 @@ import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
 import { WORDMAP } from "../WORDMAP";
 import { Card, CardContent, CardHeader } from "@components/ui/card";
+import soft404words from "./../soft-404words";
 
 let titleStr = "";
 
@@ -220,7 +221,11 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-         return (
+        if (soft404words.includes(word)) {
+          permanentRedirect("/");
+        }
+
+        return (
           <>
             <Card className="m-2">
               <CardHeader>
@@ -239,13 +244,25 @@ export default async function WordSpecificPage({ params }) {
                 <ul className="list-disc m-2">
                   <li className="p-0.5 list-item">
                     Wordstruck? Don't fret! Search for a words similar to {word}{" "}
-                    in our <a href="/thesaurus" className="text-[#75c32c] p-0.5">thesaurus</a>.
+                    in our{" "}
+                    <a href="/thesaurus" className="text-[#75c32c] p-0.5">
+                      thesaurus
+                    </a>
+                    .
                   </li>
                   <li className="p-0.5 list-item">
                     Feeling fancy? Browse our{" "}
-                    <a href="/browse/adjectives" className="text-[#75c32c] p-0.5">adjective dictionary</a> to
-                    find words that describe popular nouns, then craft powerful
-                    verbs using our <a href="/browse/verbs" className="text-[#75c32c] p-0.5">verb dictionary</a>{" "}
+                    <a
+                      href="/browse/adjectives"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      adjective dictionary
+                    </a>{" "}
+                    to find words that describe popular nouns, then craft
+                    powerful verbs using our{" "}
+                    <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
+                      verb dictionary
+                    </a>{" "}
                     to bring your writing to life!
                   </li>
                 </ul>
@@ -254,19 +271,41 @@ export default async function WordSpecificPage({ params }) {
                 </p>
                 <ul className="list-disc m-2">
                   <li>
-                    <a href="/define/ephemeral" className="text-[#75c32c] p-0.5">Ephemeral</a>
+                    <a
+                      href="/define/ephemeral"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Ephemeral
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/pulchritudinous" className="text-[#75c32c] p-0.5">Pulchritudinous </a>
+                    <a
+                      href="/define/pulchritudinous"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Pulchritudinous{" "}
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/cacophony" className="text-[#75c32c] p-0.5">Cacophony  </a>
+                    <a
+                      href="/define/cacophony"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Cacophony{" "}
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">Gazump  </a>
+                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">
+                      Gazump{" "}
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/facetious" className="text-[#75c32c] p-0.5">Facetious  </a>
+                    <a
+                      href="/define/facetious"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Facetious{" "}
+                    </a>
                   </li>
                 </ul>
               </CardContent>
@@ -399,6 +438,10 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
+        if (soft404words.includes(decodedWord)) {
+          permanentRedirect("/");
+        }
+
         return (
           <>
             <Card className="m-2">
@@ -418,13 +461,25 @@ export default async function WordSpecificPage({ params }) {
                 <ul className="list-disc m-2">
                   <li className="p-0.5 list-item">
                     Wordstruck? Don't fret! Search for a words similar to {word}{" "}
-                    in our <a href="/thesaurus" className="text-[#75c32c] p-0.5">thesaurus</a>.
+                    in our{" "}
+                    <a href="/thesaurus" className="text-[#75c32c] p-0.5">
+                      thesaurus
+                    </a>
+                    .
                   </li>
                   <li className="p-0.5 list-item">
                     Feeling fancy? Browse our{" "}
-                    <a href="/browse/adjectives" className="text-[#75c32c] p-0.5">adjective dictionary</a> to
-                    find words that describe popular nouns, then craft powerful
-                    verbs using our <a href="/browse/verbs" className="text-[#75c32c] p-0.5">verb dictionary</a>{" "}
+                    <a
+                      href="/browse/adjectives"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      adjective dictionary
+                    </a>{" "}
+                    to find words that describe popular nouns, then craft
+                    powerful verbs using our{" "}
+                    <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
+                      verb dictionary
+                    </a>{" "}
                     to bring your writing to life!
                   </li>
                 </ul>
@@ -433,19 +488,41 @@ export default async function WordSpecificPage({ params }) {
                 </p>
                 <ul className="list-disc m-2">
                   <li>
-                    <a href="/define/ephemeral" className="text-[#75c32c] p-0.5">Ephemeral</a>
+                    <a
+                      href="/define/ephemeral"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Ephemeral
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/pulchritudinous" className="text-[#75c32c] p-0.5">Pulchritudinous </a>
+                    <a
+                      href="/define/pulchritudinous"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Pulchritudinous{" "}
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/cacophony" className="text-[#75c32c] p-0.5">Cacophony  </a>
+                    <a
+                      href="/define/cacophony"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Cacophony{" "}
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">Gazump  </a>
+                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">
+                      Gazump{" "}
+                    </a>
                   </li>
                   <li>
-                    <a href="/define/facetious" className="text-[#75c32c] p-0.5">Facetious  </a>
+                    <a
+                      href="/define/facetious"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Facetious{" "}
+                    </a>
                   </li>
                 </ul>
               </CardContent>
