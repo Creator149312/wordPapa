@@ -10,7 +10,7 @@ const DataFilterDisplay = ({words}) => {
   const [length, setLength] = useState("");
 
   return (
-    <div>
+    <div className="mb-6">
         <AdvancedFilter 
           startsWith={startsWith}
           handleStartsWith={setStartsWith}
