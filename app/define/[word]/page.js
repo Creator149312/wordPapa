@@ -156,6 +156,33 @@ async function displayDefs() {
   );
 }
 
+/* 
+* Get all the similar sounding words which user has searched 
+*/
+async function getRelatedWordsUsingML(word) {
+  try {
+    const timeout = 5000; // Set timeout to 5 second
+    const Controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      Controller.abort();
+    }, timeout);
+
+    const endpoint = `https://api.datamuse.com/words?sl=${word}&max=30`;
+    const res = await fetch(endpoint, { signal: Controller.signal });
+
+    clearTimeout(timeoutId); // Clear the timeout since the request completed
+
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    return [];
+  }
+}
+
 export default async function WordSpecificPage({ params }) {
   let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
   //let decodedWord = word.split('-').join(' ') //This is the original word typed by User
@@ -225,6 +252,12 @@ export default async function WordSpecificPage({ params }) {
           permanentRedirect("/");
         }
 
+        //if no definitions found
+        const relatedWordsData = getRelatedWordsUsingML(word);
+
+        // Wait for the promises to resolve
+        const [relatedWords] = await Promise.all([relatedWordsData]);
+
         return (
           <>
             <Card className="m-2">
@@ -266,10 +299,21 @@ export default async function WordSpecificPage({ params }) {
                     to bring your writing to life!
                   </li>
                 </ul>
-                <p className="m-2 pt-2 text-lg font-normal">
+                {relatedWords.length > 0 && (
+                  <div className="mb-2">
+                    <h2 className="text-3xl font-bold">Words Close to "{word}"</h2>
+                    {/* {console.log("Related Words" + relatedWords + " is this")} */}
+                    <ul className="list-disc m-2">
+                      {relatedWords.map((data, index) => (
+                        <li key={index} className="p-0.5">{data.word}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                  <p className="m-2 pt-2 text-lg font-normal">
                   While you're here, check out some of our most popular words:{" "}
                 </p>
-                <ul className="list-disc m-2">
+                <ul className="list-disc m-2 mb-6">
                   <li>
                     <a
                       href="/define/ephemeral"
@@ -442,6 +486,12 @@ export default async function WordSpecificPage({ params }) {
           permanentRedirect("/");
         }
 
+         //if no definitions found
+         const relatedWordsData = getRelatedWordsUsingML(word);
+
+         // Wait for the promises to resolve
+         const [relatedWords] = await Promise.all([relatedWordsData]); 
+
         return (
           <>
             <Card className="m-2">
@@ -483,10 +533,21 @@ export default async function WordSpecificPage({ params }) {
                     to bring your writing to life!
                   </li>
                 </ul>
-                <p className="m-2 pt-2 text-lg font-normal">
+                {relatedWords.length > 0 && (
+                  <div className="mb-2">
+                    <h2 className="text-3xl font-bold">Words Close to "{word}"</h2>
+                    {/* {console.log("Related Words" + relatedWords + " is this")} */}
+                    <ul className="list-disc m-2">
+                      {relatedWords.map((data, index) => (
+                        <li key={index} className="p-0.5">{data.word}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                  <p className="m-2 pt-2 text-lg font-normal">
                   While you're here, check out some of our most popular words:{" "}
                 </p>
-                <ul className="list-disc m-2">
+                <ul className="list-disc m-2 mb-6">
                   <li>
                     <a
                       href="/define/ephemeral"
