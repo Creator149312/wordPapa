@@ -1,6 +1,8 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import { CardContent, CardHeader } from "@components/ui/card";
+import soft404words from "./../soft-404words";
+import { permanentRedirect } from "next/navigation";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -25,6 +27,12 @@ export default async function Page({ params }) {
   //const word = params.word.split('-').join(' ');
 
   const word = decodeURIComponent(params.word);
+
+  //redirect to /adjectives page when that work is causing some 404 or soft 404 errors in google search console
+  if (soft404words.includes(word)) {
+    permanentRedirect("/adjectives");
+  }
+
   titleStr =
     "Adjective Words to Describe " +
     (word.charAt(0).toUpperCase() + word.slice(1));
@@ -73,11 +81,11 @@ export default async function Page({ params }) {
       <CardContent>
         <p className="mb-6 text-lg font-normal">
           Following is a list of {adjectiveWords.length} adjective words and
-          phrases used for describing <strong>{word}</strong> in writing.{" "}
+          phrases used for describing <strong>{word}</strong> in writing.
         </p>
         <DataFilterDisplay words={adjectiveWords} />
         <p className="mb-6 text-lg font-normal">
-          With these adjectives you can choose the one that perfectly describes{" "}
+          With these adjectives you can choose the one that perfectly describes
           {word} in your writing. Don't be afraid to experiment with various
           combinations. Try to push the boundaries of your descriptions to
           elevate it from good to great.

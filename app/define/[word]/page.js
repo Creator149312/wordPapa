@@ -185,6 +185,13 @@ async function getRelatedWordsUsingML(word) {
 
 export default async function WordSpecificPage({ params }) {
   let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
+
+  //if this word is causing soft 404 or other google search console errors 
+  // we'll redirect it to the /define to avoid future errors
+  if (soft404words.includes(word)) {
+    permanentRedirect("/define");
+  }
+
   //let decodedWord = word.split('-').join(' ') //This is the original word typed by User
   let key = word.replace(/[ -]/g, "");
   let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
@@ -248,10 +255,6 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-        if (soft404words.includes(word)) {
-          permanentRedirect("/");
-        }
-
         //if no definitions found
         const relatedWordsData = getRelatedWordsUsingML(word);
 
@@ -482,10 +485,6 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-        if (soft404words.includes(decodedWord)) {
-          permanentRedirect("/");
-        }
-
          //if no definitions found
          const relatedWordsData = getRelatedWordsUsingML(word);
 

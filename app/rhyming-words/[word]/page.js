@@ -1,6 +1,8 @@
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
+import soft404words from "./../soft-404words";
+import { permanentRedirect } from "next/navigation";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -24,6 +26,12 @@ let similarSoundingWords = [];
 
 export default async function Page({ params }) {
   const word = decodeURIComponent(params.word); //this one gives the best results
+
+  //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
+  if (soft404words.includes(word)) {
+    permanentRedirect("/rhyming-words");
+  }
+
   titleStr =
     "Rhyming Words and Phrases for " +
     (word.charAt(0).toUpperCase() + word.slice(1));
