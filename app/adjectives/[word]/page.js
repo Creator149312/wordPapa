@@ -86,7 +86,7 @@ export default async function Page({ params }) {
         <DataFilterDisplay words={adjectiveWords} />
         <p className="mb-6 text-lg font-normal">
           With these adjectives you can choose the one that perfectly describes
-          {word} in your writing. Don't be afraid to experiment with various
+          {" "}{word} in your writing. Don't be afraid to experiment with various
           combinations. Try to push the boundaries of your descriptions to
           elevate it from good to great.
         </p>

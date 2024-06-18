@@ -25,7 +25,7 @@ export async function CreateSitemap() {
 //     for(var i = 0; i < All503Links.length ; i++){
 //         allLinks.push(`<url>
 //             <loc>${All503Links[i]}</loc>
-//             <lastmod>2024-04-14T03:27:42.448Z</lastmod>
+//             <lastmod>2024-06-15T03:27:42.448Z</lastmod>
 //             </url>`);
 //     }
 
