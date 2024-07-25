@@ -5,7 +5,3 @@ Disallow: /wildcard
 Disallow: /api
 Disallow: /lists
 Disallow: /dashboard
-
-# Disallow for all invalid 404s in Define Section
-Disallow: /define/24/7
-Disallow: /define/s/n
