@@ -19,8 +19,13 @@ const types = {
   u: "Other Meanings",
 };
 
+let siteURL = process.env.NODE_ENV === 'production' ? "https://words.englishbix.com" : "http://localhost:3000"
+
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
+  let slug = decodeURIComponent(params.word);
+
+  let canonical = `${siteURL}/define/${word}`;
   if (word.includes("-")) word = word.replace("-", " ");
   // read route params
   titleStr =
@@ -31,9 +36,26 @@ export async function generateMetadata({ params }, parent) {
     " mean and Have a look at list of sentence examples using " +
     params.word +
     ".";
+
+    if (soft404words.includes(slug)) {
+     canonical = "https://words.englishbix.com/define";
+    }
+  
+    let key = slug.replace(/[ -]/g, "");
+    let decodedWord = WORDMAP[key] ? WORDMAP[key] : slug;
+  
+    if (slug !== decodedWord) {
+      //using permanentRedirect for 301 redirect instead of temporary redirect
+      //redirect("/define/" + decodedWord);
+     canonical = `https://words.englishbix.com/define/${decodedWord}`;
+    }  
+
   return {
     title: titleStr,
     description: descriptionStr,
+    alternates: {
+      canonical: canonical,
+    },
   };
 }
 
@@ -156,9 +178,9 @@ async function displayDefs() {
   );
 }
 
-/* 
-* Get all the similar sounding words which user has searched 
-*/
+/*
+ * Get all the similar sounding words which user has searched
+ */
 async function getRelatedWordsUsingML(word) {
   try {
     const timeout = 5000; // Set timeout to 5 second
@@ -186,7 +208,7 @@ async function getRelatedWordsUsingML(word) {
 export default async function WordSpecificPage({ params }) {
   let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
 
-  //if this word is causing soft 404 or other google search console errors 
+  //if this word is causing soft 404 or other google search console errors
   // we'll redirect it to the /define to avoid future errors
   if (soft404words.includes(word)) {
     permanentRedirect("/define");
@@ -304,16 +326,20 @@ export default async function WordSpecificPage({ params }) {
                 </ul>
                 {relatedWords.length > 0 && (
                   <div className="mb-2">
-                    <h2 className="text-3xl font-bold">Words Close to "{word}"</h2>
+                    <h2 className="text-3xl font-bold">
+                      Words Close to "{word}"
+                    </h2>
                     {/* {console.log("Related Words" + relatedWords + " is this")} */}
                     <ul className="list-disc m-2">
                       {relatedWords.map((data, index) => (
-                        <li key={index} className="p-0.5">{data.word}</li>
+                        <li key={index} className="p-0.5">
+                          {data.word}
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
-                  <p className="m-2 pt-2 text-lg font-normal">
+                <p className="m-2 pt-2 text-lg font-normal">
                   While you're here, check out some of our most popular words:{" "}
                 </p>
                 <ul className="list-disc m-2 mb-6">
@@ -485,11 +511,11 @@ export default async function WordSpecificPage({ params }) {
           </>
         );
       } else {
-         //if no definitions found
-         const relatedWordsData = getRelatedWordsUsingML(word);
+        //if no definitions found
+        const relatedWordsData = getRelatedWordsUsingML(word);
 
-         // Wait for the promises to resolve
-         const [relatedWords] = await Promise.all([relatedWordsData]); 
+        // Wait for the promises to resolve
+        const [relatedWords] = await Promise.all([relatedWordsData]);
 
         return (
           <>
@@ -534,16 +560,20 @@ export default async function WordSpecificPage({ params }) {
                 </ul>
                 {relatedWords.length > 0 && (
                   <div className="mb-2">
-                    <h2 className="text-3xl font-bold">Words Close to "{word}"</h2>
+                    <h2 className="text-3xl font-bold">
+                      Words Close to "{word}"
+                    </h2>
                     {/* {console.log("Related Words" + relatedWords + " is this")} */}
                     <ul className="list-disc m-2">
                       {relatedWords.map((data, index) => (
-                        <li key={index} className="p-0.5">{data.word}</li>
+                        <li key={index} className="p-0.5">
+                          {data.word}
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
-                  <p className="m-2 pt-2 text-lg font-normal">
+                <p className="m-2 pt-2 text-lg font-normal">
                   While you're here, check out some of our most popular words:{" "}
                 </p>
                 <ul className="list-disc m-2 mb-6">
