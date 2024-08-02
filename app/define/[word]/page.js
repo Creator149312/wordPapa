@@ -211,7 +211,9 @@ export default async function WordSpecificPage({ params }) {
   //if this word is causing soft 404 or other google search console errors
   // we'll redirect it to the /define to avoid future errors
   if (soft404words.includes(word)) {
-    permanentRedirect("/define");
+     //again using temporary redirect because permanentRedirect was causing redirect errors in search console
+     redirect("/define");
+    // permanentRedirect("/define");
   }
 
   //let decodedWord = word.split('-').join(' ') //This is the original word typed by User
@@ -219,9 +221,10 @@ export default async function WordSpecificPage({ params }) {
   let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
 
   if (word !== decodedWord) {
+    //again using temporary redirect because permanentRedirect was causing redirect errors in search console
+    redirect("/define/" + decodedWord);
     //using permanentRedirect for 301 redirect instead of temporary redirect
-    //redirect("/define/" + decodedWord);
-    permanentRedirect("/define/" + decodedWord);
+    // permanentRedirect("/define/" + decodedWord);
   }
 
   if (!word.includes(".ico")) {
