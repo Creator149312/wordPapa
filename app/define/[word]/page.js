@@ -222,7 +222,7 @@ export default async function WordSpecificPage({ params }) {
 
   if (word !== decodedWord) {
     //again using temporary redirect because permanentRedirect was causing redirect errors in search console
-    redirect("/define/" + decodedWord);
+    // redirect("/define/" + decodedWord); // commented this on 12th Aug
     //using permanentRedirect for 301 redirect instead of temporary redirect
     // permanentRedirect("/define/" + decodedWord);
   }
