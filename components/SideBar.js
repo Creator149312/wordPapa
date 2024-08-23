@@ -6,25 +6,25 @@ import AdsUnit from "./AdsUnit";
 const SideBar = () => {
   return (
     <>
-      {/* <div className="">
+      <div className="">
         <CardHeader>
-          <h2 className="text-2xl font-extrabold">Workbooks</h2>
+          <h2 className="text-2xl font-extrabold">Resources</h2>
         </CardHeader>
         <CardContent>
           <ul>
             <li className="no-style-list">
               <a href="https://www.englishbix.com/product/35-word-family-words-tracing-workbook/">
-                Rhyming Words Tracing Workbook
+                Word Family Tracing Workbook
               </a>
             </li>
             <li className="no-style-list">
-              <a href="https://www.englishbix.com/product/3-letter-rhyming-words-workbook/">
-                3 Letter Rhyming Words Workbook
+              <a href="https://www.englishbix.com/shop/">
+                Worksheets and Printables for Kids
               </a>
             </li>
           </ul>
         </CardContent>
-      </div> */}
+      </div>
 
       <AdsUnit slotID={3722270586} />
       <AdsUnit slotID={3722270586} />
