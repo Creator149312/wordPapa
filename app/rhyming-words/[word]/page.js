@@ -28,9 +28,9 @@ export default async function Page({ params }) {
   const word = decodeURIComponent(params.word); //this one gives the best results
 
   //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
-  if (soft404words.includes(word)) {
-    redirect("/rhyming-words");
-  }
+  // if (soft404words.includes(word)) {
+  //   redirect("/rhyming-words");
+  // }
 
   titleStr =
     "Rhyming Words and Phrases for " +
