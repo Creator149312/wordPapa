@@ -139,9 +139,9 @@ const SentencesFetcher = async ({ word }) => {
 
     return (
       <Card className="m-2" id="examples">
-        <CardHeader><h1 className="text-3xl font-extrabold">Examples of "{word}" in Sentences</h1></CardHeader>
+        <CardHeader><h1 className="text-4xl font-extrabold">Examples of "{word}" in Sentences</h1></CardHeader>
         <CardContent>
-          <ul className="m-2 p-2 list-disc">
+          <ul className="m-2 p-2 text-lg list-disc">
             {
               // if there is an error in fetching Sentences using Twinword API
               errorTwinWord &&
@@ -206,7 +206,7 @@ const SentencesFetcher = async ({ word }) => {
         </CardHeader>
         <CardContent>
           {/* { console.log(sentencesWordNick)} */}
-          <ul className="m-2 p-2 list-disc">
+          <ul className="m-2 p-2 text-lg list-disc">
             {sentencesWordNick.map((sent, index) =>
               sent.includes(word) ? <li className="p-0.5" key={index}>{sent}</li> : ""
             )}

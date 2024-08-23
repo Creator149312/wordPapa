@@ -163,8 +163,8 @@ async function displayDefs() {
         (key) =>
           defTypes[key].length > 0 && (
             <div key={key}>
-              <h3 className="mb-2 font-bold text-xl">{types[key]}</h3>
-              <ul className="list-disc m-2 p-2">
+              <h3 className="mb-2 font-bold text-2xl">{types[key]}</h3>
+              <ul className="list-disc m-2 text-lg p-2">
                 {defTypes[key].map((def, index) => (
                   <li className="p-0.5" key={index}>
                     {def}
@@ -251,7 +251,7 @@ export default async function WordSpecificPage({ params }) {
             {await splitDefsbyPOS(definitions.defs)}
             <Card className="m-2">
               <CardHeader className="list-heading-container">
-                <h1 className="text-4xl font-extrabold">{decodedWord}</h1>
+                <h1 className="text-5xl font-extrabold">{decodedWord}</h1>
                 {/* <AddToMyListsButton /> */}
               </CardHeader>
               <CardContent className="card-body">
@@ -275,6 +275,9 @@ export default async function WordSpecificPage({ params }) {
                 {await displayDefs()}
               </CardContent>
             </Card>
+            {/* 
+            // Add it in future
+            <AdsUnit slotID={3722270586} /> */}
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>
@@ -505,6 +508,9 @@ export default async function WordSpecificPage({ params }) {
             {defsForWord.map((part, index) => (
               <div key={index}>{part}</div>
             ))}
+            {/* 
+            //Add it in future 
+            <AdsUnit slotID={3722270586} /> */}
             {sentencesForWord.map((sen) => (
               <div>{sen}</div>
             ))}

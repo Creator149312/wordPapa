@@ -80,7 +80,7 @@ export default async function sitemap({ id }) {
   const start = id * 20000;
   const end = start + 20000;
   const Fetchedwords = await getWordsUsingWordMap(start, end);
-  console.log(id + "     " + Fetchedwords.length);
+  // console.log(id + "     " + Fetchedwords.length);
 
   //without WORDMAP
   // return Fetchedwords.map((word) => {

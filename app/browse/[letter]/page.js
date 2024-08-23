@@ -1,6 +1,7 @@
 import React from "react";
 import LinkPagination from "../LinkPagination";
 import { redirect } from "next/navigation";
+import FINALCLEANWORDS from "../FINALCLEANWORDS";
 import { promises as fs } from "fs";
 
 let titleStr = "";
@@ -37,11 +38,11 @@ async function getWords(l) {
   const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
 
   try {
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const linksArray = fileContent.split("\n");
+    // const fileContent = await fs.readFile(filePath, "utf8");
+    // const linksArray = fileContent.split("\n");
     //console.log("Total Words = " + linksArray.length);
     if (l === "0") {
-      return linksArray.filter((word) => {
+      return FINALCLEANWORDS.filter((word) => {
         if (!/[a-zA-Z]/.test(word.charAt(0))) {
           if (regex.test(word) && word.length > 1) {
             //checking if word is a word or compound words with maximum of two words.
@@ -51,7 +52,7 @@ async function getWords(l) {
         }
       });
     } else {
-      return linksArray.filter((word) => {
+      return FINALCLEANWORDS.filter((word) => {
         if (word.charAt(0) === l) {
           if (regex.test(word) && word.length > 1) {
             //checking if word is a word or compound words with maximum of two words.
@@ -73,12 +74,17 @@ const Page = async ({ params }) => {
   if (checkLengthandLetter(params.letter)) {
     let words = await getWords(params.letter);
 
+    let pagenumber = params.pagenumber;
+    // read route params
+    const L = decodeURIComponent(params.letter);
+    let titleStr = `Letter ${L} Dictionary`;
+
     return (
       <>
-        <h1 className="mb-3 text-4xl font-bold">{titleStr}</h1>
+        <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
         <LinkPagination
           links={words}
-          linksPerPage={100}
+          linksPerPage={300}
           pagenumber={1}
           letter={params.letter}
         />

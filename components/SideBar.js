@@ -6,7 +6,7 @@ import AdsUnit from "./AdsUnit";
 const SideBar = () => {
   return (
     <>
-      <div className="">
+      {/* <div className="">
         <CardHeader>
           <h2 className="text-2xl font-extrabold">Workbooks</h2>
         </CardHeader>
@@ -24,7 +24,7 @@ const SideBar = () => {
             </li>
           </ul>
         </CardContent>
-      </div>
+      </div> */}
 
       <AdsUnit slotID={3722270586} />
       <AdsUnit slotID={3722270586} />

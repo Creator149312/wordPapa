@@ -2,12 +2,14 @@ import React from "react";
 import LinkPagination from "@app/browse/LinkPagination";
 import { promises as fs } from "fs";
 
-let titleStr = "";
+import FINALCLEANWORDS from "@app/browse/FINALCLEANWORDS";
+
+
 export async function generateMetadata({ params }, parent) {
   const L  = decodeURIComponent(params.letter);
   let pagenumber = params.pagenumber;
   // read route params
-   titleStr = `Letter ${L} Dictionary: Page ${pagenumber}`;
+  let titleStr = `Letter ${L} Dictionary: Page ${pagenumber}`;
   const descriptionStr = `Browse letter ${L} Dictionary at WordPapa - Page ${pagenumber}`;
   return {
     title: titleStr,
@@ -22,14 +24,14 @@ function countSpacesAndHyphens(word) {
 }
 
 async function getWords(l) {
-  const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
+  // const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
   const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits 
   try {
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const linksArray = fileContent.split("\n");
+    // const fileContent = await fs.readFile(filePath, "utf8");
+    // const linksArray = fileContent.split("\n");
     
     if (l === "0") {
-      return linksArray.filter(
+      return FINALCLEANWORDS.filter(
         (word) => {
           if (!/[a-zA-Z]/.test(word.charAt(0))) {
             if (regex.test(word) && word.length > 1) {
@@ -41,7 +43,7 @@ async function getWords(l) {
         }
       );
     } else {
-      return linksArray.filter((word) => {
+      return FINALCLEANWORDS.filter((word) => {
         if (word.charAt(0) === l) {
           if (regex.test(word) && word.length > 1) {
             //checking if word is a word or compound words with maximum of two words.
@@ -62,13 +64,16 @@ async function getWords(l) {
 const Page = async ({ params }) => {
   let words = await getWords(params.letter);
   let pagenumber = params.pagenumber;
+  // read route params
+  const L = decodeURIComponent(params.letter);
+  let titleStr = `Letter ${L} Dictionary: Page ${pagenumber}`;
 
   return (
     <>
-    <h1 className="mb-3 text-4xl font-bold">{titleStr}</h1>
+    <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
     <LinkPagination
       links={words}
-      linksPerPage={100}
+      linksPerPage={300}
       pagenumber={pagenumber}
       letter={params.letter}
     />
