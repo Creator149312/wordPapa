@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import ALLCLEANWORDS from "./ALLCLEANWORDS";
+import FINALCLEANWORDS from "./FINALCLEANWORDS";
 import { WORDMAP } from "../define/WORDMAP";
 const BASE_URL = "https://words.englishbix.com";
 
@@ -37,7 +38,7 @@ async function getWords(start, end) {
 async function getWordsUsingWordMap(start, end) {
   const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
 
-  let sitemapWords = ALLCLEANWORDS.filter((word, index) => {
+  let sitemapWords = FINALCLEANWORDS.filter((word, index) => {
     if (index >= start && index < end) {
       word = word.trim();
       if (regex.test(word) && word.length > 1) {
@@ -76,10 +77,10 @@ export async function generateSitemaps() {
 
 export default async function sitemap({ id }) {
   // Google's limit is 50,000 URLs per sitemap
-  const start = id * 25000;
-  const end = start + 25000;
+  const start = id * 20000;
+  const end = start + 20000;
   const Fetchedwords = await getWordsUsingWordMap(start, end);
-  // console.log(id + "     " + Fetchedwords.length);
+  console.log(id + "     " + Fetchedwords.length);
 
   //without WORDMAP
   // return Fetchedwords.map((word) => {
