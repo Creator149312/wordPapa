@@ -9,7 +9,7 @@ function Pagination({ currentPage, totalPages, letter }) {
         pagination.push(
           <a
             key={i}
-            href={`/browse/${letter}/${i}/`}
+            href={`/browse/${letter}/${i}`}
             className={i === currentPage ? 'active' : ''}
           >
             {i}
@@ -22,7 +22,7 @@ function Pagination({ currentPage, totalPages, letter }) {
 
       if (startPage > 1) {
         pagination.push(
-          <a key="prev" href={`/browse/${letter}/${(currentPage-1)}/`}>
+          <a key="prev" href={`/browse/${letter}/${(currentPage-1)}`}>
             Prev
           </a>
         );
@@ -32,7 +32,7 @@ function Pagination({ currentPage, totalPages, letter }) {
         pagination.push(
           <a
             key={i}
-            href={`/browse/${letter}/${i}/`}
+            href={`/browse/${letter}/${i}`}
             className={i === currentPage ? 'active' : ''}
           >
             {i}
@@ -42,7 +42,7 @@ function Pagination({ currentPage, totalPages, letter }) {
 
       if (endPage < totalPages) {
         pagination.push(
-          <a key="next" href={`/browse/${letter}/${++currentPage}/`}>
+          <a key="next" href={`/browse/${letter}/${++currentPage}`}>
             Next
           </a>
         );

@@ -2,7 +2,7 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
 import soft404words from "./../soft-404words";
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -29,7 +29,7 @@ export default async function Page({ params }) {
 
   //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
   if (soft404words.includes(word)) {
-    permanentRedirect("/rhyming-words");
+    redirect("/rhyming-words");
   }
 
   titleStr =

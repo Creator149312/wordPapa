@@ -2,7 +2,7 @@ import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import { CardContent, CardHeader } from "@components/ui/card";
 import soft404words from "./../soft-404words";
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
@@ -28,9 +28,9 @@ export default async function Page({ params }) {
 
   const word = decodeURIComponent(params.word);
 
-  //redirect to /adjectives page when that work is causing some 404 or soft 404 errors in google search console
+  //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
   if (soft404words.includes(word)) {
-    permanentRedirect("/adjectives");
+    redirect("/adjectives");
   }
 
   titleStr =
@@ -85,8 +85,8 @@ export default async function Page({ params }) {
         </p>
         <DataFilterDisplay words={adjectiveWords} />
         <p className="mb-6 text-lg font-normal">
-          With these adjectives you can choose the one that perfectly describes
-          {" "}{word} in your writing. Don't be afraid to experiment with various
+          With these adjectives you can choose the one that perfectly describes{" "}
+          {word} in your writing. Don't be afraid to experiment with various
           combinations. Try to push the boundaries of your descriptions to
           elevate it from good to great.
         </p>

@@ -2,6 +2,13 @@ import { promises as fs } from "fs";
 import ALLCLEANWORDS from "./ALLCLEANWORDS";
 import WORDSWITHZEROFREQUENCY from "./WORDSWITHZEROFREQUENCY";
 
+const specialCharsRegex = /[`!@#$%^&*()_+\[\]{};':"\\|,.<>\/?~]/;
+
+function containsSpecialChars(str) {
+  const trimmedStr = str.replace(/\s|-/g, '');
+  return specialCharsRegex.test(trimmedStr);
+}
+
 export default function page() {
   // console.log("Length of Clean Words Before = ", ALLCLEANWORDS.length);
   // console.log(
@@ -37,7 +44,14 @@ export default function page() {
   //   "utf8"
   // );
 
- 
+  // let count = 0;
+  // for(let i = 0; i < ALLCLEANWORDS.length; i++){
+  //   if(containsSpecialChars(ALLCLEANWORDS[i])){
+  //     count = count + 1;
+  //     console.log(ALLCLEANWORDS[i]);
+  //   }
+  // }
+
   //using WORDMAP
-  return <div>Trying to create a Final Words Array</div>;
+  return <div>Checking if Word Contains Special Chars</div>;
 }

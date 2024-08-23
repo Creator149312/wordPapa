@@ -5,3 +5,6 @@ Disallow: /wildcard
 Disallow: /api
 Disallow: /lists
 Disallow: /dashboard
+Disallow: /word-finder/*.*
+Disallow: /rhyming-words/*.*
+Disallow: /adjectives/*.*
