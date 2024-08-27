@@ -3,10 +3,11 @@ import ALLCLEANWORDS from "./ALLCLEANWORDS";
 import WORDSWITHZEROFREQUENCY from "./WORDSWITHZEROFREQUENCY";
 
 const specialCharsRegex = /[`!@#$%^&*()_+\[\]{};':"\\|,.<>\/?~]/;
+const compoundRegex = /\s|-/;
 
 function containsSpecialChars(str) {
-  const trimmedStr = str.replace(/\s|-/g, '');
-  return specialCharsRegex.test(trimmedStr);
+  // const trimmedStr = str.replace(/\s|-/g, '');
+  return compoundRegex.test(str);
 }
 
 export default function page() {
@@ -44,7 +45,7 @@ export default function page() {
   //   "utf8"
   // );
 
-  // let count = 0;
+  let count = 0;
   // for(let i = 0; i < ALLCLEANWORDS.length; i++){
   //   if(containsSpecialChars(ALLCLEANWORDS[i])){
   //     count = count + 1;
@@ -52,6 +53,8 @@ export default function page() {
   //   }
   // }
 
+  console.log("Total number of compound Words - ", count);
+
   //using WORDMAP
-  return <div>Checking if Word Contains Special Chars</div>;
+  return <div>Checking if Word Contains Special Chars {count}</div>;
 }
