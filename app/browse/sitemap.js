@@ -1,5 +1,4 @@
 import { promises as fs } from "fs";
-import ALLCLEANWORDS from "./ALLCLEANWORDS";
 import FINALCLEANWORDS from "./FINALCLEANWORDS";
 import { WORDMAP } from "../define/WORDMAP";
 const BASE_URL = "https://words.englishbix.com";
@@ -18,33 +17,38 @@ function countSpacesAndHyphens(word) {
   return matches ? matches.length : 0;
 }
 
-//previous GetWords method with WORDMAP
-async function getWords(start, end) {
-  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
+/* 
+previous GetWords method with WORDMAP 
+*/
+// async function getWords(start, end) {
+//   const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
 
-  return ALLCLEANWORDS.filter((word, index) => {
-    if (index >= start && index < end) {
-      word = word.trim();
-      if (regex.test(word) && word.length > 1) {
-        //checking if word is a word or compound words with maximum of two words.
-        if (countSpacesAndHyphens(word) <= 1) return true;
-        else return false;
-      }
-    }
-  });
-}
+//   return ALLCLEANWORDS.filter((word, index) => {
+//     if (index >= start && index < end) {
+//       word = word.trim();
+//       if (regex.test(word) && word.length > 1) {
+//         //checking if word is a word or compound words with maximum of two words.
+//         if (countSpacesAndHyphens(word) <= 1) return true;
+//         else return false;
+//       }
+//     }
+//   });
+// }
 
 //new getwords method using WORDMAP
 async function getWordsUsingWordMap(start, end) {
-  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
+  const regex = /^[a-zA-Z]+$/; //to find words which contain characters but not digits
 
   let sitemapWords = FINALCLEANWORDS.filter((word, index) => {
     if (index >= start && index < end) {
       word = word.trim();
       if (regex.test(word) && word.length > 1) {
         //checking if word is a word or compound words with maximum of two words.
-        if (countSpacesAndHyphens(word) <= 1) return true;
-        else return false;
+        // if (countSpacesAndHyphens(word) <= 0) return true;
+        // else return false;
+        return true;
+      }else{
+        return false;
       }
     }
   });
@@ -77,8 +81,8 @@ export async function generateSitemaps() {
 
 export default async function sitemap({ id }) {
   // Google's limit is 50,000 URLs per sitemap
-  const start = id * 20000;
-  const end = start + 20000;
+  const start = id * 18000;
+  const end = start + 18000;
   const Fetchedwords = await getWordsUsingWordMap(start, end);
   // console.log(id + "     " + Fetchedwords.length);
 

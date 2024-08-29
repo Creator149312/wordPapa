@@ -5,6 +5,18 @@ Disallow: /wildcard
 Disallow: /api
 Disallow: /lists
 Disallow: /dashboard
+Disallow: /define/*-*
+Disallow: /define/*.*
+Disallow: /word-finder/*-*
 Disallow: /word-finder/*.*
+Disallow: /rhyming-words/*-*
 Disallow: /rhyming-words/*.*
 Disallow: /adjectives/*.*
+Disallow: /adjectives/*-*
+Disallow: /syllables/*.*
+Disallow: /syllables/*-*
+
+Allow: /word-finder/sitemap.xml
+Allow: /rhyming-words/sitemap.xml
+Allow: /adjectives/sitemap.xml
+Allow: /syllables/sitemap.xml

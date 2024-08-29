@@ -45,16 +45,26 @@ export default function page() {
   //   "utf8"
   // );
 
-  let count = 0;
-  // for(let i = 0; i < ALLCLEANWORDS.length; i++){
-  //   if(containsSpecialChars(ALLCLEANWORDS[i])){
-  //     count = count + 1;
-  //     console.log(ALLCLEANWORDS[i]);
-  //   }
-  // }
+  
+  // let Words = [];
+  // let count = 0;
+  // // for (let i = 0; i < ALLCLEANWORDS.length; i++) {
+  // //   if (!containsSpecialChars(ALLCLEANWORDS[i])) {
+  // //     count = count + 1;
+  // //     Words.push(ALLCLEANWORDS[i]);
+  // //   }
+  // // }
 
-  console.log("Total number of compound Words - ", count);
+  // console.log("Total number of compound Words - ", count);
 
   //using WORDMAP
-  return <div>Checking if Word Contains Special Chars {count}</div>;
+  return (
+    <>
+      <div>Checking if Word Contains Special Chars</div>
+     {/* <p>All Valid Words</p>
+      {Words.map((word, index) => {
+        return <li key={index}>{word}</li>;
+      })}  */}
+    </>
+  );
 }

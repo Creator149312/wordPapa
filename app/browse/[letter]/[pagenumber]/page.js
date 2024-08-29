@@ -1,9 +1,7 @@
 import React from "react";
 import LinkPagination from "@app/browse/LinkPagination";
 import { promises as fs } from "fs";
-
 import FINALCLEANWORDS from "@app/browse/FINALCLEANWORDS";
-
 
 export async function generateMetadata({ params }, parent) {
   const L  = decodeURIComponent(params.letter);
