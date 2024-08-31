@@ -39,6 +39,8 @@ previous GetWords method with WORDMAP
 async function getWordsUsingWordMap(start, end) {
   const regex = /^[a-zA-Z]+$/; //to find words which contain characters but not digits
 
+  // console.log("Total Words for Sitemap", FINALCLEANWORDS.length);
+
   let sitemapWords = FINALCLEANWORDS.filter((word, index) => {
     if (index >= start && index < end) {
       word = word.trim();
@@ -47,23 +49,25 @@ async function getWordsUsingWordMap(start, end) {
         // if (countSpacesAndHyphens(word) <= 0) return true;
         // else return false;
         return true;
-      }else{
+      } else {
         return false;
       }
     }
   });
 
-  //keep only unique words 
-  return Array.from(
-    new Set(
-      sitemapWords.map((word) => {
-        let key = word.replace(/[ -]/g, "");
-        let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
+  return sitemapWords;
 
-        return decodedWord;
-      })
-    )
-  );
+  //keep only unique words
+  // return Array.from(
+  //   new Set(
+  //     sitemapWords.map((word) => {
+  //       let key = word.replace(/[ -]/g, "");
+  //       let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
+
+  //       return decodedWord;
+  //     })
+  //   )
+  // );
 }
 
 export async function generateSitemaps() {
@@ -81,8 +85,8 @@ export async function generateSitemaps() {
 
 export default async function sitemap({ id }) {
   // Google's limit is 50,000 URLs per sitemap
-  const start = id * 18000;
-  const end = start + 18000;
+  const start = id * 13000;
+  const end = start + 13000;
   const Fetchedwords = await getWordsUsingWordMap(start, end);
   // console.log(id + "     " + Fetchedwords.length);
 

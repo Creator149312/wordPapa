@@ -4,8 +4,8 @@ import WordChecker from "./WordChecker";
 import ALLCLEANWORDS from "./cleanwords/ALLCLEANWORDS"
 import { promises as fs } from "fs";
 
-const chunkSize = 1;
-const delay = 1200; // 1 minute in milliseconds
+const chunkSize = 2;
+const delay = 2500; // 1 minute in54321` milliseconds
 let count = 0;
 
 let finalInValidWords = [];
@@ -195,7 +195,7 @@ const findInvalidandValidWords = async (allWords) => {
 };
 
 const Page = async () => {
-  // let getXWords = await getWords("r");
+  // let getXWords = await getWords("i");
 
   // console.log("Total Words", getXWords.length);
 
@@ -214,9 +214,9 @@ const Page = async () => {
       })}   */}
       <br />
       <p>All InValid Words</p>
-       {/* {finalInValidWords.map((word, index) => {
+        {/* {finalInValidWords.map((word, index) => {
         return <li key={index}>{word}</li>;
-      })}  */}
+      })}   */}
     </div>
   );
 };
