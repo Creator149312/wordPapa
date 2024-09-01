@@ -35,8 +35,8 @@ export async function generateMetadata({ params }, parent) {
 
 async function getWords(l) {
   const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
-  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
-
+  const regexZero = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits
+  const regex = /^[a-zA-Z]+$/; //words without spaces, hyphens and digits
   try {
     // const fileContent = await fs.readFile(filePath, "utf8");
     // const linksArray = fileContent.split("\n");
@@ -44,9 +44,9 @@ async function getWords(l) {
     if (l === "0") {
       return FINALCLEANWORDS.filter((word) => {
         if (!/[a-zA-Z]/.test(word.charAt(0))) {
-          if (regex.test(word) && word.length > 1) {
+          if (regexZero.test(word) && word.length > 1) {
             //checking if word is a word or compound words with maximum of two words.
-            if (countSpacesAndHyphens(word) <= 1) return true;
+            if (countSpacesAndHyphens(word) <= 0) return true;
             else return false;
           }
         }
@@ -56,8 +56,11 @@ async function getWords(l) {
         if (word.charAt(0) === l) {
           if (regex.test(word) && word.length > 1) {
             //checking if word is a word or compound words with maximum of two words.
-            if (countSpacesAndHyphens(word) <= 1) return true;
-            else return false;
+            // if (countSpacesAndHyphens(word) <= 1) return true;
+            // else return false;
+            return true;
+          } else {
+            return false;
           }
         }
       });

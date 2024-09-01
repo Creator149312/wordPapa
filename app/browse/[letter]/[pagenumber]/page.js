@@ -4,15 +4,15 @@ import { promises as fs } from "fs";
 import FINALCLEANWORDS from "@app/browse/FINALCLEANWORDS";
 
 export async function generateMetadata({ params }, parent) {
-  const L  = decodeURIComponent(params.letter);
+  const L = decodeURIComponent(params.letter);
   let pagenumber = params.pagenumber;
   // read route params
   let titleStr = `Letter ${L} Dictionary: Page ${pagenumber}`;
   const descriptionStr = `Browse letter ${L} Dictionary at WordPapa - Page ${pagenumber}`;
   return {
     title: titleStr,
-    description: descriptionStr ,
-  }
+    description: descriptionStr,
+  };
 }
 
 function countSpacesAndHyphens(word) {
@@ -23,36 +23,38 @@ function countSpacesAndHyphens(word) {
 
 async function getWords(l) {
   // const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
-  const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits 
+  const regexZero = /^[a-zA-Z0-9 -]+$/;
+  const regex = /^[a-zA-Z]+$/; //to find words which contain characters or digits
   try {
     // const fileContent = await fs.readFile(filePath, "utf8");
     // const linksArray = fileContent.split("\n");
-    
+
     if (l === "0") {
-      return FINALCLEANWORDS.filter(
-        (word) => {
-          if (!/[a-zA-Z]/.test(word.charAt(0))) {
-            if (regex.test(word) && word.length > 1) {
-              //checking if word is a word or compound words with maximum of two words.
-              if (countSpacesAndHyphens(word) <= 1) return true;
-              else return false;
-            }
+      return FINALCLEANWORDS.filter((word) => {
+        if (!/[a-zA-Z]/.test(word.charAt(0))) {
+          if (regexZero.test(word) && word.length > 1) {
+            //checking if word is a word or compound words with maximum of two words.
+            if (countSpacesAndHyphens(word) <= 0) return true;
+            else return false;
           }
         }
-      );
+      });
     } else {
       return FINALCLEANWORDS.filter((word) => {
         if (word.charAt(0) === l) {
           if (regex.test(word) && word.length > 1) {
             //checking if word is a word or compound words with maximum of two words.
-            if (countSpacesAndHyphens(word) <= 1) return true;
-            else return false;
+            // if (countSpacesAndHyphens(word) <= 1) return true;
+            // else return false;
+            return true;
+          } else {
+            return false;
           }
         }
       });
     }
   } catch (error) {
-       // here we'll not throw error instead we return empty array
+    // here we'll not throw error instead we return empty array
     // throw new Error(`Error reading the file: ${error.message}`);
 
     return [];
@@ -68,13 +70,13 @@ const Page = async ({ params }) => {
 
   return (
     <>
-    <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
-    <LinkPagination
-      links={words}
-      linksPerPage={300}
-      pagenumber={pagenumber}
-      letter={params.letter}
-    />
+      <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
+      <LinkPagination
+        links={words}
+        linksPerPage={300}
+        pagenumber={pagenumber}
+        letter={params.letter}
+      />
     </>
   );
 };
