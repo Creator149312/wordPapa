@@ -13,7 +13,7 @@ const NavLinks = ({ setOpen }) => {
       {links.map((link, index) => (
         <div key={index}>
           <div className="px-3 text-left md:cursor-pointer group">
-            <h1
+            <p
               className="py-7 flex justify-between items-center md:pr-0 pr-5 text-lg group"
               onClick={() => {
                 heading !== link.name ? setHeading(link.name) : setHeading("");
@@ -29,7 +29,7 @@ const NavLinks = ({ setOpen }) => {
               <span className="text-xl md:mt-1 md:ml-2 md:block hidden group-hover:rotate-180 group-hover:-mt-2">
                 <ChevronDown />
               </span>
-            </h1>
+            </p>
             {link.submenu && (
               <div>
                 <div className="absolute dark:bg-[#020817] bg-white top-20 hidden group-hover:md:block hover:md:block">
@@ -42,9 +42,9 @@ const NavLinks = ({ setOpen }) => {
                   <div className="p-5 grid shadow-lg">
                     {link.sublinks.map((mysublinks, index) => (
                       <div key={`dropdown${index}`}>
-                        {/* <h1 className="text-lg font-semibold">
+                        {/* <p className="text-lg font-semibold">
                           {mysublinks.Head}
-                        </h1> */}
+                        </p> */}
                         {mysublinks.sublink.map((slink, index) => (
                           <li className="text-lg my-3" key={`sublink${index}`}>
                             <a
@@ -72,7 +72,7 @@ const NavLinks = ({ setOpen }) => {
             {link.sublinks.map((slinks, index) => (
               <div key={`mb${index}`}>
                 <div>
-                  <h1
+                  <p
                     onClick={() =>
                       subHeading !== slinks.Head
                         ? setSubHeading(slinks.Head)
@@ -89,7 +89,7 @@ const NavLinks = ({ setOpen }) => {
                           : <ChevronDown />
                       }
                     </span>
-                  </h1>
+                  </p>
                   <div
                     className={`${subHeading === slinks.Head ? "md:hidden" : "hidden"
                       }`}
