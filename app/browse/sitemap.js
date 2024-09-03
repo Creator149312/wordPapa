@@ -55,9 +55,23 @@ async function getWordsUsingWordMap(start, end) {
     }
   });
 
-  return sitemapWords;
+  // filter the words which are compound in nature foreg. [pullup] => [pull-up]
+  return Array.from(
+      new Set(
+        sitemapWords.filter((word) => {
+          let key = word.replace(/[ -]/g, "");
+          let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
+          if(decodedWord.includes('-')){
+            return false;
+          }else{
+            return true;
+          }
+        })
+      )
+    );
 
-  //keep only unique words
+
+  // keep only unique words
   // return Array.from(
   //   new Set(
   //     sitemapWords.map((word) => {

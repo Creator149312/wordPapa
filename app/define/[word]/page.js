@@ -19,7 +19,10 @@ const types = {
   u: "Other Meanings",
 };
 
-let siteURL = process.env.NODE_ENV === 'production' ? "https://words.englishbix.com" : "http://localhost:3000"
+let siteURL =
+  process.env.NODE_ENV === "production"
+    ? "https://words.englishbix.com"
+    : "http://localhost:3000";
 
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
@@ -37,18 +40,18 @@ export async function generateMetadata({ params }, parent) {
     params.word +
     ".";
 
-    if (soft404words.includes(slug)) {
-     canonical = "https://words.englishbix.com/define";
-    }
-  
-    let key = slug.replace(/[ -]/g, "");
-    let decodedWord = WORDMAP[key] ? WORDMAP[key] : slug;
-  
-    if (slug !== decodedWord) {
-      //using permanentRedirect for 301 redirect instead of temporary redirect
-      //redirect("/define/" + decodedWord);
-     canonical = `https://words.englishbix.com/define/${decodedWord}`;
-    }  
+  if (soft404words.includes(slug)) {
+    canonical = "https://words.englishbix.com/define";
+  }
+
+  let key = slug.replace(/[ -]/g, "");
+  let decodedWord = WORDMAP[key] ? WORDMAP[key] : slug;
+
+  if (slug !== decodedWord) {
+    //using permanentRedirect for 301 redirect instead of temporary redirect
+    //redirect("/define/" + decodedWord);
+    canonical = `https://words.englishbix.com/define/${decodedWord}`;
+  }
 
   return {
     title: titleStr,
@@ -208,11 +211,11 @@ async function getRelatedWordsUsingML(word) {
 export default async function WordSpecificPage({ params }) {
   let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
 
-  //if this word is causing soft 404 or other google search console errors
+  // if this word is causing soft 404 or other google search console errors
   // we'll redirect it to the /define to avoid future errors
   if (soft404words.includes(word)) {
-     //again using temporary redirect because permanentRedirect was causing redirect errors in search console
-     redirect("/define");
+    //again using temporary redirect because permanentRedirect was causing redirect errors in search console
+    redirect("/define");
     // permanentRedirect("/define");
   }
 
@@ -222,13 +225,13 @@ export default async function WordSpecificPage({ params }) {
 
   if (word !== decodedWord) {
     //again using temporary redirect because permanentRedirect was causing redirect errors in search console
-    // redirect("/define/" + decodedWord); // commented this on 12th Aug
+    redirect("/define/" + decodedWord); // commented this on 12th Aug
     //using permanentRedirect for 301 redirect instead of temporary redirect
     // permanentRedirect("/define/" + decodedWord);
   }
 
   if (!word.includes(".ico")) {
-    if (!(word.includes("-") || word.includes(" "))) {
+    if (!(decodedWord.includes("-") || decodedWord.includes(" "))) {
       //if word is made up of only 1 set of letters without spaces or hyphes
       // Initiate both requests in parallel
       const definitionsData = getDefinitions(decodedWord, false);
