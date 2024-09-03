@@ -15,8 +15,10 @@ Disallow: /adjectives/*.*
 Disallow: /adjectives/*-*
 Disallow: /syllables/*.*
 Disallow: /syllables/*-*
+Disallow: /thesaurus/*.*
 
 Allow: /word-finder/sitemap.xml
 Allow: /rhyming-words/sitemap.xml
 Allow: /adjectives/sitemap.xml
 Allow: /syllables/sitemap.xml
+Allow: /thesaurus/sitemap.xml
