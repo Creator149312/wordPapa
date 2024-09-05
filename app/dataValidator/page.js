@@ -146,13 +146,13 @@ const findInvalidandValidWords = async (allWords) => {
 };
 
 const Page = async () => {
-  let getXWords = await getWords("m");
+  // let getXWords = await getWords("m");
 
-  console.log("Total Words", getXWords.length);
+  // console.log("Total Words", getXWords.length);
 
-  await iterateOverChunks(getXWords);
+  // await iterateOverChunks(getXWords);
 
-  console.log("Total Words to Check ", count);
+  // console.log("Total Words to Check ", count);
 
   // console.log("Invalid Words = ", finalInValidWords.length);
   // console.log("Valid Words", finalValidWords.length);
