@@ -32,6 +32,7 @@ export const links = [
             { name: "Word Unscrambler", link: "/word-finder" },
             { name: "Adjectives Finder", link: "/adjectives" },
             { name: "Syllable Counter", link: "/syllables" },
+            { name: "Spin Wheel", link: "https://www.spinpapa.com" },
           ],
         },
       ],

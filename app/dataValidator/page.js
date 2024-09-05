@@ -1,11 +1,11 @@
 import { all } from "axios";
 import WordChecker from "./WordChecker";
 
-import ALLCLEANWORDS from "./cleanwords/ALLCLEANWORDS"
+import ALLCLEANWORDS from "./cleanwords/ALLCLEANWORDS";
 import { promises as fs } from "fs";
 
-const chunkSize = 2;
-const delay = 2500; // 1 minute in54321` milliseconds
+const chunkSize = 3;
+const delay = 1200; // 1 minute in 54321` milliseconds
 let count = 0;
 
 let finalInValidWords = [];
@@ -51,66 +51,18 @@ const handleCheckValidity = async (checkWord) => {
 
   try {
     const frequencyresponse = await fetch(
-      `https://api.datamuse.com/words?sp=${checkWord}&qe=sp&md=f&max=1&v=enwiki`
+      `https://api.datamuse.com/words?sp=${checkWord}&qe=sp&md=d&max=1&v=enwiki`
     );
     const data = await frequencyresponse.json();
-    if (data[0].hasOwnProperty("tags")) {
-      let freq = parseFloat(
-        data[0].tags[data[0].tags.length - 1].split(":")[1]
-      );
-      if (freq < 0.5) {
-        count++;
-        console.log(`${checkWord} = ${freq}`);
-        const response = await fetch(
-          `https://api.datamuse.com/words?sp=${checkWord}&qe=sp&md=d&max=1&v=enwiki`
-        );
-
-        const apiKey = "e0d094e089e87c411680f08f6ab0e7be39143f84626e8c9e4"; // Replace with your Wordnik API key
-        const endpoint = `https://api.wordnik.com/v4/word.json/${checkWord}/examples?api_key=${apiKey}`;
-
-        const responseSentences = await fetch(endpoint);
-
-        const data = await response.json();
-        const dataSentences = await responseSentences.json();
-        if (
-          data[0].hasOwnProperty("defs") &&
-          dataSentences.examples !== undefined &&
-          dataSentences.examples !== null &&
-          dataSentences.examples.length > 0
-        ) {
-          // console.log(data[0]);
-          // console.log(dataSentences.examples);
+    if (data[0].hasOwnProperty("defs")) {
+      data[0].defs.map((def)=>{
+        if(def.includes("Alternative")){
+          console.log(checkWord)
           isValid = true;
-        } else {
-          // const url = `https://twinword-word-graph-dictionary.p.rapidapi.com/example/?entry=${checkWord}`;
-          // const options = {
-          //   method: "GET",
-          //   headers: {
-          //     "X-RapidAPI-Key":
-          //       "338b7bbeaemsh4f79a8247d73aefp18217cjsn6cf2a83d6072",
-          //     "X-RapidAPI-Host":
-          //       "twinword-word-graph-dictionary.p.rapidapi.com",
-          //   },
-          // };
-
-          // const twinwordresponse = await fetch(url, options);
-
-          // const twinworddata = await twinwordresponse.json();
-          // // console.log("Response Data from TwinWord - ", data);
-          // if (
-          //   twinworddata.example !== undefined &&
-          //   twinworddata.example !== null &&
-          //   twinworddata.example.length > 0
-          // ) {
-          //   isValid = true;
-          // } else {
-          //   isValid = false;
-          // }
-        isValid = false;
+        }else{
+          isValid = false;
         }
-      }else{
-        isValid = true;
-      }
+      });
     }
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -136,7 +88,6 @@ const handleCheckFreqOfWord = async (checkWord) => {
       if (freq > 0.01) {
         isValid = true;
       } else {
-       
       }
       console.log(`${checkWord} = ${freq}`);
     }
@@ -195,26 +146,26 @@ const findInvalidandValidWords = async (allWords) => {
 };
 
 const Page = async () => {
-  // let getXWords = await getWords("i");
+  let getXWords = await getWords("m");
 
-  // console.log("Total Words", getXWords.length);
+  console.log("Total Words", getXWords.length);
 
-  // await iterateOverChunks(getXWords);
-  
-  // console.log("Total Words to Check ", count);
+  await iterateOverChunks(getXWords);
+
+  console.log("Total Words to Check ", count);
 
   // console.log("Invalid Words = ", finalInValidWords.length);
   // console.log("Valid Words", finalValidWords.length);
 
   return (
     <div>
-       <p>All Valid Words</p>
-      {/* {finalValidWords.map((word, index) => {
+      <p>All Valid Words</p>
+      {finalValidWords.map((word, index) => {
         return <li key={index}>{word}</li>;
-      })}   */}
+      })}  
       <br />
       <p>All InValid Words</p>
-        {/* {finalInValidWords.map((word, index) => {
+      {/* {finalInValidWords.map((word, index) => {
         return <li key={index}>{word}</li>;
       })}   */}
     </div>

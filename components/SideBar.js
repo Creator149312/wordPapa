@@ -25,10 +25,10 @@ const SideBar = () => {
           </ul>
         </CardContent>
       </div>
-
       <AdsUnit slotID={3722270586} />
       <AdsUnit slotID={3722270586} />
-    </>
+       {/* ad for Spinwheel website goes after two ads */}
+     </>
   );
 };
 
