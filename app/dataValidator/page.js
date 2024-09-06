@@ -3,14 +3,16 @@ import WordChecker from "./WordChecker";
 
 import ALLCLEANWORDS from "./cleanwords/ALLCLEANWORDS";
 import { promises as fs } from "fs";
+import ALTERNATIVEWORDS from "./AlternativeWords";
 
 const chunkSize = 3;
-const delay = 1200; // 1 minute in 54321` milliseconds
+const delay = 250; // 1 minute in 54321` milliseconds
 let count = 0;
 
 let finalInValidWords = [];
 let finalValidWords = [];
 const compoundRegex = /\s|-/; //to check if word contains space or -
+let altWords = [];
 
 async function getWords(l) {
   // const filePath = process.cwd() + "/app/browse/cleanwords.txt"; // Replace with the actual path to your file.
@@ -55,14 +57,21 @@ const handleCheckValidity = async (checkWord) => {
     );
     const data = await frequencyresponse.json();
     if (data[0].hasOwnProperty("defs")) {
-      data[0].defs.map((def)=>{
-        if(def.includes("Alternative")){
-          console.log(checkWord)
-          isValid = true;
-        }else{
-          isValid = false;
+      let alternativeCount = 0;
+      data[0].defs.map((def) => {
+        if (def.includes("Alternative")) {
+          alternativeCount++;
         }
       });
+      // console.log(checkWord);
+
+      if (alternativeCount > 0) {
+        if(data[0].defs.length > 2){
+        // console.log(checkWord);
+        altWords.push({ word: checkWord, value: data[0].defs });
+        isValid = true;
+        }
+      }
     }
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -150,7 +159,7 @@ const Page = async () => {
 
   // console.log("Total Words", getXWords.length);
 
-  // await iterateOverChunks(getXWords);
+  // await iterateOverChunks(ALTERNATIVEWORDS);
 
   // console.log("Total Words to Check ", count);
 
@@ -160,9 +169,14 @@ const Page = async () => {
   return (
     <div>
       <p>All Valid Words</p>
-      {finalValidWords.map((word, index) => {
-        return <li key={index}>{word}</li>;
-      })}  
+      {/* {altWords.map((word, index) => {
+        return (
+          <>
+            <h3 className="text-2xl">{word.word}</h3>
+            <li key={index}>{word.value}</li>
+          </>
+        );
+      })} */}
       <br />
       <p>All InValid Words</p>
       {/* {finalInValidWords.map((word, index) => {
