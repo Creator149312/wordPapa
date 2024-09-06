@@ -16,6 +16,7 @@ Disallow: /adjectives/*-*
 Disallow: /syllables/*.*
 Disallow: /syllables/*-*
 Disallow: /thesaurus/*.*
+Disallow: /thesaurus/*-*
 
 Allow: /word-finder/sitemap.xml
 Allow: /rhyming-words/sitemap.xml
