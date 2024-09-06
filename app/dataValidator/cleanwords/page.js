@@ -62,9 +62,9 @@ export default function page() {
     <>
       <div>Checking if Word Contains Special Chars</div>
      <p>All Valid Words</p>
-      {Words.map((word, index) => {
+      {/* {Words.map((word, index) => {
         return <li key={index}>{word}</li>;
-      })} 
+      })}  */}
     </>
   );
 }
