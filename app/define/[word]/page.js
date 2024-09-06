@@ -6,6 +6,7 @@ import Link from "next/link";
 import { WORDMAP } from "../WORDMAP";
 import { Card, CardContent, CardHeader } from "@components/ui/card";
 import soft404words from "./../soft-404words";
+import AdsUnit from "@components/AdsUnit";
 
 let titleStr = "";
 
@@ -278,9 +279,7 @@ export default async function WordSpecificPage({ params }) {
                 {await displayDefs()}
               </CardContent>
             </Card>
-            {/* 
-            // Add it in future
-            <AdsUnit slotID={3722270586} /> */}
+            <AdsUnit slotID={3722270586} />
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>
