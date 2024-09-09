@@ -1,4 +1,7 @@
 # Block all crawlers for
+User-agent: GPTBot
+Disallow: /
+
 User-agent: *
 Disallow: /*?
 Disallow: /dataValidator
