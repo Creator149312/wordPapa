@@ -44,6 +44,8 @@ Disallow: /define/apemen
 Disallow: /define/handbuild
 Disallow: /browse/e/3/
 Disallow: /thesaurus/rachet/
+Disallow: /define/adaxially
+Disallow: /define/albitical
 Disallow: /define/argled
 Disallow: /define/acierated
 Disallow: /define/autolysed
