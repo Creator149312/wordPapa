@@ -18,21 +18,20 @@ function getISOTime() {
     const time = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
   
     return time;
-  }
+}
 
 export async function CreateSitemap() {
   let allLinks = [];
 //     for(var i = 0; i < All503Links.length ; i++){
 //         allLinks.push(`<url>
 //             <loc>${All503Links[i]}</loc>
-//             <lastmod>2024-07-19T03:27:42.448Z</lastmod>
+//             <lastmod>2024-08-28T03:27:42.448Z</lastmod>
 //             </url>`);
 //     }
 
 //     const creationPath =
 //     process.cwd() + "/app/dataValidator/Sitemap/sitemap.txt"; // Replace with the actual path to your file.
 // fs.writeFile(creationPath, allLinks, "utf8");
-
 
   return (<div>{allLinks}</div>)
 }
