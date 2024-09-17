@@ -29,15 +29,9 @@ Allow: /syllables/sitemap.xml
 Allow: /thesaurus/sitemap.xml
 
 #block pages causing redirect errors and soft 404s
-Disallow: /define/touchscreen
 Disallow: /define/arrowwood
-Disallow: /define/launchpad
 Disallow: /define/24/7
 Disallow: /define/sweetpea
-Disallow: /define/garbageman
-Disallow: /define/lambchop
-Disallow: /define/terrycloth
-Disallow: /define/sabertoothed
 Disallow: /define/redmaids
 Disallow: /define/ankling
 Disallow: /define/atoneable
@@ -52,7 +46,6 @@ Disallow: /define/acierated
 Disallow: /define/autolysed
 Disallow: /define/until
 Disallow: /define/agatized
-Disallow: /define/lightbulb
 Disallow: /define/adaxially
 Disallow: /define/albitical
 Disallow: /define/abduced
@@ -81,7 +74,6 @@ Disallow: /define/attritting
 Disallow: /define/auguster
 Disallow: /define/azotised
 Disallow: /define/collapsable
-Disallow: /define/molt
 Disallow: /define/orthopaedist
 Disallow: /define/racehorse/
 Disallow: /define/zibit
