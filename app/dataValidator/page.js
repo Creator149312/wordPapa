@@ -5,10 +5,8 @@ import ALLCLEANWORDS from "./cleanwords/ALLCLEANWORDS";
 import { promises as fs } from "fs";
 import ALTERNATIVEWORDS from "./AlternativeWords";
 
-const chunkSize = 3;
-const delay = 250; // 1 minute in 54321` milliseconds
-let count = 0;
-
+const chunkSize = 1;
+const delay = 2500; // 1 minute in 54321` milliseconds
 let finalInValidWords = [];
 let finalValidWords = [];
 const compoundRegex = /\s|-/; //to check if word contains space or -
@@ -50,40 +48,75 @@ async function getWords(l) {
 const handleCheckValidity = async (checkWord) => {
   checkWord = checkWord.trim();
   let isValid = false;
+  console.log(checkWord);
 
+  // try {
+  //   const frequencyresponse = await fetch(
+  //     `https://api.datamuse.com/words?sp=${checkWord}&qe=sp&md=d&max=1&v=enwiki`
+  //   );
+  //   const data = await frequencyresponse.json();
+  //   if (data[0].hasOwnProperty("defs")) {
+  //     let alternativeCount = 0;
+  //     data[0].defs.map((def) => {
+  //       if (def.includes("Alternative")) {
+  //         alternativeCount++;
+  //       }
+  //     });
+  //     // console.log(checkWord);
+
+  //     if (alternativeCount > 0) {
+  //       if(data[0].defs.length > 2){
+  //       // console.log(checkWord);
+  //       altWords.push({ word: checkWord, value: data[0].defs });
+  //       isValid = true;
+  //       }
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.error("Error fetching data:", error);
+  //   isValid = false; // Assume word is not valid if there's an error
+  // }
   try {
-    const frequencyresponse = await fetch(
-      `https://api.datamuse.com/words?sp=${checkWord}&qe=sp&md=d&max=1&v=enwiki`
-    );
-    const data = await frequencyresponse.json();
-    if (data[0].hasOwnProperty("defs")) {
-      let alternativeCount = 0;
-      data[0].defs.map((def) => {
-        if (def.includes("Alternative")) {
-          alternativeCount++;
-        }
-      });
-      // console.log(checkWord);
-
-      if (alternativeCount > 0) {
-        if(data[0].defs.length > 2){
-        // console.log(checkWord);
-        altWords.push({ word: checkWord, value: data[0].defs });
-        isValid = true;
-        }
+    const url = `https://twinword-word-graph-dictionary.p.rapidapi.com/example/?entry=${checkWord}`;
+    const options = {
+      method: "GET",
+      headers: {
+        "X-RapidAPI-Key": "338b7bbeaemsh4f79a8247d73aefp18217cjsn6cf2a83d6072",
+        "X-RapidAPI-Host": "twinword-word-graph-dictionary.p.rapidapi.com",
       }
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    isValid = false; // Assume word is not valid if there's an error
-  }
+    };
 
+    const response = await fetch(url, options);
+
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    // Parse the JSON response
+    const data = await response.json();
+    console.log("Response Data from TwinWord - ", data);
+    if (
+      data.example !== undefined &&
+      data.example !== null &&
+      data.example.length > 0
+    ) {
+      console.log("Adding.", checkWord);
+      isValid = true;
+    } else {
+      isValid = false;
+    }
+  } catch (e) {
+    // console.log("Error occured in Twinword Fetch");
+    isValid = false;
+  }
   return isValid;
 };
 
 //word frequency check
 const handleCheckFreqOfWord = async (checkWord) => {
   checkWord = checkWord.trim();
+
   let isValid = false;
   try {
     const response = await fetch(
@@ -169,13 +202,8 @@ const Page = async () => {
   return (
     <div>
       <p>All Valid Words</p>
-      {/* {altWords.map((word, index) => {
-        return (
-          <>
-            <h3 className="text-2xl">{word.word}</h3>
-            <li key={index}>{word.value}</li>
-          </>
-        );
+      {/* {finalValidWords.map((word, index) => {
+        return <li key={index}>{word}</li>;
       })} */}
       <br />
       <p>All InValid Words</p>
