@@ -32,6 +32,7 @@ Allow: /thesaurus/sitemap.xml
 Disallow: /define/arrowwood
 Disallow: /define/24/7
 Disallow: /define/sweetpea
+Disallow: /define/tightfitting
 Disallow: /define/redmaids
 Disallow: /define/ankling
 Disallow: /define/atoneable
