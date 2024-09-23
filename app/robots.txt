@@ -46,6 +46,7 @@ Disallow: /define/argled
 Disallow: /define/acierated
 Disallow: /define/autolysed
 Disallow: /define/until
+Disallow: /define/expired
 Disallow: /define/agatized
 Disallow: /define/adaxially
 Disallow: /define/albitical
