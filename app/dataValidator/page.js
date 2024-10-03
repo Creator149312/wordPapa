@@ -5,8 +5,8 @@ import ALLCLEANWORDS from "./cleanwords/ALLCLEANWORDS";
 import { promises as fs } from "fs";
 import ALTERNATIVEWORDS from "./AlternativeWords";
 
-const chunkSize = 2;
-const delay = 500; // 1 minute in 54321` milliseconds
+const chunkSize = 1;
+const delay = 50; // 1 minute in 54321` milliseconds
 let finalInValidWords = [];
 let finalValidWords = [];
 const compoundRegex = /\s|-/; //to check if word contains space or -
@@ -74,6 +74,73 @@ const handleCheckAdjectives = async (checkWord) => {
     }
   } catch (error) {
     isValid = false;
+  }
+
+  return isValid;
+};
+
+let AllRelatedWords = [];
+let synonymWords = [];
+let antonymWords = [];
+const handleCheckSynonyms = async (checkWord) => {
+  let isValid = false;
+  try {
+    if(!checkWord.includes(' ')){
+    AllRelatedWords = [];
+
+    const timeout = 5000; // Set timeout to 5 seconds
+    const syncontroller = new AbortController();
+    const syntimeoutId = setTimeout(() => {
+      syncontroller.abort();
+    }, timeout);
+
+    let endpointSyn = `https://api.datamuse.com/words?ml=${word}&max=200`;
+    const synres = await fetch(endpointSyn, { signal: syncontroller.signal });
+
+    clearTimeout(syntimeoutId); // Clear the timeout of synonym request since the request completed
+
+    if (!synres.ok) {
+      throw new Error(`API request failed with status ${synres.status}`);
+    }
+
+    const syndata = await synres.json();
+
+    const antcontroller = new AbortController();
+    const anttimeoutId = setTimeout(() => {
+      antcontroller.abort();
+    }, timeout);
+
+    let endpointAnt = `https://api.datamuse.com/words?rel_ant=${word}`;
+    const antres = await fetch(endpointAnt, { signal: antcontroller.signal });
+
+    clearTimeout(anttimeoutId); // Clear the timeout of synonym request since the request completed
+
+    if (!antres.ok) {
+      throw new Error(`API request failed with status ${antres.status}`);
+    }
+
+    const antdata = await antres.json();
+
+    const allData = syndata;
+
+    AllRelatedWords = allData.map((item) => item.word);
+    const synresponse = allData.filter((obj) => {
+      if (obj.hasOwnProperty("tags")) return obj.tags.includes("syn");
+    });
+
+    synonymWords = synresponse.map((item) => item.word);
+    antonymWords = antdata.map((item) => item.word);
+
+    if(synonymWords.length + antonymWords.length > 10){
+      isValid = true;
+    }else{
+      isValid = false;
+    }
+  }} catch (error) {
+    console.log("Error occured while getting data from api request....")
+    AllRelatedWords = [];
+    synonymWords = [];
+    antonymWords = [];
   }
 
   return isValid;
@@ -181,7 +248,7 @@ const findInvalidandValidWords = async (allWords) => {
   let validWords = [];
   let invalidWords = [];
   for (let i = 0; i < allWords.length; i++) {
-    let isWordValid = await handleCheckAdjectives(allWords[i]);
+    let isWordValid = await handleCheckSynonyms(allWords[i]);
     if (isWordValid) validWords.push(allWords[i].trim());
     else invalidWords.push(allWords[i]);
   }
@@ -196,22 +263,20 @@ const Page = async () => {
 
   // await iterateOverChunks(ALTERNATIVEWORDS);
 
-  // console.log("Total Words to Check ", count);
-
   // console.log("Invalid Words = ", finalInValidWords.length);
   // console.log("Valid Words", finalValidWords.length);
 
   return (
     <div>
       <p>All Valid Words</p>
-      {/* {finalValidWords.map((word, index) => {
+       {/* {finalValidWords.map((word, index) => {
         return <li key={index}>{word}</li>;
-      })} */}
+      })}  */}
       <br />
       <p>All InValid Words</p>
       {/* {finalInValidWords.map((word, index) => {
         return <li key={index}>{word}</li>;
-      })}   */}
+      })}    */}
     </div>
   );
 };

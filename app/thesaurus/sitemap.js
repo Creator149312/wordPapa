@@ -8,16 +8,17 @@ export default async function sitemap({ id }) {
 
   // const regex = /^\S+$/; // Matches any word that doesn't contain spaces
   const regex = /^[a-zA-Z0-9 -]+$/; //to find words which contain characters or digits 
+  const simpleRegex = /^[a-zA-Z0-9]+$/; // to find words which only contain letters
 
   synonymWordsArray.forEach((word) => {
-    if (regex.test(word) && !synonymsToAvoid.includes(word)) {
+    if (simpleRegex.test(word) && !synonymsToAvoid.includes(word)) {
       AllWords.add(word);
     }
   });
 
   const AllWordsArray = [...AllWords];
 
-  //console.log(AllWordsArray.length);
+  // console.log(AllWordsArray.length);
 
   return AllWordsArray.map((word) => {
     word = word.replace(/ /g, "-");
