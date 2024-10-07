@@ -4,7 +4,7 @@ const AdsUnit = ({ slot }) => {
       <div className="text-sm text-center">Advertisement</div>
       <div className="mt-4 justify-center">
       <ins
-        className="adsbygoogle  max-w-[320px] sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px]"
+        className="adsbygoogle max-w-[320px] sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px]"
         style={{ display: 'block'}}
         data-ad-client="ca-pub-6746947892342481"
         data-ad-slot={ slot }
