@@ -7,7 +7,7 @@ const nextConfig = {
     domains: ["lh3.googleusercontent.com"],
   },
   env: {
-    WORK_ENV: process.env.WORK_ENV,
+    WORK_ENV: process.env.NODE_ENV,
   },
   async redirects() {
     return [

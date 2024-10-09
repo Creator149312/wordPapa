@@ -4,12 +4,12 @@ import configGit from "./config.github";
 
 let apiConfig;
 
-if (process.env.WORK_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   apiConfig = configProd;
-} else if (process.env.WORK_ENV === "github") {
-  apiConfig = configGit;
-} else {
+} else if (process.env.NODE_ENV === "development") {
   apiConfig = configDev;
+} else {
+  apiConfig = configGit;
 }
 
 export default apiConfig;
