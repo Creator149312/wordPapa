@@ -1,4 +1,3 @@
-"use client";
 // import GoogleAd from "@utils/GoogleAd";
 import { CardContent, CardHeader } from "@components/ui/card";
 import AdsUnit from "./AdsUnit";
@@ -6,7 +5,7 @@ import AdsUnit from "./AdsUnit";
 const SideBar = () => {
   return (
     <>
-      <AdsUnit slotID={3722270586} />
+      <AdsUnit slot='3722270586' />
       <div className="">
         <CardHeader>
           <h2 className="text-2xl font-extrabold">Resources</h2>
@@ -26,7 +25,7 @@ const SideBar = () => {
           </ul>
         </CardContent>
       </div>
-      <AdsUnit slotID={3722270586} />
+      <AdsUnit slot='3722270586' />
        {/* ad for Spinwheel website goes after two ads */}
      </>
   );

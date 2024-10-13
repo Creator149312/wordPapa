@@ -8,8 +8,8 @@ export async function POST(req) {
   try {
     const { queryType, prompt } = await req.json();
 
-    console.log("Query Type = ", queryType);
-    console.log("Query Prompt = ", prompt);
+    // console.log("Query Type = ", queryType);
+    // console.log("Query Prompt = ", prompt);
 
     // Define prompts based on query type
     const queryPrompts = {
@@ -42,7 +42,7 @@ export async function POST(req) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("OpenAI API error:", error.message || error);
+    // console.error("OpenAI API error:", error.message || error);
 
     return new Response(JSON.stringify({ error: "Failed to generate words" }), {
       status: 500,

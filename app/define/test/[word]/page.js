@@ -3,10 +3,11 @@ import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
 import { permanentRedirect, redirect } from "next/navigation";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
-import { WORDMAP } from "../WORDMAP";
+import { WORDMAP } from "../../WORDMAP";
 import { Card, CardContent, CardHeader } from "@components/ui/card";
-import soft404words from "./../soft-404words";
+import soft404words from "./../../soft-404words";
 import AdsUnit from "@components/AdsUnit";
+import apiConfig from "@utils/apiUrlConfig";
 
 let titleStr = "";
 
@@ -279,121 +280,86 @@ export default async function WordSpecificPage({ params }) {
                 {await displayDefs()}
               </CardContent>
             </Card>
-            <AdsUnit slot='7782807936'/> 
+            <AdsUnit slotID={3722270586} />
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>
         );
       } else {
-        //if no definitions found
-        const relatedWordsData = getRelatedWordsUsingML(word);
+        let sentencesByAI = null;
+        console.log("inside AI Set for Definition");
+        try {
+          const response = await fetch(
+            `${apiConfig.apiUrl}/generateSentences`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ word: word }),
+            }
+          );
 
-        // Wait for the promises to resolve
-        const [relatedWords] = await Promise.all([relatedWordsData]);
+          const data = await response.json();
+          console.log("Data = ", data.definitionAndSentences);
 
-        return (
-          <>
-            <Card className="m-2">
-              <CardHeader>
-                <h1 className="text-4xl font-extrabold">{word}</h1>
-              </CardHeader>
-              <CardContent className="card-body">
-                <p className="mb-6 text-lg font-normal">
-                  Looks like we couldn't find {word} word in our dictionary yet.{" "}
-                </p>
+          let wordForProcessing = null;
+          if (data.definitionAndSentences.includes("\n")) {
+            wordForProcessing = data.definitionAndSentences.split("\n");
+          } else {
+            wordForProcessing = data.definitionAndSentences;
+          }
 
-                <p className="m-2 text-lg font-normal">
-                  Don't worry, new words are added all the time! Here are some
-                  options you can try:{" "}
-                </p>
+          console.log("Words for Processing = ", wordForProcessing);
+          sentencesByAI = wordForProcessing.map((str) =>
+            str
+              .replace(/^\W+|\W+$/, "")
+              .replace(/^\d+\.\s*/, "")
+              .trim()
+          );
 
-                <ul className="list-disc m-2">
-                  <li className="p-0.5 list-item">
-                    Wordstruck? Don't fret! Search for a words similar to {word}{" "}
-                    in our{" "}
-                    <a href="/thesaurus" className="text-[#75c32c] p-0.5">
-                      thesaurus
-                    </a>
-                    .
-                  </li>
-                  <li className="p-0.5 list-item">
-                    Feeling fancy? Browse our{" "}
-                    <a
-                      href="/browse/adjectives"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      adjective dictionary
-                    </a>{" "}
-                    to find words that describe popular nouns, then craft
-                    powerful verbs using our{" "}
-                    <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
-                      verb dictionary
-                    </a>{" "}
-                    to bring your writing to life!
-                  </li>
-                </ul>
-                <AdsUnit slot='7782807936'/> 
-                {relatedWords.length > 0 && (
-                  <div className="mb-2">
-                    <h2 className="text-3xl font-bold">
-                      Words Close to "{word}"
-                    </h2>
-                    {/* {console.log("Related Words" + relatedWords + " is this")} */}
-                    <ul className="list-disc m-2">
-                      {relatedWords.map((data, index) => (
-                        <li key={index} className="p-0.5">
-                          {data.word}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <p className="m-2 pt-2 text-lg font-normal">
-                  While you're here, check out some of our most popular words:{" "}
-                </p>
-                <ul className="list-disc m-2 mb-6">
-                  <li>
-                    <a
-                      href="/define/ephemeral"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Ephemeral
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/define/pulchritudinous"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Pulchritudinous{" "}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/define/cacophony"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Cacophony{" "}
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">
-                      Gazump{" "}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/define/facetious"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Facetious{" "}
-                    </a>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </>
-        );
+          console.log("Data Words = ", sentencesByAI);
+        } catch (error) {
+          console.error("Error fetching words:", error);
+        }
+
+        if (sentencesByAI.length > 0) {
+          return (
+            <>
+              <Card className="m-2">
+                <CardHeader className="list-heading-container">
+                  <h1 className="text-5xl font-extrabold">{decodedWord}</h1>
+                  {/* <AddToMyListsButton /> */}
+                </CardHeader>
+                <CardContent className="card-body">
+                  <p className=" m-2 text-lg p-2">{sentencesByAI[0]}</p>
+                </CardContent>
+              </Card>
+              <AdsUnit slotID={3722270586} />
+              <Card className="m-2" id="examples">
+                <CardHeader>
+                  <h1 className="text-4xl font-extrabold">
+                    Examples of "{word}" in Sentences
+                  </h1>
+                </CardHeader>
+                <CardContent>
+                  <ul className="m-2 p-2 text-lg list-disc">
+                    {sentencesByAI.map(
+                      (sent, index) =>
+                        sent &&
+                        index >= 1 && (
+                          <li className="p-0.5" key={index}>
+                            {sent}
+                          </li>
+                        )
+                    )}
+                  </ul>
+                </CardContent>
+              </Card>
+              <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
+            </>
+          );
+        }
       }
     } else {
       // Initiate both requests in parallel
@@ -477,7 +443,6 @@ export default async function WordSpecificPage({ params }) {
                     {await displayDefs()}
                   </CardContent>
                 </Card>
-                <AdsUnit slot='7782807936'/> 
               </>
             );
 
@@ -571,7 +536,6 @@ export default async function WordSpecificPage({ params }) {
                     to bring your writing to life!
                   </li>
                 </ul>
-                <AdsUnit slot='7782807936'/> 
                 {relatedWords.length > 0 && (
                   <div className="mb-2">
                     <h2 className="text-3xl font-bold">
