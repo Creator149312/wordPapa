@@ -1,9 +1,12 @@
 import SentencesFetcher from "./SentencesFetcher";
 import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
-import { redirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
 import { WORDMAP } from "../WORDMAP";
+import { Card, CardContent, CardHeader } from "@components/ui/card";
+import soft404words from "./../soft-404words";
+import AdsUnit from "@components/AdsUnit";
 
 let titleStr = "";
 
@@ -17,8 +20,16 @@ const types = {
   u: "Other Meanings",
 };
 
+let siteURL =
+  process.env.NODE_ENV === "production"
+    ? "https://words.englishbix.com"
+    : "http://localhost:3000";
+
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
+  let slug = decodeURIComponent(params.word);
+
+  let canonical = `${siteURL}/define/${word}`;
   if (word.includes("-")) word = word.replace("-", " ");
   // read route params
   titleStr =
@@ -29,9 +40,26 @@ export async function generateMetadata({ params }, parent) {
     " mean and Have a look at list of sentence examples using " +
     params.word +
     ".";
+
+  if (soft404words.includes(slug)) {
+    canonical = "https://words.englishbix.com/define";
+  }
+
+  let key = slug.replace(/[ -]/g, "");
+  let decodedWord = WORDMAP[key] ? WORDMAP[key] : slug;
+
+  if (slug !== decodedWord) {
+    //using permanentRedirect for 301 redirect instead of temporary redirect
+    //redirect("/define/" + decodedWord);
+    canonical = `https://words.englishbix.com/define/${decodedWord}`;
+  }
+
   return {
     title: titleStr,
     description: descriptionStr,
+    alternates: {
+      canonical: canonical,
+    },
   };
 }
 
@@ -53,19 +81,67 @@ export async function generateMetadata({ params }, parent) {
 */
 
 async function getDefinitions(word, iscompound) {
+  const timeout = 5000; // Set timeout to 5 second
+
   let endpoint = "";
   if (iscompound) {
-    endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
-    const res = await fetch(endpoint);
-    const data = await res.json();
-    // console.log(data);
-    return data;
+    try {
+      const compoundController = new AbortController();
+      const compoundtimeoutId = setTimeout(() => {
+        compoundController.abort();
+      }, timeout);
+
+      endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1`;
+      const res = await fetch(endpoint, { signal: compoundController.signal });
+
+      clearTimeout(compoundtimeoutId); // Clear the timeout since the request completed
+
+      if (!res.ok) {
+        throw new Error(`API request failed with status ${res.status}`);
+      }
+
+      const data = await res.json();
+      //console.log(data);
+      return data;
+    } catch (error) {
+      // console.log("Error occured in Compound trial");
+      return [
+        {
+          word: word,
+          score: 11111111,
+          tags: ["query", "pron:  ", "ipa_pron: "],
+          defs: [],
+        },
+      ];
+    }
   } else {
-    endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
-    const res = await fetch(endpoint);
-    const data = await res.json();
-    // console.log(data[0]);
-    return data[0];
+    try {
+      const simpleController = new AbortController();
+      const simpletimeoutId = setTimeout(() => {
+        simpleController.abort();
+      }, timeout);
+
+      endpoint = `https://api.datamuse.com/words?sp=${word}&qe=sp&md=dr&ipa=1&max=1&v=enwiki`;
+      const res = await fetch(endpoint, { signal: simpleController.signal });
+
+      clearTimeout(simpletimeoutId); // Clear the timeout since the request completed
+
+      if (!res.ok) {
+        throw new Error(`API request failed with status ${res.status}`);
+      }
+      const data = await res.json();
+      //console.log(data[0]);
+      return data[0];
+    } catch (error) {
+      // console.log("Error occured in simple trial");
+
+      //we are not adding defs property to return object
+      return {
+        word: word,
+        score: 11111111,
+        tags: ["query", "pron:  ", "ipa_pron: "],
+      };
+    }
   }
 }
 
@@ -86,43 +162,77 @@ async function splitDefsbyPOS(defs) {
  */
 async function displayDefs() {
   return (
-    <div>
+    <>
       {Object.keys(defTypes).map(
         (key) =>
           defTypes[key].length > 0 && (
             <div key={key}>
-              <h3>{types[key]}</h3>
-              <ul className="m-2 p-2">
+              <h3 className="mb-2 font-bold text-2xl">{types[key]}</h3>
+              <ul className="list-disc m-2 text-lg p-2">
                 {defTypes[key].map((def, index) => (
-                  <li key={index}>{def}</li>
+                  <li className="p-0.5" key={index}>
+                    {def}
+                  </li>
                 ))}
               </ul>
             </div>
           )
       )}
-    </div>
+    </>
   );
 }
 
+/*
+ * Get all the similar sounding words which user has searched
+ */
 async function getRelatedWordsUsingML(word) {
-  const endpoint = `https://api.datamuse.com/words?ml=${word}`;
-  const res = await fetch(endpoint);
-  const data = await res.json();
-  return data;
+  try {
+    const timeout = 5000; // Set timeout to 5 second
+    const Controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      Controller.abort();
+    }, timeout);
+
+    const endpoint = `https://api.datamuse.com/words?sl=${word}&max=30`;
+    const res = await fetch(endpoint, { signal: Controller.signal });
+
+    clearTimeout(timeoutId); // Clear the timeout since the request completed
+
+    if (!res.ok) {
+      throw new Error(`API request failed with status ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    return [];
+  }
 }
 
 export default async function WordSpecificPage({ params }) {
   let word = decodeURIComponent(params.word); //in this form there will be - in word in place of spaces
+
+  // if this word is causing soft 404 or other google search console errors
+  // we'll redirect it to the /define to avoid future errors
+  if (soft404words.includes(word)) {
+    //again using temporary redirect because permanentRedirect was causing redirect errors in search console
+    redirect("/define");
+    // permanentRedirect("/define");
+  }
+
   //let decodedWord = word.split('-').join(' ') //This is the original word typed by User
   let key = word.replace(/[ -]/g, "");
   let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
 
   if (word !== decodedWord) {
-    redirect("/define/" + decodedWord);
+    //again using temporary redirect because permanentRedirect was causing redirect errors in search console
+    redirect("/define/" + decodedWord); // commented this on 12th Aug
+    //using permanentRedirect for 301 redirect instead of temporary redirect
+    // permanentRedirect("/define/" + decodedWord);
   }
 
   if (!word.includes(".ico")) {
-    if (!(word.includes("-") || word.includes(" "))) {
+    if (!(decodedWord.includes("-") || decodedWord.includes(" "))) {
       //if word is made up of only 1 set of letters without spaces or hyphes
       // Initiate both requests in parallel
       const definitionsData = getDefinitions(decodedWord, false);
@@ -143,18 +253,18 @@ export default async function WordSpecificPage({ params }) {
         return (
           <>
             {await splitDefsbyPOS(definitions.defs)}
-            <div className="card m-2">
-              <div className="card-header list-heading-container">
-                <h1>{decodedWord}</h1>
+            <Card className="m-2">
+              <CardHeader className="list-heading-container">
+                <h1 className="text-5xl font-extrabold">{decodedWord}</h1>
                 {/* <AddToMyListsButton /> */}
-              </div>
-              <div className="card-body">
-                <p className="ipa">
-                  IPA:{" "}
+              </CardHeader>
+              <CardContent className="card-body">
+                <p className="mb-6 text-lg font-normal">
+                  <strong>IPA:</strong>{" "}
                   {definitions.tags[definitions.tags.length - 1].split(":")[1]}
                 </p>
                 {definitions.hasOwnProperty("defHeadword") && (
-                  <p className="normal-text">
+                  <p className="mb-6 text-lg font-normal">
                     Root Word:{" "}
                     <Link
                       href={definitions.defHeadword
@@ -166,10 +276,10 @@ export default async function WordSpecificPage({ params }) {
                   </p>
                 )}
                 {/* {console.log(definitions)} */}
-                {/* <p>Following are different meanings of {decodedWord} depending on the part of speech:</p> */}
                 {await displayDefs()}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+            <AdsUnit slot='7782807936'/> 
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>
@@ -181,29 +291,107 @@ export default async function WordSpecificPage({ params }) {
         // Wait for the promises to resolve
         const [relatedWords] = await Promise.all([relatedWordsData]);
 
-        if (relatedWords.length === 0 || relatedWords === null) {
-          return (
-            <>
-              <div className="card m-2">
-                <h2>
-                  We couldn't find any matches for "{word}" in the dictionary.
-                </h2>
-              </div>
-            </>
-          );
-        }
-
         return (
           <>
-            <div className="card m-2">
-              <h1>Words like "{word}"</h1>
-              {/* {console.log("Related Words" + relatedWords + " is this")} */}
-              <ul className="m-2">
-                {relatedWords.map((data, index) => (
-                  <li key={index}>{data.word}</li>
-                ))}
-              </ul>
-            </div>
+            <Card className="m-2">
+              <CardHeader>
+                <h1 className="text-4xl font-extrabold">{word}</h1>
+              </CardHeader>
+              <CardContent className="card-body">
+                <p className="mb-6 text-lg font-normal">
+                  Looks like we couldn't find {word} word in our dictionary yet.{" "}
+                </p>
+
+                <p className="m-2 text-lg font-normal">
+                  Don't worry, new words are added all the time! Here are some
+                  options you can try:{" "}
+                </p>
+
+                <ul className="list-disc m-2">
+                  <li className="p-0.5 list-item">
+                    Wordstruck? Don't fret! Search for a words similar to {word}{" "}
+                    in our{" "}
+                    <a href="/thesaurus" className="text-[#75c32c] p-0.5">
+                      thesaurus
+                    </a>
+                    .
+                  </li>
+                  <li className="p-0.5 list-item">
+                    Feeling fancy? Browse our{" "}
+                    <a
+                      href="/browse/adjectives"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      adjective dictionary
+                    </a>{" "}
+                    to find words that describe popular nouns, then craft
+                    powerful verbs using our{" "}
+                    <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
+                      verb dictionary
+                    </a>{" "}
+                    to bring your writing to life!
+                  </li>
+                </ul>
+                <AdsUnit slot='7782807936'/> 
+                {relatedWords.length > 0 && (
+                  <div className="mb-2">
+                    <h2 className="text-3xl font-bold">
+                      Words Close to "{word}"
+                    </h2>
+                    {/* {console.log("Related Words" + relatedWords + " is this")} */}
+                    <ul className="list-disc m-2">
+                      {relatedWords.map((data, index) => (
+                        <li key={index} className="p-0.5">
+                          {data.word}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <p className="m-2 pt-2 text-lg font-normal">
+                  While you're here, check out some of our most popular words:{" "}
+                </p>
+                <ul className="list-disc m-2 mb-6">
+                  <li>
+                    <a
+                      href="/define/ephemeral"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Ephemeral
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/define/pulchritudinous"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Pulchritudinous{" "}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/define/cacophony"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Cacophony{" "}
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">
+                      Gazump{" "}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/define/facetious"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Facetious{" "}
+                    </a>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </>
         );
       }
@@ -251,20 +439,22 @@ export default async function WordSpecificPage({ params }) {
       let sentencesForWord = [];
       let relLinkForWord = [];
       let doIneedCheckingforHyphenated = true;
-
+      // console.log("Final Matches length = ", finalMatches.length);
       if (finalMatches.length > 0) {
         for (let i = 0; i < finalMatches.length; i++) {
           if (finalMatches[i].hasOwnProperty("defs")) {
             await splitDefsbyPOS(finalMatches[i].defs);
             defsForWord.push(
               <>
-                <div className="card m-2">
-                  <div className="card-header">
-                    <h1>{finalMatches[i].word}</h1>
-                  </div>
-                  <div className="card-body">
-                    <p className="ipa">
-                      IPA:{" "}
+                <Card className="card m-2">
+                  <CardHeader>
+                    <h1 className="text-4xl font-extrabold">
+                      {finalMatches[i].word}
+                    </h1>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-6 text-lg font-normal">
+                      <strong>IPA:</strong>{" "}
                       {
                         finalMatches[i].tags[
                           finalMatches[i].tags.length - 1
@@ -272,7 +462,7 @@ export default async function WordSpecificPage({ params }) {
                       }
                     </p>
                     {finalMatches[i].hasOwnProperty("defHeadword") && (
-                      <p>
+                      <p className="mb-6 text-lg font-normal">
                         Root Word:{" "}
                         <Link
                           href={finalMatches[i].defHeadword
@@ -285,8 +475,9 @@ export default async function WordSpecificPage({ params }) {
                     )}
                     {/* {console.log(definitions)} */}
                     {await displayDefs()}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
+                <AdsUnit slot='7782807936'/> 
               </>
             );
 
@@ -321,6 +512,9 @@ export default async function WordSpecificPage({ params }) {
             {defsForWord.map((part, index) => (
               <div key={index}>{part}</div>
             ))}
+            {/* 
+            //Add it in future 
+            <AdsUnit slotID={3722270586} /> */}
             {sentencesForWord.map((sen) => (
               <div>{sen}</div>
             ))}
@@ -336,29 +530,107 @@ export default async function WordSpecificPage({ params }) {
         // Wait for the promises to resolve
         const [relatedWords] = await Promise.all([relatedWordsData]);
 
-        if (relatedWords.length === 0 || relatedWords === null) {
-          return (
-            <>
-              <div className="card m-2">
-                <h2>
-                  We couldn't find any matches for "{word}" in the dictionary.
-                </h2>
-              </div>
-            </>
-          );
-        }
-
         return (
           <>
-            <div className="card m-2">
-              <h1>Words like "{word}"</h1>
-              {/* {console.log("Related Words" + relatedWords + " is this")} */}
-              <ul className="m-2">
-                {relatedWords.map((data, index) => (
-                  <li key={index}>{data.word}</li>
-                ))}
-              </ul>
-            </div>
+            <Card className="m-2">
+              <CardHeader>
+                <h1 className="text-4xl font-extrabold">{word}</h1>
+              </CardHeader>
+              <CardContent className="card-body">
+                <p className="mb-6 text-lg font-normal">
+                  Looks like we couldn't find {word} word in our dictionary yet.{" "}
+                </p>
+
+                <p className="m-2 text-lg font-normal">
+                  Don't worry, new words are added all the time! Here are some
+                  options you can try:{" "}
+                </p>
+
+                <ul className="list-disc m-2">
+                  <li className="p-0.5 list-item">
+                    Wordstruck? Don't fret! Search for a words similar to {word}{" "}
+                    in our{" "}
+                    <a href="/thesaurus" className="text-[#75c32c] p-0.5">
+                      thesaurus
+                    </a>
+                    .
+                  </li>
+                  <li className="p-0.5 list-item">
+                    Feeling fancy? Browse our{" "}
+                    <a
+                      href="/browse/adjectives"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      adjective dictionary
+                    </a>{" "}
+                    to find words that describe popular nouns, then craft
+                    powerful verbs using our{" "}
+                    <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
+                      verb dictionary
+                    </a>{" "}
+                    to bring your writing to life!
+                  </li>
+                </ul>
+                <AdsUnit slot='7782807936'/> 
+                {relatedWords.length > 0 && (
+                  <div className="mb-2">
+                    <h2 className="text-3xl font-bold">
+                      Words Close to "{word}"
+                    </h2>
+                    {/* {console.log("Related Words" + relatedWords + " is this")} */}
+                    <ul className="list-disc m-2">
+                      {relatedWords.map((data, index) => (
+                        <li key={index} className="p-0.5">
+                          {data.word}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <p className="m-2 pt-2 text-lg font-normal">
+                  While you're here, check out some of our most popular words:{" "}
+                </p>
+                <ul className="list-disc m-2 mb-6">
+                  <li>
+                    <a
+                      href="/define/ephemeral"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Ephemeral
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/define/pulchritudinous"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Pulchritudinous{" "}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/define/cacophony"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Cacophony{" "}
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">
+                      Gazump{" "}
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/define/facetious"
+                      className="text-[#75c32c] p-0.5"
+                    >
+                      Facetious{" "}
+                    </a>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </>
         );
       }

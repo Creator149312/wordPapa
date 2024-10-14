@@ -126,27 +126,27 @@ const SentencesFetcher = async ({ word }) => {
       sentencesDataofTwinWord,
       sentencesDataofWordNick,
     ]);
-    console.log("We are inside, Checking for", word);
-    console.log("Sentences from Twinword", sentencesTwinWord);
-    console.log("Sentences from WorkNick", sentencesWordNick);
-    console.log(errorWordNick + " --- " + errorTwinWord);
+    // console.log("We are inside, Checking for", word);
+    // console.log("Sentences from Twinword", sentencesTwinWord);
+    // console.log("Sentences from WorkNick", sentencesWordNick);
+    // console.log(errorWordNick + " --- " + errorTwinWord);
 
     if (
       (sentencesTwinWord === undefined || sentencesTwinWord.length === 0) &&
       (sentencesWordNick === undefined || sentencesWordNick.length === 0)
     ) {
-      console.log("inside AI Set");
+      // console.log("inside AI Set");
       try {
         const response = await fetch(`${apiConfig.apiUrl}/generateSentences`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ word: word }),
+          body: JSON.stringify({ word: word, queryType: 'sentences' }),
         });
 
         const data = await response.json();
-        console.log("Data = ", data.definitionAndSentences);
+        // console.log("Data = ", data.definitionAndSentences);
 
         let wordForProcessing = null;
         if (data.definitionAndSentences.includes("\n")) {
@@ -155,7 +155,7 @@ const SentencesFetcher = async ({ word }) => {
           wordForProcessing = data.definitionAndSentences;
         }
 
-        console.log("Words for Processing = ", wordForProcessing);
+        // console.log("Words for Processing = ", wordForProcessing);
         sentencesByAI = wordForProcessing.map((str) =>
           str
             .replace(/^\W+|\W+$/, "")
@@ -163,10 +163,9 @@ const SentencesFetcher = async ({ word }) => {
             .trim()
         );
 
-        console.log("Data Words = ", sentencesByAI);
+        // console.log("Data Words = ", sentencesByAI);
       } catch (error) {
-        // console.error("Error fetching words:", error);
-        adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
+        sentencesByAI = [];
       }
     }
 
@@ -192,8 +191,7 @@ const SentencesFetcher = async ({ word }) => {
               (sentencesByAI.length > 0 ? (
                 sentencesByAI.map(
                   (sent, index) =>
-                    sent &&
-                    index >= 1 && (
+                    sent && (
                       <li className="p-0.5" key={index}>
                         {sent}
                       </li>
@@ -234,11 +232,6 @@ const SentencesFetcher = async ({ word }) => {
             }
             {
               /* If no errors are found Join sentences array and sort them in the order of length and display them */
-              // !errorTwinWord &&
-              //   !errorWordNick &&
-              //   sortStringArrayinASC(sentencesTwinWord.concat(sentencesWordNick)).map((sent, index) =>
-              //     sent.match(regex) ? <li key={index}>{sent}</li> : ""
-              //   )
               !errorTwinWord &&
                 !errorWordNick &&
                 sortStringArrayinASC(
@@ -255,12 +248,10 @@ const SentencesFetcher = async ({ word }) => {
     );
   } else {
     //if word is a compound word or a phrase
-    //word = word.replace("%20", "-");
     const sentencesDataofWordNick = getSentencesUsingWordnik(word);
 
     const [sentencesWordNick] = await Promise.all([sentencesDataofWordNick]);
 
-    //word = word.replace("%20", "-");
     // console.log("We are inside, Checking for", word);
     if (errorWordNick !== null) {
       errorWordNick = null;

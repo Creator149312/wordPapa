@@ -79,7 +79,6 @@ export const displayWords = (
           <div
             key={`ad${index}`}
           >
-            {console.log("Ad Inside DisplayWords")}
           <AdsUnit slot='7782807936'/> 
             {/* <GoogleAd slotID='7782807936'/> */}
           </div>

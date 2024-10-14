@@ -215,11 +215,11 @@ export default async function WordSpecificPage({ params }) {
 
   // if this word is causing soft 404 or other google search console errors
   // we'll redirect it to the /define to avoid future errors
-  if (soft404words.includes(word)) {
-    //again using temporary redirect because permanentRedirect was causing redirect errors in search console
-    redirect("/define");
-    // permanentRedirect("/define");
-  }
+  // if (soft404words.includes(word)) {
+  //   //again using temporary redirect because permanentRedirect was causing redirect errors in search console
+  //   redirect("/define");
+  //   // permanentRedirect("/define");
+  // }
 
   //let decodedWord = word.split('-').join(' ') //This is the original word typed by User
   let key = word.replace(/[ -]/g, "");
@@ -276,18 +276,17 @@ export default async function WordSpecificPage({ params }) {
                     </Link>
                   </p>
                 )}
-                {/* {console.log(definitions)} */}
                 {await displayDefs()}
               </CardContent>
             </Card>
-            <AdsUnit slotID={3722270586} />
+            <AdsUnit slotID='3722270586' />
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>
         );
       } else {
         let sentencesByAI = null;
-        console.log("inside AI Set for Definition");
+        // console.log("inside AI Set for Definition");
         try {
           const response = await fetch(
             `${apiConfig.apiUrl}/generateSentences`,
@@ -301,7 +300,7 @@ export default async function WordSpecificPage({ params }) {
           );
 
           const data = await response.json();
-          console.log("Data = ", data.definitionAndSentences);
+          // console.log("Data = ", data.definitionAndSentences);
 
           let wordForProcessing = null;
           if (data.definitionAndSentences.includes("\n")) {
@@ -310,7 +309,7 @@ export default async function WordSpecificPage({ params }) {
             wordForProcessing = data.definitionAndSentences;
           }
 
-          console.log("Words for Processing = ", wordForProcessing);
+          // console.log("Words for Processing = ", wordForProcessing);
           sentencesByAI = wordForProcessing.map((str) =>
             str
               .replace(/^\W+|\W+$/, "")
@@ -318,9 +317,9 @@ export default async function WordSpecificPage({ params }) {
               .trim()
           );
 
-          console.log("Data Words = ", sentencesByAI);
+          // console.log("Data Words = ", sentencesByAI);
         } catch (error) {
-          console.error("Error fetching words:", error);
+          sentencesByAI = [];
         }
 
         if (sentencesByAI.length > 0) {
@@ -335,7 +334,7 @@ export default async function WordSpecificPage({ params }) {
                   <p className=" m-2 text-lg p-2">{sentencesByAI[0]}</p>
                 </CardContent>
               </Card>
-              <AdsUnit slotID={3722270586} />
+              <AdsUnit slotID='3722270586' />
               <Card className="m-2" id="examples">
                 <CardHeader>
                   <h1 className="text-4xl font-extrabold">
@@ -356,9 +355,17 @@ export default async function WordSpecificPage({ params }) {
                   </ul>
                 </CardContent>
               </Card>
-              <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
+              {/* <RelLinksOnPageTop word={decodedWord} pos={defTypes} /> */}
             </>
           );
+        } else {
+          //if no definitions found
+          const relatedWordsData = getRelatedWordsUsingML(word);
+
+          // Wait for the promises to resolve
+          const [relatedWords] = await Promise.all([relatedWordsData]);
+
+          return def404Page(word, relatedWords);
         }
       }
     } else {
@@ -366,15 +373,6 @@ export default async function WordSpecificPage({ params }) {
       const searchWord = decodedWord.replace(/[ -]/g, "*"); //replace all spaces and hyphes with * for searching all instances and variations
 
       const wordsData = await getDefinitions(searchWord, true);
-      // const wordsDatawithSpaces = await getDefinitions(
-      //   decodedWord.replace(" ", "-"),
-      //   true
-      // );
-
-      // const wordsDatawithSpaces = await getDefinitions(
-      //   decodedWord.replace(/-/g, "*"),
-      //   true
-      // );
 
       // Merge arrays
       // const mergedArray = wordsData.concat(wordsDatawithSpaces);
@@ -390,22 +388,16 @@ export default async function WordSpecificPage({ params }) {
 
       // Creating a regex object with the pattern
       const regex = new RegExp(pattern);
-      // const finalMatches = wordsData.filter(
-      //   (dataObj) =>
-      //     regex.test(dataObj.word.replace(/[\s-]/g, "")) &&
-      //     dataObj.hasOwnProperty("defs")
-      // );
 
       const finalMatches = uniqueObjects.filter((dataObj) =>
         regex.test(dataObj.word.replace(/[\s-]/g, ""))
       );
 
-      let AllDataforPage = [];
       let defsForWord = [];
       let sentencesForWord = [];
       let relLinkForWord = [];
       let doIneedCheckingforHyphenated = true;
-      // console.log("Final Matches length = ", finalMatches.length);
+      //console.log("Final Matches length = ", finalMatches.length);
       if (finalMatches.length > 0) {
         for (let i = 0; i < finalMatches.length; i++) {
           if (finalMatches[i].hasOwnProperty("defs")) {
@@ -439,7 +431,6 @@ export default async function WordSpecificPage({ params }) {
                         </Link>
                       </p>
                     )}
-                    {/* {console.log(definitions)} */}
                     {await displayDefs()}
                   </CardContent>
                 </Card>
@@ -477,9 +468,7 @@ export default async function WordSpecificPage({ params }) {
             {defsForWord.map((part, index) => (
               <div key={index}>{part}</div>
             ))}
-            {/* 
-            //Add it in future 
-            <AdsUnit slotID={3722270586} /> */}
+           <AdsUnit slotID='3722270586' />
             {sentencesForWord.map((sen) => (
               <div>{sen}</div>
             ))}
@@ -495,109 +484,98 @@ export default async function WordSpecificPage({ params }) {
         // Wait for the promises to resolve
         const [relatedWords] = await Promise.all([relatedWordsData]);
 
-        return (
-          <>
-            <Card className="m-2">
-              <CardHeader>
-                <h1 className="text-4xl font-extrabold">{word}</h1>
-              </CardHeader>
-              <CardContent className="card-body">
-                <p className="mb-6 text-lg font-normal">
-                  Looks like we couldn't find {word} word in our dictionary yet.{" "}
-                </p>
-
-                <p className="m-2 text-lg font-normal">
-                  Don't worry, new words are added all the time! Here are some
-                  options you can try:{" "}
-                </p>
-
-                <ul className="list-disc m-2">
-                  <li className="p-0.5 list-item">
-                    Wordstruck? Don't fret! Search for a words similar to {word}{" "}
-                    in our{" "}
-                    <a href="/thesaurus" className="text-[#75c32c] p-0.5">
-                      thesaurus
-                    </a>
-                    .
-                  </li>
-                  <li className="p-0.5 list-item">
-                    Feeling fancy? Browse our{" "}
-                    <a
-                      href="/browse/adjectives"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      adjective dictionary
-                    </a>{" "}
-                    to find words that describe popular nouns, then craft
-                    powerful verbs using our{" "}
-                    <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
-                      verb dictionary
-                    </a>{" "}
-                    to bring your writing to life!
-                  </li>
-                </ul>
-                {relatedWords.length > 0 && (
-                  <div className="mb-2">
-                    <h2 className="text-3xl font-bold">
-                      Words Close to "{word}"
-                    </h2>
-                    {/* {console.log("Related Words" + relatedWords + " is this")} */}
-                    <ul className="list-disc m-2">
-                      {relatedWords.map((data, index) => (
-                        <li key={index} className="p-0.5">
-                          {data.word}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <p className="m-2 pt-2 text-lg font-normal">
-                  While you're here, check out some of our most popular words:{" "}
-                </p>
-                <ul className="list-disc m-2 mb-6">
-                  <li>
-                    <a
-                      href="/define/ephemeral"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Ephemeral
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/define/pulchritudinous"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Pulchritudinous{" "}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/define/cacophony"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Cacophony{" "}
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/define/gazump" className="text-[#75c32c] p-0.5">
-                      Gazump{" "}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/define/facetious"
-                      className="text-[#75c32c] p-0.5"
-                    >
-                      Facetious{" "}
-                    </a>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </>
-        );
+        return def404Page(word, relatedWords);
       }
     }
   }
+}
+
+function def404Page(word, relatedWords) {
+  return (
+    <>
+      <Card className="m-2">
+        <CardHeader>
+          <h1 className="text-4xl font-extrabold">{word}</h1>
+        </CardHeader>
+        <CardContent className="card-body">
+          <p className="mb-6 text-lg font-normal">
+            Looks like we couldn't find {word} word in our dictionary yet.{" "}
+          </p>
+          <p className="m-2 text-lg font-normal">
+            Don't worry, new words are added all the time! Here are some options
+            you can try:{" "}
+          </p>
+
+          <ul className="list-disc m-2">
+            <li className="p-0.5 list-item">
+              Wordstruck? Don't fret! Search for a words similar to {word} in
+              our{" "}
+              <a href="/thesaurus" className="text-[#75c32c] p-0.5">
+                thesaurus
+              </a>
+              .
+            </li>
+            <li className="p-0.5 list-item">
+              Feeling fancy? Browse our{" "}
+              <a href="/browse/adjectives" className="text-[#75c32c] p-0.5">
+                adjective dictionary
+              </a>{" "}
+              to find words that describe popular nouns, then craft powerful
+              verbs using our{" "}
+              <a href="/browse/verbs" className="text-[#75c32c] p-0.5">
+                verb dictionary
+              </a>{" "}
+              to bring your writing to life!
+            </li>
+          </ul>
+          <AdsUnit slotID='3722270586' />
+          {relatedWords.length > 0 && (
+            <div className="mb-2">
+              <h2 className="text-3xl font-bold">Words Close to "{word}"</h2>
+              <ul className="list-disc m-2">
+                {relatedWords.map((data, index) => (
+                  <li key={index} className="p-0.5">
+                    {data.word}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <p className="m-2 pt-2 text-lg font-normal">
+            While you're here, check out some of our most popular words:{" "}
+          </p>
+          <ul className="list-disc m-2 mb-6">
+            <li>
+              <a href="/define/ephemeral" className="text-[#75c32c] p-0.5">
+                Ephemeral
+              </a>
+            </li>
+            <li>
+              <a
+                href="/define/pulchritudinous"
+                className="text-[#75c32c] p-0.5"
+              >
+                Pulchritudinous{" "}
+              </a>
+            </li>
+            <li>
+              <a href="/define/cacophony" className="text-[#75c32c] p-0.5">
+                Cacophony{" "}
+              </a>
+            </li>
+            <li>
+              <a href="/define/gazump" className="text-[#75c32c] p-0.5">
+                Gazump{" "}
+              </a>
+            </li>
+            <li>
+              <a href="/define/facetious" className="text-[#75c32c] p-0.5">
+                Facetious{" "}
+              </a>
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+    </>
+  );
 }

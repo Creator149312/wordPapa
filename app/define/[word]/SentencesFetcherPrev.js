@@ -1,8 +1,10 @@
 import { sortStringArrayinASC } from "@utils/HelperFunctions";
+import { Card, CardContent, CardHeader } from "@components/ui/card";
 
 let errorWordNick = null;
 let errorTwinWord = null;
 let regex = null;
+const timeout = 5000; // Set timeout to 5 second
 
 /*
 examples: [
@@ -20,44 +22,20 @@ examples: [
 ]
 */
 
-// async function getSentencesUsingWordnik(word) {
-//   errorWordNick = null;
-//   try {
-//     const endpoint = `https://api.wordnik.com/v4/word.json/${word}/examples`;
-//     const apiKey = "e0d094e089e87c411680f08f6ab0e7be39143f84626e8c9e4"; // Replace with your Wordnik API key
-//     const response = await axios.get(endpoint, {
-//       params: {
-//         api_key: apiKey,
-//       },
-//     });
-
-//     // console.log(`Response Data from WorkNick for ${word}- `, response.data);
-//     if (
-//       response.data.examples !== undefined &&
-//       response.data.examples !== null &&
-//       response.data.examples.length > 0
-//     ) {
-//       return sortStringArrayinASC(
-//         response.data.examples.map((sent) => {
-//           return sent.text;
-//         })
-//       );
-//     } else {
-//       throw new Error();
-//     }
-//   } catch (e) {
-//     errorWordNick = e;
-//   }
-// }
-
 async function getSentencesUsingWordnik(word) {
   errorWordNick = null;
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
+
     const apiKey = "e0d094e089e87c411680f08f6ab0e7be39143f84626e8c9e4"; // Replace with your Wordnik API key
     const endpoint = `https://api.wordnik.com/v4/word.json/${word}/examples?api_key=${apiKey}`;
 
-    const response = await fetch(endpoint);
+    const response = await fetch(endpoint, { signal: controller.signal });
 
+    clearTimeout(timeoutId); // Clear the timeout since the request completed
     // Check if the response is successful
     if (!response.ok) {
       throw new Error("Network response was not ok");
@@ -79,45 +57,20 @@ async function getSentencesUsingWordnik(word) {
       throw new Error();
     }
   } catch (e) {
+    // console.log("Error occured in WordNick Fetch, for Word ", word);
     errorWordNick = e;
   }
 }
 
-// async function getSentencesUsingTwinWord(word, regex) {
-//   errorTwinWord = null;
-//   try {
-//     const options = {
-//       method: "GET",
-//       url: "https://twinword-word-graph-dictionary.p.rapidapi.com/example/",
-//       params: { entry: word },
-//       headers: {
-//         "X-RapidAPI-Key": "338b7bbeaemsh4f79a8247d73aefp18217cjsn6cf2a83d6072",
-//         "X-RapidAPI-Host": "twinword-word-graph-dictionary.p.rapidapi.com",
-//       },
-//     };
-
-//     const response = await axios.request(options);
-//     // console.log("Response Data from TwinWord - ", response.data);
-
-//     if (
-//       response.data.examples !== undefined &&
-//       response.data.example !== null &&
-//       response.data.example.length > 0
-//     ) {
-//       return sortStringArrayinASC(
-//         response.data.example.filter((sent) => sent.match(regex) && sent)
-//       );
-//     } else {
-//       throw new Error();
-//     }
-//   } catch (e) {
-//     errorTwinWord = e;
-//   }
-// }
-
 async function getSentencesUsingTwinWord(word, regex) {
   errorTwinWord = null;
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeout);
+    const signal = controller.signal;
+
     const url = `https://twinword-word-graph-dictionary.p.rapidapi.com/example/?entry=${word}`;
     const options = {
       method: "GET",
@@ -125,9 +78,12 @@ async function getSentencesUsingTwinWord(word, regex) {
         "X-RapidAPI-Key": "338b7bbeaemsh4f79a8247d73aefp18217cjsn6cf2a83d6072",
         "X-RapidAPI-Host": "twinword-word-graph-dictionary.p.rapidapi.com",
       },
+      signal
     };
 
     const response = await fetch(url, options);
+
+    clearTimeout(timeoutId); // Clear the timeout since the request completed
 
     // Check if the response is successful
     if (!response.ok) {
@@ -137,7 +93,6 @@ async function getSentencesUsingTwinWord(word, regex) {
     // Parse the JSON response
     const data = await response.json();
     // console.log("Response Data from TwinWord - ", data);
-
     if (
       data.example !== undefined &&
       data.example !== null &&
@@ -150,6 +105,7 @@ async function getSentencesUsingTwinWord(word, regex) {
       throw new Error();
     }
   } catch (e) {
+    // console.log("Error occured in Twinword Fetch");
     errorTwinWord = e;
   }
 }
@@ -182,50 +138,52 @@ const SentencesFetcher = async ({ word }) => {
     }
 
     return (
-      <div className="card m-2" id="examples">
-        <h1>Examples of "{word}" in Sentences</h1>
-        <ul className="m-2 p-2">
-          {
-            // if there is an error in fetching Sentences using Twinword API
-            errorTwinWord &&
+      <Card className="m-2" id="examples">
+        <CardHeader><h1 className="text-4xl font-extrabold">Examples of "{word}" in Sentences</h1></CardHeader>
+        <CardContent>
+          <ul className="m-2 p-2 text-lg list-disc">
+            {
+              // if there is an error in fetching Sentences using Twinword API
+              errorTwinWord &&
               (sentencesWordNick !== undefined &&
-              sentencesWordNick.length > 0 ? (
+                sentencesWordNick.length > 0 ? (
                 sentencesWordNick.map(
                   (sent, index) =>
-                    sent.match(regex) && <li key={index}>{sent}</li>
+                    sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
                 )
               ) : (
                 <p>No Sentences Found for {word}</p>
               ))
-          }
-          {
-            //if there is an error fetching sentences using WordNick API
-            errorWordNick &&
+            }
+            {
+              //if there is an error fetching sentences using WordNick API
+              errorWordNick &&
               ((sentencesTwinWord !== undefined &&
-              sentencesTwinWord.length > 0) ? (
+                sentencesTwinWord.length > 0) ? (
                 sentencesTwinWord.map(
                   (sent, index) =>
-                    sent.match(regex) && <li key={index}>{sent}</li>
+                    sent.match(regex) && <li className="p-0.5" key={index}>{sent}</li>
                 )
               ) : (
                 <p>No Sentences Found for {word}</p>
               ))
-          }
-          {
-            /* If no errors are found Join sentences array and sort them in the order of length and display them */
-            // !errorTwinWord &&
-            //   !errorWordNick &&
-            //   sortStringArrayinASC(sentencesTwinWord.concat(sentencesWordNick)).map((sent, index) =>
-            //     sent.match(regex) ? <li key={index}>{sent}</li> : ""
-            //   )
-            !errorTwinWord &&
+            }
+            {
+              /* If no errors are found Join sentences array and sort them in the order of length and display them */
+              // !errorTwinWord &&
+              //   !errorWordNick &&
+              //   sortStringArrayinASC(sentencesTwinWord.concat(sentencesWordNick)).map((sent, index) =>
+              //     sent.match(regex) ? <li key={index}>{sent}</li> : ""
+              //   )
+              !errorTwinWord &&
               !errorWordNick &&
               sortStringArrayinASC(
                 sentencesTwinWord.concat(sentencesWordNick)
-              ).map((sent, index) => <li key={index}>{sent}</li>)
-          }
-        </ul>
-      </div>
+              ).map((sent, index) => <li className="p-0.5" key={index}>{sent}</li>)
+            }
+          </ul>
+        </CardContent>
+      </Card>
     );
   } else {
     //if word is a compound word or a phrase
@@ -242,15 +200,19 @@ const SentencesFetcher = async ({ word }) => {
     }
 
     return (
-      <div className="card m-2">
-        <h1>Examples of "{word}" in Sentences</h1>
-        {/* { console.log(sentencesWordNick)} */}
-        <ul className="m-2">
-          {sentencesWordNick.map((sent, index) =>
-            sent.includes(word) ? <li key={index}>{sent}</li> : ""
-          )}
-        </ul>
-      </div>
+      <Card className="m-2">
+        <CardHeader>
+          <h1 className="text-3xl font-extrabold">Examples of "{word}" in Sentences</h1>
+        </CardHeader>
+        <CardContent>
+          {/* { console.log(sentencesWordNick)} */}
+          <ul className="m-2 p-2 text-lg list-disc">
+            {sentencesWordNick.map((sent, index) =>
+              sent.includes(word) ? <li className="p-0.5" key={index}>{sent}</li> : ""
+            )}
+          </ul>
+        </CardContent>
+      </Card>
     );
   }
 };
