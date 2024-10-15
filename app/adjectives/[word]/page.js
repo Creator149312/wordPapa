@@ -1,7 +1,6 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import { CardContent, CardHeader } from "@components/ui/card";
-
 import apiConfig from "@utils/apiUrlConfig";
 
 let titleStr = "";
@@ -24,10 +23,9 @@ export async function generateMetadata({ params }, parent) {
 let adjectiveWords = [];
 
 export default async function Page({ params }) {
-  //const word = params.word.split('-').join(' ');
-
   const word = decodeURIComponent(params.word);
   const isNotCompound = word.split(" ").length === 1;
+  let isAIUsed = false;  //to keep a check if we are using AI or not
 
   //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
   // if (soft404words.includes(word)) {
@@ -37,19 +35,6 @@ export default async function Page({ params }) {
   titleStr =
     "Adjective Words to Describe " +
     (word.charAt(0).toUpperCase() + word.slice(1));
-
-  // try {
-  //   adjectiveWords = [];
-  //   const response = await axios.get(
-  //     `https://api.datamuse.com/words?rel_jjb=${word}&max=200`
-  //   );
-  //   adjectiveWords = response.data.map((item) => item.word);
-  // } catch (error) {
-  //   // console.error(error);
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
 
   if (isNotCompound) {
     try {
@@ -71,41 +56,50 @@ export default async function Page({ params }) {
 
       const data = await res.json();
       adjectiveWords = data.map((item) => item.word);
+
+      if (adjectiveWords.length < 5) {
+        isAIUsed = true;
+        try {
+          const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ queryType: "adjective", prompt: word }),
+          });
+
+          const data = await response.json();
+          // console.log("Data = ", data);
+          let wordForProcessing = null;
+          if (data.words[0].includes("\n")) {
+            wordForProcessing = data.words[0].split("\n");
+          } else {
+            wordForProcessing = data.words;
+          }
+
+          // console.log("Words for Processing = ", wordForProcessing);
+          wordForProcessing.map((str) =>
+            adjectiveWords.push(
+              str
+                .replace(/^\W+|\W+$/, "")
+                .replace(/^\d+\.\s*/, "")
+                .trim()
+            )
+          );
+
+          // console.log("Data Words = ", adjectiveWords);
+        } catch (error) {
+          // console.error("Error fetching words:", error);
+          adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
+        }
+      }
     } catch (error) {
       adjectiveWords = [];
     }
   } else {
-    // console.log("Word = ", word);
-    // console.log("Host = ", apiConfig.apiUrl);
-    try {
-      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ queryType: "adjective", prompt: word }),
-      });
-
-      const data = await response.json();
-      // console.log("Data = ", data);
-
-      let wordForProcessing = null;
-      if (data.words[0].includes("\n")) {
-        wordForProcessing = data.words[0].split("\n");
-      } else {
-        wordForProcessing = data.words;
-      }
-
-      // console.log("Words for Processing = ", wordForProcessing);
-      adjectiveWords = wordForProcessing.map((str) =>
-        str.replace(/^\W+|\W+$/, "").replace(/^\d+\.\s*/, '').trim()
-      );
-      
-      // console.log("Data Words = ", adjectiveWords);
-    } catch (error) {
-      // console.error("Error fetching words:", error);
-      adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
-    }
+    isAIUsed = true;
+    adjectiveWords = [];
+    await newFunction(word);
   }
 
   return (
@@ -125,10 +119,44 @@ export default async function Page({ params }) {
           combinations. Try to push the boundaries of your descriptions to
           elevate it from good to great.
         </p>
-        {(adjectiveWords.length > 0 && isNotCompound) && (
+        {adjectiveWords.length > 0 && (isNotCompound && !isAIUsed) && (
           <RelLinksonPageBottom word={word} pos={null} />
         )}
       </CardContent>
     </>
   );
+
+  async function newFunction(word) {
+    try {
+      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ queryType: "adjective", prompt: word }),
+      });
+
+      const data = await response.json();
+      // console.log("Data = ", data);
+      let wordForProcessing = null;
+      if (data.words[0].includes("\n")) {
+        wordForProcessing = data.words[0].split("\n");
+      } else {
+        wordForProcessing = data.words;
+      }
+
+      // console.log("Words for Processing = ", wordForProcessing);
+      adjectiveWords = wordForProcessing.map((str) =>
+        str
+          .replace(/^\W+|\W+$/, "")
+          .replace(/^\d+\.\s*/, "")
+          .trim()
+      );
+
+      // console.log("Data Words = ", adjectiveWords);
+    } catch (error) {
+      // console.error("Error fetching words:", error);
+      adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
+    }
+  }
 }

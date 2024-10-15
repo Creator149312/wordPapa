@@ -1,7 +1,6 @@
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
-
 import apiConfig from "@utils/apiUrlConfig";
 
 let titleStr = "";
@@ -28,6 +27,7 @@ export default async function Page({ params }) {
   const word = decodeURIComponent(params.word); //this one gives the best results
 
   const isNotCompound = word.split(" ").length === 1;
+  let isAIUsed = false;
   //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
   // if (soft404words.includes(word)) {
   //   redirect("/rhyming-words");
@@ -63,6 +63,12 @@ export default async function Page({ params }) {
       rhymingWords = data.map((item) => item.word);
       //End of code to get rhyming words for a word
 
+      if (rhymingWords.length < 4) {
+        isAIUsed = true;
+        await newFunction();
+      }
+      
+      //if now rhyming words are found we display similar sounding words for user
       if (rhymingWords.length <= 0) {
         const SScontroller = new AbortController();
         const SStimeoutId = setTimeout(() => {
@@ -82,47 +88,14 @@ export default async function Page({ params }) {
         //End of code to get the similar sounding words for a word
       }
     } catch (error) {
-      // return {
-      //   notFound: true,
-      // };
       rhymingWords = rhymingWords.length === 0 ? [] : rhymingWords;
       similarSoundingWords =
         similarSoundingWords.length === 0 ? [] : similarSoundingWords;
     }
   } else {
-    // console.log("Word = ", word);
-    // console.log("Host = ", apiConfig.apiUrl);
-    try {
-      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ queryType: "rhymes", prompt: word }),
-      });
-
-      const data = await response.json();
-      // console.log("Data = ", data);
-
-      let wordForProcessing = null;
-      if (data.words[0].includes("\n")) {
-        wordForProcessing = data.words[0].split("\n");
-      } else {
-        wordForProcessing = data.words;
-      }
-
-      // console.log("Words for Processing = ", wordForProcessing);
-      rhymingWords = wordForProcessing.map((str) =>
-        str.replace(/^\W+|\W+$/, "").replace(/^\d+\.\s*/, '').trim()
-      );
-
-    //   rhymingWords = rhymingWords.map(item => item.replace(/^\d+\.\s*/, ''))
-     
-      // console.log("Data Words = ", rhymingWords);
-    } catch (error) {
-      // console.error("Error fetching words:", error);
-      rhymingWords = rhymingWords.length === 0 ? [] : rhymingWords;
-    }
+    rhymingWords = [];
+    isAIUsed = true;
+    await newFunction();
   }
 
   return (
@@ -152,10 +125,48 @@ export default async function Page({ params }) {
             <DataFilterDisplay words={similarSoundingWords} />
           </>
         )}
-        {rhymingWords.length > 0 && isNotCompound && (
+        {rhymingWords.length > 0 && (isNotCompound && !isAIUsed) && (
           <RelLinksonPageBottom word={word} pos={null} />
         )}
       </CardContent>
     </>
   );
+
+  async function newFunction() {
+    try {
+      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ queryType: "rhymes", prompt: word }),
+      });
+
+      const data = await response.json();
+      // console.log("Data = ", data);
+      let wordForProcessing = null;
+      if (data.words[0].includes("\n")) {
+        wordForProcessing = data.words[0].split("\n");
+      } else {
+        wordForProcessing = data.words;
+      }
+
+      // console.log("Words for Processing = ", wordForProcessing);
+     
+      wordForProcessing.map((str) =>
+        rhymingWords.push(
+          str
+            .replace(/^\W+|\W+$/, "")
+            .replace(/^\d+\.\s*/, "")
+            .trim()
+        )
+      );
+
+      //   rhymingWords = rhymingWords.map(item => item.replace(/^\d+\.\s*/, ''))
+      // console.log("Data Words = ", rhymingWords);
+    } catch (error) {
+      // console.error("Error fetching words:", error);
+      rhymingWords = rhymingWords.length === 0 ? [] : rhymingWords;
+    }
+  }
 }
