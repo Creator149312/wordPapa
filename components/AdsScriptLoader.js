@@ -3,34 +3,36 @@ import { useEffect } from "react";
 
 const AdsScriptLoader = () => {
   useEffect(() => {
-    let scriptLoaded = false;
-    // const timeoutId = setTimeout(() => {
-    //   if (!scriptLoaded) {
-    //     scriptLoaded = newFunction(scriptLoaded);
-    //   }
-    // }, 6000);
+    if (typeof document !== "undefined") {
+      let scriptLoaded = false;
+      // const timeoutId = setTimeout(() => {
+      //   if (!scriptLoaded) {
+      //     scriptLoaded = newFunction(scriptLoaded);
+      //   }
+      // }, 6000);
 
-    const handleInteraction = () => {
-      // clearTimeout(timeoutId);
-      if (!scriptLoaded) {
-        scriptLoaded = newFunction(scriptLoaded);
-      }
-    };
+      const handleInteraction = () => {
+        // clearTimeout(timeoutId);
+        if (!scriptLoaded) {
+          scriptLoaded = newFunction(scriptLoaded);
+        }
+      };
 
-    // document.addEventListener("mousemove", handleInteraction);
-    document.addEventListener("scroll", handleInteraction);
-    // document.addEventListener("keypress", handleInteraction);
-    // document.addEventListener("touchstart", handleInteraction);
-    window.addEventListener('load', handleInteraction);
+      document.addEventListener("mousemove", handleInteraction);
+      document.addEventListener("scroll", handleInteraction);
+      // document.addEventListener("keypress", handleInteraction);
+      // document.addEventListener("touchstart", handleInteraction);
+      document.addEventListener("load", handleInteraction);
 
-    return () => {
-      // Cleanup function to remove event listeners on component unmount
-      // document.removeEventListener("mousemove", handleInteraction);
-      document.removeEventListener("scroll", handleInteraction);
-      // document.removeEventListener("keypress", handleInteraction);
-      // document.removeEventListener("touchstart", handleInteraction);
-      window.removeEventListener('load', handleInteraction);
-    };
+      return () => {
+        // Cleanup function to remove event listeners on component unmount
+        document.removeEventListener("mousemove", handleInteraction);
+        document.removeEventListener("scroll", handleInteraction);
+        // document.removeEventListener("keypress", handleInteraction);
+        // document.removeEventListener("touchstart", handleInteraction);
+        document.removeEventListener("load", handleInteraction);
+      };
+    }
   }, []);
 
   return (
@@ -45,7 +47,8 @@ export default AdsScriptLoader;
 
 function newFunction(scriptLoaded) {
   const script = document.createElement("script");
-  script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6746947892342481";
+  script.src =
+    "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6746947892342481";
   script.crossorigin = "anonymous";
   script.async = true;
   script.onload = () => {
