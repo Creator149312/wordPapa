@@ -21,6 +21,7 @@ const AdsScriptLoader = () => {
     document.addEventListener("scroll", handleInteraction);
     document.addEventListener("keypress", handleInteraction);
     document.addEventListener("touchstart", handleInteraction);
+    window.addEventListener('load', handleInteraction);
 
     return () => {
       // Cleanup function to remove event listeners on component unmount
@@ -28,6 +29,7 @@ const AdsScriptLoader = () => {
       document.removeEventListener("scroll", handleInteraction);
       document.removeEventListener("keypress", handleInteraction);
       document.removeEventListener("touchstart", handleInteraction);
+      window.removeEventListener('load', handleInteraction);
     };
   }, []);
 
