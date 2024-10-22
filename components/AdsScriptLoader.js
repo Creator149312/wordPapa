@@ -5,14 +5,14 @@ const AdsScriptLoader = () => {
   useEffect(() => {
     if (typeof document !== "undefined") {
       let scriptLoaded = false;
-      // const timeoutId = setTimeout(() => {
-      //   if (!scriptLoaded) {
-      //     scriptLoaded = newFunction(scriptLoaded);
-      //   }
-      // }, 6000);
+      const timeoutId = setTimeout(() => {
+        if (!scriptLoaded) {
+          scriptLoaded = newFunction(scriptLoaded);
+        }
+      }, 4000);
 
       const handleInteraction = () => {
-        // clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
         if (!scriptLoaded) {
           scriptLoaded = newFunction(scriptLoaded);
         }
@@ -20,16 +20,16 @@ const AdsScriptLoader = () => {
 
       document.addEventListener("mousemove", handleInteraction);
       document.addEventListener("scroll", handleInteraction);
-      // document.addEventListener("keypress", handleInteraction);
-      document.addEventListener("touchstart", handleInteraction);
+      document.addEventListener("keypress", handleInteraction);
+      // document.addEventListener("touchstart", handleInteraction);
       document.addEventListener("DOMContentLoaded", handleInteraction);
 
       return () => {
         // Cleanup function to remove event listeners on component unmount
         document.removeEventListener("mousemove", handleInteraction);
         document.removeEventListener("scroll", handleInteraction);
-        // document.removeEventListener("keypress", handleInteraction);
-        document.removeEventListener("touchstart", handleInteraction);
+        document.removeEventListener("keypress", handleInteraction);
+        //document.removeEventListener("touchstart", handleInteraction);
         document.removeEventListener("DOMContentLoaded", handleInteraction);
       };
     }
