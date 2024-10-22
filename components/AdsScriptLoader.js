@@ -21,16 +21,16 @@ const AdsScriptLoader = () => {
       document.addEventListener("mousemove", handleInteraction);
       document.addEventListener("scroll", handleInteraction);
       // document.addEventListener("keypress", handleInteraction);
-      // document.addEventListener("touchstart", handleInteraction);
-      document.addEventListener("load", handleInteraction);
+      document.addEventListener("touchstart", handleInteraction);
+      document.addEventListener("DOMContentLoaded", handleInteraction);
 
       return () => {
         // Cleanup function to remove event listeners on component unmount
         document.removeEventListener("mousemove", handleInteraction);
         document.removeEventListener("scroll", handleInteraction);
         // document.removeEventListener("keypress", handleInteraction);
-        // document.removeEventListener("touchstart", handleInteraction);
-        document.removeEventListener("load", handleInteraction);
+        document.removeEventListener("touchstart", handleInteraction);
+        document.removeEventListener("DOMContentLoaded", handleInteraction);
       };
     }
   }, []);

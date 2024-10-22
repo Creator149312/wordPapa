@@ -75,7 +75,7 @@ export const displayWords = (
         <div key={length}>
           <WordsDisplay length={length} words={words} />
         </div>
-        {index % 3 === 0 && (
+        {index % 4 === 0 && (
           <div
             key={`ad${index}`}
           >
