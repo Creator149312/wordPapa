@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 
 const GoogleAd = ({slotID}) => {
-
   useEffect(() => {
     // Create a function to load the Google Ads script
     const loadGoogleAdsScript = () => {
