@@ -1,4 +1,3 @@
-'use client'
 // import GoogleAd from "@utils/GoogleAd";
 import { CardContent, CardHeader } from "@components/ui/card";
 import AdsUnit from "./AdsUnit";
