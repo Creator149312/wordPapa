@@ -43,7 +43,7 @@ export default AdsScriptLoader;
 
 function newFunction(scriptLoaded) {
   const script = document.createElement("script");
-  script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+  script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6746947892342481";
   script.crossorigin = "anonymous";
   script.async = true;
   script.onload = () => {

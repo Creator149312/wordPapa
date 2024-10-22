@@ -6,7 +6,7 @@ import AdsUnit from "./AdsUnit";
 const SideBar = () => {
   return (
     <>
-      <AdsUnit slot='3722270586' />
+      <GoogleAd slotID='3722270586' />
       <div className="">
         <CardHeader>
           <h2 className="text-2xl font-extrabold">Resources</h2>
@@ -26,7 +26,7 @@ const SideBar = () => {
           </ul>
         </CardContent>
       </div>
-      <AdsUnit slot='3722270586' />
+      <GoogleAd slotID='3722270586' />
        {/* ad for Spinwheel website goes after two ads */}
      </>
   );
