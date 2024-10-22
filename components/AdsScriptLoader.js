@@ -9,7 +9,7 @@ const AdsScriptLoader = () => {
         if (!scriptLoaded) {
           scriptLoaded = newFunction(scriptLoaded);
         }
-      }, 4000);
+      }, 3500);
 
       const handleInteraction = () => {
         clearTimeout(timeoutId);
@@ -20,7 +20,7 @@ const AdsScriptLoader = () => {
 
       document.addEventListener("mousemove", handleInteraction);
       document.addEventListener("scroll", handleInteraction);
-      document.addEventListener("keypress", handleInteraction);
+      // document.addEventListener("keypress", handleInteraction);
       // document.addEventListener("touchstart", handleInteraction);
       document.addEventListener("DOMContentLoaded", handleInteraction);
 
@@ -28,7 +28,7 @@ const AdsScriptLoader = () => {
         // Cleanup function to remove event listeners on component unmount
         document.removeEventListener("mousemove", handleInteraction);
         document.removeEventListener("scroll", handleInteraction);
-        document.removeEventListener("keypress", handleInteraction);
+        // document.removeEventListener("keypress", handleInteraction);
         //document.removeEventListener("touchstart", handleInteraction);
         document.removeEventListener("DOMContentLoaded", handleInteraction);
       };
