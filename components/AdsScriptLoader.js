@@ -29,7 +29,7 @@ const AdsScriptLoader = () => {
         document.removeEventListener("mousemove", handleInteraction);
         document.removeEventListener("scroll", handleInteraction);
         // document.removeEventListener("keypress", handleInteraction);
-        //document.removeEventListener("touchstart", handleInteraction);
+        // document.removeEventListener("touchstart", handleInteraction);
         document.removeEventListener("DOMContentLoaded", handleInteraction);
       };
     }
