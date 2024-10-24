@@ -16,7 +16,7 @@ const WordsDisplay = ({ length, words }) => {
   };
 
   return (
-    <Card className="text-center p-2 mt-3 mb-3">
+    <Card className="text-center mt-3 mb-3">
       <CardTitle className="mb-2 font-bold text-xl">
         {length} Letter Words
       </CardTitle>

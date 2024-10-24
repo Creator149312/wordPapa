@@ -11,7 +11,7 @@ const Navbar = () => {
   return (
     <nav className="mr-2 ml-2 ">
       <div className="flex items-center font-medium justify-between">
-        <div className="z-50 p-3 md:w-auto w-full flex justify-between">
+        <div className="z-20 p-3 md:w-auto w-full flex justify-between">
           <a href="/" className="text-3xl font-bold flex items-center">
             <img
               src={"/logo192.png"}
@@ -27,7 +27,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <ul className="md:flex hidden items-center gap-2">
+        <ul className="z-10 md:flex hidden items-center gap-2 ">
           <ThemeToggle/>
           <NavLinks />
           <li>
@@ -44,7 +44,7 @@ const Navbar = () => {
                 </div> */}
         {/* Mobile nav */}
         <ul
-          className={`
+          className={`z-10
         md:hidden dark:bg-[#020817] bg-white fixed w-full top-0 overflow-y-auto bottom-0 py-10 pl-4
         duration-500 ${open ? "left-0" : "left-[-100%]"}
         `}

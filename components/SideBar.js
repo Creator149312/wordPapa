@@ -13,12 +13,12 @@ const SideBar = () => {
         </CardHeader>
         <CardContent>
           <ul>
-            <li className="no-style-list">
+            <li className="no-style-list mb-2">
               <a href="https://www.englishbix.com/product/35-word-family-words-tracing-workbook/">
                 Word Family Tracing Workbook
               </a>
             </li>
-            <li className="no-style-list">
+            <li className="no-style-list mb-2">
               <a href="https://www.englishbix.com/shop/">
                 Worksheets and Printables for Kids
               </a>
@@ -31,6 +31,26 @@ const SideBar = () => {
         <AdsUnit slot="3722270586" />
       </div>
       {/* ad for Spinwheel website goes after two ads */}
+      <div className="hidden md:block">
+        {/* This List of Links to spinpapa.com is only displayed in desktop */}
+        <CardHeader>
+          <h2 className="text-2xl font-extrabold">Spin the Wheel</h2>
+        </CardHeader>
+        <CardContent>
+          <ul>
+            <li className="no-style-list mb-2">
+              <a href="https://www.spinpapa.com">
+                Make a Custom Wheel Decider
+              </a>
+            </li>
+            <li className="no-style-list mb-2">
+              <a href="https://www.spinpapa.com/search">
+                Find Spin Wheels to Make Choice
+              </a>
+            </li>
+          </ul>
+        </CardContent>
+      </div>
     </>
   );
 };
