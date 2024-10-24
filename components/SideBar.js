@@ -5,8 +5,9 @@ import AdsUnit from "./AdsUnit";
 const SideBar = () => {
   return (
     <>
-      <AdsUnit slot='3722270586' />
-      <div className="">
+      <AdsUnit slot="3722270586" />
+      <div className="hidden md:block">
+        {/* This List of Links to englishbix.com is only displayed in desktop */}
         <CardHeader>
           <h2 className="text-2xl font-extrabold">Resources</h2>
         </CardHeader>
@@ -25,9 +26,12 @@ const SideBar = () => {
           </ul>
         </CardContent>
       </div>
-      <AdsUnit slot='3722270586' />
-       {/* ad for Spinwheel website goes after two ads */}
-     </>
+      {/* This Ad is only displayed in desktop */}
+      <div className="hidden md:block">
+        <AdsUnit slot="3722270586" />
+      </div>
+      {/* ad for Spinwheel website goes after two ads */}
+    </>
   );
 };
 
