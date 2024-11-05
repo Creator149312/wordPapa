@@ -36,14 +36,11 @@ Disallow: /define/asperated
 Disallow: /define/unexplorative
 Disallow: /define/adducer
 Disallow: /define/expired
-Disallow: /define/racehorse/
 Disallow: /define/orthopaedist
 Disallow: /define/artillerymen
 Disallow: /define/against
 Disallow: /define/antbear
 Disallow: /define/24/7
-Disallow: /browse/e/3/
-Disallow: /thesaurus/rachet/
 Disallow: /define/closeup
 Disallow: /define/until
 Disallow: /define/backdoor
