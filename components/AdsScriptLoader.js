@@ -6,11 +6,11 @@ const AdsScriptLoader = () => {
   useEffect(() => {
     if (typeof document !== "undefined") {
       const adElements = document.querySelectorAll(".adsbygoogle"); // Select all ad slots
-      const timeoutId = setTimeout(() => {
-        if (!scriptLoaded) {
-          loadAdsScript();
-        }
-      }, 5000);
+      // const timeoutId = setTimeout(() => {
+      //   if (!scriptLoaded) {
+      //     loadAdsScript();
+      //   }
+      // }, 5000);
 
       const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
 
@@ -56,7 +56,7 @@ const AdsScriptLoader = () => {
       );
 
       const handleInteraction = () => {
-        clearTimeout(timeoutId);
+        // clearTimeout(timeoutId);
         if (!scriptLoaded) {
           loadAdsScript();
         }
