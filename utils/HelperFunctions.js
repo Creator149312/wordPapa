@@ -80,7 +80,6 @@ export const displayWords = (
             key={`ad${index}`}
           >
           <AdsUnit slot='7782807936'/> 
-            {/* <GoogleAd slotID='7782807936'/> */}
           </div>
         )}
       </div>

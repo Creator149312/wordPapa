@@ -28,6 +28,36 @@ async function getWords(letters) {
   try {
     // const fileContent = await fs.readFile(filePath, "utf8");
     // const linksArray = fileContent.split("\n");
+    let wordsPerLength = {
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: [],
+      7: [],
+      8: [],
+      9: [],
+      10: [],
+      11: [],
+      12: [],
+      13: [],
+      14: [],
+      15: [],
+      16: [],
+      17: [],
+      18: [],
+      19: [],
+      20: [],
+      21: [],
+      22: [],
+      23: [],
+      24: [],
+      25: [],
+      26: [],
+      27: [],
+      28: [],
+    };
 
     let alphabetObject = {};
     for (let charCode = 97; charCode <= 122; charCode++) {
@@ -42,11 +72,12 @@ async function getWords(letters) {
     const questionMarks = (letters.match(/\_/g) || []).length;
 
     let matchingWords = [];
+    let currentWordLength = 1;
 
     if (questionMarks > 0) {
       for (let j = 0; j < allUSWords.length; j++) {
         let word = allUSWords[j];
-        if (word.length <= (questionMarks + word.length)) {
+        if (word.length <= questionMarks + word.length) {
           if (word.length <= questionMarks) {
             matchingWords.push(word);
           } else {
@@ -77,7 +108,7 @@ async function getWords(letters) {
     } else {
       for (let j = 0; j < allUSWords.length; j++) {
         let word = allUSWords[j];
-        if (word.length <= letters.length) {
+        if (word.length >= currentWordLength && word.length <= letters.length) {
           let sequenceObject = { ...alphabetObject };
           let isScramble = true;
           for (let i = 0; i < word.length; i++) {
@@ -88,9 +119,20 @@ async function getWords(letters) {
               break;
             }
           }
-          if (isScramble) matchingWords.push(word);
+          if (isScramble) {
+            // console.log("Word = ", word);
+            // console.log("CurrentWordLength = ", currentWordLength)
+            matchingWords.push(word);
+            wordsPerLength[word.length].push(word);
+            if (wordsPerLength[word.length].length >= 45) {
+              currentWordLength++;
+              // console.log(wordsPerLength);
+            } else {
+              currentWordLength = word.length;
+            }
+          }
         } else {
-          break;
+          continue;
         }
       }
     }
@@ -114,15 +156,15 @@ export default async function Page({ params }) {
 
   return (
     <>
-    <CardHeader>
-      <h1 className="text-4xl font-extrabold">{pageHeading}</h1>
+      <CardHeader>
+        <h1 className="text-4xl font-extrabold">{pageHeading}</h1>
       </CardHeader>
       <CardContent>
-      <p className="mb-6 text-lg font-normal">
-        Following is a list of {wordsWithLetters.length} English words you can
-        form using letters in {letterinUppercase} when unscrambled.
-      </p>
-      <DataFilterDisplay words={wordsWithLetters} />
+        <p className="mb-6 text-lg font-normal">
+          Following is a list of English words you can form using letters in{" "}
+          {letterinUppercase} when unscrambled.
+        </p>
+        <DataFilterDisplay words={wordsWithLetters} />
       </CardContent>
     </>
   );

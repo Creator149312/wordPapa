@@ -9,7 +9,7 @@ import GAnalytics from "./GAnalytics";
 import { NextAuthProvider } from "./Providers";
 // import { Toaster } from "react-hot-toast";
 import { Card } from "@/components/ui/card";
-import MobileTopAdsUnit from "@/components/MobileTopAdsUnit";
+// import MobileTopAdsUnit from "@/components/MobileTopAdsUnit";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "@app/api/auth/[...nextauth]/route";
 
@@ -60,14 +60,12 @@ const layout = ({ children }) => {
           disableTransitionOnChange
         >
           <div className="border-b-2">
-            {/* <NavbarComponent /> */}
-            {/* <NavBarLatest /> */}
             <Card className="rounded-none">
               <Navbar />
               <SearchNavBar />
             </Card>
           </div>
-          <div className="md:hidden z-10"><MobileTopAdsUnit slot='7782807936'/></div>
+          {/* <div className="md:hidden z-10"><MobileTopAdsUnit slot='7782807936'/></div> */}
           <main className="grid md:grid-cols-12 gap-x-2 m-2">
             <Card className="md:m-2 mb-2 mt-2 md:p-5 md:col-span-9">
               {children}
