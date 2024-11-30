@@ -2,10 +2,13 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
 import apiConfig from "@utils/apiUrlConfig";
+import rhymingWordsSET from "../rhyming-wordsSET"
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
+  const toIndex = rhymingWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+ 
   // read route params
   titleStr =
     "Rhyming Words and Phrases for " +
@@ -17,6 +20,9 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    robots: {
+      index: toIndex,
+    },
   };
 }
 
@@ -49,7 +55,7 @@ export default async function Page({ params }) {
         controller.abort();
       }, timeout);
 
-      const endpoint = `https://api.datamuse.com/words?rel_rhy=${word}&max=200`;
+      const endpoint = `https://api.datamuse.com/words?rel_rhy=${word}&max=100`;
 
       const res = await fetch(endpoint, { signal: controller.signal });
 

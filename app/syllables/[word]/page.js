@@ -1,9 +1,11 @@
 import Error from "../error";
+import syllableWordsSET from "../syllable-wordsSET";
 import { CardContent, CardHeader } from "@components/ui/card";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
+  const toIndex = syllableWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
   // read route params
   titleStr =
     "How many syllables in " +
@@ -18,6 +20,9 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    robots: {
+      index: toIndex,
+    },
   };
 }
 
@@ -71,7 +76,9 @@ export default async function Page({ params }) {
         <h1 className="text-4xl font-extrabold"> {titleStr}</h1>
       </CardHeader>
       <CardContent className="m-3 p-3">
-        <h2 className="text-3xl mb-6 font-semibold">{word.charAt(0).toUpperCase() + word.slice(1)}</h2>
+        <h2 className="text-3xl mb-6 font-semibold">
+          {word.charAt(0).toUpperCase() + word.slice(1)}
+        </h2>
         <p className="mb-6 text-lg font-normal">
           <strong>Number of Syllables:</strong> {syllableWords.numSyllables}
         </p>

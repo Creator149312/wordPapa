@@ -1,11 +1,13 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import ToggleView from "../ToggleView";
-
+import synonymWordsSET from "../synonym-wordsSET"
 import { Card, CardContent, CardHeader } from "@components/ui/card";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
+  const toIndex = synonymWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+
   word = word.replace(/-/g, " ");
   // read route params
   titleStr =
@@ -18,6 +20,9 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    robots: {
+      index: toIndex,
+    },
   };
 }
 
@@ -41,7 +46,7 @@ export default async function Page({ params }) {
       syncontroller.abort();
     }, timeout);
 
-    let endpointSyn = `https://api.datamuse.com/words?ml=${word}&max=200`;
+    let endpointSyn = `https://api.datamuse.com/words?ml=${word}&max=150`;
     const synres = await fetch(endpointSyn, { signal: syncontroller.signal });
 
     clearTimeout(syntimeoutId); // Clear the timeout of synonym request since the request completed

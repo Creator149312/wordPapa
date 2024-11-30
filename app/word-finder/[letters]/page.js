@@ -1,12 +1,15 @@
 import allUSWords from "../allUsWords";
+import unScrambledWordsSet from "../unscrambled-wordsSET"
 import DataFilterDisplay from "@utils/DataFilterDisplay";
-// import { promises as fs, link } from "fs";
 import { CardContent, CardHeader } from "@components/ui/card";
 
 let titleStr = "";
 let ltUp = "";
+
 export async function generateMetadata({ params }, parent) {
   const letters = decodeURIComponent(params.letters);
+  const toIndex = unScrambledWordsSet.has(letters); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+
   ltUp = letters.toUpperCase();
   // read route params
   titleStr = "Unscramble " + ltUp + " | Find Words with letters in " + ltUp;
@@ -17,6 +20,9 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    robots: {
+      index: toIndex,
+    },
   };
 }
 

@@ -1,4 +1,3 @@
-import { promises as fs } from "fs";
 import FINALCLEANWORDS from "./FINALCLEANWORDS";
 import { WORDMAP } from "../define/WORDMAP";
 const BASE_URL = "https://words.englishbix.com";

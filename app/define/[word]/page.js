@@ -1,6 +1,7 @@
 import SentencesFetcher from "./SentencesFetcher";
 import RelLinksOnPageTop from "@components/RelLinksonPageBottom";
 import { permanentRedirect, redirect } from "next/navigation";
+import finalWordsSET from "@app/browse/finalwordsSET";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import Link from "next/link";
 import { WORDMAP } from "../WORDMAP";
@@ -29,6 +30,7 @@ let siteURL =
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
   let slug = decodeURIComponent(params.word);
+  const toIndex = finalWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
 
   let canonical = `${siteURL}/define/${word}`;
   if (word.includes("-")) word = word.replace("-", " ");
@@ -60,6 +62,9 @@ export async function generateMetadata({ params }, parent) {
     description: descriptionStr,
     alternates: {
       canonical: canonical,
+    },
+    robots: {
+      index: toIndex,
     },
   };
 }
@@ -279,7 +284,7 @@ export default async function WordSpecificPage({ params }) {
                 {await displayDefs()}
               </CardContent>
             </Card>
-            <AdsUnit slotID='3722270586' />
+            <AdsUnit slotID="3722270586" />
             <SentencesFetcher word={word} />
             <RelLinksOnPageTop word={decodedWord} pos={defTypes} />
           </>
@@ -334,7 +339,7 @@ export default async function WordSpecificPage({ params }) {
                   <p className=" m-2 text-lg p-2">{sentencesByAI[0]}</p>
                 </CardContent>
               </Card>
-              <AdsUnit slotID='3722270586' />
+              <AdsUnit slotID="3722270586" />
               <Card className="m-2" id="examples">
                 <CardHeader>
                   <h1 className="text-4xl font-extrabold">
@@ -468,7 +473,7 @@ export default async function WordSpecificPage({ params }) {
             {defsForWord.map((part, index) => (
               <div key={index}>{part}</div>
             ))}
-           <AdsUnit slotID='3722270586' />
+            <AdsUnit slotID="3722270586" />
             {sentencesForWord.map((sen) => (
               <div>{sen}</div>
             ))}
@@ -528,7 +533,7 @@ function def404Page(word, relatedWords) {
               to bring your writing to life!
             </li>
           </ul>
-          <AdsUnit slotID='3722270586' />
+          <AdsUnit slotID="3722270586" />
           {relatedWords.length > 0 && (
             <div className="mb-2">
               <h2 className="text-3xl font-bold">Words Close to "{word}"</h2>

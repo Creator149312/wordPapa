@@ -1,11 +1,14 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
+import adjectiveWordsSET from "../adjectivewordsSET";
 import { CardContent, CardHeader } from "@components/ui/card";
 import apiConfig from "@utils/apiUrlConfig";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
+  const toIndex = adjectiveWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+
   // read route params
   titleStr =
     "Adjective Words to Describe " +
@@ -17,6 +20,9 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    robots: {
+      index: toIndex,
+    },
   };
 }
 
@@ -25,7 +31,7 @@ let adjectiveWords = [];
 export default async function Page({ params }) {
   const word = decodeURIComponent(params.word);
   const isNotCompound = word.split(" ").length === 1;
-  let isAIUsed = false;  //to keep a check if we are using AI or not
+  let isAIUsed = false; //to keep a check if we are using AI or not
 
   //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
   // if (soft404words.includes(word)) {
@@ -119,7 +125,7 @@ export default async function Page({ params }) {
           combinations. Try to push the boundaries of your descriptions to
           elevate it from good to great.
         </p>
-        {adjectiveWords.length > 0 && (isNotCompound && !isAIUsed) && (
+        {adjectiveWords.length > 0 && isNotCompound && !isAIUsed && (
           <RelLinksonPageBottom word={word} pos={null} />
         )}
       </CardContent>
