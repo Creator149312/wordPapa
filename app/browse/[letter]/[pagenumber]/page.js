@@ -12,6 +12,9 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    alternates: {
+      canonical: `/browse/${L}`,
+    },
   };
 }
 

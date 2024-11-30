@@ -21,7 +21,6 @@ const Page = async ({ params }) => {
     let wordwithHyphens = word.toLowerCase().replace(/ /g, "-");
     let slug = commonLinks.definition + wordwithHyphens;
 
-
     return (
       <Link href={slug} target="_blank" rel="noopener noreferrer">
         {word}

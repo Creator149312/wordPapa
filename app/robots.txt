@@ -9,6 +9,7 @@ Disallow: /wildcard
 Disallow: /api
 Disallow: /lists
 Disallow: /dashboard
+Disallow: /define
 Disallow: /define/*-*
 Disallow: /define/*.*
 Disallow: /word-finder/*-*
