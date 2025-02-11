@@ -56,19 +56,18 @@ async function getWordsUsingWordMap(start, end) {
 
   // filter the words which are compound in nature foreg. [pullup] => [pull-up]
   return Array.from(
-      new Set(
-        sitemapWords.filter((word) => {
-          let key = word.replace(/[ -]/g, "");
-          let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
-          if(decodedWord.includes('-')){
-            return false;
-          }else{
-            return true;
-          }
-        })
-      )
-    );
-
+    new Set(
+      sitemapWords.filter((word) => {
+        let key = word.replace(/[ -]/g, "");
+        let decodedWord = WORDMAP[key] ? WORDMAP[key] : word;
+        if (decodedWord.includes("-")) {
+          return false;
+        } else {
+          return true;
+        }
+      })
+    )
+  );
 
   // keep only unique words
   // return Array.from(
@@ -98,20 +97,14 @@ export async function generateSitemaps() {
 
 export default async function sitemap({ id }) {
   // Google's limit is 50,000 URLs per sitemap
-  const start = id * 13000;
-  const end = start + 13000;
+  // const start = id * 13000;
+  // const end = start + 13000;
+
+  //doing the following because we don't want to index the /define pages as of now
+  const start = id * 130;
+  const end = start + 130;
+
   const Fetchedwords = await getWordsUsingWordMap(start, end);
-  // console.log(id + "     " + Fetchedwords.length);
-
-  //without WORDMAP
-  // return Fetchedwords.map((word) => {
-  //   word = word.replace(/ /g, "-");
-
-  //   return {
-  //     url: `${BASE_URL}/define/${word}`.trim(),
-  //     lastModified: new Date(),
-  //   };
-  // });
 
   //using WORDMAP
   return Fetchedwords.map((word) => {

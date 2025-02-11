@@ -10,7 +10,7 @@ Disallow: /api
 Disallow: /lists
 Disallow: /dashboard
 #disallowing all the /define pages so that others can be indexed properly - 11th Feb
-Disallow: /define
+Disallow: /define/*
 Disallow: /define/*-*
 Disallow: /define/*.*
 Disallow: /word-finder/*-*
