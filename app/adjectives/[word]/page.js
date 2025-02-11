@@ -33,11 +33,6 @@ export default async function Page({ params }) {
   const isNotCompound = word.split(" ").length === 1;
   let isAIUsed = false; //to keep a check if we are using AI or not
 
-  //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
-  // if (soft404words.includes(word)) {
-  //   redirect("/adjectives");
-  // }
-
   titleStr =
     "Adjective Words to Describe " +
     (word.charAt(0).toUpperCase() + word.slice(1));

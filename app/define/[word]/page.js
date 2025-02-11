@@ -30,7 +30,9 @@ let siteURL =
 export async function generateMetadata({ params }, parent) {
   let word = decodeURIComponent(params.word);
   let slug = decodeURIComponent(params.word);
-  const toIndex = finalWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+  
+  // const toIndex = finalWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+  const toIndex = false;   //we want other pages to be indexed that is why setting toIndex = false so that we can stop indexing of /define pages.
 
   let canonical = `${siteURL}/define/${word}`;
   if (word.includes("-")) word = word.replace("-", " ");
@@ -305,7 +307,6 @@ export default async function WordSpecificPage({ params }) {
           );
 
           const data = await response.json();
-          // console.log("Data = ", data.definitionAndSentences);
 
           let wordForProcessing = null;
           if (data.definitionAndSentences.includes("\n")) {

@@ -22,9 +22,9 @@ export async function POST(req) {
 
     // Send request to OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model:"gpt-4o-mini", 
       messages: [{ role: "user", content: chosenPrompt }],
-      max_tokens: 50,
+      max_tokens: 100,
     });
 
     // Get the text from OpenAI response
