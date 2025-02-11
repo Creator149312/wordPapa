@@ -97,19 +97,17 @@ export async function generateSitemaps() {
 
 export default async function sitemap({ id }) {
   // Google's limit is 50,000 URLs per sitemap
-  // const start = id * 13000;
-  // const end = start + 13000;
+  const start = id * 13000;
+  const end = start + 13000;
 
-  //doing the following because we don't want to index the /define pages as of now
-  const start = id * 10;
-  const end = start + 10;
-
-  const Fetchedwords = await getWordsUsingWordMap(start, end);
+  //commenting the following because we don't want to index the /define 
+  // const Fetchedwords = await getWordsUsingWordMap(start, end);
+  const Fetchedwords = [""];
 
   //using WORDMAP
   return Fetchedwords.map((word) => {
     return {
-      url: `${BASE_URL}/define/${word}`.trim(),
+      url: word === "" ? `${BASE_URL}/define`.trim() : `${BASE_URL}/define/${word}`.trim(),
       lastModified: new Date(),
     };
   });
