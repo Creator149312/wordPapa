@@ -101,8 +101,8 @@ export default async function sitemap({ id }) {
   // const end = start + 13000;
 
   //doing the following because we don't want to index the /define pages as of now
-  const start = id * 130;
-  const end = start + 130;
+  const start = id * 10;
+  const end = start + 10;
 
   const Fetchedwords = await getWordsUsingWordMap(start, end);
 
