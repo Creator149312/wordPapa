@@ -4,19 +4,21 @@ import adjectiveWordsSET from "../adjectivewordsSET";
 import { CardContent, CardHeader } from "@components/ui/card";
 import apiConfig from "@utils/apiUrlConfig";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
-  const word = decodeURIComponent(params.word);
-  const toIndex = adjectiveWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
 
-  // read route params
-  titleStr =
+export async function generateMetadata({ params }) {
+  const word = decodeURIComponent(params.word);
+  const toIndex = adjectiveWordsSET.has(word);
+
+  const titleStr =
     "Adjective Words to Describe " +
     (word.charAt(0).toUpperCase() + word.slice(1));
+
   const descriptionStr =
     "Explore list of commonly used adjective words for describing " +
     params.word +
     " in writing.";
+
   return {
     title: titleStr,
     description: descriptionStr,
@@ -26,81 +28,42 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 
-let adjectiveWords = [];
-
 export default async function Page({ params }) {
   const word = decodeURIComponent(params.word);
   const isNotCompound = word.split(" ").length === 1;
-  let isAIUsed = false; //to keep a check if we are using AI or not
+  let isAIUsed = false;
+  let adjectiveWords = [];
 
-  titleStr =
+  const titleStr =
     "Adjective Words to Describe " +
     (word.charAt(0).toUpperCase() + word.slice(1));
 
   if (isNotCompound) {
     try {
-      adjectiveWords = [];
-      const timeout = 5000; // Set timeout to 5 seconds
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, timeout);
-
-      const endpoint = `https://api.datamuse.com/words?rel_jjb=${word}&max=200`;
-      const res = await fetch(endpoint, { signal: controller.signal });
-
-      clearTimeout(timeoutId); // Clear the timeout since the request completed
+      // ✅ API-level caching for Datamuse
+      const res = await fetch(
+        `https://api.datamuse.com/words?rel_jjb=${word}&max=100`,
+        { cache: "force-cache" }
+      );
 
       if (!res.ok) {
         throw new Error(`API request failed with status ${res.status}`);
       }
 
-      const data = await res.json();
-      adjectiveWords = data.map((item) => item.word);
+      adjectiveWords = (await res.json()).map((item) => item.word);
 
+      // If too few adjectives, fall back to AI API
       if (adjectiveWords.length < 5) {
         isAIUsed = true;
-        try {
-          const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ queryType: "adjective", prompt: word }),
-          });
-
-          const data = await response.json();
-          // console.log("Data = ", data);
-          let wordForProcessing = null;
-          if (data.words[0].includes("\n")) {
-            wordForProcessing = data.words[0].split("\n");
-          } else {
-            wordForProcessing = data.words;
-          }
-
-          // console.log("Words for Processing = ", wordForProcessing);
-          wordForProcessing.map((str) =>
-            adjectiveWords.push(
-              str
-                .replace(/^\W+|\W+$/, "")
-                .replace(/^\d+\.\s*/, "")
-                .trim()
-            )
-          );
-
-          // console.log("Data Words = ", adjectiveWords);
-        } catch (error) {
-          // console.error("Error fetching words:", error);
-          adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
-        }
+        adjectiveWords.push(...(await fetchAIAdjectives(word)));
       }
     } catch (error) {
+      console.error("Error fetching adjectives:", error);
       adjectiveWords = [];
     }
   } else {
     isAIUsed = true;
-    adjectiveWords = [];
-    await newFunction(word);
+    adjectiveWords = await fetchAIAdjectives(word);
   }
 
   return (
@@ -126,38 +89,28 @@ export default async function Page({ params }) {
       </CardContent>
     </>
   );
+}
 
-  async function newFunction(word) {
-    try {
-      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ queryType: "adjective", prompt: word }),
-      });
+// ✅ Helper function for AI fallback
+async function fetchAIAdjectives(word) {
+  try {
+    const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ queryType: "adjective", prompt: word }),
+      cache: "force-cache", // Optional: cache AI API response too
+    });
 
-      const data = await response.json();
-      // console.log("Data = ", data);
-      let wordForProcessing = null;
-      if (data.words[0].includes("\n")) {
-        wordForProcessing = data.words[0].split("\n");
-      } else {
-        wordForProcessing = data.words;
-      }
+    const data = await response.json();
+    const rawWords = data.words[0].includes("\n")
+      ? data.words[0].split("\n")
+      : data.words;
 
-      // console.log("Words for Processing = ", wordForProcessing);
-      adjectiveWords = wordForProcessing.map((str) =>
-        str
-          .replace(/^\W+|\W+$/, "")
-          .replace(/^\d+\.\s*/, "")
-          .trim()
-      );
-
-      // console.log("Data Words = ", adjectiveWords);
-    } catch (error) {
-      // console.error("Error fetching words:", error);
-      adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
-    }
+    return rawWords.map((str) =>
+      str.replace(/^\W+|\W+$/, "").replace(/^\d+\.\s*/, "").trim()
+    );
+  } catch (error) {
+    console.error("Error fetching AI adjectives:", error);
+    return [];
   }
 }

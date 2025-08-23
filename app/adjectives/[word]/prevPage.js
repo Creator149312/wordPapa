@@ -1,12 +1,14 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
+import adjectiveWordsSET from "../adjectivewordsSET";
 import { CardContent, CardHeader } from "@components/ui/card";
-import soft404words from "./../soft-404words";
-import { permanentRedirect, redirect } from "next/navigation";
+import apiConfig from "@utils/apiUrlConfig";
 
 let titleStr = "";
 export async function generateMetadata({ params }, parent) {
   const word = decodeURIComponent(params.word);
+  const toIndex = adjectiveWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+
   // read route params
   titleStr =
     "Adjective Words to Describe " +
@@ -18,59 +20,87 @@ export async function generateMetadata({ params }, parent) {
   return {
     title: titleStr,
     description: descriptionStr,
+    robots: {
+      index: toIndex,
+    },
   };
 }
 
 let adjectiveWords = [];
 
 export default async function Page({ params }) {
-  //const word = params.word.split('-').join(' ');
-
   const word = decodeURIComponent(params.word);
-
-  //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
-  // if (soft404words.includes(word)) {
-  //   redirect("/adjectives");
-  // }
+  const isNotCompound = word.split(" ").length === 1;
+  let isAIUsed = false; //to keep a check if we are using AI or not
 
   titleStr =
     "Adjective Words to Describe " +
     (word.charAt(0).toUpperCase() + word.slice(1));
 
-  // try {
-  //   adjectiveWords = [];
-  //   const response = await axios.get(
-  //     `https://api.datamuse.com/words?rel_jjb=${word}&max=200`
-  //   );
-  //   adjectiveWords = response.data.map((item) => item.word);
-  // } catch (error) {
-  //   // console.error(error);
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
+  if (isNotCompound) {
+    try {
+      adjectiveWords = [];
+      const timeout = 5000; // Set timeout to 5 seconds
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+      }, timeout);
 
-  try {
-    adjectiveWords = [];
-    const timeout = 5000; // Set timeout to 5 seconds
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, timeout);
+      const endpoint = `https://api.datamuse.com/words?rel_jjb=${word}&max=200`;
+      const res = await fetch(endpoint, { signal: controller.signal });
 
-    const endpoint = `https://api.datamuse.com/words?rel_jjb=${word}&max=200`;
-    const res = await fetch(endpoint, { signal: controller.signal });
+      clearTimeout(timeoutId); // Clear the timeout since the request completed
 
-    clearTimeout(timeoutId); // Clear the timeout since the request completed
+      if (!res.ok) {
+        throw new Error(`API request failed with status ${res.status}`);
+      }
 
-    if (!res.ok) {
-      throw new Error(`API request failed with status ${res.status}`);
+      const data = await res.json();
+      adjectiveWords = data.map((item) => item.word);
+
+      if (adjectiveWords.length < 5) {
+        isAIUsed = true;
+        try {
+          const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ queryType: "adjective", prompt: word }),
+          });
+
+          const data = await response.json();
+          // console.log("Data = ", data);
+          let wordForProcessing = null;
+          if (data.words[0].includes("\n")) {
+            wordForProcessing = data.words[0].split("\n");
+          } else {
+            wordForProcessing = data.words;
+          }
+
+          // console.log("Words for Processing = ", wordForProcessing);
+          wordForProcessing.map((str) =>
+            adjectiveWords.push(
+              str
+                .replace(/^\W+|\W+$/, "")
+                .replace(/^\d+\.\s*/, "")
+                .trim()
+            )
+          );
+
+          // console.log("Data Words = ", adjectiveWords);
+        } catch (error) {
+          // console.error("Error fetching words:", error);
+          adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
+        }
+      }
+    } catch (error) {
+      adjectiveWords = [];
     }
-
-    const data = await res.json();
-    adjectiveWords = data.map((item) => item.word);
-  } catch (error) {
+  } else {
+    isAIUsed = true;
     adjectiveWords = [];
+    await newFunction(word);
   }
 
   return (
@@ -90,10 +120,44 @@ export default async function Page({ params }) {
           combinations. Try to push the boundaries of your descriptions to
           elevate it from good to great.
         </p>
-        {adjectiveWords.length > 0 && (
+        {adjectiveWords.length > 0 && isNotCompound && !isAIUsed && (
           <RelLinksonPageBottom word={word} pos={null} />
         )}
       </CardContent>
     </>
   );
+
+  async function newFunction(word) {
+    try {
+      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ queryType: "adjective", prompt: word }),
+      });
+
+      const data = await response.json();
+      // console.log("Data = ", data);
+      let wordForProcessing = null;
+      if (data.words[0].includes("\n")) {
+        wordForProcessing = data.words[0].split("\n");
+      } else {
+        wordForProcessing = data.words;
+      }
+
+      // console.log("Words for Processing = ", wordForProcessing);
+      adjectiveWords = wordForProcessing.map((str) =>
+        str
+          .replace(/^\W+|\W+$/, "")
+          .replace(/^\d+\.\s*/, "")
+          .trim()
+      );
+
+      // console.log("Data Words = ", adjectiveWords);
+    } catch (error) {
+      // console.error("Error fetching words:", error);
+      adjectiveWords = adjectiveWords.length === 0 ? [] : adjectiveWords;
+    }
+  }
 }

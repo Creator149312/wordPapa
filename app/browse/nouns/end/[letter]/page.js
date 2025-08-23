@@ -1,16 +1,15 @@
 import NOUN from "@app/browse/NOUNS";
-import Link from "next/link";
-import commonLinks from "@utils/commonLinks";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
-  const L = decodeURIComponent(params.letter);
+export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
 
-  const phraseSearch = L.length > 1 ? '' : 'Letter';
-  // read route params
-  titleStr = `Nouns Ending with ${phraseSearch} ${L.toUpperCase()}`;
-  const descriptionStr = `Browse all singular and plural nouns that end with ${phraseSearch} ${L} to and see how they name a person, place or thing.`;
+export async function generateMetadata({ params }) {
+  const L = decodeURIComponent(params.letter);
+  const phraseSearch = L.length > 1 ? "" : "Letter";
+
+  const titleStr = `Nouns Ending with ${phraseSearch} ${L.toUpperCase()}`;
+  const descriptionStr = `Browse all singular and plural nouns that end with ${phraseSearch} ${L} and see how they name a person, place, thing, or concept.`;
+
   return {
     title: titleStr,
     description: descriptionStr,
@@ -18,41 +17,46 @@ export async function generateMetadata({ params }, parent) {
 }
 
 const Page = async ({ params }) => {
-  function customLink(word) {
-    let wordwithHyphens = word.toLowerCase().replace(/ /g, "-");
-    let slug = commonLinks.definition + wordwithHyphens;
+  const L = decodeURIComponent(params.letter);
+  const phraseSearch = L.length > 1 ? "" : "Letter";
+  const regex = /^[a-zA-Z0-9]+$/;
 
+  const words = NOUN.filter(
+    (noun) => noun.length > 1 && noun.endsWith(L) && regex.test(noun)
+  );
+
+  const titleString = `Nouns Ending with ${phraseSearch} ${L.toUpperCase()}`;
+
+  if (words.length === 0) {
     return (
-      <Link href={slug} target="_blank" rel="noopener noreferrer">
-        {word}
-      </Link>
+      <div className="m-4 p-4 border border-red-400 rounded bg-red-50">
+        <h1 className="text-2xl font-bold text-red-600">No Nouns Found</h1>
+        <p className="mt-2 text-lg">
+          Sorry, we couldn’t find any nouns ending with{" "}
+          <strong>{L}</strong>. Try a different letter or check your input.
+        </p>
+      </div>
     );
   }
-
-  let L = params.letter;
-
-  const phraseSearch = L.length > 1 ? '' : 'Letter';
-  const regex = /^[a-zA-Z0-9]+$/;
-  let words = NOUN.filter(
-    (adj) => adj.length > 1 && adj.endsWith(L) && regex.test(adj)
-  );
-  let titleString = `Nouns Ending with ${phraseSearch} ${L.toUpperCase()}`;
 
   return (
     <>
       <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
       <p className="mb-6 text-lg font-normal">
-        Explore the list of {words.length} singular and plural nouns ending with {phraseSearch} {L} and
-        see how they represent names of person, place, thing or concept.
+        Explore the list of {words.length} singular and plural nouns ending with{" "}
+        {phraseSearch} <strong>{L}</strong> and see how they represent names of a
+        person, place, thing, or concept.
       </p>
-       <DataFilterDisplay words={words} />
-       <p className="mb-6 text-lg font-normal">
-       <strong>Note:</strong> All nouns that end with <strong>{L}</strong> are sorted based on
-        length for easy browsing.
+
+      <DataFilterDisplay words={words} />
+
+      <p className="mb-6 text-lg font-normal">
+        <strong>Note:</strong> All nouns that end with <strong>{L}</strong> are
+        sorted based on length for easy browsing.
       </p>
       <p className="mb-6 text-lg font-normal">
         This list will help you brainstorm specific categories or discover more
-        specific type of noun (e.g., common noun, proper noun, concrete noun,
+        specific types of nouns (e.g., common noun, proper noun, concrete noun,
         abstract noun) you might not have known before.
       </p>
     </>

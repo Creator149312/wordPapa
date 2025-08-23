@@ -1,22 +1,25 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import ToggleView from "../ToggleView";
-import synonymWordsSET from "../synonym-wordsSET"
-import { Card, CardContent, CardHeader } from "@components/ui/card";
+import synonymWordsSET from "../synonym-wordsSET";
+import { CardContent, CardHeader } from "@components/ui/card";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
+export const revalidate = 2592000; // ✅ Cache full page HTML
+
+// Metadata stays the same — no change needed for caching
+export async function generateMetadata({ params }) {
   let word = decodeURIComponent(params.word);
-  const toIndex = synonymWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+  const toIndex = synonymWordsSET.has(word);
 
   word = word.replace(/-/g, " ");
-  // read route params
-  titleStr =
+  const titleStr =
     "Synonyms and Antonyms for " +
     (word.charAt(0).toUpperCase() + word.slice(1));
+
   const descriptionStr =
     "Explore an extensive list of synonyms and antonyms for " +
     params.word +
     " and choose another word that suits you the best for your writing";
+
   return {
     title: titleStr,
     description: descriptionStr,
@@ -26,90 +29,67 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 
-let AllRelatedWords = [];
-let synonymWords = [];
-let antonymWords = [];
-
 export default async function Page({ params }) {
-  let word = decodeURIComponent(params.word);
-  word = word.replace(/-/g, " ");
-
-  titleStr =
+  const word = decodeURIComponent(params.word).replace(/-/g, " ");
+  const titleStr =
     "Synonyms and Antonyms for " +
     (word.charAt(0).toUpperCase() + word.slice(1));
+
+  let AllRelatedWords = [];
+  let synonymWords = [];
+  let antonymWords = [];
+
   try {
-    AllRelatedWords = [];
+    // ✅ Fetch both in parallel with API-level caching
+    const [syndata, antdata] = await Promise.all([
+      fetch(`https://api.datamuse.com/words?ml=${word}&max=100`, {
+        cache: "force-cache",
+      }).then((res) => res.json()),
+      fetch(`https://api.datamuse.com/words?rel_ant=${word}`, {
+        cache: "force-cache",
+      }).then((res) => res.json()),
+    ]);
 
-    const timeout = 5000; // Set timeout to 5 seconds
-    const syncontroller = new AbortController();
-    const syntimeoutId = setTimeout(() => {
-      syncontroller.abort();
-    }, timeout);
-
-    let endpointSyn = `https://api.datamuse.com/words?ml=${word}&max=150`;
-    const synres = await fetch(endpointSyn, { signal: syncontroller.signal });
-
-    clearTimeout(syntimeoutId); // Clear the timeout of synonym request since the request completed
-
-    if (!synres.ok) {
-      throw new Error(`API request failed with status ${synres.status}`);
-    }
-
-    const syndata = await synres.json();
-
-    const antcontroller = new AbortController();
-    const anttimeoutId = setTimeout(() => {
-      antcontroller.abort();
-    }, timeout);
-
-    let endpointAnt = `https://api.datamuse.com/words?rel_ant=${word}`;
-    const antres = await fetch(endpointAnt, { signal: antcontroller.signal });
-
-    clearTimeout(anttimeoutId); // Clear the timeout of synonym request since the request completed
-
-    if (!antres.ok) {
-      throw new Error(`API request failed with status ${antres.status}`);
-    }
-
-    const antdata = await antres.json();
-
-    const allData = syndata;
-
-    AllRelatedWords = allData.map((item) => item.word);
-    const synresponse = allData.filter((obj) => {
-      if (obj.hasOwnProperty("tags")) return obj.tags.includes("syn");
-    });
-
-    synonymWords = synresponse.map((item) => item.word);
+    AllRelatedWords = syndata.map((item) => item.word);
+    synonymWords = syndata
+      .filter((obj) => obj.tags?.includes("syn"))
+      .map((item) => item.word);
     antonymWords = antdata.map((item) => item.word);
   } catch (error) {
-    console.log("Error occured while getting data from api request....")
-    AllRelatedWords = [];
-    synonymWords = [];
-    antonymWords = [];
+    console.error("Error fetching data:", error);
   }
 
   return (
-    <Card>
+    <>
       <CardHeader>
-      <h1 className="text-4xl font-extrabold">{titleStr}</h1>
+        <h1 className="text-4xl font-extrabold">{titleStr}</h1>
       </CardHeader>
       <CardContent>
-      <p className="mb-6 text-lg font-normal">
-        Following is a list of {AllRelatedWords.length} synonym words and
-        phrases that are related to <strong>{word}</strong>:
-      </p>
-      <ToggleView
-        allWords={AllRelatedWords}
-        synWords={synonymWords}
-        antWords={antonymWords}
-      />
-      <p className="mb-6 text-lg font-normal">Using this list of similar-meaning words, you can choose the best synonyms to replace <strong>{word}</strong> in your sentences.</p>
-      <p className="mb-6 text-lg font-normal">Additionally, you'll find antonyms included, perfect for when you need the complete opposite meaning of <strong>{word}</strong> in your writing. </p>
-      {AllRelatedWords.length > 0 && (
-        <RelLinksonPageBottom word={word} pos={null} />
-      )}
+        <p className="mb-6 text-lg font-normal">
+          Following is a list of {AllRelatedWords.length} synonym words and
+          phrases that are related to <strong>{word}</strong>:
+        </p>
+
+        <ToggleView
+          allWords={AllRelatedWords}
+          synWords={synonymWords}
+          antWords={antonymWords}
+        />
+
+        <p className="mb-6 text-lg font-normal">
+          Using this list of similar-meaning words, you can choose the best
+          synonyms to replace <strong>{word}</strong> in your sentences.
+        </p>
+        <p className="mb-6 text-lg font-normal">
+          Additionally, you'll find antonyms included, perfect for when you
+          need the complete opposite meaning of <strong>{word}</strong> in your
+          writing.
+        </p>
+
+        {AllRelatedWords.length > 0 && (
+          <RelLinksonPageBottom word={word} pos={null} />
+        )}
       </CardContent>
-    </Card>
+    </>
   );
 }

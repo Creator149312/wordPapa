@@ -60,14 +60,13 @@ const layout = ({ children }) => {
           disableTransitionOnChange
         >
           <div className="border-b-2">
-            <Card className="rounded-none">
+            <Card className="rounded-none m-0 p-0">
               <Navbar />
-              <SearchNavBar />
             </Card>
           </div>
           {/* <div className="md:hidden z-10"><MobileTopAdsUnit slot='7782807936'/></div> */}
           <main className="grid md:grid-cols-12 gap-x-2 m-2">
-            <Card className="md:m-2 mb-2 mt-2 md:p-5 md:col-span-9">
+            <Card className="md:m-2 mb-2 mt-2 md:p-4 md:col-span-9">
               {children}
               {/** All the main content goes here */}
             </Card>

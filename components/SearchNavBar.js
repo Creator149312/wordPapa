@@ -3,9 +3,7 @@
 import commonLinks from "@utils/commonLinks";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Button } from "@components/ui/button";
-
-import { Card } from "@components/ui/card";
+import { FiSearch } from "react-icons/fi"; // Add this at the top
 
 //usage of SessionStore is causing website to load slowly
 const SearchBarNav = () => {
@@ -145,47 +143,49 @@ const SearchBarNav = () => {
   }
 
   return (
-      <div className="grid md:grid-cols-6 w-[100%] md:w-[60%] m-auto p-2">
-        <select
-          value={selectedOption}
-          onChange={handleOptionChange}
-          className="p-2 md:mr-2 border-2 md:col-span-2"
-          name="tool"
-        >
-          {urlOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="md:col-span-4 grid border-2 md:rounded-r-lg grid-cols-5">
+    <div className="grid md:grid-cols-6 w-full md:w-[60%] m-auto p-2">
+      <select
+        value={selectedOption}
+        onChange={handleOptionChange}
+        className="p-2 md:mr-2 border-2 md:col-span-2 text-sm"
+        name="tool"
+      >
+        {urlOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      <div className="md:col-span-4 grid border-2 md:rounded-r-lg grid-cols-5 items-center">
         <input
-          className={
-            inputError
-              ? "px-2 py-2 text-lg col-span-4"
-              : "text-lg px-2 py-2 col-span-4"
-          }
+          className={`text-sm px-2 py-2 col-span-4 ${
+            inputError ? "border-red-500" : ""
+          }`}
           type="text"
           placeholder={placeholder}
           onChange={(e) => {
-            let isInputGood = sanitizeInput(e.target.value);
+            const isInputGood = sanitizeInput(e.target.value);
             if (isInputGood !== null) {
               setWord(e.target.value);
               setInputError(false);
-            } else setInputError(true);
+            } else {
+              setInputError(true);
+            }
           }}
           onKeyPress={handleKeyPress}
         />
-        <Button
-          variant="searchcustom"
+
+        <button
           onClick={handleLoadUrl}
-          className="cursor-pointer text-lg md:rounded-l-none rounded-none col-span-1 w-[100%] h-[100%]"
-          disabled={inputError ? true : false}
+          disabled={inputError}
+          className="col-span-1 flex items-center justify-center h-full w-full text-gray-600 hover:text-black"
+          aria-label="Search"
         >
-          Search
-        </Button>
-        </div>
+          <FiSearch size={24} />
+        </button>
       </div>
+    </div>
   );
 };
 

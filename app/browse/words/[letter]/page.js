@@ -1,15 +1,15 @@
 import ALLCLEANWORDS from "@app/browse/ALLCLEANWORDS";
-import Link from "next/link";
-import commonLinks from "@utils/commonLinks";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
+export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
+
+export async function generateMetadata({ params }) {
   const L = decodeURIComponent(params.letter);
-  const phraseSearch = L.length > 1 ? '' : 'Letter';
-  // read route params
-  titleStr = `Words Starting with ${phraseSearch} ${L.toUpperCase()} in English `;
+  const phraseSearch = L.length > 1 ? "" : "Letter";
+
+  const titleStr = `Words Starting with ${phraseSearch} ${L.toUpperCase()} in English`;
   const descriptionStr = `Browse all English words that begin with ${phraseSearch} ${L} as a prefix`;
+
   return {
     title: titleStr,
     description: descriptionStr,
@@ -17,30 +17,36 @@ export async function generateMetadata({ params }, parent) {
 }
 
 const Page = async ({ params }) => {
-  function customLink(word) {
-    let wordwithHyphens = word.toLowerCase().replace(/ /g, "-");
-    let slug = commonLinks.definition + wordwithHyphens;
+  const L = decodeURIComponent(params.letter);
+  const phraseSearch = L.length > 1 ? "" : "Letter";
+  const regex = /^[a-zA-Z0-9]+$/;
 
+  const words = ALLCLEANWORDS.filter(
+    (w) => w.length > 1 && w.startsWith(L) && regex.test(w)
+  );
+
+  const titleString = `Words Starting with ${phraseSearch} ${L.toUpperCase()} in English`;
+
+  if (words.length === 0) {
     return (
-      <Link href={slug} target="_blank" rel="noopener noreferrer">
-        {word}
-      </Link>
+      <div className="m-4 p-4 border border-red-400 rounded bg-red-50">
+        <h1 className="text-2xl font-bold text-red-600">No Words Found</h1>
+        <p className="mt-2 text-lg">
+          Sorry, we couldn’t find any words starting with{" "}
+          <strong>{L}</strong>. Try a different letter or check your input.
+        </p>
+      </div>
     );
   }
-
-  let L = params.letter;
-  const phraseSearch = L.length > 1 ? '' : 'Letter';
-  const regex = /^[a-zA-Z0-9]+$/;
-  let words = ALLCLEANWORDS.filter((w) => (w.length > 1 && w.startsWith(L) && regex.test(w)));
-  let titleString = `Words Starting with ${phraseSearch} ${L.toUpperCase()} in English`;
 
   return (
     <>
       <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
       <p className="mb-6 text-lg font-normal">
-        Explore the list of {words.length} English words
-        starting with {phraseSearch} {L} as a prefix.
+        Explore the list of {words.length} English words starting with{" "}
+        {phraseSearch} <strong>{L}</strong> as a prefix.
       </p>
+
       <DataFilterDisplay words={words} />
     </>
   );

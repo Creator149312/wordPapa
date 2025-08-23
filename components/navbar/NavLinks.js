@@ -8,98 +8,90 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 const NavLinks = ({ setOpen }) => {
   const [heading, setHeading] = useState("");
   const [subHeading, setSubHeading] = useState("");
+
   return (
     <>
       {links.map((link, index) => (
-        <div key={index}>
-          <div className="px-3 text-left md:cursor-pointer group">
-            <p
-              className="py-7 flex justify-between items-center md:pr-0 pr-5 text-lg group"
-              onClick={() => {
-                heading !== link.name ? setHeading(link.name) : setHeading("");
-                setSubHeading("");
-              }}
-            >
-              {link.name}
-              <span className="text-xl md:hidden inline">
-                {heading === link.name ? <ChevronUp />
-                  : <ChevronDown />
-                }
-              </span>
-              <span className="text-xl md:mt-1 md:ml-2 md:block hidden group-hover:rotate-180 group-hover:-mt-2">
-                <ChevronDown />
-              </span>
-            </p>
-            {link.submenu && (
-              <div>
-                <div className="z-10 absolute dark:bg-[#020817] bg-white top-20 hidden group-hover:md:block hover:md:block">
-                  {/* <div className="py-3">
-                    <div
-                      className="w-4 h-4 left-3 absolute 
-                    mt-1 bg-white rotate-45"
-                    ></div>
-                  </div> */}
-                  <div className="p-5 grid shadow-lg">
-                    {link.sublinks.map((mysublinks, index) => (
-                      <div key={`dropdown${index}`}>
-                        {/* <p className="text-lg font-semibold">
-                          {mysublinks.Head}
-                        </p> */}
-                        {mysublinks.sublink.map((slink, index) => (
-                          <li className="text-lg my-3" key={`sublink${index}`}>
-                            <a
-                              href={slink.link}
-                              className="hover:font-semibold"
-                            >
-                              {slink.name}
-                            </a>
-                          </li>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          {/* Mobile menus */}
+        <div key={index} className="relative group">
+          {/* Top-level link */}
           <div
-            className={`
-            ${heading === link.name ? "md:hidden" : "hidden"}
-            dark:bg-[#020817] bg-white` }
+            className="px-3 text-left md:cursor-pointer"
+            onClick={() => {
+              heading !== link.name ? setHeading(link.name) : setHeading("");
+              setSubHeading("");
+            }}
           >
-            {/* sublinks */}
-            {link.sublinks.map((slinks, index) => (
-              <div key={`mb${index}`}>
-                <div>
-                  <p
-                    onClick={() =>
-                      subHeading !== slinks.Head
-                        ? setSubHeading(slinks.Head)
-                        : setSubHeading("")
-                    }
-                    className="py-4 pl-7 font-semibold md:pr-0 pr-5 flex justify-between items-center"
-                  >
-                    {slinks.Head}
+            <p className="py-2 flex justify-between items-center text-base font-medium">
+              {link.name}
+              {/* Mobile icon */}
+              <span className="text-base md:hidden inline">
+                {heading === link.name ? <ChevronUp /> : <ChevronDown />}
+              </span>
+              {/* Desktop icon */}
+              {link.submenu && (
+                <span className="text-base md:ml-1 hidden md:inline-block group-hover:rotate-180 transition-transform">
+                  <ChevronDown />
+                </span>
+              )}
+            </p>
+          </div>
 
-                    <span className="text-xl md:mt-1 md:ml-2 inline">
-                      {
-                        subHeading === slinks.Head
-                          ? <ChevronUp />
-                          : <ChevronDown />
-                      }
-                    </span>
-                  </p>
-                  <div
-                    className={`${subHeading === slinks.Head ? "md:hidden" : "hidden"
-                      }`}
-                  >
-                    {slinks.sublink.map((slink, index) => (
-                      <li key={`mbsub${index}`} className="py-3 pl-14 text-lg">
-                        <a href={slink.link} >{slink.name}</a>
-                      </li>
+          {/* Desktop dropdown */}
+          {link.submenu && (
+            <div className="absolute left-0 top-full hidden group-hover:block bg-white dark:bg-[#020817] shadow-lg rounded-md z-20 min-w-[200px] pt-1">
+              <div className="p-3">
+                {link.sublinks.map((mysublinks, subIndex) => (
+                  <div key={`dropdown${subIndex}`}>
+                    {mysublinks.sublink.map((slink, i) => (
+                      <Link
+                        key={`sublink${i}`}
+                        href={slink.link}
+                        className="block px-3 py-1 text-base hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                      >
+                        {slink.name}
+                      </Link>
                     ))}
                   </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Mobile dropdown */}
+          <div
+            className={`${
+              heading === link.name ? "md:hidden block" : "hidden"
+            } bg-white dark:bg-[#020817]`}
+          >
+            {link.sublinks.map((slinks, subIndex) => (
+              <div key={`mb${subIndex}`}>
+                <p
+                  onClick={() =>
+                    subHeading !== slinks.Head
+                      ? setSubHeading(slinks.Head)
+                      : setSubHeading("")
+                  }
+                  className="py-2 pl-5 font-medium text-base flex justify-between items-center"
+                >
+                  {slinks.Head}
+                  <span className="text-base">
+                    {subHeading === slinks.Head ? <ChevronUp /> : <ChevronDown />}
+                  </span>
+                </p>
+                <div
+                  className={`${
+                    subHeading === slinks.Head ? "block" : "hidden"
+                  }`}
+                >
+                  {slinks.sublink.map((slink, i) => (
+                    <Link
+                      key={`mbsub${i}`}
+                      href={slink.link}
+                      className="block py-1 pl-8 text-base hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      {slink.name}
+                    </Link>
+                  ))}
                 </div>
               </div>
             ))}

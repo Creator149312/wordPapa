@@ -1,164 +1,86 @@
 import allUSWords from "../allUsWords";
 import unScrambledWordsSet from "../unscrambled-wordsSET"
-import DataFilterDisplay from "@utils/DataFilterDisplay";
-import { CardContent, CardHeader } from "@components/ui/card";
+import DataFilterDisplay from "@/utils/DataFilterDisplay";
+import { CardContent, CardHeader } from "@/components/ui/card";
 
-let titleStr = "";
-let ltUp = "";
+export const revalidate = 2592000; // Revalidate 
 
-export async function generateMetadata({ params }, parent) {
+export async function generateStaticParams() {
+  const popularCombos = ["stone", "apple", "train", "react", "words"];
+  return popularCombos.map((letters) => ({ letters }));
+}
+
+export async function generateMetadata({ params }) {
   const letters = decodeURIComponent(params.letters);
-  const toIndex = unScrambledWordsSet.has(letters); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
+  const toIndex = unScrambledWordsSet.has(letters);
+  const ltUp = letters.toUpperCase();
 
-  ltUp = letters.toUpperCase();
-  // read route params
-  titleStr = "Unscramble " + ltUp + " | Find Words with letters in " + ltUp;
-  const descriptionStr =
-    "Explore list of words you can make using letters in " +
-    ltUp +
-    " when you unscramble";
   return {
-    title: titleStr,
-    description: descriptionStr,
+    title: `Unscramble ${ltUp} | Find Words with letters in ${ltUp}`,
+    description: `Explore list of words you can make using letters in ${ltUp} when you unscramble.`,
     robots: {
       index: toIndex,
     },
   };
 }
 
-let wordsWithLetters = [];
+function getWords(letters) {
+  const questionMarks = (letters.match(/_/g) || []).length;
+  const maxLength = letters.length;
+  const minLength = 2;
 
-async function getWords(letters) {
-  // const filePath = process.cwd() + "/app/word-finder/english-wordlist.txt"; // Replace with the actual path to your file.
+  // Build frequency map of input letters
+  const letterFreq = {};
+  for (const char of letters) {
+    if (char !== "_") {
+      letterFreq[char] = (letterFreq[char] || 0) + 1;
+    }
+  }
 
-  try {
-    // const fileContent = await fs.readFile(filePath, "utf8");
-    // const linksArray = fileContent.split("\n");
-    let wordsPerLength = {
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: [],
-      10: [],
-      11: [],
-      12: [],
-      13: [],
-      14: [],
-      15: [],
-      16: [],
-      17: [],
-      18: [],
-      19: [],
-      20: [],
-      21: [],
-      22: [],
-      23: [],
-      24: [],
-      25: [],
-      26: [],
-      27: [],
-      28: [],
-    };
+  const matchingWords = [];
 
-    let alphabetObject = {};
-    for (let charCode = 97; charCode <= 122; charCode++) {
-      const letter = String.fromCharCode(charCode);
-      alphabetObject[letter] = 0;
+  for (const word of allUSWords) {
+    const wordLen = word.length;
+
+    // Skip words that are too short or too long
+    if (wordLen < minLength) continue;
+    if (wordLen > maxLength) break; // Because list is sorted by length
+
+    // Build frequency map of the word
+    const wordFreq = {};
+    for (const char of word) {
+      wordFreq[char] = (wordFreq[char] || 0) + 1;
     }
 
-    for (let i = 0; i < letters.length; i++) {
-      alphabetObject[letters[i]]++;
-    }
+    let wildcardsUsed = 0;
+    let canForm = true;
 
-    const questionMarks = (letters.match(/\_/g) || []).length;
-
-    let matchingWords = [];
-    let currentWordLength = 1;
-
-    if (questionMarks > 0) {
-      for (let j = 0; j < allUSWords.length; j++) {
-        let word = allUSWords[j];
-        if (word.length <= questionMarks + word.length) {
-          if (word.length <= questionMarks) {
-            matchingWords.push(word);
-          } else {
-            let matchedChars = 0;
-            let e = letters.split("");
-            for (let i = 0; i < word.length; i++) {
-              for (let j = 0; j < e.length; j++) {
-                if (e[j] === word[i]) {
-                  matchedChars++;
-                  e[j] = "0";
-                  // console.log("Word : ", word);
-                  // console.log("Expression : ", e);
-                }
-              }
-            }
-            // console.log("Total Matched Chars", matchedChars);
-            // console.log("Final Expression", e);
-
-            if (matchedChars + questionMarks >= word.length) {
-              matchingWords.push(word);
-              //console.log("Added Word: ", word);
-            }
-          }
-        } else {
+    for (const char in wordFreq) {
+      const required = wordFreq[char];
+      const available = letterFreq[char] || 0;
+      if (required > available) {
+        wildcardsUsed += required - available;
+        if (wildcardsUsed > questionMarks) {
+          canForm = false;
           break;
         }
       }
-    } else {
-      for (let j = 0; j < allUSWords.length; j++) {
-        let word = allUSWords[j];
-        if (word.length >= currentWordLength && word.length <= letters.length) {
-          let sequenceObject = { ...alphabetObject };
-          let isScramble = true;
-          for (let i = 0; i < word.length; i++) {
-            if (sequenceObject[word[i]] > 0) {
-              sequenceObject[word[i]]--;
-            } else {
-              isScramble = false;
-              break;
-            }
-          }
-          if (isScramble) {
-            // console.log("Word = ", word);
-            // console.log("CurrentWordLength = ", currentWordLength)
-            matchingWords.push(word);
-            wordsPerLength[word.length].push(word);
-            if (wordsPerLength[word.length].length >= 45) {
-              currentWordLength++;
-              // console.log(wordsPerLength);
-            } else {
-              currentWordLength = word.length;
-            }
-          }
-        } else {
-          continue;
-        }
-      }
     }
 
-    return matchingWords.filter((str) => str.length > 1);
-  } catch (error) {
-    return [];
+    if (canForm) {
+      matchingWords.push(word);
+    }
   }
+
+  return matchingWords;
 }
 
+
 export default async function Page({ params }) {
-  const letters = params.letters;
-  wordsWithLetters = await getWords(params.letters);
+  const letters = decodeURIComponent(params.letters);
+  const wordsWithLetters = getWords(letters);
   const letterinUppercase = letters.toUpperCase();
-  // read route params
-  const pageHeading =
-    "Unscramble " +
-    letterinUppercase +
-    " | Find Words with letters in " +
-    letterinUppercase;
+  const pageHeading = `Unscramble ${letterinUppercase} | Find Words with letters in ${letterinUppercase}`;
 
   return (
     <>

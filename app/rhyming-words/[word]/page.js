@@ -2,21 +2,23 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
 import apiConfig from "@utils/apiUrlConfig";
-import rhymingWordsSET from "../rhyming-wordsSET"
+import rhymingWordsSET from "../rhyming-wordsSET";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
+export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
+
+export async function generateMetadata({ params }) {
   const word = decodeURIComponent(params.word);
-  const toIndex = rhymingWordsSET.has(word); //if word is present in the syllableWordsArray used to generate sitemap we index it otherwise we do not index
- 
-  // read route params
-  titleStr =
+  const toIndex = rhymingWordsSET.has(word);
+
+  const titleStr =
     "Rhyming Words and Phrases for " +
     (word.charAt(0).toUpperCase() + word.slice(1));
+
   const descriptionStr =
     "Explore list of common words that rhyme with " +
     params.word +
     " to use in creative writing and poetry.";
+
   return {
     title: titleStr,
     description: descriptionStr,
@@ -26,82 +28,55 @@ export async function generateMetadata({ params }, parent) {
   };
 }
 
-let rhymingWords = [];
-let similarSoundingWords = [];
-
 export default async function Page({ params }) {
-  const word = decodeURIComponent(params.word); //this one gives the best results
-
+  const word = decodeURIComponent(params.word);
   const isNotCompound = word.split(" ").length === 1;
   let isAIUsed = false;
-  //redirect to /rhyming-words page when that work is causing some 404 or soft 404 errors in google search console
-  // if (soft404words.includes(word)) {
-  //   redirect("/rhyming-words");
-  // }
+  let rhymingWords = [];
+  let similarSoundingWords = [];
 
-  titleStr =
+  const titleStr =
     "Rhyming Words and Phrases for " +
     (word.charAt(0).toUpperCase() + word.slice(1));
-  //const word = params.word.split('-').join(' ');
 
   if (isNotCompound) {
     try {
-      rhymingWords = [];
-      similarSoundingWords = [];
-      const timeout = 5000; // Set timeout to 5 seconds
-      //start of code to get rhyming words for a word
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, timeout);
-
-      const endpoint = `https://api.datamuse.com/words?rel_rhy=${word}&max=100`;
-
-      const res = await fetch(endpoint, { signal: controller.signal });
-
-      clearTimeout(timeoutId); // Clear the timeout since the request completed
+      // ✅ API-level caching for rhyming words
+      const res = await fetch(
+        `https://api.datamuse.com/words?rel_rhy=${word}&max=100`,
+        { cache: "force-cache" }
+      );
 
       if (!res.ok) {
         throw new Error(`API request failed with status ${res.status}`);
       }
 
-      const data = await res.json();
-      rhymingWords = data.map((item) => item.word);
-      //End of code to get rhyming words for a word
+      rhymingWords = (await res.json()).map((item) => item.word);
 
       if (rhymingWords.length < 4) {
         isAIUsed = true;
-        await newFunction();
+        rhymingWords.push(...(await fetchAIRhymes(word)));
       }
-      
-      //if now rhyming words are found we display similar sounding words for user
+
+      // If no rhyming words, fetch similar sounding words
       if (rhymingWords.length <= 0) {
-        const SScontroller = new AbortController();
-        const SStimeoutId = setTimeout(() => {
-          SScontroller.abort();
-        }, timeout);
+        const SSres = await fetch(
+          `https://api.datamuse.com/words?sl=${word}&max=50`,
+          { cache: "force-cache" }
+        );
 
-        const SSendpoint = `https://api.datamuse.com/words?sl=${word}&max=50`;
-
-        const SSres = await fetch(SSendpoint, { signal: SScontroller.signal });
-
-        clearTimeout(SStimeoutId); // Clear the timeout since the request completed
         if (!SSres.ok) {
           throw new Error(`API request failed with status ${SSres.status}`);
         }
-        const SSdata = await SSres.json();
-        similarSoundingWords = SSdata.map((item) => item.word);
-        //End of code to get the similar sounding words for a word
+
+        similarSoundingWords = (await SSres.json()).map((item) => item.word);
       }
     } catch (error) {
-      rhymingWords = rhymingWords.length === 0 ? [] : rhymingWords;
-      similarSoundingWords =
-        similarSoundingWords.length === 0 ? [] : similarSoundingWords;
+      console.error("Error fetching rhyming/similar words:", error);
     }
   } else {
-    rhymingWords = [];
     isAIUsed = true;
-    await newFunction();
+    rhymingWords = await fetchAIRhymes(word);
   }
 
   return (
@@ -119,6 +94,7 @@ export default async function Page({ params }) {
           With all these rhyming words at your disposal, you'll surely find the
           perfect word to match with {word} in your writing.
         </p>
+
         {similarSoundingWords.length > 0 && (
           <>
             <h2 className="text-3xl mb-6 font-bold">
@@ -131,48 +107,35 @@ export default async function Page({ params }) {
             <DataFilterDisplay words={similarSoundingWords} />
           </>
         )}
-        {rhymingWords.length > 0 && (isNotCompound && !isAIUsed) && (
+
+        {rhymingWords.length > 0 && isNotCompound && !isAIUsed && (
           <RelLinksonPageBottom word={word} pos={null} />
         )}
       </CardContent>
     </>
   );
+}
 
-  async function newFunction() {
-    try {
-      const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ queryType: "rhymes", prompt: word }),
-      });
+// ✅ Helper function for AI fallback
+async function fetchAIRhymes(word) {
+  try {
+    const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ queryType: "rhymes", prompt: word }),
+      cache: "force-cache", // Optional: cache AI API response too
+    });
 
-      const data = await response.json();
-      // console.log("Data = ", data);
-      let wordForProcessing = null;
-      if (data.words[0].includes("\n")) {
-        wordForProcessing = data.words[0].split("\n");
-      } else {
-        wordForProcessing = data.words;
-      }
+    const data = await response.json();
+    const rawWords = data.words[0].includes("\n")
+      ? data.words[0].split("\n")
+      : data.words;
 
-      // console.log("Words for Processing = ", wordForProcessing);
-     
-      wordForProcessing.map((str) =>
-        rhymingWords.push(
-          str
-            .replace(/^\W+|\W+$/, "")
-            .replace(/^\d+\.\s*/, "")
-            .trim()
-        )
-      );
-
-      //   rhymingWords = rhymingWords.map(item => item.replace(/^\d+\.\s*/, ''))
-      // console.log("Data Words = ", rhymingWords);
-    } catch (error) {
-      // console.error("Error fetching words:", error);
-      rhymingWords = rhymingWords.length === 0 ? [] : rhymingWords;
-    }
+    return rawWords.map((str) =>
+      str.replace(/^\W+|\W+$/, "").replace(/^\d+\.\s*/, "").trim()
+    );
+  } catch (error) {
+    console.error("Error fetching AI rhymes:", error);
+    return [];
   }
 }
