@@ -1,8 +1,8 @@
 const AdsUnit = ({ slot }) => {
   return (
     <div className="w-full bg-slate-50 dark:bg-slate-800 text-center px-0 md:mx-0 mt-3 mb-3 min-h-64">
-      <div className="text-sm text-center">Advertisement</div>
-      <div className="mt-4 justify-center">
+      <div className="text-xs text-center">Advertisement</div>
+      <div className="mt-1 justify-center">
       <ins
         className="adsbygoogle max-w-[320px] sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px]"
         style={{ display: 'block'}}

@@ -40,9 +40,9 @@ const Navbar = () => {
           <ThemeToggle />
           <NavLinks />
           <li>
-            <Link href="/thesaurus" className="px-2 py-2 inline-block text-base">
+            <a href="/thesaurus" className="px-2 py-2 inline-block text-base">
               Thesaurus
-            </Link>
+            </a>
           </li>
         </ul>
 

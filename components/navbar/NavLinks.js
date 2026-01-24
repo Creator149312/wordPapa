@@ -43,13 +43,13 @@ const NavLinks = ({ setOpen }) => {
                 {link.sublinks.map((mysublinks, subIndex) => (
                   <div key={`dropdown${subIndex}`}>
                     {mysublinks.sublink.map((slink, i) => (
-                      <Link
+                      <a
                         key={`sublink${i}`}
                         href={slink.link}
                         className="block px-3 py-1 text-base hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       >
                         {slink.name}
-                      </Link>
+                      </a>
                     ))}
                   </div>
                 ))}

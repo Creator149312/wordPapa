@@ -17,6 +17,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Navbar from "../components/navbar/Navbar";
 import AdsScriptLoader from "@components/AdsScriptLoader";
+import TopBar from "../components/topBar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -50,7 +51,7 @@ const layout = ({ children }) => {
       <body
         className={cn(
           "min-h-screen bg-slate-100 dark:bg-slate-900 font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <NextAuthProvider
@@ -64,6 +65,7 @@ const layout = ({ children }) => {
               <Navbar />
             </Card>
           </div>
+          <TopBar />
           {/* <div className="md:hidden z-10"><MobileTopAdsUnit slot='7782807936'/></div> */}
           <main className="grid md:grid-cols-12 gap-x-2 m-2">
             <Card className="md:m-2 mb-2 mt-2 md:p-4 md:col-span-9">
