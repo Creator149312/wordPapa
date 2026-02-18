@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import Word from "@/models/Word";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import Word from "@models/Word";
+import { Card, CardHeader, CardContent } from "@components/ui/card";
 import { WORDMAP } from "../WORDMAP";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import { connectMongoDB } from "@lib/mongodb";
