@@ -4,10 +4,9 @@ import { Card, CardHeader, CardContent } from "@components/ui/card";
 import { WORDMAP } from "../WORDMAP";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import { connectMongoDB } from "@lib/mongodb";
-import finalwordsSET from "@app/browse/finalwordsSET";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
+export const revalidate = 3600 * 24 * 60; // revalidate every 2 months 
 
 let siteURL =
   process.env.NODE_ENV === "production"
@@ -18,12 +17,9 @@ export async function generateMetadata({ params }) {
   let slug = decodeURIComponent(params.word);
   let word = slug;
 
-  const ifInWordMap = finalwordsSET.has(word);
-
   if (word.includes("-")) word = word.replace(/-/g, " ");
-  // Previous - commented on 19th Feb
-  // const ifInWordMap = WORDMAP[params.word];
 
+  const ifInWordMap = WORDMAP[params.word];
   if (!ifInWordMap) {
     return {
       title: "Try a new word",
@@ -55,11 +51,9 @@ export async function generateMetadata({ params }) {
 export default async function DefineWordPage({ params }) {
   await connectMongoDB();
   const decodedWord = decodeURIComponent(params.word);
-  // Previous - commented on 19th Feb
-  // const ifInWordMap = WORDMAP[params.word];
-  const ifInWordMap = finalwordsSET.has(decodedWord);
+  const ifInWordMap = WORDMAP[params.word];
 
-  // If word not in FinalWordsSET, show message
+  // If word not in WORDMAP, show message
   if (!ifInWordMap) {
     return (
       <Card className="m-2">
@@ -133,9 +127,7 @@ export default async function DefineWordPage({ params }) {
               <strong>Definition:</strong> {entry.definition}
             </p>
             <div className="m-2" id={`examples-${idx}`}>
-              <h2 className="text-2xl font-bold">
-                Sentence Examples ({entry.pos})
-              </h2>
+              <h2 className="text-2xl font-bold">Sentence Examples ({entry.pos})</h2>
               <ul className="m-2 p-2 text-lg list-disc">
                 {entry.examples.map((sent, i) => (
                   <li key={i} className="p-0.5">
