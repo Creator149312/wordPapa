@@ -1,49 +1,37 @@
 import { connectMongoDB } from "@lib/mongodb";
 import List from "@models/list";
-import { validateListDescription, validateListTitle } from "@utils/Validator";
+import { validateListTitle } from "@utils/Validator";
 import { NextResponse } from "next/server";
 
-//sending request to create a list
+// Create a new list
 export async function POST(request) {
   try {
-    const { title, description, words, createdBy } = await request.json();
-    let error = "we have error";
-    let vlt = validateListTitle(title);
-    let vld = validateListDescription(description);
+    const { title, description, createdBy } = await request.json();
+    let error = "";
 
+    const vlt = validateListTitle(title);
     if (vlt.length !== 0) error = vlt;
-    if (vld.length !== 0) error = vld;
 
     if (error.length === 0) {
-      console.log("Inside Processing")
       await connectMongoDB();
-      await List.create({ title, description, words, createdBy });
-      return NextResponse.json({ message: "List Created Successfully" });
+      await List.create({ title, description, createdBy });
+      return NextResponse.json({ message: "List Created Successfully" }, { status: 201 });
     } else {
-      return NextResponse.json({ error });
+      return NextResponse.json({ error }, { status: 400 });
     }
   } catch (e) {
-    return NextResponse.json({ error });
+    return NextResponse.json({ error: "Error creating list", details: e.message }, { status: 500 });
   }
 }
 
-//get all the lists
+// Get all lists
 export async function GET() {
   await connectMongoDB();
   const lists = await List.find();
   return NextResponse.json({ lists }, { status: 200 });
 }
 
-//   //get all the lists created by a user
-// export async function GET(request) {
-//   const {createdBy} =  await request.json();
-//   console.log("CreatedBy = " + request);
-//   await connectMongoDB();
-//   const lists = await List.find({ createdBy: createdBy });
-//   return NextResponse.json({ lists }, {status: 200});
-// }
-
-// to delete a particular List using it's List ID
+// Delete a list by ID
 export async function DELETE(request) {
   const id = request.nextUrl.searchParams.get("id");
   await connectMongoDB();

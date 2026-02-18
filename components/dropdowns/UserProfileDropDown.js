@@ -1,63 +1,72 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { HiOutlineUserCircle } from "react-icons/hi";
+import { useState } from "react";
+import { signOut, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 
-import SignOut from "../user/SignOut";
-
-function UserProfileDropDown(props) {
+export default function UserProfileDropdown() {
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
 
-  let menuRef = useRef();
+  if (!session?.user) {
+    return (
+      <button
+        onClick={() => signIn("google")}
+        className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors"
+      >
+        Sign In
+      </button>
+    );
+  }
 
-  useEffect(() => {
-    let handler = (e) => {
-      if (!menuRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handler);
-
-    return () => {
-      document.removeEventListener("mousedown", handler);
-    };
-  });
+  const user = session.user;
 
   return (
-    <div className="menu-container" ref={menuRef}>
-      <div
-        className="menu-trigger"
-        onClick={() => {
-          setOpen(!open);
-        }}
+    <div className="relative group">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
       >
-        <div className="display-flex center-align x-large-text">
-          <HiOutlineUserCircle />
-        </div>
-      </div>
+        <Image
+          src={user?.image || "/default-avatar.png"}
+          alt="User avatar"
+          width={32}
+          height={32}
+          className="rounded-full"
+        />
+        <span className="font-medium text-sm">{user?.name || "User"}</span>
+        <ChevronDown className="w-4 h-4" />
+      </button>
 
-      <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
-        <ul>
-          <li>{props.name}</li>
-          <DropdownItem url={"/lists/addList"} text={"New List +"} />
-          <DropdownItem url={"/dashboard"} text={"Dashboard"} />
-          <DropdownItem url={"/settings"} text={"Settings"} />
-          <li className="dropdownItem">
-            <SignOut />
-          </li>
-        </ul>
+      {/* Dropdown: hover on desktop, click on mobile */}
+      <div
+        className={`absolute right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md z-20
+          ${open ? "block" : "hidden"} 
+          md:group-hover:block`}
+        onClick={() => setOpen(false)} // collapse after any click inside
+      >
+        <Link
+          href="/dashboard"
+          className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          Dashboard
+        </Link>
+        <Link
+          href="/settings"
+          className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          Settings
+        </Link>
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          Sign Out
+        </button>
       </div>
     </div>
   );
 }
-
-function DropdownItem(props) {
-  return (
-    <li className="dropdownItem dropdown-menu-border-gap">
-      <a href={props.url}> {props.text} </a>
-    </li>
-  );
-}
-
-export default UserProfileDropDown;

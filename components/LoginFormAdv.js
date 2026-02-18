@@ -9,36 +9,28 @@ import Notification from "./Notification";
 import { validateEmail, validatePasswordLength } from "@utils/Validator";
 
 export default function LoginFormAdv() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [error, setError] = useState("");
   const [isSigning, setIsSigning] = useState(false);
 
   const router = useRouter();
 
-  // whenever input changes in input fields 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-
-    //clear errors when user is typing
     setErrors({ ...errors, [name]: "" });
     setError("");
   };
 
   const validateForm = (data) => {
     let err = {};
-
     let ve = validateEmail(data.email);
     let vp = validatePasswordLength(data.password);
 
-    if(ve.length !== 0) err.email = ve;
-    if(vp.length !== 0) err.password = vp;
-    
+    if (ve.length !== 0) err.email = ve;
+    if (vp.length !== 0) err.password = vp;
+
     return err;
   };
 
@@ -62,7 +54,7 @@ export default function LoginFormAdv() {
           return;
         }
 
-        router.replace("dashboard");
+        router.replace("/dashboard");
       } catch (error) {
         setError(error);
       } finally {
@@ -74,53 +66,85 @@ export default function LoginFormAdv() {
   };
 
   return (
-    <div className="text-center">
-      <div className="card form-50">
-        <h1 className="card-title mb-2">Login</h1>
-        <form onSubmit={handleSubmit} className="card-content ">
+    <div className="flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
+          Login
+        </h1>
+        {/* <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email">Email Address:</label>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Email Address
+            </label>
             <input
               type="email"
               id="email"
-              className="form-control mt-2 mb-3"
               name="email"
+              className="mt-2 w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={formData.email}
               onChange={handleChange}
               required
             />
-            {errors.email && <p className="error">{errors.email}</p>}
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
           </div>
+
           <div>
-            <label htmlFor="password">Password:</label>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Password
+            </label>
             <input
               type="password"
               id="password"
               name="password"
-              className="form-control mt-2 mb-2"
+              className="mt-2 w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={formData.password}
               onChange={handleChange}
               required
             />
-            {errors.password && <p className="error">{errors.password}</p>}
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            )}
           </div>
-          <div className="">
-            <button className="custom-button m-3">Login</button>
-          </div>
-          {isSigning && <p>Checking Your Credentials....</p>}
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow hover:bg-blue-700 transition-colors"
+          >
+            Login
+          </button>
+
+          {isSigning && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+              Checking your credentials…
+            </p>
+          )}
+
           {error && (
             <Notification
               message={"Username or Password is incorrect..."}
               state={"failed"}
             />
           )}
-          <div className="">
-            <Link className="m-4 p-3" href={"/register"}>
-              Don't have an account? <span className="underline">Register</span>
+
+          <div className="text-center">
+            <Link
+              href="/register"
+              className="text-sm text-gray-600 dark:text-gray-300 hover:underline"
+            >
+              Don&apos;t have an account? <span className="font-medium">Register</span>
             </Link>
           </div>
-        </form>
-        <div className="">
+        </form> */}
+
+        <div className="mt-6">
           <SignInBtn />
         </div>
       </div>

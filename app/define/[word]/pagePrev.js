@@ -10,6 +10,8 @@ import soft404words from "./../soft-404words";
 import AdsUnit from "@components/AdsUnit";
 import apiConfig from "@utils/apiUrlConfig";
 
+
+export const revalidate = 2592000; // ✅ Cache full page HTML
 let titleStr = "";
 
 let defTypes = { n: [], v: [], adj: [], adv: [], u: [] };

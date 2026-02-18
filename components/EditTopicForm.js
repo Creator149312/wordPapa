@@ -1,257 +1,145 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import apiConfig from "@utils/apiUrlConfig";
-import { HiPencilAlt } from "react-icons/hi";
-import { HiOutlineTrash } from "react-icons/hi";
+import { HiPencilAlt, HiOutlineTrash } from "react-icons/hi";
 import Link from "next/link";
 
 export default function EditTopicForm({ id, title, description, words }) {
   const [newTitle, setNewTitle] = useState(title);
   const [newDescription, setNewDescription] = useState(description);
-  const [newWords, setNewWords] = useState(words ? words : []);
+  const [newWords, setNewWords] = useState(words || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [simpleView, setSimpleView] = useState(false);
-  const [wordData, setWordData] = useState(null);
-  const [updatedIndex, setUpdatedIndex] = useState(-1);
-  // const [dataRequested, setDataRequested] = useState(false);
-  const [descriptionEdit, setDescriptionEdit] = useState(false);
-  const [titleEdit, setTitleEdit] = useState(false);
 
   const router = useRouter();
 
-  // useEffect({
-
-  // }, [dataRequested]);
-
-  // Function to handle the button click and disable the component
-  const showSimpleView = (e) => {
-    e.preventDefault();
-    setSimpleView(!simpleView);
-  };
-
-  //submit data to database for saving
   const handleSubmit = async (e) => {
-    setIsSubmitting(true);
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
     try {
       const res = await fetch(`${apiConfig.apiUrl}/list/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ newTitle, newDescription, newWords }),
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          newTitle,
+          newDescription,
+          newWords,
+        }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to update topic");
-      }
+      if (!res.ok) throw new Error("Failed to update list");
 
       router.refresh();
       router.push("/dashboard");
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleWordsChange = (e) => {
-    const textareaValue = e.target.value;
-    const lines = textareaValue.split(/\s+/).filter(Boolean);
-    setNewWords(lines);
+    const lines = e.target.value.split(/\s+/).filter(Boolean);
+    setNewWords(lines.map((w) => ({ word: w, wordData: "" })));
   };
-
-  const showNewWords = (words) => {
-    let txtAreaValue = "";
-    for (let i = 0; i < words.length; i++) {
-      if (i != words.length - 1) txtAreaValue += words[i].word + "\n";
-      else txtAreaValue += words[i].word;
-    }
-    return txtAreaValue;
-  };
-
-  const handleWordDataChange = (newValue, index) => {
-    newWords[index].wordData = newValue;
-    setNewWords(newWords);
-    setUpdatedIndex(-1);
-  };
-
-  //start of code to check valid words
-  async function fetchWordData(word) {
-    setWordData(null);
-    // Trim input word and convert to lowercase before checking
-    const trimmedWord = word.trim().toLowerCase();
-    if (trimmedWord === "") {
-      return false; // Empty string is not considered valid
-    }
-
-    console.log(" I am finding defs of word");
-
-    try {
-      const response = await fetch(
-        `https://api.datamuse.com/words?sp=${trimmedWord}&qe=sp&md=d&max=1&v=enwiki`
-      );
-      const data = await response.json();
-      //check if word has property "defs" and is not a stopWord
-      if (data[0].hasOwnProperty("defs")) {
-        setWordData({
-          word: trimmedWord,
-          wordData: data[0].defs,
-        }); //we'll get all the defs of that particular word
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return false; // Assume word is not valid if there's an error
-    }
-  }
 
   return (
-    <form onSubmit={handleSubmit} className="card">
-      <label>List Title</label>
-      {titleEdit ? (
-      <input
-        onChange={(e) => setNewTitle(e.target.value)}
-        onBlur={()=>setTitleEdit(false)}
-        value={newTitle}
-        className="form-control m-2"
-        type="text"
-        placeholder="Topic Title"
-      />) : (
-        <>
-        <div className="card list-heading-container m-2">
-          <div>{newTitle}</div>
-          <a
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 bg-white shadow-md rounded-lg p-6"
+    >
+      <div>
+        <label className="block text-gray-700 font-medium mb-2">List Title</label>
+        <input
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+          type="text"
+          placeholder="Enter list title"
+        />
+      </div>
+
+      <div>
+        <label className="block text-gray-700 font-medium mb-2">Description</label>
+        <input
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+          type="text"
+          placeholder="Enter list description"
+        />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-gray-700 font-medium">Words</label>
+          <button
             onClick={(e) => {
               e.preventDefault();
-              setTitleEdit(true);
+              setSimpleView(!simpleView);
             }}
+            className="bg-blue-600 text-white px-3 py-1 rounded-md shadow hover:bg-blue-700 transition-colors"
           >
-            <HiPencilAlt size={24} />
-          </a>
+            {simpleView ? "List View" : "Simple View"}
+          </button>
         </div>
-      </>
-      )
-}
-      <label>Description</label>
-      {descriptionEdit ? (
-        <input
-          onChange={(e) => {setNewDescription(e.target.value);}}
-          onBlur={()=>setDescriptionEdit(false)}
-          value={newDescription}
-          className="form-control m-2"
-          type="text"
-          placeholder="Topic Description"
-        />
-      ) : (
-        <>
-          <div className="card list-heading-container m-2">
-            <div>{newDescription}</div>
-            <a
-              onClick={(e) => {
-                e.preventDefault();
-                setDescriptionEdit(true);
-              }}
-            >
-              <HiPencilAlt size={24} />
-            </a>
-          </div>
-        </>
+
+        {simpleView ? (
+          <textarea
+            onChange={handleWordsChange}
+            rows="5"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Enter words separated by spaces or new lines"
+            defaultValue={newWords.map((w) => w.word).join("\n")}
+          />
+        ) : (
+          <ul className="space-y-3">
+            {newWords.map((word, index) => (
+              <li
+                key={index}
+                className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-md p-3 hover:bg-gray-100 transition-colors"
+              >
+                <Link
+                  href={`/define/${word.word}`}
+                  className="text-blue-600 font-medium hover:underline"
+                >
+                  {word.word}
+                </Link>
+                <div className="flex items-center gap-3 text-gray-600">
+                  <span className="text-sm">{word.wordData}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...newWords];
+                      updated.splice(index, 1);
+                      setNewWords(updated);
+                    }}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <HiOutlineTrash size={20} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <button
+        type="submit"
+        className="w-full bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition-colors"
+      >
+        {isSubmitting ? "Updating..." : "Update List"}
+      </button>
+
+      {error && (
+        <p className="text-red-500 text-sm mt-2">Error: {error}</p>
       )}
-      <>
-        <div className="">
-          <div className="list-heading-container">
-            <h1 className="card-title">Edit List</h1>
-            <button onClick={showSimpleView} className="custom-button">
-              {simpleView ? "List View" : "Simple View"}
-            </button>
-          </div>
-          {simpleView ? (
-            <textarea
-              onChange={handleWordsChange}
-              rows="5"
-              className="form-control m-2"
-              placeholder="Write Your Words"
-            >
-              {showNewWords(newWords)}
-            </textarea>
-          ) : (
-            <>
-              <ul className="card-content m-3">
-                {newWords.map((word, index) => (
-                  <li key={index} className="card user-list-item">
-                    <Link
-                      href={`/define/${word.word}`}
-                      className="medium-text user-list-item-word"
-                    >
-                      {word.word}
-                    </Link>
-                    {(wordData && updatedIndex === index) ? (
-                      <select
-                        className="user-list-item-worddata input-lg"
-                        onChange={(e) => {
-                          handleWordDataChange(e.target.value, index);
-                        }}
-                        style={{ maxWidth: "500px", minWidth: "150px" }}
-                      >
-                        {wordData.wordData.map((option, index) => (
-                          <option
-                            key={index}
-                            value={option}
-                            style={{
-                              maxWidth: "500px",
-                              minWidth: "150px",
-                              textOverflow: "wrap",
-                            }}
-                          >
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <div className="user-list-item-worddata">
-                        {word.wordData}
-                      </div>
-                    )}
-                    <a
-                      onClick={(e) => {
-                        e.preventDefault();
-                        fetchWordData(word.word);
-                        setUpdatedIndex(index);
-                      }}
-                    >
-                      <HiPencilAlt size={24} />
-                    </a>
-                    <a
-                      onClick={(e) => {
-                        e.preventDefault();
-                        console.log("executing trashclick");
-                        newWords.splice(index, 1);
-                        setNewWords(newWords);
-                        console.log(newWords);
-                        setUpdatedIndex(index);
-                      }}
-                    >
-                      <HiOutlineTrash size={24} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </>
-
-      <button className="custom-button">Update List</button>
-
-      {isSubmitting && <p> Updating List Data... </p>}
-      {error && <p>Error Updating the List, Try Again sometime!</p>}
     </form>
   );
 }

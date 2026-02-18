@@ -19,7 +19,7 @@ const Page = () => {
                   <span className="p-1"> by</span>
                   <span className="p-1 text-3xl">EnglishBix</span></div>
                 </h1>
-                <h3 className="text-2xl m-2 p-2">The fun and effective way to master a words!</h3>
+                <h3 className="text-2xl m-2 p-2">The fun and effective way to master words!</h3>
                 <p className="m-3 p-2 text-lg font-normal">
                   An enriching vocabulary hub, where language mastery begins.
                   Dive into a world of words and their nuances.

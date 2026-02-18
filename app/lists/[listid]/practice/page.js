@@ -10,8 +10,6 @@ const Cards = () => {
     flashcards.push({ frontHTML: words[i], backHTML:  `Back of Card ${i}`});
    } 
 
-   console.log(flashcards);
-
   return (
     <div>
       {/* {flashcards.map((flashcard, index) => (

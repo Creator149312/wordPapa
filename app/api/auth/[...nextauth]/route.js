@@ -8,7 +8,6 @@ import { validateEmail, validatePasswordLength } from "@utils/Validator";
 
 const validateForm = async (data) => {
   let err = {};
-  // Validate email address
   let ve = validateEmail(data.email);
   let vp = validatePasswordLength(data.password);
 
@@ -20,17 +19,12 @@ const validateForm = async (data) => {
 
 const checkLogin = async (email, password) => {
   await connectMongoDB();
-  const user = await User.findOne({ email }); // Include fields you need explicitly;
+  const user = await User.findOne({ email });
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const passwordsMatch = await bcrypt.compare(password, user.password);
-
-  if (!passwordsMatch) {
-    return null;
-  }
+  if (!passwordsMatch) return null;
 
   return user;
 };
@@ -44,7 +38,6 @@ export const authOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {},
-
       async authorize(credentials) {
         const { email, password } = credentials;
         let validationError = await validateForm({ email, password });
@@ -70,33 +63,39 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account.provider === "google") {
-        const { name, email } = user;
+        const { name, email, image } = user;
         try {
           await connectMongoDB();
-          const userExists = await User.findOne({ email });
+          let existingUser = await User.findOne({ email });
 
-          if (!userExists) {
-            const res = await fetch("http://localhost:3000/api/user", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                name,
-                email,
-              }),
+          if (!existingUser) {
+            // Create new user in DB
+            existingUser = await User.create({
+              name,
+              email,
+              image,
+              provider: "google",
             });
-
-            if (res.ok) {
-              return user;
-            }
           }
+          return true;
         } catch (error) {
-          return null;
+          console.error("Error saving Google user:", error);
+          return false;
         }
       }
-
-      return user;
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user._id || user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token?.id) {
+        session.user.id = token.id;
+      }
+      return session;
     },
   },
 };

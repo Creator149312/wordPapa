@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useSession } from "next-auth/react";
 import WordLists from "@components/WordLists";
@@ -11,18 +11,29 @@ export default function Page() {
 
   if (status === "authenticated" || session?.user?.email !== undefined) {
     return (
-      <div className="m-3">
-        <h1>Dashboard</h1>
-        <div className="list-heading-container">
-          <h2>My Lists</h2>
-          <Link href={'./lists/addList'} className="custom-button">Create List + </Link>
+      <div className="p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-gray-700">My Lists</h2>
+          <Link
+            href="./lists/addList"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition-colors"
+          >
+            Create List +
+          </Link>
         </div>
+
         <WordLists createdBy={session?.user?.email} />
       </div>
     );
   } else {
-    if (session !== null) { //if is used till the time browser fetches the session data
-      return <p>Fetching Your Lists ...</p>
+    if (session !== null) {
+      return (
+        <p className="text-center text-gray-500 mt-6">
+          Fetching Your Lists ...
+        </p>
+      );
     } else {
       router.push("/login");
     }

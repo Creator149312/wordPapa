@@ -5,17 +5,27 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true // Enforces uniqueness for email
+      unique: true, // enforce unique email
     },
     name: {
       type: String,
       required: true,
-      unique: true //enforces uniqueness for email
-    }, 
+    },
+    image: {
+      type: String, // profile picture (Google avatar, etc.)
+    },
+    provider: {
+      type: String,
+      enum: ["credentials", "google"], // track how user signed up
+      default: "credentials",
+    },
     password: {
       type: String,
-      required: true
-    }
+      // only required if provider is "credentials"
+      required: function () {
+        return this.provider === "credentials";
+      },
+    },
   },
   { timestamps: true }
 );

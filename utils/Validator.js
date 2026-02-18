@@ -53,7 +53,7 @@ export const validateListTitle = (input) => {
 
   const inputRegex = /[^a-zA-Z0-9\s-]/;
 
-  console.log("validating description")
+  // console.log("validating title")
   if (!input.trim()) {
     err = "List name is required!";
   } else if (inputRegex.test(input)) {
@@ -70,6 +70,7 @@ export const validateListTitle = (input) => {
 export const validateListDescription = (input) => {
   let err = "";
 
+  // console.log("validating description")
   const inputRegex = /[^a-zA-Z0-9.\s-]/;
   if (!input.trim()) {
     err = "List description is required!";

@@ -10,20 +10,19 @@ const listSchema = new Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     description: {
       type: String,
-      required: true
     },
-    words:  {
+    words: {
       type: [wordDataObject],
-      default: []
+      default: [],
     }, // Array of wordDataObjects
     createdBy: {
       type: String,
-      required: true
-    } //includes email of user who created the list
+      required: true,
+    }, //includes email of user who created the list
     // userId: {
     //   type: mongoose.Schema.Types.ObjectId,
     //   ref: 'User',
@@ -32,7 +31,7 @@ const listSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const List = models.List || mongoose.model("List", listSchema);
