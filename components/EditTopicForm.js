@@ -51,25 +51,29 @@ export default function EditTopicForm({ id, title, description, words }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 bg-white shadow-md rounded-lg p-6"
+      className="space-y-6 bg-white dark:bg-gray-900 shadow-md rounded-lg p-6"
     >
       <div>
-        <label className="block text-gray-700 font-medium mb-2">List Title</label>
+        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+          List Title
+        </label>
         <input
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+          className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
           type="text"
           placeholder="Enter list title"
         />
       </div>
 
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Description</label>
+        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+          Description
+        </label>
         <input
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+          className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
           type="text"
           placeholder="Enter list description"
         />
@@ -77,13 +81,15 @@ export default function EditTopicForm({ id, title, description, words }) {
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-gray-700 font-medium">Words</label>
+          <label className="block text-gray-700 dark:text-gray-200 font-medium">
+            Words
+          </label>
           <button
             onClick={(e) => {
               e.preventDefault();
               setSimpleView(!simpleView);
             }}
-            className="bg-blue-600 text-white px-3 py-1 rounded-md shadow hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white px-3 py-1 rounded-md shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
           >
             {simpleView ? "List View" : "Simple View"}
           </button>
@@ -93,7 +99,7 @@ export default function EditTopicForm({ id, title, description, words }) {
           <textarea
             onChange={handleWordsChange}
             rows="5"
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
             placeholder="Enter words separated by spaces or new lines"
             defaultValue={newWords.map((w) => w.word).join("\n")}
           />
@@ -102,15 +108,15 @@ export default function EditTopicForm({ id, title, description, words }) {
             {newWords.map((word, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-md p-3 hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <Link
                   href={`/define/${word.word}`}
-                  className="text-blue-600 font-medium hover:underline"
+                  className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
                 >
                   {word.word}
                 </Link>
-                <div className="flex items-center gap-3 text-gray-600">
+                <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
                   <span className="text-sm">{word.wordData}</span>
                   <button
                     type="button"
@@ -119,7 +125,7 @@ export default function EditTopicForm({ id, title, description, words }) {
                       updated.splice(index, 1);
                       setNewWords(updated);
                     }}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                   >
                     <HiOutlineTrash size={20} />
                   </button>
@@ -132,13 +138,15 @@ export default function EditTopicForm({ id, title, description, words }) {
 
       <button
         type="submit"
-        className="w-full bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition-colors"
+        className="w-full bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors"
       >
         {isSubmitting ? "Updating..." : "Update List"}
       </button>
 
       {error && (
-        <p className="text-red-500 text-sm mt-2">Error: {error}</p>
+        <p className="text-red-500 dark:text-red-400 text-sm mt-2">
+          Error: {error}
+        </p>
       )}
     </form>
   );

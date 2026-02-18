@@ -57,43 +57,45 @@ export default function AddList() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Create a New List</h1>
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+        Create a New List
+      </h1>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-lg p-6 space-y-4"
+        className="bg-white dark:bg-gray-900 shadow-md rounded-lg p-6 space-y-4"
       >
         <div>
-          <label className="block text-gray-700 font-medium mb-2">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             List Title <span className="text-red-500">*</span>
           </label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
             type="text"
             placeholder="Enter a title for your list"
           />
         </div>
 
         <div>
-          <label className="block text-gray-700 font-medium mb-2">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Description (optional)
           </label>
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
             type="text"
             placeholder="Brief description of your list"
           />
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>}
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 transition-colors"
+          className="w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
         >
           {isLoading ? "Creating..." : "Create List"}
         </button>

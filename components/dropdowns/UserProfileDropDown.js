@@ -25,7 +25,7 @@ export default function UserProfileDropdown() {
   const user = session.user;
 
   return (
-    <div className="relative">
+    <div className="relative group">
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -43,10 +43,9 @@ export default function UserProfileDropdown() {
 
       {/* Dropdown: hover on desktop, click on mobile */}
       <div
-        className={`absolute mt-2 w-full md:w-48 bg-white dark:bg-gray-900 z-20
+        className={`absolute mt-2 w-full md:w-48 bg-white dark:bg-gray-900 shadow-lg rounded-md z-20 
           ${open ? "block" : "hidden"} 
           md:group-hover:block`}
-        onClick={() => setOpen(false)} // collapse after any click inside
       >
         <Link
           href="/dashboard"

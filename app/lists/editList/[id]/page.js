@@ -35,20 +35,24 @@ export default function GetListData({ params }) {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit List</h1>
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+        Edit List
+      </h1>
 
       {isLoading && (
-        <p className="text-center text-gray-500">Loading list data...</p>
+        <p className="text-center text-gray-500 dark:text-gray-400">
+          Loading list data...
+        </p>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-md text-center">
+        <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-300 p-4 rounded-md text-center">
           Error: {error.message}
         </div>
       )}
 
       {data !== null && (
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg p-6">
           <EditTopicForm
             id={id}
             title={data.title}
