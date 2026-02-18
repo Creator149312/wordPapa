@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import Word from "@models/Word";
+import Word from "@models/word";
 import { Card, CardHeader, CardContent } from "@components/ui/card";
 import { WORDMAP } from "../WORDMAP";
 import AddToMyListsButton from "@components/AddToMyListsButton";

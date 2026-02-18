@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import mongoose from "mongoose";
-import Word from "@models/Word"; // updated schema with entries array
+import Word from "@models/word";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
