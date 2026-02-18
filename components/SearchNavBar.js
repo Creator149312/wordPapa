@@ -13,16 +13,40 @@ const SearchBarNav = () => {
   const pathname = usePathname();
   const [inputError, setInputError] = useState(false);
   const [placeholder, setPlaceHolder] = useState(
-    "Enter Word to Find Definitions"
+    "Enter Word to Find Definitions",
   );
 
   const urlOptions = [
-    { value: commonLinks.definition, label: "Word Dictionary", placeholder: "Enter Word to Find Definitions" },
-    { value: commonLinks.wordfinder, label: "Word Finder", placeholder: "Enter Letters to Unscramble" },
-    { value: commonLinks.thesaurus, label: "Thesaurus", placeholder: "Enter Word to Find Synonyms" },
-    { value: commonLinks.rhyming, label: "Rhyming Dictionary", placeholder: "Enter Word to Find Rhyming Words" },
-    { value: commonLinks.syllables, label: "Syllable Counter", placeholder: "Enter Word to Count Syllables" },
-    { value: commonLinks.adjectives, label: "Adjectives Finder", placeholder: "Enter Word to Find Adjectives" },
+    {
+      value: commonLinks.definition,
+      label: "Word Dictionary",
+      placeholder: "Enter Word to Find Definitions",
+    },
+    {
+      value: commonLinks.wordfinder,
+      label: "Word Finder",
+      placeholder: "Enter Letters to Unscramble",
+    },
+    {
+      value: commonLinks.thesaurus,
+      label: "Thesaurus",
+      placeholder: "Enter Word to Find Synonyms",
+    },
+    {
+      value: commonLinks.rhyming,
+      label: "Rhyming Dictionary",
+      placeholder: "Enter Word to Find Rhyming Words",
+    },
+    {
+      value: commonLinks.syllables,
+      label: "Syllable Counter",
+      placeholder: "Enter Word to Count Syllables",
+    },
+    {
+      value: commonLinks.adjectives,
+      label: "Adjectives Finder",
+      placeholder: "Enter Word to Find Adjectives",
+    },
   ];
 
   function checkOptionInSearch(obj, stringA) {
@@ -36,7 +60,10 @@ const SearchBarNav = () => {
 
   useEffect(() => {
     let path = pathname.split("/")[1];
-    let ifOptionInSearchBar = checkOptionInSearch(commonLinks, "/" + path + "/");
+    let ifOptionInSearchBar = checkOptionInSearch(
+      commonLinks,
+      "/" + path + "/",
+    );
     if (path !== "" && ifOptionInSearchBar) {
       setSelectedOption(`/${path}/`);
     }
@@ -59,7 +86,9 @@ const SearchBarNav = () => {
     if (selectedOption && word) {
       let encodedWord = "";
       try {
-        encodedWord = decodeURIComponent(word.toLowerCase().replace(/\?/g, "_"));
+        encodedWord = decodeURIComponent(
+          word.toLowerCase().replace(/\?/g, "_"),
+        );
       } catch {
         encodedWord = "";
       }
@@ -92,7 +121,7 @@ const SearchBarNav = () => {
       // Only show suggestions if 2+ letters typed
       if (value.length >= 2) {
         const filtered = FINALCLEANWORDS.filter((w) =>
-          w.toLowerCase().startsWith(value.toLowerCase())
+          w.toLowerCase().startsWith(value.toLowerCase()),
         ).slice(0, 8);
         setSuggestions(filtered);
       } else {
@@ -110,7 +139,7 @@ const SearchBarNav = () => {
         <select
           value={selectedOption}
           onChange={handleOptionChange}
-          className="p-2 md:mr-2 border-2 md:col-span-2 text-sm rounded-l-md"
+          className="p-2 md:mr-2 border-2 md:col-span-2 text-sm rounded-l-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring focus:ring-blue-300"
           name="tool"
         >
           {urlOptions.map((option) => (
@@ -120,9 +149,9 @@ const SearchBarNav = () => {
           ))}
         </select>
 
-        <div className="md:col-span-4 grid border-2 rounded-r-md grid-cols-5 items-center relative">
+        <div className="md:col-span-4 flex border-2 rounded-r-md items-center relative bg-white dark:bg-gray-800">
           <input
-            className={`text-sm px-2 py-2 col-span-4 focus:outline-none ${
+            className={`flex-grow text-sm px-2 py-2 focus:outline-none bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 ${
               inputError ? "border-red-500" : ""
             }`}
             type="text"
@@ -135,7 +164,7 @@ const SearchBarNav = () => {
           <button
             onClick={handleLoadUrl}
             disabled={inputError}
-            className="col-span-1 flex items-center justify-center h-full w-full text-gray-600 hover:text-black"
+            className="flex items-center justify-center h-full px-3 text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors"
             aria-label="Search"
           >
             <FiSearch size={24} />
@@ -143,7 +172,7 @@ const SearchBarNav = () => {
 
           {/* Suggestions dropdown */}
           {suggestions.length > 0 && (
-            <ul className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-md z-10">
+            <ul className="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-md z-10">
               {suggestions.map((s, idx) => (
                 <li
                   key={idx}
@@ -152,7 +181,7 @@ const SearchBarNav = () => {
                     setSuggestions([]);
                     window.location.href = selectedOption + s.toLowerCase();
                   }}
-                  className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                  className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
                 >
                   {s}
                 </li>

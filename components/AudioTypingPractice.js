@@ -15,13 +15,17 @@ export default function AudioTypingPractice({ words }) {
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = speechSynthesis.getVoices();
-      // console.log(availableVoices);
-      // Find the two voices we want
       const brian = availableVoices.find(
-        (v) => v.name === "Microsoft Brian Online (Natural) - English (United States)" && v.lang === "en-US"
+        (v) =>
+          v.name ===
+            "Microsoft Brian Online (Natural) - English (United States)" &&
+          v.lang === "en-US"
       );
       const emma = availableVoices.find(
-        (v) => v.name === "Microsoft Emma Online (Natural) - English (United States)" && v.lang === "en-US"
+        (v) =>
+          v.name ===
+            "Microsoft Emma Online (Natural) - English (United States)" &&
+          v.lang === "en-US"
       );
 
       setVoices(availableVoices);
@@ -38,7 +42,6 @@ export default function AudioTypingPractice({ words }) {
 
     const utterance = new SpeechSynthesisUtterance(currentWord);
 
-    // Alternate voices: Brian for even index, Emma for odd index
     if (currentIndex % 2 === 0 && brianVoice) {
       utterance.voice = brianVoice;
     } else if (emmaVoice) {
@@ -68,7 +71,7 @@ export default function AudioTypingPractice({ words }) {
     <div className="space-y-4">
       <button
         onClick={playAudio}
-        className="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition-colors"
+        className="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition-colors dark:bg-blue-500 dark:hover:bg-blue-600"
       >
         🔊 Play Audio
       </button>
@@ -78,25 +81,29 @@ export default function AudioTypingPractice({ words }) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Type the word you heard"
-        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-blue-200"
+        className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
       />
 
       <div className="flex gap-2">
         <button
           onClick={checkAnswer}
-          className="bg-green-600 text-white px-4 py-2 rounded-md shadow hover:bg-green-700 transition-colors"
+          className="bg-green-600 text-white px-4 py-2 rounded-md shadow hover:bg-green-700 transition-colors dark:bg-green-500 dark:hover:bg-green-600"
         >
           Check
         </button>
         <button
           onClick={nextWord}
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-400 transition-colors"
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-400 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
         >
           Next Word
         </button>
       </div>
 
-      {feedback && <p className="text-gray-800 font-medium">{feedback}</p>}
+      {feedback && (
+        <p className="text-gray-800 dark:text-gray-100 font-medium">
+          {feedback}
+        </p>
+      )}
     </div>
   );
 }

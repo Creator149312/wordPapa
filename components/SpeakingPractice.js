@@ -84,21 +84,23 @@ export default function SpeakingPractice({ words }) {
 
   return (
     <div className="space-y-4 text-center">
-      <h1 className="text-3xl font-bold">{currentWord}</h1>
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+        {currentWord}
+      </h1>
 
       {/* Mic button with animation */}
       <button
         onClick={startRecognition}
         className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto 
           ${isRecording ? "bg-red-600 animate-pulse" : "bg-blue-600"} 
-          text-white shadow-lg transition-colors`}
+          text-white shadow-lg transition-colors dark:bg-blue-500 dark:hover:bg-blue-600`}
       >
         🎤
       </button>
 
       <button
         onClick={nextWord}
-        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-400 transition-colors"
+        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow hover:bg-gray-400 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
       >
         Next Word
       </button>
@@ -107,10 +109,10 @@ export default function SpeakingPractice({ words }) {
         <p
           className={`text-lg font-medium ${
             score >= 80
-              ? "text-green-600"
+              ? "text-green-600 dark:text-green-400"
               : score >= 50
-              ? "text-yellow-600"
-              : "text-red-600"
+              ? "text-yellow-600 dark:text-yellow-400"
+              : "text-red-600 dark:text-red-400"
           }`}
         >
           {feedback}

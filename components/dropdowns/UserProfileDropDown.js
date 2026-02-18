@@ -25,10 +25,10 @@ export default function UserProfileDropdown() {
   const user = session.user;
 
   return (
-    <div className="relative group">
+    <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
       >
         <Image
           src={user?.image || "/default-avatar.png"}
@@ -43,26 +43,26 @@ export default function UserProfileDropdown() {
 
       {/* Dropdown: hover on desktop, click on mobile */}
       <div
-        className={`absolute right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md z-20
+        className={`absolute mt-2 w-full md:w-48 bg-white dark:bg-gray-900 z-20
           ${open ? "block" : "hidden"} 
           md:group-hover:block`}
         onClick={() => setOpen(false)} // collapse after any click inside
       >
         <Link
           href="/dashboard"
-          className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           Dashboard
         </Link>
         <Link
           href="/settings"
-          className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           Settings
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           Sign Out
         </button>

@@ -18,12 +18,16 @@ const Dropdown = ({ name, items }) => {
     <div className="relative group">
       {/* Top-level button */}
       <button
-        className="w-full md:w-auto px-3 py-2 flex items-center justify-between md:justify-start gap-1 font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="w-full md:w-auto px-3 py-2 flex items-center justify-between md:justify-start gap-1 font-medium rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         onClick={() => setOpenMobile(!openMobile)}
       >
         {name}
         <span className="md:hidden">
-          {openMobile ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {openMobile ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
         </span>
         <span className="hidden md:inline-block group-hover:rotate-180 transition-transform">
           <ChevronDown className="w-4 h-4" />
@@ -37,7 +41,7 @@ const Dropdown = ({ name, items }) => {
             <button
               key={i}
               onClick={() => handleAction(item)}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               {item.name}
             </button>
@@ -45,7 +49,7 @@ const Dropdown = ({ name, items }) => {
             <Link
               key={i}
               href={item.link}
-              className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               {item.name}
             </Link>
@@ -61,7 +65,7 @@ const Dropdown = ({ name, items }) => {
               <button
                 key={i}
                 onClick={() => handleAction(item)}
-                className="w-full text-left px-4 py-2 text-base hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="w-full text-left px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 {item.name}
               </button>
@@ -69,7 +73,7 @@ const Dropdown = ({ name, items }) => {
               <Link
                 key={i}
                 href={item.link}
-                className="block px-4 py-2 text-base hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 {item.name}
               </Link>

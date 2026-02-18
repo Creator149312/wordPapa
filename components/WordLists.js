@@ -39,10 +39,14 @@ export default function WordLists({ createdBy }) {
   return (
     <div className="p-4">
       {isLoading && (
-        <p className="text-center text-gray-500">Fetching Your Lists ...</p>
+        <p className="text-center text-gray-500 dark:text-gray-400">
+          Fetching Your Lists ...
+        </p>
       )}
       {error && (
-        <p className="text-center text-red-500">Failed to Load Your Lists</p>
+        <p className="text-center text-red-500 dark:text-red-400">
+          Failed to Load Your Lists
+        </p>
       )}
 
       {/* Show lists if data is found */}
@@ -51,29 +55,31 @@ export default function WordLists({ createdBy }) {
           {data.map((item, index) => (
             <div
               key={index}
-              className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition-shadow"
             >
               <div>
-                <h2 className="text-xl font-bold text-gray-800 mb-2">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                   {item.title}
                 </h2>
-                <p className="text-gray-600 mb-3">{item.description}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-gray-600 dark:text-gray-300 mb-3">
+                  {item.description}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {item.words.length} Words
                 </p>
               </div>
 
-              <div className="flex items-center justify-end gap-4 mt-4 text-gray-600">
+              <div className="flex items-center justify-end gap-4 mt-4 text-gray-600 dark:text-gray-300">
                 <Link
                   href={`/lists/${item._id}`}
-                  className="hover:text-blue-600 transition-colors"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   title="View List"
                 >
                   <HiOutlineEye size={22} />
                 </Link>
                 <Link
                   href={`/lists/editList/${item._id}`}
-                  className="hover:text-green-600 transition-colors"
+                  className="hover:text-green-600 dark:hover:text-green-400 transition-colors"
                   title="Edit List"
                 >
                   <HiPencilAlt size={22} />
@@ -87,7 +93,7 @@ export default function WordLists({ createdBy }) {
 
       {/* If loading finished and no lists */}
       {!isLoading && data.length === 0 && (
-        <p className="text-center text-gray-500 mt-6">
+        <p className="text-center text-gray-500 dark:text-gray-400 mt-6">
           No Lists Found. Create Your Lists and Start Learning!
         </p>
       )}
