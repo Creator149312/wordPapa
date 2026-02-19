@@ -91,7 +91,7 @@ export default function AddToMyListsButton({ word, definition }) {
   if (status !== "authenticated" || !session) return null;
 
   return (
-    <div className="mt-2">
+    <div className="">
       {/* Compact icon button for mobile */}
       {/* Mobile: small rounded icon button */}
       <button
@@ -105,11 +105,9 @@ export default function AddToMyListsButton({ word, definition }) {
       {/* Desktop: rectangle button with + */}
       <button
         onClick={handleOpenModal}
-        className="hidden md:flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition-colors"
+        className="hidden md:flex items-center gap-2 bg-blue-600 text-white px-2 py-2 rounded-md shadow hover:bg-blue-700 transition-colors"
       >
-        <span className="text-lg font-bold">
-          <Plus className="w-6 h-6" />
-        </span>
+        <Plus className="w-6 h-6" />
         <span>Save</span>
       </button>
 

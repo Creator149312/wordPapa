@@ -4,6 +4,7 @@ import { Card, CardHeader, CardContent } from "@components/ui/card";
 import { WORDMAP } from "../WORDMAP";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import { connectMongoDB } from "@lib/mongodb";
+import AudioPronunciation from "../AudioPronunciation";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
@@ -140,13 +141,20 @@ export default async function DefineWordPage({ params }) {
   return (
     <div className="m-2">
       <CardHeader className="list-heading-container justify-between flex-row">
-        <h1 className="text-5xl font-extrabold">{decodedWord}</h1>
-        {wordData.entries.length > 0 && (
-          <AddToMyListsButton
-            word={decodedWord}
-            definition={wordData.entries[0].definition}
-          />
-        )}
+        <div>
+          <h1 className="text-5xl font-extrabold">{decodedWord}</h1>
+        </div>
+        <div className="flex flex-row gap-3 items-center justify-center">
+          {wordData.entries.length > 0 && (
+            <>
+              <AudioPronunciation word={decodedWord} />
+              <AddToMyListsButton
+                word={decodedWord}
+                definition={wordData.entries[0].definition}
+              />
+            </>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="card-body">
         {wordData.entries.length > 0 ? (
