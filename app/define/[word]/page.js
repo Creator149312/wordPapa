@@ -25,9 +25,7 @@ export async function generateMetadata({ params }) {
   let slug = decodeURIComponent(params.word);
   let word = slug;
 
-  if (word.includes("-")) word = word.replace(/-/g, " ");
-
-  const ifInWordMap = WORDMAP[params.word];
+  const ifInWordMap = WORDMAP[word.replace(/[ -]/g, "")];
   if (!ifInWordMap) {
     return {
       title: "Try a new word",
@@ -143,9 +141,7 @@ export default async function DefineWordPage({ params }) {
               <strong>Definition:</strong> {entry.definition}
             </p>
             <div className="mt-4" id={`examples-${idx}`}>
-              <h2 className="text-2xl font-bold">
-                Sentence Examples
-              </h2>
+              <h2 className="text-2xl font-bold">Sentence Examples</h2>
               <ul className="m-2 p-2 text-lg list-disc">
                 {entry.examples.map((sent, i) => (
                   <li key={i} className="p-0.5">
