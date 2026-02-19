@@ -6,7 +6,15 @@ import AddToMyListsButton from "@components/AddToMyListsButton";
 import { connectMongoDB } from "@lib/mongodb";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-export const revalidate = 3600 * 24 * 60; // revalidate every 2 months 
+export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
+
+// Utility function to validate single words
+function isSingleWord(word) {
+  // Allow only alphabetic characters (A–Z, a–z)
+  // Reject if word contains spaces, hyphens, dots, commas, or special characters
+  const regex = /^[A-Za-z]+$/;
+  return regex.test(word);
+}
 
 let siteURL =
   process.env.NODE_ENV === "production"
@@ -51,7 +59,7 @@ export async function generateMetadata({ params }) {
 export default async function DefineWordPage({ params }) {
   await connectMongoDB();
   const decodedWord = decodeURIComponent(params.word);
-  const ifInWordMap = WORDMAP[params.word];
+  const ifInWordMap = WORDMAP[decodedWord.replace(/[ -]/g, "")];
 
   // If word not in WORDMAP, show message
   if (!ifInWordMap) {
@@ -102,10 +110,18 @@ export default async function DefineWordPage({ params }) {
 
     const parsed = JSON.parse(completion.choices[0].message.content);
 
-    wordData = await Word.create({
-      word: decodedWord,
-      entries: parsed.entries,
-    });
+    //store in DB only if it is single word
+    if (isSingleWord(decodedWord)) {
+      wordData = await Word.create({
+        word: decodedWord,
+        entries: parsed.entries,
+      });
+    } else {
+      wordData = {
+        word: decodedWord,
+        entries: parsed.entries,
+      };
+    }
   }
 
   return (
@@ -126,8 +142,10 @@ export default async function DefineWordPage({ params }) {
             <p className="text-lg font-normal mb-2">
               <strong>Definition:</strong> {entry.definition}
             </p>
-            <div className="m-2" id={`examples-${idx}`}>
-              <h2 className="text-2xl font-bold">Sentence Examples ({entry.pos})</h2>
+            <div className="mt-4" id={`examples-${idx}`}>
+              <h2 className="text-2xl font-bold">
+                Sentence Examples
+              </h2>
               <ul className="m-2 p-2 text-lg list-disc">
                 {entry.examples.map((sent, i) => (
                   <li key={i} className="p-0.5">
