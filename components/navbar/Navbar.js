@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
       <div className="flex flex-col md:flex-row items-center justify-between gap-2">
         {/* Logo + Mobile Toggle */}
-        <div className="z-50 px-2 w-full md:w-auto flex justify-between items-center">
+        <div className="z-50 p-2 w-full md:w-auto flex justify-between items-center">
           <a
             href="/"
             className="text-2xl font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100"

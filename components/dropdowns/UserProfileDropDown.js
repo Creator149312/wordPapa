@@ -15,7 +15,7 @@ export default function UserProfileDropdown() {
     return (
       <button
         onClick={() => signIn("google")}
-        className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors"
+        className="px-4 mr-2 py-2 rounded-md bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors"
       >
         Sign In
       </button>
@@ -43,22 +43,22 @@ export default function UserProfileDropdown() {
 
       {/* Dropdown: hover on desktop, click on mobile */}
       <div
-        className={`absolute mt-2 w-full md:w-48 bg-white dark:bg-gray-900 shadow-lg rounded-md z-20 
+        className={`absolute w-full md:w-48 bg-white dark:bg-gray-900 shadow-lg rounded-md z-20 
           ${open ? "block" : "hidden"} 
           md:group-hover:block`}
       >
-        <Link
+        <a
           href="/dashboard"
           className="block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           Dashboard
-        </Link>
-        <Link
+        </a>
+        <a
           href="/settings"
           className="block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           Settings
-        </Link>
+        </a>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
