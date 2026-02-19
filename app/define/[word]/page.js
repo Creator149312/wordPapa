@@ -8,14 +8,6 @@ import { connectMongoDB } from "@lib/mongodb";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
 
-// Utility function to validate single words
-function isSingleWord(word) {
-  // Allow only alphabetic characters (A–Z, a–z)
-  // Reject if word contains spaces, hyphens, dots, commas, or special characters
-  const regex = /^[A-Za-z]+$/;
-  return regex.test(word);
-}
-
 let siteURL =
   process.env.NODE_ENV === "production"
     ? "https://words.englishbix.com"
@@ -54,12 +46,30 @@ export async function generateMetadata({ params }) {
   };
 }
 
+// Utility function to validate single words
+function isSingleWord(word) {
+  const regex = /^[A-Za-z]+$/; // only alphabetic
+  return regex.test(word);
+}
+
+// Utility function to validate parsed JSON
+function isValidWordData(parsed) {
+  if (!parsed || !Array.isArray(parsed.entries)) return false;
+
+  return parsed.entries.every(
+    (entry) =>
+      entry.definition &&
+      typeof entry.definition === "string" &&
+      Array.isArray(entry.examples) &&
+      entry.examples.length > 0,
+  );
+}
+
 export default async function DefineWordPage({ params }) {
   await connectMongoDB();
   const decodedWord = decodeURIComponent(params.word);
   const ifInWordMap = WORDMAP[decodedWord.replace(/[ -]/g, "")];
 
-  // If word not in WORDMAP, show message
   if (!ifInWordMap) {
     return (
       <Card className="m-2">
@@ -77,7 +87,6 @@ export default async function DefineWordPage({ params }) {
     );
   }
 
-  // Otherwise proceed
   let wordData = await Word.findOne({ word: decodedWord });
 
   if (!wordData) {
@@ -106,18 +115,24 @@ export default async function DefineWordPage({ params }) {
       response_format: { type: "json_object" },
     });
 
-    const parsed = JSON.parse(completion.choices[0].message.content);
+    let parsed;
+    try {
+      parsed = JSON.parse(completion.choices[0].message.content);
+    } catch {
+      parsed = null;
+    }
 
-    //store in DB only if it is single word
-    if (isSingleWord(decodedWord)) {
+    // Only store if JSON is valid, has entries, and word is single
+    if (isValidWordData(parsed) && isSingleWord(decodedWord)) {
       wordData = await Word.create({
         word: decodedWord,
         entries: parsed.entries,
       });
     } else {
+      // fallback: show data but don't store
       wordData = {
         word: decodedWord,
-        entries: parsed.entries,
+        entries: parsed?.entries || [],
       };
     }
   }
@@ -126,32 +141,38 @@ export default async function DefineWordPage({ params }) {
     <div className="m-2">
       <CardHeader className="list-heading-container justify-between flex-row">
         <h1 className="text-5xl font-extrabold">{decodedWord}</h1>
-        <AddToMyListsButton
-          word={decodedWord}
-          definition={wordData.entries[0].definition}
-        />
+        {wordData.entries.length > 0 && (
+          <AddToMyListsButton
+            word={decodedWord}
+            definition={wordData.entries[0].definition}
+          />
+        )}
       </CardHeader>
       <CardContent className="card-body">
-        {wordData.entries.map((entry, idx) => (
-          <div key={idx} className="mb-6">
-            <p className="text-lg font-semibold">
-              <strong>POS:</strong> {entry.pos}
-            </p>
-            <p className="text-lg font-normal mb-2">
-              <strong>Definition:</strong> {entry.definition}
-            </p>
-            <div className="mt-4" id={`examples-${idx}`}>
-              <h2 className="text-2xl font-bold">Sentence Examples</h2>
-              <ul className="m-2 p-2 text-lg list-disc">
-                {entry.examples.map((sent, i) => (
-                  <li key={i} className="p-0.5">
-                    {sent}
-                  </li>
-                ))}
-              </ul>
+        {wordData.entries.length > 0 ? (
+          wordData.entries.map((entry, idx) => (
+            <div key={idx} className="mb-6">
+              <p className="text-lg font-semibold">
+                <strong>POS:</strong> {entry.pos}
+              </p>
+              <p className="text-lg font-normal mb-2">
+                <strong>Definition:</strong> {entry.definition}
+              </p>
+              <div className="mt-4" id={`examples-${idx}`}>
+                <h2 className="text-2xl font-bold">Sentence Examples</h2>
+                <ul className="m-2 p-2 text-lg list-disc">
+                  {entry.examples.map((sent, i) => (
+                    <li key={i} className="p-0.5">
+                      {sent}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-red-500">No valid definitions found.</p>
+        )}
       </CardContent>
     </div>
   );
