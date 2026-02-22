@@ -10,17 +10,25 @@ if (!mongoose.connection.readyState) {
   mongoose.connect(process.env.MONGODB_URI);
 }
 
+// Utility function to validate single words
+function isSingleWord(word) {
+  const regex = /^[A-Za-z]+$/; // only alphabetic
+  return regex.test(word);
+}
+
+
 export async function POST(req) {
   const { words } = await req.json();
   const results = [];
 
   for (const word of words) {
+    const sentenceCount = isSingleWord(word) ? '3' : '2';
     const prompt = `
     For the word "${word}", provide definitions grouped by part of speech (POS).
     For each POS, include:
     - POS (noun, verb, adjective, etc.)
     - A simple definition
-    - 3 short example sentences
+    - "${sentenceCount}" short example sentences
 
     Output as JSON:
     {

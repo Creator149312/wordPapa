@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 // Create a new list
 export async function POST(request) {
   try {
-    const { title, description, createdBy } = await request.json();
+    const { title, description, words, createdBy } = await request.json();
     let error = "";
 
     const vlt = validateListTitle(title);
@@ -14,13 +14,32 @@ export async function POST(request) {
 
     if (error.length === 0) {
       await connectMongoDB();
-      await List.create({ title, description, createdBy });
-      return NextResponse.json({ message: "List Created Successfully" }, { status: 201 });
+
+      // Store the result of the creation in a variable
+      const newList = await List.create({ 
+        title, 
+        description: description || "My custom list", 
+        words: words || [], // Ensure words is at least an empty array
+        createdBy 
+      });
+
+      // Return the newList object so the frontend can use data.list
+      return NextResponse.json(
+        { 
+          message: "List Created Successfully", 
+          list: newList 
+        }, 
+        { status: 201 }
+      );
     } else {
       return NextResponse.json({ error }, { status: 400 });
     }
   } catch (e) {
-    return NextResponse.json({ error: "Error creating list", details: e.message }, { status: 500 });
+    console.error("API Error:", e);
+    return NextResponse.json(
+      { error: "Error creating list", details: e.message }, 
+      { status: 500 }
+    );
   }
 }
 

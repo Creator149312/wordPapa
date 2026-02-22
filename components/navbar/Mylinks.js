@@ -8,6 +8,7 @@ export const links = [
       { name: "Adjective Dictionary", link: "/browse/adjectives" },
       { name: "Verb Dictionary", link: "/browse/verbs" },
       { name: "Noun Dictionary", link: "/browse/nouns" },
+      { name: "Phrasal Verbs", link: "/phrasal-verbs" },
     ],
   },
   {

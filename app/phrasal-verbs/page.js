@@ -39,8 +39,8 @@ const Page = async () => {
       </p>
 
       <p className="mb-6 text-lg font-normal">
-        All 8000+ phrasal verbs are meticulously organized alphabetically from
-        A to Z, making it easy to find the specific verb you're looking for.
+        All 8000+ phrasal verbs are meticulously organized alphabetically from A
+        to Z, making it easy to find the specific verb you're looking for.
         Easily navigate this extensive list using the "Filter Results" option to
         pinpoint the phrasal verbs you need right away. It's designed to be an
         interactive learning companion for someone willing to learn different{" "}

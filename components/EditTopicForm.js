@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import apiConfig from "@utils/apiUrlConfig";
-import { HiPencilAlt, HiOutlineTrash } from "react-icons/hi";
+import { Trash2, Loader2, Save, LayoutList, AlignLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export default function EditTopicForm({ id, title, description, words }) {
@@ -44,110 +44,136 @@ export default function EditTopicForm({ id, title, description, words }) {
   };
 
   const handleWordsChange = (e) => {
-    const lines = e.target.value.split(/\s+/).filter(Boolean);
-    setNewWords(lines.map((w) => ({ word: w, wordData: "" })));
+    const lines = e.target.value.split(/\n|,/).filter(Boolean); // Split by newline or comma
+    setNewWords(lines.map((w) => ({ word: w.trim(), wordData: "" })));
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 bg-white dark:bg-gray-900 shadow-md rounded-lg p-6"
-    >
-      <div>
-        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-          List Title
-        </label>
-        <input
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
-          type="text"
-          placeholder="Enter list title"
-        />
-      </div>
-
-      <div>
-        <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-          Description
-        </label>
-        <input
-          value={newDescription}
-          onChange={(e) => setNewDescription(e.target.value)}
-          className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
-          type="text"
-          placeholder="Enter list description"
-        />
-      </div>
-
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-gray-700 dark:text-gray-200 font-medium">
-            Words
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Title & Description Inputs */}
+      <div className="grid gap-6">
+        <div className="space-y-1">
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">
+            Collection Title
           </label>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              setSimpleView(!simpleView);
-            }}
-            className="bg-blue-600 text-white px-3 py-1 rounded-md shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
+          <input
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[#75c32c] rounded-2xl px-5 py-4 font-bold focus:outline-none dark:text-white transition-all"
+            type="text"
+            placeholder="Enter title..."
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-[10px] font-black uppercase text-gray-400 ml-1 tracking-widest">
+            Description
+          </label>
+          <input
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+            className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[#75c32c] rounded-2xl px-5 py-4 font-bold focus:outline-none dark:text-white transition-all"
+            type="text"
+            placeholder="What is this collection for?"
+          />
+        </div>
+      </div>
+
+      {/* Words Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
+            Words in Collection ({newWords.length})
+          </label>
+          {/* <button
+            type="button"
+            onClick={() => setSimpleView(!simpleView)}
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#75c32c] hover:opacity-70 transition-opacity"
           >
-            {simpleView ? "List View" : "Simple View"}
-          </button>
+            {simpleView ? <LayoutList size={14} /> : <AlignLeft size={14} />}
+            {simpleView ? "Switch to List" : "Bulk Edit"}
+          </button> */}
         </div>
 
         {simpleView ? (
           <textarea
             onChange={handleWordsChange}
-            rows="5"
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:bg-gray-800 dark:text-gray-100"
-            placeholder="Enter words separated by spaces or new lines"
+            rows="8"
+            className="w-full bg-gray-50 dark:bg-white/5 border-2 border-transparent focus:border-[#75c32c] rounded-[2rem] px-6 py-5 font-medium focus:outline-none dark:text-white transition-all leading-relaxed"
+            placeholder="Type words separated by commas or new lines..."
             defaultValue={newWords.map((w) => w.word).join("\n")}
           />
         ) : (
-          <ul className="space-y-3">
-            {newWords.map((word, index) => (
-              <li
-                key={index}
-                className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <Link
-                  href={`/define/${word.word}`}
-                  className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+          <div className="grid gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            {newWords.length > 0 ? (
+              newWords.map((word, index) => (
+                <div
+                  key={index}
+                  className="group flex items-center justify-between bg-gray-50 dark:bg-white/5 border-2 border-transparent hover:border-[#75c32c]/30 rounded-2xl p-4 transition-all"
                 >
-                  {word.word}
-                </Link>
-                <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
-                  <span className="text-sm">{word.wordData}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = [...newWords];
-                      updated.splice(index, 1);
-                      setNewWords(updated);
-                    }}
-                    className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
-                  >
-                    <HiOutlineTrash size={20} />
-                  </button>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-black text-gray-300 dark:text-gray-600 w-4">
+                      {index + 1}
+                    </span>
+                    <Link
+                      href={`/define/${word.word}`}
+                      className="font-bold text-gray-900 dark:text-white hover:text-[#75c32c] transition-colors flex items-center gap-2"
+                    >
+                      {word.word}
+                      <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs font-medium text-gray-400 italic">
+                      {word.wordData || "No definition saved"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = [...newWords];
+                        updated.splice(index, 1);
+                        setNewWords(updated);
+                      }}
+                      className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ))
+            ) : (
+              <div className="text-center py-10 border-2 border-dashed border-gray-100 dark:border-white/5 rounded-[2rem]">
+                <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No words in this list</p>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors"
-      >
-        {isSubmitting ? "Updating..." : "Update List"}
-      </button>
+      {/* Action Button */}
+      <div className="pt-4">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-[#75c32c] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-lg shadow-[#75c32c]/20 hover:bg-[#66aa26] active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale"
+        >
+          {isSubmitting ? (
+            <Loader2 className="animate-spin" size={20} />
+          ) : (
+            <>
+              <Save size={18} />
+              Update Collection
+            </>
+          )}
+        </button>
 
-      {error && (
-        <p className="text-red-500 dark:text-red-400 text-sm mt-2">
-          Error: {error}
-        </p>
-      )}
+        {error && (
+          <p className="text-red-500 dark:text-red-400 text-[10px] font-black uppercase tracking-widest text-center mt-4 animate-bounce">
+            ⚠️ {error}
+          </p>
+        )}
+      </div>
     </form>
   );
 }

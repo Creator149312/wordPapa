@@ -50,7 +50,7 @@ const layout = ({ children }) => {
       </head>
       <body
         className={cn(
-          "min-h-screen bg-slate-100 dark:bg-slate-900 font-sans antialiased",
+          "min-h-screen bg-gray-50 dark:bg-gray-950 font-sans antialiased selection:bg-[#75c32c]/30 selection:text-[#5fa323]",
           fontSans.variable,
         )}
       >
@@ -60,25 +60,32 @@ const layout = ({ children }) => {
           enableSystem
           disableTransitionOnChange
         >
-          <div className="border-b-2">
-            <Card className="rounded-none m-0 p-0">
+          {/* Navbar Wrapper - Removed the harsh border-b-2 */}
+          <div className="sticky top-0 z-[100]">
+            <Card className="rounded-none border-none shadow-none m-0 p-0 overflow-visible">
               <Navbar />
             </Card>
           </div>
+
           <TopBar />
-          {/* <div className="md:hidden z-10"><MobileTopAdsUnit slot='7782807936'/></div> */}
-          <main className="grid md:grid-cols-12 gap-x-2 m-2">
-            <Card className="md:m-2 mb-2 mt-2 md:p-4 md:col-span-9">
+
+          {/* Main Content Grid */}
+          <main className="max-w-[1600px] mx-auto grid md:grid-cols-12 gap-4 p-2 md:p-4">
+            {/* Primary Content Area - Large Rounded Corners */}
+            <Card className="md:col-span-9 border-none bg-white dark:bg-gray-900 shadow-sm rounded-[2.5rem] md:p-6 overflow-hidden min-h-[80vh]">
               {children}
-              {/** All the main content goes here */}
             </Card>
-            <Card className="md:m-2 mb-2 mt-2 md:col-span-3">
+
+            {/* Sidebar Area - Subtle design to keep focus on main content */}
+            <Card className="md:col-span-3 border-none bg-transparent shadow-none rounded-[2.5rem]">
               <SideBar />
             </Card>
           </main>
-          <AlphabetLinks />
-          <Footer />
-          {/* <Toaster position="top-right" /> */}
+
+          <div className="mt-8 space-y-8">
+            <AlphabetLinks />
+            <Footer />
+          </div>
         </NextAuthProvider>
         <AdsScriptLoader />
       </body>
