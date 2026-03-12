@@ -20,7 +20,7 @@ import { useWordPapaProfile } from './hooks/useWordPapaProfile';
 import { calculateLevel } from './lib/progression';
 
 // Initialize socket outside component to prevent multiple connections on re-render
-const socket = io('https://crispy-computing-machine-x5xxrx74gv43p6p5-3001.app.github.dev', { autoConnect: false, transports: ['websocket'] } // Forces websocket for better compatibility in cloud environments
+const socket = io('http://localhost:3001', { autoConnect: false, transports: ['websocket'] } // Forces websocket for better compatibility in cloud environments
 );
 
 const WORDS_POOL = [
