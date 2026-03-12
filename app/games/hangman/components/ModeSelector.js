@@ -1,69 +1,115 @@
+'use client';
 import { Card } from "@/components/ui/card";
-import { Coffee, Zap, Play, Globe, Users } from "lucide-react";
+import { Coffee, Globe, Users, Lock, Coins, Flame, Trophy, ChevronRight } from "lucide-react";
 
-export default function ModeSelector({ onSelect }) {
+export default function ModeSelector({ onSelect, profile, requirements }) {
+  const isXPLocked = profile.xp < requirements.MIN_XP;
+  const isCoinLocked = profile.papaPoints < requirements.MIN_COINS;
+  const isLocked = isXPLocked || isCoinLocked;
+
   return (
-    <Card className="p-10 md:p-16 rounded-[3rem] border-2 border-gray-100 shadow-2xl text-center bg-white dark:bg-gray-900 max-w-4xl mx-auto">
-      <div className="flex justify-center mb-6">
-        <div className="p-4 bg-[#75c32c]/10 rounded-full animate-pulse">
-          <Play className="text-[#75c32c] fill-[#75c32c]" size={48} />
-        </div>
+    <Card className="p-8 md:p-8 rounded-[2.5rem] border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl max-w-4xl mx-auto animate-in fade-in zoom-in duration-700">
+      <div className="space-y-2 mb-6">
+        {/* Minimalist Top Nav/Header Area */}
+        <header className="relative z-10 pt-2 pb-2 px-6 flex flex-col items-center gap-2">
+          <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-gray-900 dark:text-white leading-none">
+            Hang<span className="text-[#75c32c]">Papa</span>
+          </h1>
+        </header>
+        <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.4em]">Select your battleground</p>
       </div>
-      
-      <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 uppercase tracking-tighter italic">WordPapa</h2>
-      <p className="text-gray-500 mb-10 font-medium uppercase text-xs tracking-[0.3em]">Select your battleground</p>
-      
-      {/* Grid updated to 3 columns for desktop */}
-      <div className="grid md:grid-cols-3 gap-6">
-        
-        {/* CLASSIC MODE */}
-        <button 
+
+      <div className="grid md:grid-cols-2 gap-6">
+
+        {/* ENDLESS CLASSIC MODE */}
+        <button
           onClick={() => onSelect('classic')}
-          className="group p-8 rounded-[2.5rem] border-2 border-gray-50 hover:border-[#75c32c] hover:bg-[#75c32c]/5 transition-all text-left flex flex-col justify-between"
+          className="group relative p-8 rounded-[2rem] bg-gray-50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 border-2 border-transparent hover:border-[#75c32c] transition-all duration-500 text-left flex flex-col h-full shadow-sm hover:shadow-2xl hover:-translate-y-1"
         >
-          <div>
-            <Coffee className="text-blue-500 mb-4 group-hover:rotate-12 transition-transform" size={32} />
-            <h3 className="font-black text-xl text-gray-900 dark:text-white uppercase tracking-tighter">Classic</h3>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 leading-tight">Relaxed play.<br/>No timer.</p>
+          {profile.highestStreak > 0 && (
+            <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 bg-orange-500 text-white rounded-full shadow-lg shadow-orange-500/20">
+              <Flame size={12} fill="currentColor" />
+              <span className="text-[10px] font-black">{profile.highestStreak}</span>
+            </div>
+          )}
+
+          <div className="mb-8">
+            <div className="w-14 h-14 bg-[#75c32c]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+              <Coffee className="text-[#75c32c]" size={30} strokeWidth={2.5} />
+            </div>
+            <h3 className="font-black text-2xl text-gray-900 dark:text-white uppercase tracking-tighter">Classic Run</h3>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-widest mt-2 leading-relaxed">
+              Infinite words. <br />One life. <span className="text-[#75c32c] font-black">Build a legacy.</span>
+            </p>
+          </div>
+
+          <div className="mt-auto flex items-center gap-2 text-[#75c32c] font-black text-[10px] uppercase tracking-[0.2em]">
+            Quick Play <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </div>
         </button>
 
-        {/* BLITZ MODE */}
-        <button 
-          onClick={() => onSelect('blitz')}
-          className="group p-8 rounded-[2.5rem] border-2 border-gray-50 hover:border-yellow-500 hover:bg-yellow-50/50 transition-all text-left flex flex-col justify-between"
+        {/* ONLINE 1v1 DUEL */}
+        {/* <button
+          onClick={() => !isLocked ? onSelect('online') : null}
+          className={`group relative p-8 rounded-[2rem] border-2 transition-all duration-500 text-left flex flex-col h-full overflow-hidden ${isLocked
+              ? "border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 cursor-not-allowed"
+              : "border-transparent bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:-translate-y-1"
+            }`}
         >
-          <div>
-            <Zap className="text-yellow-500 mb-4 group-hover:scale-110 transition-transform" size={32} />
-            <h3 className="font-black text-xl text-gray-900 dark:text-white uppercase tracking-tighter">Blitz</h3>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 leading-tight">Fast pace.<br/>+5s per hit.</p>
-          </div>
-        </button>
-
-        {/* ONLINE 1v1 MODE */}
-        <button 
-          onClick={() => onSelect('online')}
-          className="group p-8 rounded-[2.5rem] border-2 border-blue-100 bg-blue-50/30 hover:border-blue-500 hover:bg-blue-50 transition-all text-left flex flex-col justify-between relative overflow-hidden"
-        >
-          {/* Live Badge */}
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-2 py-1 rounded-md bg-blue-500 text-white text-[8px] font-black uppercase tracking-widest">
-            <span className="w-1 h-1 rounded-full bg-white animate-ping" />
-            Live
+         
+          <div className={`absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isLocked ? "bg-gray-200 dark:bg-gray-700 text-gray-500" : "bg-white/20 text-white backdrop-blur-md"
+            }`}>
+            {isLocked ? <Lock size={10} /> : <span className="relative flex h-2 w-2 mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span></span>}
+            {isLocked ? "Level Restricted" : "Live Duel"}
           </div>
 
-          <div>
-            <Globe className="text-blue-600 mb-4 group-hover:spin-slow transition-transform" size={32} />
-            <h3 className="font-black text-xl text-gray-900 dark:text-white uppercase tracking-tighter">Online Duel</h3>
-            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mt-1 leading-tight">1v1 Race.<br/>2 Min Sprint.</p>
-          </div>
-        </button>
+          <div className="mb-8">
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${isLocked ? 'bg-gray-200 dark:bg-gray-800' : 'bg-white/10 group-hover:rotate-12'}`}>
+              <Globe className={isLocked ? "text-gray-400" : "text-white"} size={30} strokeWidth={2.5} />
+            </div>
+            <h3 className={`font-black text-2xl uppercase tracking-tighter ${isLocked ? 'text-gray-400' : 'text-white'}`}>Online Arena</h3>
 
+            {isLocked ? (
+              <div className="mt-4 space-y-3">
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[9px] font-black uppercase text-gray-400">
+                    <span>XP Progress</span>
+                    <span>{profile.xp}/{requirements.MIN_XP}</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#75c32c] transition-all duration-1000" style={{ width: `${Math.min((profile.xp / requirements.MIN_XP) * 100, 100)}%` }} />
+                  </div>
+                </div>
+                {isCoinLocked && (
+                  <p className="text-[10px] text-amber-600 font-black uppercase flex items-center gap-1">
+                    <Coins size={10} /> Entry: {requirements.MIN_COINS} needed
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-[11px] text-blue-100 font-medium uppercase tracking-widest mt-2 leading-relaxed">
+                Compete for <span className="underline decoration-white/30 underline-offset-4">{requirements.MIN_COINS * 2} Coins</span>.<br />Ranked Matchmaking.
+              </p>
+            )}
+          </div>
+
+          <div className={`mt-auto flex items-center gap-2 font-black text-[10px] uppercase tracking-[0.2em] ${isLocked ? 'text-gray-400' : 'text-white'}`}>
+            {isLocked ? 'Boost XP to Unlock' : 'Join Queue'} <ChevronRight size={14} className={isLocked ? '' : 'group-hover:translate-x-1 transition-transform'} />
+          </div>
+        </button> */}
       </div>
 
-      <div className="mt-12 flex items-center justify-center gap-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">
-        <Users size={14} />
-        <span>1,402 Players Online</span>
-      </div>
+      {/* Footer Stats */}
+      {/* <div className="mt-10 flex items-center justify-center gap-8 border-t border-gray-100 dark:border-gray-800 pt-8 opacity-60">
+        <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-500 tracking-widest">
+          <Users size={14} className="text-blue-500" />
+          <span>2.4k Online</span>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-500 tracking-widest">
+          <Trophy size={14} className="text-amber-500" />
+          <span>Season 1 Ends in 4d</span>
+        </div>
+      </div> */}
     </Card>
   );
 }
