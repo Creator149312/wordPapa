@@ -1,259 +1,337 @@
 'use client';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card } from "@/components/ui/card";
-import { io } from 'socket.io-client';
 
 // Components
-import ModeSelector from './components/ModeSelector';
 import LevelUpModal from './components/LevelUpModal';
-import HangmanDrawing from './components/HangmanDrawing';
+import SaveProgressModal from './components/SaveProgressModal';
+import DynamicPapa from './components/DynamicPapa';
 import GameResults from './components/GameResults';
 import VirtualKeyboard from './components/VirtualKeyboard';
 import LevelBar from './components/LevelBar';
 import GameHeader from './components/GameHeader';
 import WordDisplay from './components/WordDisplay';
 import OnlineRaceTracker from './components/OnlineRaceTracker';
-import OnlineLobby from './components/OnlineLobby';
+import GameLobbyView from './components/GameLobbyView';
+import GameTransitionOverlay from './components/GameTransitionOverlay';
 
 // Hooks & Lib
-import { useWordPapaProfile } from './hooks/useWordPapaProfile';
-import { calculateLevel } from './lib/progression';
+import { useProfile } from './../../ProfileContext';
+import { useHangmanSocket } from './hooks/useHangmanSocket';
+import { useGameLogic } from './hooks/useGameLogic';
+import { calculateLevel, getClassicRewards, getOnlineMatchRewards } from './lib/progression';
 
-// Initialize socket outside component to prevent multiple connections on re-render
-const socket = io('https://crispy-computing-machine-x5xxrx74gv43p6p5-3001.app.github.dev', { autoConnect: false, transports: ['websocket'] } // Forces websocket for better compatibility in cloud environments
-);
+const ONLINE_REQUIREMENTS = { MIN_XP: 0, MIN_COINS: 10 };
 
-const WORDS_POOL = [
-  { word: "HAMLET", category: "Books" },
-  { word: "EINSTEIN", category: "People" },
-  { word: "FERRARI", category: "Cars" },
-  { word: "PINEAPPLE", category: "Fruits" }
-];
+export default function Hangman({ initialMode = null, dailyWord = null, onDailyComplete = null }) {
+  // --- Global State ---
+  const {
+    profile,
+    applyClassicResult,
+    showLevelUp,
+    setShowLevelUp,
+    deductCoins,
+    applyOnlineResults,
+    addDailyRewards
+  } = useProfile();
 
-export default function Hangman() {
-  // 1. STATE MANAGEMENT
-  const [gameMode, setGameMode] = useState(null);
-  const [gameState, setGameState] = useState('menu');
-  const [hasClaimedXP, setHasClaimedXP] = useState(false);
-  const [opponent, setOpponent] = useState(null); // Will store { name, progress, roomId }
+  // --- Local State ---
+  const [gameMode, setGameMode] = useState(initialMode);
+  const [gameState, setGameState] = useState(initialMode ? 'playing' : 'menu');
+  const [hasClaimedResult, setHasClaimedResult] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(120); // Matched to Rule #3
+  const [sessionSnapshot, setSessionSnapshot] = useState({ streak: 0, totalXP: 0, totalCoins: 0 });
+  const [showSavePrompt, setShowSavePrompt] = useState(false);
+  const [opponent, setOpponent] = useState(null);
+  const [opponentWon, setOpponentWon] = useState(false);
 
-  const { profile, addWin, showLevelUp, setShowLevelUp } = useWordPapaProfile();
+  // --- Game Logic Hook ---
+  const {
+    currentGame,
+    guessedLetters,
+    setGuessedLetters,
+    isTransitioning,
+    setIsTransitioning,
+    wordLetters,
+    wrongGuesses,
+    correctGuessesCount,
+    isLost: logicIsLost,
+    isWon: logicIsWon,
+    initGameSession,
+    currentArena
+  } = useGameLogic(dailyWord, profile.xp);
+
   const currentRank = useMemo(() => calculateLevel(profile.xp), [profile.xp]);
 
-  const [currentGame, setCurrentGame] = useState(null);
-  const [guessedLetters, setGuessedLetters] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [isAnimating, setIsAnimating] = useState(false);
+  // --- Socket Hook ---
+  const { joinQueue, disconnect, sendGuess, emitFinished, socket } = useHangmanSocket({
+    profile,
+    initGameSession: (mode, data) => {
+      initGameSession(mode, data);
+      setHasClaimedResult(false);
+      setOpponentWon(false);
+      setTimeLeft(120); // Ensure 120s timer
+    },
+    deductCoins,
+    setOpponent,
+    setGameState,
+    setOpponentWon,
+    applyOnlineResults,
+    setHasClaimedResult, 
+  });
 
-  // 2. DERIVED STATE
-  const wordLetters = useMemo(() => currentGame?.word.toUpperCase().split('') || [], [currentGame]);
-  const wrongGuesses = useMemo(() => guessedLetters.filter(l => !wordLetters.includes(l)), [guessedLetters, wordLetters]);
+  // --- NEW RULES LOGIC: WIN/LOSS DETERMINATION ---
+  
+  // Rule #3: Timer Logic
+  const isTimeUp = gameMode === 'online' && timeLeft <= 0;
+  const myScore = correctGuessesCount;
+  const oppScore = opponent?.progress || 0;
 
-  const correctGuessesCount = useMemo(() =>
-    wordLetters.filter(letter => guessedLetters.includes(letter)).length,
-    [wordLetters, guessedLetters]);
-
-  const isWon = wordLetters.length > 0 && wordLetters.every(l => guessedLetters.includes(l));
-  const isLost = wrongGuesses.length >= 6 || ((gameMode === 'blitz' || gameMode === 'online') && timeLeft <= 0);
-  const isGameOver = isWon || isLost;
-
-  // 3. ACTIONS
-
-  // Updated to accept optional server data for online sync
-  const initGameSession = useCallback((mode, serverData = null) => {
-    if (serverData) {
-      setCurrentGame({ word: serverData.word, category: serverData.category });
-    } else {
-      const next = WORDS_POOL[Math.floor(Math.random() * WORDS_POOL.length)];
-      setCurrentGame({ word: next.word, category: next.category });
+  // Rule #2 & #3 Implementation
+  const isWon = useMemo(() => {
+    if (gameMode === 'online') {
+      return (logicIsWon && !opponentWon) || (isTimeUp && myScore > oppScore);
     }
-    setGuessedLetters([]);
-    setHasClaimedXP(false);
-    setTimeLeft(mode === 'online' ? 120 : 60);
-  }, []);
+    return logicIsWon;
+  }, [gameMode, logicIsWon, opponentWon, isTimeUp, myScore, oppScore]);
 
+  const isLost = useMemo(() => {
+    if (gameMode === 'online') {
+      return opponentWon || logicIsLost || (isTimeUp && myScore < oppScore);
+    }
+    return logicIsLost;
+  }, [gameMode, opponentWon, logicIsLost, isTimeUp, myScore, oppScore]);
+
+  // Handle Tie-Breaker
+  const isDraw = gameMode === 'online' && isTimeUp && myScore === oppScore && !logicIsWon && !opponentWon;
+  
+  const isGameOver = isWon || isLost || isDraw;
+
+  // --- Actions ---
   const startNewGame = useCallback((resetToMenu = false) => {
+    if (resetToMenu && gameState === 'playing' && gameMode === 'classic' && !isGameOver) {
+        applyClassicResult(false);
+    }
+
     if (resetToMenu) {
-      if (socket.connected) socket.disconnect();
+      disconnect();
       setGameMode(null);
       setGameState('menu');
       setOpponent(null);
-      setCurrentGame(null);
+      setSessionSnapshot({ streak: 0, totalXP: 0, totalCoins: 0 });
     } else {
       initGameSession(gameMode);
       setGameState('playing');
     }
-  }, [gameMode, initGameSession]);
+    setHasClaimedResult(false);
+    setShowSavePrompt(false);
+  }, [gameMode, gameState, isGameOver, initGameSession, disconnect, applyClassicResult]);
 
   const handleModeSelect = (mode) => {
-    setGameMode(mode);
+    if (mode === 'classic' && profile.lives <= 0) {
+      return alert(`❤️ You are out of lives! Wait for recovery.`);
+    }
+
     if (mode === 'online') {
-      socket.connect();
+      if (profile.papaPoints < ONLINE_REQUIREMENTS.MIN_COINS) return alert(`💰 Not enough coins!`);
+      setGameMode(mode);
+      joinQueue();
       setGameState('lobby');
     } else {
+      setGameMode(mode);
       initGameSession(mode);
       setGameState('playing');
     }
   };
 
-  // 4. SERVER EVENT LISTENERS
-  useEffect(() => {
-    // Triggered when server pairs two players
-    socket.on('match-found', (data) => {
-      // data: { roomId, opponentName, word, category }
-      setOpponent({ name: data.opponentName, progress: 0, roomId: data.roomId });
-      initGameSession('online', { word: data.word, category: data.category });
-      setGameState('playing');
-    });
-
-    // Triggered when opponent finds a correct letter
-    socket.on('opponent-progress', (data) => {
-      // data: { score }
-      setOpponent(prev => prev ? { ...prev, progress: data.score } : null);
-    });
-
-    return () => {
-      socket.off('match-found');
-      socket.off('opponent-progress');
-    };
-  }, [initGameSession]);
-
   const handleGuess = useCallback((letter) => {
     const L = letter.toUpperCase();
-    if (guessedLetters.includes(L) || isGameOver || gameState !== 'playing') return;
+    if (guessedLetters.includes(L) || isGameOver || gameState !== 'playing' || isTransitioning) return;
 
-    const newGuessedLetters = [...guessedLetters, L];
-    setGuessedLetters(newGuessedLetters);
+    setGuessedLetters(prev => [...prev, L]);
 
-    // Emit progress to server if in Online mode
     if (gameMode === 'online' && opponent?.roomId) {
-      const newScore = wordLetters.filter(l => newGuessedLetters.includes(l)).length;
-      socket.emit('send-guess', {
-        roomId: opponent.roomId,
-        score: newScore
-      });
+      // Calculate how many letters are revealed after this guess
+      const tempGuesses = [...guessedLetters, L];
+      const newScore = wordLetters.filter(l => tempGuesses.includes(l)).length;
+      sendGuess(opponent.roomId, L, newScore);
     }
+  }, [guessedLetters, isGameOver, gameState, wordLetters, gameMode, opponent, isTransitioning, setGuessedLetters, sendGuess]);
 
-    if (wordLetters.includes(L)) {
-      if (gameMode === 'blitz') setTimeLeft(prev => prev + 5);
-    } else {
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 500);
-    }
-  }, [guessedLetters, isGameOver, gameState, wordLetters, gameMode, opponent]);
-
-  // 5. EFFECTS
-
-  // XP Claiming
+  // --- Unified Results Effect ---
   useEffect(() => {
-    if (isWon && !hasClaimedXP) {
-      addWin(gameMode);
-      setHasClaimedXP(true);
-    }
-  }, [isWon, hasClaimedXP, gameMode, addWin]);
+    if (isGameOver && !hasClaimedResult) {
+      setHasClaimedResult(true);
 
-  // Keyboard Listeners
+      // --- 1. CLASSIC MODE LOGIC (UNTOUCHED) ---
+      if (gameMode === 'classic') {
+        if (isWon) {
+          const rewards = getClassicRewards(profile.currentStreak + 1);
+          setSessionSnapshot(prev => ({
+            streak: prev.streak + 1,
+            totalXP: prev.totalXP + rewards.xpGain,
+            totalCoins: prev.totalCoins + rewards.coinGain
+          }));
+          applyClassicResult(true);
+          setIsTransitioning(true);
+          setTimeout(() => {
+            initGameSession('classic');
+            setGuessedLetters([]);
+            setIsTransitioning(false);
+            setHasClaimedResult(false);
+          }, 2000);
+        } else {
+          applyClassicResult(false);
+          if (profile.isGhost) {
+            setTimeout(() => setShowSavePrompt(true), 1200);
+          }
+        }
+      }
+      
+      // --- 2. ONLINE 1v1 LOGIC (FULLY UPDATED) ---
+      else if (gameMode === 'online') {
+        // If tied, streak is maintained but no reward
+        if (isDraw) {
+          setSessionSnapshot({ streak: profile.onlineWinStreak, totalXP: 0, totalCoins: 0 });
+        } else {
+          // Rule #5: Apply rewards and update Multiplayer Streak
+          const onlineOutcome = getOnlineMatchRewards(isWon, profile.onlineWinStreak);
+          
+          setSessionSnapshot({
+            streak: isWon ? profile.onlineWinStreak + 1 : 0,
+            totalXP: onlineOutcome.xpChange,
+            totalCoins: onlineOutcome.coinChange
+          });
+
+          // Apply results to global profile (Boolean only, local context handles math)
+          applyOnlineResults(isWon);
+
+          // Rule #2: If I won by finishing, tell the server so opponent gets "Defeat"
+          if (isWon && logicIsWon && opponent?.roomId) {
+            emitFinished(opponent.roomId, profile.name);
+          }
+        }
+      }
+
+      // --- 3. DAILY LOGIC (UNTOUCHED) ---
+      else if (gameMode === 'daily' && isWon) {
+        addDailyRewards(50, 20);
+        onDailyComplete?.();
+      }
+    }
+  }, [isGameOver, isWon, isDraw, gameMode, hasClaimedResult, profile, applyClassicResult, applyOnlineResults, initGameSession, addDailyRewards, onDailyComplete, opponent, emitFinished, setIsTransitioning, setGuessedLetters, logicIsWon]);
+
+  // --- Listeners & Timer ---
   useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.key.match(/^[a-zA-Z]$/)) handleGuess(e.key);
-    };
+    const onKeyDown = (e) => { if (e.key.match(/^[a-zA-Z]$/)) handleGuess(e.key); };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [handleGuess]);
 
-  // Timer Logic
   useEffect(() => {
-    if (!['blitz', 'online'].includes(gameMode) || isGameOver || gameState !== 'playing') return;
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    if (gameMode !== 'online' || isGameOver || gameState !== 'playing') return;
+    const timer = setInterval(() => setTimeLeft(prev => prev <= 1 ? 0 : prev - 1), 1000);
     return () => clearInterval(timer);
   }, [gameMode, isGameOver, gameState]);
 
-  // 6. RENDER LOGIC
-  if (gameState === 'menu') {
-    return <ModeSelector onSelect={handleModeSelect} />;
-  }
-
-  if (gameState === 'lobby') {
+  // --- Render ---
+  if (gameState === 'menu' || gameState === 'lobby') {
     return (
-      <div className="max-w-2xl mx-auto space-y-4">
-        <LevelBar profile={profile} />
-        <OnlineLobby
-          socket={socket}
-          profile={profile}
-          onCancel={() => startNewGame(true)}
-        />
-      </div>
+      <GameLobbyView
+        gameState={gameState}
+        handleModeSelect={handleModeSelect}
+        profile={profile}
+        requirements={ONLINE_REQUIREMENTS}
+        socket={socket}
+        startNewGame={startNewGame}
+      />
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4">
-      <LevelBar profile={profile} />
+    <div className="min-h-screen bg-gray-50 dark:bg-black p-2 md:p-4 transition-all duration-700">
+      <div className="max-w-4xl mx-auto mb-2">
+        <LevelBar />
+      </div>
 
-      <Card className="p-8 md:p-12 rounded-[2.5rem] border-2 border-gray-100 dark:border-gray-800 shadow-2xl bg-white dark:bg-gray-900 relative overflow-hidden">
+      <Card className={`max-w-4xl mx-auto p-4 md:p-6 rounded-[2rem] border-none shadow-2xl bg-white dark:bg-gray-900 transition-all duration-500 relative overflow-hidden ${isTransitioning ? 'opacity-40 scale-[0.97]' : 'opacity-100'}`}>
+        
+        <div className={`absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 blur-[100px] opacity-20 transition-colors duration-1000 ${
+          currentArena?.id === 'laboratory' ? 'bg-purple-500' : 
+          currentArena?.id === 'library' ? 'bg-blue-500' : 'bg-[#75c32c]'
+        }`} />
 
-        <GameHeader
-          gameMode={gameMode}
-          category={currentGame?.category}
-          timeLeft={timeLeft}
-          onQuit={() => startNewGame(true)}
-        />
-
-        {gameMode === 'online' && opponent && (
-          <OnlineRaceTracker
-            myCount={correctGuessesCount}
-            oppCount={opponent.progress}
-            total={wordLetters.length}
-            oppName={opponent.name}
-          />
-        )}
-
-        <div className="flex flex-col items-center space-y-12">
-          <HangmanDrawing errorCount={wrongGuesses.length} isAnimating={isAnimating} />
-
-          <WordDisplay
-            wordLetters={wordLetters}
-            guessedLetters={guessedLetters}
-            isLost={isLost}
-            isWon={isWon}
+        <div className="relative z-10">
+          <GameHeader
+            gameMode={gameMode}
+            category={currentGame?.category}
+            timeLeft={timeLeft}
+            onQuit={() => startNewGame(true)}
+            currentArena={currentArena}
+            streak={gameMode === 'online' ? (isWon ? sessionSnapshot.streak : profile.onlineWinStreak) : 
+                    gameMode === 'daily' ? profile.dailyStreak : 
+                    (isTransitioning ? sessionSnapshot.streak : profile.currentStreak)}
           />
 
-          {!isGameOver ? (
-            <VirtualKeyboard
-              guessedLetters={guessedLetters}
-              wordLetters={wordLetters}
-              onGuess={handleGuess}
-            />
-          ) : (
-            <GameResults
-              isWon={isWon}
-              word={currentGame?.word}
-              category={currentGame?.category}
-              guessedLetters={guessedLetters}
-              mode={gameMode}
-              onRestart={() => startNewGame(true)}
-              myScore={correctGuessesCount}
-              oppScore={opponent?.progress || 0}
-              oppName={opponent?.name}
-            />
-          )}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-4">
+            <div className="lg:col-span-8 flex flex-col space-y-6">
+              <div className="py-10 bg-gray-50 dark:bg-gray-800/40 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 flex justify-center shadow-inner relative overflow-hidden">
+                <WordDisplay wordLetters={wordLetters} guessedLetters={guessedLetters} isLost={isLost} isWon={isWon} />
+              </div>
+
+              <div className="min-h-[220px] flex flex-col justify-center">
+                {(!hasClaimedResult || isTransitioning) ? (
+                  <VirtualKeyboard guessedLetters={guessedLetters} wordLetters={wordLetters} onGuess={handleGuess} disabled={isTransitioning} />
+                ) : (
+                  <GameResults
+                    isWon={isWon}
+                    word={currentGame?.word}
+                    category={currentGame?.category}
+                    guessedLetters={guessedLetters}
+                    mode={gameMode}
+                    onRestart={() => startNewGame(false)}
+                    myScore={correctGuessesCount}
+                    oppScore={opponent?.progress || 0}
+                    oppName={opponent?.name}
+                    streak={sessionSnapshot.streak}
+                    xpEarned={sessionSnapshot.totalXP}
+                    coinsEarned={sessionSnapshot.totalCoins}
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="lg:col-span-4 flex flex-col items-center justify-center space-y-6">
+              <div className="w-full max-w-[280px] lg:max-w-full">
+                <DynamicPapa
+                  wrongCount={wrongGuesses.length}
+                  isWon={isWon}
+                  isLost={isLost}
+                  streak={gameMode === 'online' ? (isWon ? sessionSnapshot.streak : profile.onlineWinStreak) : 
+                          (isTransitioning ? sessionSnapshot.streak : profile.currentStreak)}
+                />
+              </div>
+
+              {gameMode === 'online' && opponent && (
+                <div className="w-full px-4 py-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm">
+                  <OnlineRaceTracker myCount={correctGuessesCount} oppCount={opponent.progress} total={wordLetters.length} oppName={opponent.name} />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
+        {isTransitioning && <GameTransitionOverlay />}
       </Card>
 
-      <LevelUpModal
-        isOpen={showLevelUp}
-        rank={currentRank}
-        onClose={() => setShowLevelUp(false)}
-      />
+      <LevelUpModal isOpen={showLevelUp} rank={currentRank} onClose={() => setShowLevelUp(false)} />
+
+      {/* <SaveProgressModal
+        isOpen={showSavePrompt}
+        onClose={() => setShowSavePrompt(false)}
+        xp={profile.xp}
+        points={profile.papaPoints}
+      /> */}
     </div>
   );
 }

@@ -1,10 +1,10 @@
 'use client';
 
-export default function VirtualKeyboard({ guessedLetters, wordLetters, onGuess }) {
+export default function VirtualKeyboard({ guessedLetters, wordLetters, onGuess, disabled }) {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   return (
-    <div className="grid grid-cols-7 md:grid-cols-9 gap-2 w-full max-w-xl animate-in fade-in zoom-in duration-500">
+    <div className="grid grid-cols-7 gap-1 md:gap-1.5 w-full max-w-sm mx-auto select-none animate-in fade-in duration-500">
       {letters.map((char) => {
         const isGuessed = guessedLetters.includes(char);
         const isCorrect = isGuessed && wordLetters.includes(char);
@@ -14,21 +14,36 @@ export default function VirtualKeyboard({ guessedLetters, wordLetters, onGuess }
           <button
             key={char}
             onClick={() => onGuess(char)}
-            disabled={isGuessed}
+            disabled={disabled || isGuessed}
             className={`
-              h-10 md:h-12 text-sm font-black rounded-xl transition-all active:scale-95
-              ${isCorrect 
-                ? 'bg-[#75c32c] text-white shadow-[0_4px_0_0_#5da124]' 
-                : isWrong 
-                ? 'bg-gray-100 text-gray-300 dark:bg-gray-800 dark:text-gray-600 opacity-50' 
-                : 'bg-gray-50 dark:bg-gray-800 hover:border-[#75c32c] border-2 border-transparent text-gray-700 dark:text-gray-200'
+              /* Compact square tiles */
+              aspect-square flex items-center justify-center
+              text-[11px] md:text-xs font-black rounded-md
+              transition-all duration-75 border-b-[2px]
+              
+              ${!isGuessed 
+                ? 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-950 active:translate-y-[1px] active:border-b-0' 
+                : ''
               }
+              ${isCorrect 
+                ? 'bg-[#75c32c] text-white border-[#5da124]' 
+                : ''
+              }
+              ${isWrong 
+                ? 'bg-gray-100 dark:bg-gray-900 text-gray-400 dark:text-gray-600 border-transparent opacity-30 shadow-none' 
+                : ''
+              }
+              ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
             `}
           >
             {char}
           </button>
         );
       })}
+      
+      {/* Optional: Visual spacers to maintain grid symmetry for the last row */}
+      <div className="aspect-square opacity-0 pointer-events-none" />
+      <div className="aspect-square opacity-0 pointer-events-none" />
     </div>
   );
 }

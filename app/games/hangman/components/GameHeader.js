@@ -1,12 +1,23 @@
 'use client';
 import { useState } from 'react';
-import { RotateCcw, Globe, Tag, Timer, AlertTriangle, X, Check } from 'lucide-react';
+import { 
+  Globe, Tag, Timer, AlertTriangle, X, Check, 
+  ArrowLeft, Heart, Trees, BookOpen, FlaskConical 
+} from 'lucide-react';
+import { useProfile } from '../../../ProfileContext';
 
-export default function GameHeader({ gameMode, category, timeLeft, onQuit }) {
+export default function GameHeader({ 
+  gameMode, 
+  category, 
+  timeLeft, 
+  onQuit, 
+  streak, 
+  currentArena // Passed from useGameLogic
+}) {
   const [showConfirm, setShowConfirm] = useState(false);
+  const { profile } = useProfile();
 
   const handleQuitClick = () => {
-    // If it's a solo mode, just quit. If it's online, ask first.
     if (gameMode === 'online') {
       setShowConfirm(true);
     } else {
@@ -14,66 +25,99 @@ export default function GameHeader({ gameMode, category, timeLeft, onQuit }) {
     }
   };
 
+  // Arena-specific icon and styling logic
+  const getArenaTheme = () => {
+    switch (currentArena?.id) {
+      case 'laboratory':
+        return { icon: <FlaskConical size={12} />, color: 'text-purple-500', bg: 'bg-purple-500/10' };
+      case 'library':
+        return { icon: <BookOpen size={12} />, color: 'text-blue-500', bg: 'bg-blue-500/10' };
+      default:
+        return { icon: <Trees size={12} />, color: 'text-[#75c32c]', bg: 'bg-[#75c32c]/10' };
+    }
+  };
+
+  const theme = getArenaTheme();
+
   return (
-    <div className="flex justify-between items-center mb-10 relative">
-      {/* QUIT BUTTON / CONFIRMATION OVERLAY */}
-      <div className="flex items-center">
+    <div className="flex justify-between items-center mb-6 relative">
+      {/* LEFT SIDE: ACTIONS & ARENA INFO */}
+      <div className="flex items-center gap-3">
         {!showConfirm ? (
           <button 
             onClick={handleQuitClick} 
-            className="group flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 hover:text-red-500 transition-colors"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 dark:bg-gray-800 dark:hover:bg-red-950/30 transition-all duration-300"
           >
-            <RotateCcw size={12} className="group-hover:rotate-[-120deg] transition-transform" />
-            Quit Game
+            <ArrowLeft size={14} className="text-gray-500 group-hover:text-red-500 group-hover:-translate-x-1 transition-all" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 group-hover:text-red-600">Quit</span>
           </button>
         ) : (
-          <div className="flex items-center gap-3 bg-red-50 dark:bg-red-950/30 px-3 py-1.5 rounded-xl border border-red-100 dark:border-red-900/50 animate-in fade-in zoom-in duration-200">
-            <span className="text-[9px] font-black uppercase text-red-600 dark:text-red-400 flex items-center gap-1">
-              <AlertTriangle size={10} /> Forfeit Match?
+          <div className="flex items-center gap-3 bg-red-600 text-white px-3 py-1.5 rounded-full shadow-lg shadow-red-500/20 animate-in slide-in-from-left-2 duration-300">
+            <span className="text-[10px] font-black uppercase tracking-tighter flex items-center gap-2">
+              <AlertTriangle size={12} /> Forfeit?
             </span>
-            <div className="flex gap-1">
-              <button 
-                onClick={onQuit}
-                className="p-1 hover:bg-red-500 hover:text-white text-red-600 rounded-md transition-colors"
-              >
-                <Check size={14} />
-              </button>
-              <button 
-                onClick={() => setShowConfirm(false)}
-                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 rounded-md transition-colors"
-              >
-                <X size={14} />
-              </button>
+            <div className="flex gap-1 border-l border-white/20 pl-2">
+              <button onClick={onQuit} className="p-0.5 hover:scale-125 transition-transform"><Check size={16} /></button>
+              <button onClick={() => setShowConfirm(false)} className="p-0.5 hover:scale-125 transition-transform"><X size={16} /></button>
             </div>
+          </div>
+        )}
+
+        {/* Dynamic Arena Badge */}
+        <div className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full ${theme.bg} ${theme.color} border border-current/10`}>
+          {theme.icon}
+          <span className="text-[9px] font-black uppercase tracking-widest leading-none">
+            {currentArena?.name || "Backyard"}
+          </span>
+        </div>
+
+        {streak > 0 && (
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/20 text-orange-600 border border-orange-100 dark:border-orange-900/50">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+            </span>
+            <span className="text-[10px] font-black tracking-widest">{streak} STREAK</span>
           </div>
         )}
       </div>
 
-      {/* GAME INFO & TIMERS */}
-      <div className="flex items-center gap-4">
-        {gameMode === 'online' ? (
-          <div className="flex flex-col items-end">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-6:00 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
-              <Globe size={12} strokeWidth={3} />
-              <span className="text-[10px] font-black uppercase tracking-widest">1vs1 Duel</span>
-            </div>
-            {/* Show category even in online mode for context */}
-            <span className="text-[8px] font-bold text-gray-400 uppercase tracking-tighter mt-1 mr-2">{category}</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-            <Tag size={12} className="text-[#75c32c]" strokeWidth={3} />
-            <span className="text-[10px] font-black uppercase tracking-tighter">{category}</span>
-          </div>
-        )}
+      {/* RIGHT SIDE: STATUS PILLS */}
+      <div className="flex items-center gap-2 md:gap-3">
+        {/* Lives Counter */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
+          <Heart 
+            size={12} 
+            className={profile.lives > 0 ? "text-red-500 animate-pulse" : "text-gray-400"} 
+            fill={profile.lives > 0 ? "currentColor" : "none"} 
+          />
+          <span className="text-[10px] font-black text-gray-700 dark:text-gray-200">
+            {profile.lives}
+          </span>
+        </div>
 
-        {(gameMode === 'blitz' || gameMode === 'online') && (
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full font-black text-xs tabular-nums border ${
-            timeLeft < 15 
-              ? 'bg-red-100 text-red-600 border-red-200 animate-pulse' 
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700'
-          }`}>
-            <Timer size={14} /> {timeLeft}s
+        {/* Category Pill */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
+          {gameMode === 'online' ? (
+            <Globe size={14} className="text-blue-500 animate-pulse" />
+          ) : (
+            <Tag size={14} className={theme.color} />
+          )}
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-700 dark:text-gray-200">
+            {category || 'Classic'}
+          </span>
+        </div>
+
+        {/* Timer Pill */}
+        {gameMode === 'online' && (
+          <div className={`
+            flex items-center gap-2 px-3 py-1.5 rounded-full font-black text-xs tabular-nums transition-all duration-300
+            ${timeLeft < 15 
+              ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse' 
+              : 'bg-gray-900 text-white dark:bg-white dark:text-black'}
+          `}>
+            <Timer size={14} strokeWidth={3} />
+            <span>{timeLeft}s</span>
           </div>
         )}
       </div>
