@@ -1,5 +1,5 @@
 import { connectMongoDB } from "@lib/mongodb";
-import List from "@models/List"; // Adjust path to your List model
+import List from "@models/list";
 
 const BASE_URL = "https://words.englishbix.com";
 
