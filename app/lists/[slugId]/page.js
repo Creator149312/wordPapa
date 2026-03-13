@@ -3,7 +3,7 @@ import { validateObjectID } from "@utils/Validator";
 import ListClientWrapper from "../ListClientWrapper";
 import { redirect } from "next/navigation";
 
-// Helper to create consistent slugs (you can move this to @utils/slugify)
+// Helper to create consistent slugs
 const slugify = (text) => 
   text.toString().toLowerCase().trim()
     .replace(/\s+/g, '-')
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }) {
   const parts = slugId.split("-");
   const id = parts.length > 1 ? parts.pop() : slugId;
 
-  if (!validateObjectID(id)) return { title: "Invalid List | WordPapa" };
+  if (!validateObjectID(id)) return { title: "Invalid List | Wordpapa" };
 
   try {
     const res = await fetch(`${apiConfig.apiUrl}/list/${id}`);
@@ -25,11 +25,14 @@ export async function generateMetadata({ params }) {
     if (!data.list) throw new Error();
 
     return {
-      title: `${data.list.title}`,
-      description: `Master ${data.list.words?.length || 0} words from this collection.`,
+      title: {
+        absolute: `${data.list.title} Flashcards - Wordpapa`
+      },
+      // Updated description with list title for better SEO context
+      description: `Master the ${data.list.title} using interactive flashcards, audio, and speaking practice.`,
     };
   } catch {
-    return { title: "List Not Found | WordPapa" };
+    return { title: { absolute: "List Not Found | Wordpapa" } };
   }
 }
 
