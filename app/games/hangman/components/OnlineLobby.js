@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Globe, Users, X, Coins, Sword, ShieldCheck } from 'lucide-react';
-import { GAME_STAKES } from '../lib/progression';
+import { GAME_STAKES } from '../constants';
 
 export default function OnlineLobby({ socket, profile, onCancel }) {
   const [status, setStatus] = useState('searching'); 

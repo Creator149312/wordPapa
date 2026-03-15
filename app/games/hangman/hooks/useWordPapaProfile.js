@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
+import { useSession } from "next-auth/react"; // Add this
 import { 
   calculateLevel, 
   getClassicRewards, 
@@ -9,7 +10,7 @@ import {
 
 const STORAGE_KEY = 'wordpapa_profile';
 const MAX_LIVES = 10;
-const RECOVERY_MS = 3 * 60 * 60 * 1000; // 3 Hours per life
+const RECOVERY_MS = 3 * 60 * 60 * 1000; 
 
 const INITIAL_STATE = {
   name: "Player",
@@ -17,10 +18,10 @@ const INITIAL_STATE = {
   papaPoints: 50,
   lives: MAX_LIVES,
   lastLifeLost: Date.now(),
-  currentStreak: 0,       // Classic Streak
-  highestStreak: 0,       // Classic Peak
-  onlineWinStreak: 0,     // NEW: Multiplayer Streak
-  highestWinStreak: 0,    // NEW: Multiplayer Peak
+  currentStreak: 0,
+  highestStreak: 0,
+  onlineWinStreak: 0,
+  highestWinStreak: 0,
   dailyStreak: 0,
   lastDailyDate: null,
   unlockedThemes: ['classic'],
@@ -29,11 +30,47 @@ const INITIAL_STATE = {
 };
 
 export function useWordPapaProfile() {
+  const { data: session, status } = useSession(); // Access NextAuth session
   const [profile, setProfile] = useState(INITIAL_STATE);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // 1. Initial Load & Offline Life Recovery Logic
+  // --- NEW: Sync local state with DB data ---
+  const updateLocalProfile = useCallback((newProfileData) => {
+    setProfile(prev => {
+      const merged = { ...prev, ...newProfileData };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      return merged;
+    });
+  }, []);
+
+  // --- NEW: Auth Effect (Handles Ghost -> User transition) ---
+  useEffect(() => {
+    const syncWithAuth = async () => {
+      if (status === "authenticated" && session?.user) {
+        try {
+          // Attempt to fetch existing profile from DB
+          const res = await fetch("/api/game/hangman/sync"); 
+          const data = await res.json();
+
+          if (data.success && data.profile) {
+            updateLocalProfile({ ...data.profile, isGhost: false });
+          } else {
+            // First time user: Convert ghost progress to DB record
+            convertGhostToUser({ 
+              name: session.user.name, 
+              userEmail: session.user.email 
+            });
+          }
+        } catch (err) {
+          console.error("Auth Sync Error:", err);
+        }
+      }
+    };
+    syncWithAuth();
+  }, [status, session]);
+
+  // 1. Initial Load & Offline Life Recovery
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -56,14 +93,12 @@ export function useWordPapaProfile() {
           }
         }
 
-        setProfile({
+        setProfile(prev => ({
           ...INITIAL_STATE,
           ...parsed,
-          isGhost: parsed.isGhost ?? true, 
           lives: updatedLives,
           lastLifeLost: lastLifeTimestamp,
-          name: parsed.name || "Player_" + Math.floor(Math.random() * 1000)
-        });
+        }));
       } catch (e) {
         console.error("Failed to parse profile", e);
       }
@@ -75,19 +110,14 @@ export function useWordPapaProfile() {
   const updateProfile = useCallback((updateFn) => {
     setProfile(prev => {
       const newProfile = updateFn(prev);
-      
       const oldLevel = calculateLevel(prev.xp).level;
       const newLevel = calculateLevel(newProfile.xp).level;
       
-      // Automatic Level Up Check
       if (newLevel > oldLevel) {
         setShowLevelUp(true);
-        
-        // --- NEW: Arena Unlock Bonus Integration ---
         const arenaBonus = getArenaUnlockBonus(newLevel);
         if (arenaBonus > 0) {
           newProfile.papaPoints += arenaBonus;
-          console.log(`Arena Bonus Unlocked: +${arenaBonus} Coins`);
         }
       }
 
@@ -96,7 +126,7 @@ export function useWordPapaProfile() {
     });
   }, []);
 
-  // 3. Classic Mode Results (XP, Coins, Streaks, Lives) - UNTOUCHED
+  // 3. Classic Result
   const applyClassicResult = (isWin) => {
     updateProfile(prev => {
       const newStreak = isWin ? prev.currentStreak + 1 : 0;
@@ -124,12 +154,10 @@ export function useWordPapaProfile() {
     });
   };
 
-  // 4. Online Race Results - UPDATED for 1v1 High Stakes
+  // 4. Online Results
   const applyOnlineResults = (isWinner) => {
     updateProfile(prev => {
-      // Use the new Multiplayer Math
       const outcome = getOnlineMatchRewards(isWinner, prev.onlineWinStreak);
-      
       const newWinStreak = outcome.shouldResetStreak ? 0 : prev.onlineWinStreak + 1;
 
       return {
@@ -142,35 +170,23 @@ export function useWordPapaProfile() {
     });
   };
 
-  // 5. Daily Rewards & Streaks
+  // 5. Daily Rewards
   const addDailyRewards = (xp, coins) => {
     updateProfile(prev => {
       const today = new Date().toISOString().slice(0, 10);
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().slice(0, 10);
-
-      let newDailyStreak = prev.dailyStreak;
-      if (prev.lastDailyDate === yesterdayStr) {
-        newDailyStreak += 1;
-      } else if (prev.lastDailyDate !== today) {
-        newDailyStreak = 1;
-      }
-
       return {
         ...prev,
         xp: prev.xp + xp,
         papaPoints: prev.papaPoints + coins,
-        dailyStreak: newDailyStreak,
+        dailyStreak: (prev.dailyStreak || 0) + 1,
         lastDailyDate: today
       };
     });
   };
 
-  // 6. Economy Actions
+  // 6. Economy
   const deductCoins = (amount) => {
     if (profile.papaPoints < amount) return false;
-    
     updateProfile(prev => ({
       ...prev,
       papaPoints: prev.papaPoints - amount
@@ -178,7 +194,7 @@ export function useWordPapaProfile() {
     return true;
   };
 
-  // 7. Theme Purchases
+  // 7. Themes
   const purchaseTheme = (themeId, price) => {
     if (profile.papaPoints >= price && !profile.unlockedThemes.includes(themeId)) {
       updateProfile(prev => ({
@@ -211,6 +227,7 @@ export function useWordPapaProfile() {
     purchaseTheme,
     showLevelUp,
     setShowLevelUp,
-    convertGhostToUser
+    convertGhostToUser,
+    updateLocalProfile // Exported so Hangman.js can call it
   };
 }
