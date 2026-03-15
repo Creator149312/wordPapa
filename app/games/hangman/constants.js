@@ -1,23 +1,365 @@
-export const WORDS_POOL = [
-  // EASY (Arena: Backyard) - 3-5 Letters
-  { word: "CHESS", category: "Games", difficulty: "easy" },
-  { word: "TOKYO", category: "Cities", difficulty: "easy" },
-  { word: "AVATAR", category: "Movies", difficulty: "easy" },
-  { word: "PIZZA", category: "Food", difficulty: "easy" },
-  
-  // MEDIUM (Arena: Library) - 6-8 Letters
-  { word: "HAMLET", category: "Books", difficulty: "medium" },
-  { word: "SAHARA", category: "Places", difficulty: "medium" },
-  { word: "FERRARI", category: "Cars", difficulty: "medium" },
-  { word: "AVOCADO", category: "Food", difficulty: "medium" },
-  { word: "BICYCLE", category: "Transport", difficulty: "medium" },
+// 1. ARENA & RANK CONFIGURATION
+export const ARENAS = {
+  1: {
+    id: 1,
+    name: "The Inner Seed",
+    arenaBg: "bg-slate-900", // Dark slate vs Green rank
+    accent: "#38bdf8",
+    description: "The beginning of sound.",
+  },
+  2: {
+    id: 2,
+    name: "The Mother's Lap",
+    arenaBg: "bg-rose-50", // Soft Pink vs Green rank
+    accent: "#ec4899",
+    description: "Domestic comfort and warmth.",
+  },
+  3: {
+    id: 3,
+    name: "The Tulsi Courtyard",
+    arenaBg: "bg-indigo-50", // Soft Indigo vs Lime rank
+    accent: "#6366f1",
+    description: "Nature within the household.",
+  },
+  4: {
+    id: 4,
+    name: "The Village Gurukul",
+    arenaBg: "bg-blue-900", // Deep Blue vs Yellow rank (High Contrast)
+    accent: "#60a5fa",
+    description: "Learning in the community.",
+  },
+  5: {
+    id: 5,
+    name: "The Temple Square",
+    arenaBg: "bg-violet-950", // Dark Violet vs Amber rank
+    accent: "#a78bfa",
+    description: "Social and spiritual connection.",
+  },
+  6: {
+    id: 6,
+    name: "The Forest Path",
+    arenaBg: "bg-teal-50", // Pale Teal vs Orange rank
+    accent: "#0d9488",
+    description: "Venturing into the wild unknown.",
+  },
+  7: {
+    id: 7,
+    name: "The Royal Court",
+    arenaBg: "bg-cyan-950", // Dark Cyan vs Deep Orange rank
+    accent: "#22d3ee",
+    description: "Governance, honor, and society.",
+  },
+  8: {
+    id: 8,
+    name: "The Great River",
+    arenaBg: "bg-orange-50", // Soft Peach vs Vermillion rank
+    accent: "#ea580c",
+    description: "Flowing with the world's wisdom.",
+  },
+  9: {
+    id: 9,
+    name: "The Solar Chariot",
+    arenaBg: "bg-emerald-950", // Deep Emerald vs Dark Red rank
+    accent: "#34d399",
+    description: "Ascending toward cosmic light.",
+  },
+  10: {
+    id: 10,
+    name: "The Cosmic Dance",
+    arenaBg: "bg-yellow-400", // Vibrant Gold vs Purple rank (Royal Contrast)
+    accent: "#1e1b4b",
+    description: "Unity with the infinite universe.",
+  },
+};
 
-  // HARD (Arena: Laboratory) - 9+ Letters
-  { word: "EINSTEIN", category: "People", difficulty: "hard" },
-  { word: "PINEAPPLE", category: "Fruits", difficulty: "hard" },
-  { word: "ESPRESSO", category: "Drinks", difficulty: "hard" },
-  { word: "OLYMPICS", category: "Sports", difficulty: "hard" }
+export const RANKS = [
+  {
+    level: 1,
+    name: "Infant",
+    arenaId: 1,
+    minXP: 0,
+    maxTries: 11,
+    color: "#75c32c",
+    stageName: ARENAS[1].name, // Direct Association
+  },
+  {
+    level: 2,
+    name: "Toddler",
+    arenaId: 2,
+    minXP: 50,
+    maxTries: 10,
+    color: "#a2d149",
+    stageName: ARENAS[2].name,
+  },
+  {
+    level: 3,
+    name: "Student",
+    arenaId: 3,
+    minXP: 120,
+    maxTries: 9,
+    color: "#d4e157",
+    stageName: ARENAS[3].name,
+  },
+  {
+    level: 4,
+    name: "Scholar",
+    arenaId: 4,
+    minXP: 220,
+    maxTries: 8,
+    color: "#ffee58",
+    stageName: ARENAS[4].name,
+  },
+  {
+    level: 5,
+    name: "Sage",
+    arenaId: 5,
+    minXP: 350,
+    maxTries: 8,
+    color: "#ffca28",
+    stageName: ARENAS[5].name,
+  },
+  {
+    level: 6,
+    name: "Yogi",
+    arenaId: 6,
+    minXP: 550,
+    maxTries: 7,
+    color: "#ff8f00",
+    stageName: ARENAS[6].name,
+  },
+  {
+    level: 7,
+    name: "Guru",
+    arenaId: 7,
+    minXP: 850,
+    maxTries: 7,
+    color: "#f4511e",
+    stageName: ARENAS[7].name,
+  },
+  {
+    level: 8,
+    name: "Master",
+    arenaId: 8,
+    minXP: 1250,
+    maxTries: 6,
+    color: "#d84315",
+    stageName: ARENAS[8].name,
+  },
+  {
+    level: 9,
+    name: "Legend",
+    arenaId: 9,
+    minXP: 1800,
+    maxTries: 6,
+    color: "#b71c1c",
+    stageName: ARENAS[9].name,
+  },
+  {
+    level: 10,
+    name: "Word Papa",
+    arenaId: 10,
+    minXP: 2500,
+    maxTries: 5,
+    color: "#4a148c",
+    stageName: ARENAS[10].name,
+  },
 ];
+
+// 3. WORDS POOL (15 words per stage)
+export const WORDS_POOL = {
+  1: [
+    { word: "SUN", category: "Nature" },
+    { word: "SKY", category: "Nature" },
+    { word: "MUD", category: "Nature" },
+    { word: "ONE", category: "Number" },
+    { word: "AIR", category: "Nature" },
+    { word: "DAY", category: "Time" },
+    { word: "CAT", category: "Animal" },
+    { word: "SON", category: "Family" },
+    { word: "EAR", category: "Body" },
+    { word: "EAT", category: "Action" },
+    { word: "RUN", category: "Action" },
+    { word: "SIT", category: "Action" },
+    { word: "BIG", category: "Adjective" },
+    { word: "RED", category: "Color" },
+  ],
+  2: [
+    { word: "MILK", category: "Food" },
+    { word: "BOWL", category: "Home" },
+    { word: "LOVE", category: "Emotion" },
+    { word: "HOME", category: "Place" },
+    { word: "PRAY", category: "Action" },
+    { word: "KIND", category: "Adj" },
+    { word: "BABY", category: "Family" },
+    { word: "HAND", category: "Body" },
+    { word: "FOOD", category: "Home" },
+    { word: "MOON", category: "Nature" },
+    { word: "STAR", category: "Nature" },
+    { word: "SOFT", category: "Adj" },
+    { word: "PLAY", category: "Action" },
+    { word: "SING", category: "Action" },
+    { word: "GIVE", category: "Action" },
+  ],
+  3: [
+    { word: "GARDEN", category: "Place" },
+    { word: "FLOWER", category: "Nature" },
+    { word: "FRUIT", category: "Food" },
+    { word: "PLANT", category: "Nature" },
+    { word: "WATER", category: "Nature" },
+    { word: "GREEN", category: "Color" },
+    { word: "SMALL", category: "Adj" },
+    { word: "BIRD", category: "Animal" },
+    { word: "SWEET", category: "Food" },
+    { word: "SHADE", category: "Nature" },
+    { word: "TULSI", category: "Sacred" },
+    { word: "LEAF", category: "Nature" },
+    { word: "SMILE", category: "Emotion" },
+    { word: "ROOTS", category: "Nature" },
+    { word: "CLEAN", category: "Adj" },
+  ],
+  4: [
+    { word: "SCHOOL", category: "Place" },
+    { word: "LEARN", category: "Action" },
+    { word: "BOOKS", category: "Items" },
+    { word: "WRITE", category: "Action" },
+    { word: "STUDY", category: "Action" },
+    { word: "PAPER", category: "Items" },
+    { word: "FRIEND", category: "People" },
+    { word: "VILLAGE", category: "Place" },
+    { word: "LISTEN", category: "Action" },
+    { word: "STORY", category: "Knowledge" },
+    { word: "TRUTH", category: "Concept" },
+    { word: "MASTER", category: "People" },
+    { word: "DHARMA", category: "Sacred" },
+    { word: "LESSON", category: "Knowledge" },
+    { word: "SIMPLE", category: "Adj" },
+  ],
+  5: [
+    { word: "TEMPLE", category: "Place" },
+    { word: "MARKET", category: "Place" },
+    { word: "PRAYER", category: "Action" },
+    { word: "MORNING", category: "Time" },
+    { word: "BELIEF", category: "Concept" },
+    { word: "PEOPLE", category: "Society" },
+    { word: "GATHER", category: "Action" },
+    { word: "SACRED", category: "Adj" },
+    { word: "STREET", category: "Place" },
+    { word: "BRIGHT", category: "Adj" },
+    { word: "FAMILY", category: "Society" },
+    { word: "FAITH", category: "Emotion" },
+    { word: "SILVER", category: "Items" },
+    { word: "INCENSE", category: "Items" },
+    { word: "CHURCH", category: "Place" },
+  ],
+  6: [
+    { word: "SILENCE", category: "State" },
+    { word: "ANCIENT", category: "Time" },
+    { word: "STREAM", category: "Nature" },
+    { word: "FOREST", category: "Place" },
+    { word: "JOURNEY", category: "Action" },
+    { word: "WILDERNESS", category: "Nature" },
+    { word: "VALLEY", category: "Nature" },
+    { word: "MYSTERY", category: "Concept" },
+    { word: "WALKING", category: "Action" },
+    { word: "NATURAL", category: "Adj" },
+    { word: "HARMONY", category: "Concept" },
+    { word: "WONDER", category: "Emotion" },
+    { word: "SHADOW", category: "Nature" },
+    { word: "SPIRIT", category: "Concept" },
+    { word: "HUNTER", category: "People" },
+  ],
+  7: [
+    { word: "KINGDOM", category: "Society" },
+    { word: "JUSTICE", category: "Concept" },
+    { word: "PALACE", category: "Place" },
+    { word: "ADVISOR", category: "People" },
+    { word: "HISTORY", category: "Knowledge" },
+    { word: "CROWNED", category: "Adj" },
+    { word: "SOLDIER", category: "People" },
+    { word: "FREEDOM", category: "Concept" },
+    { word: "COURAGE", category: "Emotion" },
+    { word: "NOBLEMAN", category: "People" },
+    { word: "COMMAND", category: "Action" },
+    { word: "DEFEND", category: "Action" },
+    { word: "HONOR", category: "Concept" },
+    { word: "SUCCESS", category: "Concept" },
+    { word: "ORATOR", category: "People" },
+  ],
+  8: [
+    { word: "CURRENT", category: "Nature" },
+    { word: "OCEANS", category: "Nature" },
+    { word: "ETERNAL", category: "Concept" },
+    { word: "POWERFUL", category: "Adj" },
+    { word: "GUIDANCE", category: "Concept" },
+    { word: "FLOWING", category: "Action" },
+    { word: "RIPPLES", category: "Nature" },
+    { word: "UNBROKEN", category: "Adj" },
+    { word: "DEEPNESS", category: "Adj" },
+    { word: "SURRENDER", category: "Action" },
+    { word: "CROSSING", category: "Action" },
+    { word: "ENDLESS", category: "Adj" },
+    { word: "WISDOM", category: "Knowledge" },
+    { word: "BRIDGES", category: "Place" },
+    { word: "SAILING", category: "Action" },
+  ],
+  9: [
+    { word: "RADIANCE", category: "State" },
+    { word: "CELESTIAL", category: "Cosmic" },
+    { word: "CHARIOT", category: "Vehicle" },
+    { word: "INFINITE", category: "Concept" },
+    { word: "ETERNITY", category: "Time" },
+    { word: "GLORIOUS", category: "Adj" },
+    { word: "HEAVENS", category: "Cosmic" },
+    { word: "LIGHTNING", category: "Nature" },
+    { word: "UNIVERSE", category: "Cosmic" },
+    { word: "DEVOTION", category: "Emotion" },
+    { word: "KNOWLEDGE", category: "Concept" },
+    { word: "BRILLIANT", category: "Adj" },
+    { word: "ABSOLUTE", category: "Adj" },
+    { word: "CREATOR", category: "People" },
+    { word: "PROPHECY", category: "Sacred" },
+  ],
+  10: [
+    { word: "CONSCIOUS", category: "Philosophy" },
+    { word: "MANDALA", category: "Sacred" },
+    { word: "ENLIGHTEN", category: "Action" },
+    { word: "EXISTENCE", category: "Concept" },
+    { word: "LIBERATION", category: "Concept" },
+    { word: "MEDITATION", category: "Action" },
+    { word: "DIMENSION", category: "Cosmic" },
+    { word: "AWAKENING", category: "State" },
+    { word: "BOUNDLESS", category: "Adj" },
+    { word: "COSMOLOGY", category: "Science" },
+    { word: "TRANSCEND", category: "Action" },
+    { word: "VIBRATION", category: "Science" },
+    { word: "ULTIMATE", category: "Adj" },
+    { word: "DUALITY", category: "Philosophy" },
+    { word: "OMNIPRESENT", category: "Adj" },
+  ],
+};
+
+// 4. ECONOMY & REWARDS
+export const GAME_STAKES = {
+  ONLINE_1V1: {
+    ENTRY_FEE: 10,
+    BASE_WIN_PRIZE: 20,
+    BASE_XP_WIN: 25,
+    XP_LOSS: 5,
+    STREAK_XP_BONUS: 15,
+  },
+  CLASSIC: {
+    BASE_XP: 15,
+    BASE_COINS: 5,
+    XP_LOSS_PER_LIFE: 2,
+    STREAK_BONUS_MULTIPLIER: 1.5,
+  },
+  ENERGY: { MAX_LIVES: 10, RECOVERY_MINUTES: 180 },
+
+  // Logic: Bonus = 100 * Level (Triggered when level changes)
+  getArenaUnlockBonus: (level) => 100 * level,
+};
+
+// constants.js
 
 export const GAME_CONFIG = {
   MAX_WRONG_GUESSES: 6,
@@ -26,29 +368,3 @@ export const GAME_CONFIG = {
   DAILY_PERFECT_BONUS: 20,
 };
 
-export const ARENAS = {
-  BACKYARD: {
-    id: 'backyard',
-    name: "Papa's Backyard",
-    minLevel: 1,
-    difficulty: 'easy',
-    color: '#75c32c',
-    description: "Simple words for a sunny start."
-  },
-  LIBRARY: {
-    id: 'library',
-    name: "The Grand Library",
-    minLevel: 3,
-    difficulty: 'medium',
-    color: '#60a5fa',
-    description: "Academic terms and longer puzzles."
-  },
-  LABORATORY: {
-    id: 'laboratory',
-    name: "Papa's Laboratory",
-    minLevel: 5,
-    difficulty: 'hard',
-    color: '#a855f7',
-    description: "Complex concepts and scientific words."
-  }
-};

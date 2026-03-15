@@ -1,40 +1,55 @@
 // lib/daily.js
-import { WORDS_POOL } from '../constants';
+import { WORDS_POOL } from "../constants";
 
 export const getDailyMetadata = () => {
-  // We use UTC time to ensure every player globally resets at the exact same moment
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10); // Format: "2026-03-08"
-  
-  // 1. Generate a consistent Seed based on the date string
-  // This ensures the word is the same for everyone on this date
-  const seed = todayStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const index = seed % WORDS_POOL.length;
-  
-  // 2. Calculate time until next reset (Midnight UTC)
-  const tomorrow = new Date(now);
-  tomorrow.setUTCHours(24, 0, 0, 0);
-  const secondsLeft = Math.floor((tomorrow - now) / 1000);
 
-  // 3. Calculate a "Day Number" (e.g., Daily Challenge #42)
-  // Base date is Jan 1, 2024
-  const baseDate = new Date('2024-01-01').getTime();
+  // Use UTC for global synchronization
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(now.getUTCDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+
+  // 1. Prepare the Daily Pool (Levels 6-10)
+  // We filter for keys >= 6 and flatten the arrays into one list
+  const dailyPool = Object.keys(WORDS_POOL)
+    .filter((level) => parseInt(level) >= 6)
+    .reduce((acc, level) => {
+      return [...acc, ...WORDS_POOL[level]];
+    }, []);
+
+  // 2. Deterministic Seeding
+  // Ensures everyone gets the same word from the dailyPool
+  const seed = year * 10000 + parseInt(month) * 100 + parseInt(day);
+
+  // Use a pseudo-random jump based on the seed to pick the index
+  const pseudoRandomIndex = Math.abs(Math.sin(seed) * 10000);
+  const index = Math.floor(pseudoRandomIndex % dailyPool.length);
+
+  // 3. Calculate Day Number (Challenge # from a base date)
+  const baseDate = new Date(Date.UTC(2024, 0, 1)).getTime();
   const dayNumber = Math.floor((now.getTime() - baseDate) / 8.64e7);
 
   return {
-    wordObj: WORDS_POOL[index],
+    wordObj: dailyPool[index], // This returns { word: "...", category: "..." }
     dayNumber: dayNumber,
     dateKey: todayStr,
-    secondsLeft
   };
 };
 
-export const formatTimeLeft = (seconds) => {
-  if (seconds < 0) return "00:00:00";
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  
-  // Pad with leading zeros
-  return `${h.toString().padStart(2, '0')}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+/**
+ * Formats time until next UTC midnight
+ */
+export const getTimeUntilNextDay = () => {
+  const now = new Date();
+  const tomorrow = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
+  );
+
+  const diff = tomorrow - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };

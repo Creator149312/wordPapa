@@ -1,96 +1,217 @@
-'use client';
-import React from 'react';
+"use client";
+import React from "react";
+import { ARENAS } from "../constants";
 
-export default function DynamicPapa({ wrongCount, isWon, isLost, streak = 0 }) {
+export default function DynamicPapa({
+  wrongCount,
+  isWon,
+  isLost,
+  maxTries = 6,
+  streak = 0,
+  arenaId = 1,
+}) {
+  const currentArena = ARENAS[arenaId] || ARENAS[1];
   const isOnFire = streak >= 5;
-  const isLegendary = streak >= 10;
 
-  const getEmotion = () => {
-    if (isWon) return { face: "^▽^", color: "text-[#75c32c]", bg: "bg-green-50/30", status: "VICTORY" };
-    if (isLost) return { face: "T_T", color: "text-red-500", bg: "bg-red-50/30", status: "SNAP!" };
-    if (wrongCount === 0) return { face: isOnFire ? "🔥‿🔥" : "◕‿◕", color: "text-blue-500", bg: "bg-blue-50/10", status: "READY?" };
-    if (wrongCount < 3) return { face: "⊙_⊙", color: "text-gray-600", bg: "bg-gray-50/50", status: "CAREFUL" };
-    return { face: "Q_Q", color: "text-orange-500", bg: "bg-orange-50/50", status: "DANGER" };
+  // Logic Constants
+  const tension = Math.min(wrongCount / maxTries, 1);
+  const isDanger = wrongCount >= maxTries - 2 && maxTries > 2;
+
+  const shouldShow = (partIndex) => {
+    if (isWon) return true;
+    const threshold = Math.ceil((partIndex / 6) * maxTries);
+    return wrongCount >= threshold;
   };
 
-  const { face, color, bg, status } = getEmotion();
+  const getEmotion = () => {
+    if (isWon) return { face: "^‿^", status: "VICTORY" };
+    if (isLost) return { face: "x_x", status: "FAILED" };
+    if (isDanger) return { face: "°o°", status: "DANGER" };
+    return { face: "•‿•", status: currentArena.name.toUpperCase() };
+  };
+
+  const { face, status } = getEmotion();
 
   return (
-    <div className={`relative w-full aspect-[4/3] lg:aspect-square max-h-[280px] flex items-center justify-center rounded-[2rem] border-2 border-dashed transition-all duration-700 ${bg} overflow-hidden ${isOnFire ? 'border-orange-400 shadow-inner' : 'border-gray-200 dark:border-gray-800'}`}>
-      
-      {/* 1. COMPACT WATERMARK */}
-      <div className="absolute top-4 left-6 opacity-[0.05] select-none pointer-events-none">
-        <span className="text-4xl font-black italic uppercase">{status}</span>
+    <div className="relative w-full aspect-square flex items-center justify-center rounded-[2.5rem] transition-all duration-700 bg-zinc-100 dark:bg-zinc-900/60">
+      <style>{`
+        @keyframes pivotSway {
+          0%, 100% { transform: rotate(-${2 + tension * 4}deg); transform-origin: 132px 75px; }
+          50% { transform: rotate(${2 + tension * 4}deg); transform-origin: 132px 75px; }
+        }
+        @keyframes winJump {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
+        }
+        .stick-root { 
+          animation: ${isWon ? "winJump 0.5s ease-in-out infinite" : isLost ? "none" : "pivotSway 3s ease-in-out infinite"}; 
+        }
+        .pop-in { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes pop { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+      `}</style>
+
+      {/* STAGE WATERMARK - Minimalist Zinc */}
+      <div className="absolute top-6 left-8 opacity-[0.05] font-black italic text-2xl md:text-4xl select-none tracking-tighter text-zinc-900 dark:text-zinc-100">
+        {status}
       </div>
 
-      {/* 2. FIRE EFFECTS (Condensed) */}
-      {isOnFire && (
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-16 bg-orange-500/10 blur-[40px] rounded-full" />
-          <div className="absolute top-4 right-4 animate-bounce text-lg">🔥</div>
-        </div>
-      )}
-
-      {/* 3. THE SVG: Optimized for smaller container */}
-      <div className={`relative w-full h-full max-w-[180px] lg:max-w-[220px] transition-transform duration-500 ${isWon ? 'animate-bounce' : ''} ${isLegendary ? 'scale-110' : 'scale-100'}`}>
-        <svg 
-          viewBox="0 0 200 250" 
-          preserveAspectRatio="xMidYMid meet" 
-          className="w-full h-full drop-shadow-md overflow-visible"
-        >
-          {/* GALLOWS */}
-          <g className={`${isOnFire ? 'text-orange-300' : 'text-gray-300 dark:text-gray-700'} transition-colors duration-500`}>
-            <path d="M40 230 L160 230" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
-            <path d="M60 230 L60 40 L132 40 L132 65" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
-            <line x1="132" y1="65" x2="132" y2="80" stroke={isOnFire ? "#ea580c" : "#78350f"} strokeWidth="3" />
+      <div className="relative w-full h-full max-w-[180px] md:max-w-[220px]">
+        <svg viewBox="0 0 200 250" className="w-full h-full overflow-visible">
+          {/* GALLOWS - Neutralized */}
+          <g
+            className="transition-colors duration-700"
+            style={{
+              color: isLost
+                ? "#ef4444"
+                : isDanger
+                  ? "#f97316"
+                  : "rgba(161, 161, 170, 0.3)", // zinc-400 equivalent
+            }}
+          >
+            <line
+              x1="40"
+              y1="230"
+              x2="160"
+              y2="230"
+              stroke="currentColor"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+            <path
+              d="M60 230 L60 40 L132 40 L132 75"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+            {!isLost && (
+              <line
+                x1="132"
+                y1="75"
+                x2="132"
+                y2="90"
+                stroke="currentColor"
+                strokeWidth="3"
+              />
+            )}
           </g>
 
-          {/* THE MAN */}
-          <g className={`transition-all duration-300 ${isLost ? 'translate-y-2' : ''}`}>
-            <style>{`
-              .limb-enter { animation: limbPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-              @keyframes limbPop {
-                0% { opacity: 0; transform: scale(0.8); }
-                100% { opacity: 1; transform: scale(1); }
-              }
-            `}</style>
-
-            {/* Head */}
-            {(wrongCount > 0 || isWon) && (
-              <g className="limb-enter">
-                <circle cx="132" cy="100" r="20" fill="white" stroke="currentColor" strokeWidth="4" className={isOnFire && !isLost ? 'text-orange-500' : color} />
-                <text x="132" y="105" textAnchor="middle" className={`font-bold text-[12px] fill-current ${isOnFire && !isLost ? 'fill-orange-600' : color}`}>
+          {/* THE CHARACTER */}
+          <g
+            className="stick-root"
+            style={{ color: isLost ? "#ef4444" : currentArena.accent }}
+          >
+            {shouldShow(1) && (
+              <g className="pop-in">
+                <circle
+                  cx="132"
+                  cy="110"
+                  r="20"
+                  fill="currentColor"
+                  fillOpacity="0.05"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <text
+                  x="132"
+                  y="117"
+                  textAnchor="middle"
+                  className="text-[14px] font-black fill-current"
+                >
                   {face}
                 </text>
               </g>
             )}
-
-            {/* Body & Limbs - Thinner lines for sleeker look */}
-            {(wrongCount > 1 || isWon) && (
-              <line x1="132" y1="120" x2="132" y2="170" stroke="currentColor" strokeWidth="4" strokeLinecap="round" className={`${isOnFire && !isLost ? 'text-orange-500' : color} limb-enter`} />
+            {shouldShow(2) && (
+              <line
+                x1="132"
+                y1="130"
+                x2="132"
+                y2="175"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className="pop-in"
+              />
             )}
-            {(wrongCount > 2 || isWon) && (
-              <line x1="132" y1="135" x2={isWon ? "155" : "110"} y2={isWon ? "110" : "155"} stroke="currentColor" strokeWidth="4" strokeLinecap="round" className={`${isOnFire && !isLost ? 'text-orange-500' : color} limb-enter`} />
+            {shouldShow(3) && (
+              <line
+                x1="132"
+                y1="145"
+                x2="105"
+                y2={isWon ? "120" : "165"}
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className="pop-in"
+              />
             )}
-            {(wrongCount > 3 || isWon) && (
-              <line x1="132" y1="135" x2={isWon ? "109" : "154"} y2={isWon ? "110" : "155"} stroke="currentColor" strokeWidth="4" strokeLinecap="round" className={`${isOnFire && !isLost ? 'text-orange-500' : color} limb-enter`} />
+            {shouldShow(4) && (
+              <line
+                x1="132"
+                y1="145"
+                x2="159"
+                y2={isWon ? "120" : "165"}
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className="pop-in"
+              />
             )}
-            {(wrongCount > 4 || isWon) && (
-              <line x1="132" y1="170" x2="115" y2="210" stroke="currentColor" strokeWidth="4" strokeLinecap="round" className={`${isOnFire && !isLost ? 'text-orange-500' : color} limb-enter`} />
+            {shouldShow(5) && (
+              <line
+                x1="132"
+                y1="175"
+                x2="110"
+                y2="215"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className="pop-in"
+              />
             )}
-            {(wrongCount > 5 || isWon) && (
-              <line x1="132" y1="170" x2="149" y2="210" stroke="currentColor" strokeWidth="4" strokeLinecap="round" className={`${isOnFire && !isLost ? 'text-orange-500' : color} limb-enter`} />
+            {shouldShow(6) && (
+              <line
+                x1="132"
+                y1="175"
+                x2="154"
+                y2="215"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                className="pop-in"
+              />
             )}
           </g>
         </svg>
       </div>
 
-      {/* 4. FLOATING STREAK BADGE */}
+      {/* STREAK PILL - Minimalist Zinc */}
       {streak > 0 && (
-        <div className={`absolute bottom-3 right-3 px-3 py-1 rounded-full font-bold text-[10px] tracking-widest transition-all shadow-sm ${isOnFire ? 'bg-orange-500 text-white animate-pulse' : 'bg-white/80 text-gray-400 border border-gray-100'}`}>
-          STREAK {streak}
+        <div
+          className={`absolute top-6 right-8 px-3 py-1.5 rounded-xl font-black text-[11px] ${isOnFire ? "bg-orange-500 text-white animate-bounce" : "bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300"}`}
+        >
+          {isOnFire ? "🔥" : "⚡"} {streak}
         </div>
       )}
+
+      {/* HEALTH TRACKER */}
+      <div className="absolute bottom-6 flex flex-col items-center w-full px-8 md:px-12">
+        <div className="flex gap-1 w-full justify-center">
+          {[...Array(maxTries)].map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                i < wrongCount ? "bg-zinc-200 dark:bg-zinc-800" : ""
+              }`}
+              style={{
+                backgroundColor:
+                  i < wrongCount ? undefined : currentArena.accent,
+              }}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
