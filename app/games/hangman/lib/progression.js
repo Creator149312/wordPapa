@@ -28,6 +28,22 @@ export const getOnlineMatchRewards = (isWinner, currentWinStreak = 0) => {
   };
 };
 
+
+/**
+ * Calculates rewards for Endless Run mode.
+ * Rewards are given per word solved, with bonuses for current health.
+ */
+export const getEndlessRewards = (remainingLives) => {
+  const { BASE_XP, BASE_COINS, HEALTH_BONUS_XP, HEALTH_BONUS_COINS } = GAME_STAKES.ENDLESS;
+
+  const safeLives = Math.max(0, remainingLives);
+
+  return {
+    xpGain: BASE_XP + (safeLives * HEALTH_BONUS_XP),
+    coinGain: BASE_COINS + (safeLives * HEALTH_BONUS_COINS),
+  };
+};
+
 /**
  * Calculates the "First Time Arena Bonus" when leveling up.
  * Updated to use the dynamic (100 * level) formula.

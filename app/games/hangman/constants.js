@@ -1,168 +1,33 @@
-// 1. ARENA & RANK CONFIGURATION
+// constants.js
+
+// 1. ARENA CONFIGURATION
+// We use "Atmospheric" backgrounds (Zinc/Slate) so the Rank colors pop.
 export const ARENAS = {
-  1: {
-    id: 1,
-    name: "The Inner Seed",
-    arenaBg: "bg-slate-900", // Dark slate vs Green rank
-    accent: "#38bdf8",
-    description: "The beginning of sound.",
-  },
-  2: {
-    id: 2,
-    name: "The Mother's Lap",
-    arenaBg: "bg-rose-50", // Soft Pink vs Green rank
-    accent: "#ec4899",
-    description: "Domestic comfort and warmth.",
-  },
-  3: {
-    id: 3,
-    name: "The Tulsi Courtyard",
-    arenaBg: "bg-indigo-50", // Soft Indigo vs Lime rank
-    accent: "#6366f1",
-    description: "Nature within the household.",
-  },
-  4: {
-    id: 4,
-    name: "The Village Gurukul",
-    arenaBg: "bg-blue-900", // Deep Blue vs Yellow rank (High Contrast)
-    accent: "#60a5fa",
-    description: "Learning in the community.",
-  },
-  5: {
-    id: 5,
-    name: "The Temple Square",
-    arenaBg: "bg-violet-950", // Dark Violet vs Amber rank
-    accent: "#a78bfa",
-    description: "Social and spiritual connection.",
-  },
-  6: {
-    id: 6,
-    name: "The Forest Path",
-    arenaBg: "bg-teal-50", // Pale Teal vs Orange rank
-    accent: "#0d9488",
-    description: "Venturing into the wild unknown.",
-  },
-  7: {
-    id: 7,
-    name: "The Royal Court",
-    arenaBg: "bg-cyan-950", // Dark Cyan vs Deep Orange rank
-    accent: "#22d3ee",
-    description: "Governance, honor, and society.",
-  },
-  8: {
-    id: 8,
-    name: "The Great River",
-    arenaBg: "bg-orange-50", // Soft Peach vs Vermillion rank
-    accent: "#ea580c",
-    description: "Flowing with the world's wisdom.",
-  },
-  9: {
-    id: 9,
-    name: "The Solar Chariot",
-    arenaBg: "bg-emerald-950", // Deep Emerald vs Dark Red rank
-    accent: "#34d399",
-    description: "Ascending toward cosmic light.",
-  },
-  10: {
-    id: 10,
-    name: "The Cosmic Dance",
-    arenaBg: "bg-yellow-400", // Vibrant Gold vs Purple rank (Royal Contrast)
-    accent: "#1e1b4b",
-    description: "Unity with the infinite universe.",
-  },
+  1: { id: 1, name: "The Inner Seed", arenaBg: "bg-zinc-50 dark:bg-zinc-900", description: "The beginning of sound." },
+  2: { id: 2, name: "The Mother's Lap", arenaBg: "bg-stone-50 dark:bg-stone-900", description: "Domestic comfort and warmth." },
+  3: { id: 3, name: "The Tulsi Courtyard", arenaBg: "bg-slate-50 dark:bg-slate-900", description: "Nature within the household." },
+  4: { id: 4, name: "The Village Gurukul", arenaBg: "bg-zinc-100 dark:bg-zinc-900", description: "Learning in the community." },
+  5: { id: 5, name: "The Temple Square", arenaBg: "bg-stone-100 dark:bg-stone-900", description: "Social and spiritual connection." },
+  6: { id: 6, name: "The Forest Path", arenaBg: "bg-zinc-50 dark:bg-zinc-950", description: "Venturing into the wild unknown." },
+  7: { id: 7, name: "The Royal Court", arenaBg: "bg-slate-100 dark:bg-zinc-950", description: "Governance and honor." },
+  8: { id: 8, name: "The Great River", arenaBg: "bg-blue-50/30 dark:bg-zinc-950", description: "World's wisdom." },
+  9: { id: 9, name: "The Solar Chariot", arenaBg: "bg-orange-50/20 dark:bg-zinc-950", description: "Cosmic light." },
+  10: { id: 10, name: "The Cosmic Dance", arenaBg: "bg-zinc-950", description: "Unity with the infinite." },
 };
 
+// 2. RANK CONFIGURATION
+// These colors now drive EVERY accent in the game (Balloons, Buttons, Overlays)
 export const RANKS = [
-  {
-    level: 1,
-    name: "Infant",
-    arenaId: 1,
-    minXP: 0,
-    maxTries: 11,
-    color: "#75c32c",
-    stageName: ARENAS[1].name, // Direct Association
-  },
-  {
-    level: 2,
-    name: "Toddler",
-    arenaId: 2,
-    minXP: 50,
-    maxTries: 10,
-    color: "#a2d149",
-    stageName: ARENAS[2].name,
-  },
-  {
-    level: 3,
-    name: "Student",
-    arenaId: 3,
-    minXP: 120,
-    maxTries: 9,
-    color: "#d4e157",
-    stageName: ARENAS[3].name,
-  },
-  {
-    level: 4,
-    name: "Scholar",
-    arenaId: 4,
-    minXP: 220,
-    maxTries: 8,
-    color: "#ffee58",
-    stageName: ARENAS[4].name,
-  },
-  {
-    level: 5,
-    name: "Sage",
-    arenaId: 5,
-    minXP: 350,
-    maxTries: 8,
-    color: "#ffca28",
-    stageName: ARENAS[5].name,
-  },
-  {
-    level: 6,
-    name: "Yogi",
-    arenaId: 6,
-    minXP: 550,
-    maxTries: 7,
-    color: "#ff8f00",
-    stageName: ARENAS[6].name,
-  },
-  {
-    level: 7,
-    name: "Guru",
-    arenaId: 7,
-    minXP: 850,
-    maxTries: 7,
-    color: "#f4511e",
-    stageName: ARENAS[7].name,
-  },
-  {
-    level: 8,
-    name: "Master",
-    arenaId: 8,
-    minXP: 1250,
-    maxTries: 6,
-    color: "#d84315",
-    stageName: ARENAS[8].name,
-  },
-  {
-    level: 9,
-    name: "Legend",
-    arenaId: 9,
-    minXP: 1800,
-    maxTries: 6,
-    color: "#b71c1c",
-    stageName: ARENAS[9].name,
-  },
-  {
-    level: 10,
-    name: "Word Papa",
-    arenaId: 10,
-    minXP: 2500,
-    maxTries: 5,
-    color: "#4a148c",
-    stageName: ARENAS[10].name,
-  },
+  { level: 1, name: "Infant", arenaId: 1, minXP: 0, maxTries: 10, color: "#75c32c", stageName: ARENAS[1].name },
+  { level: 2, name: "Toddler", arenaId: 2, minXP: 200, maxTries: 10, color: "#a2d149", stageName: ARENAS[2].name },
+  { level: 3, name: "Student", arenaId: 3, minXP: 450, maxTries: 9, color: "#d4e157", stageName: ARENAS[3].name },
+  { level: 4, name: "Scholar", arenaId: 4, minXP: 700, maxTries: 8, color: "#ffee58", stageName: ARENAS[4].name },
+  { level: 5, name: "Sage", arenaId: 5, minXP: 1100, maxTries: 8, color: "#ffca28", stageName: ARENAS[5].name },
+  { level: 6, name: "Yogi", arenaId: 6, minXP: 1500, maxTries: 7, color: "#ff8f00", stageName: ARENAS[6].name },
+  { level: 7, name: "Guru", arenaId: 7, minXP: 8500, maxTries: 7, color: "#f4511e", stageName: ARENAS[7].name },
+  { level: 8, name: "Master", arenaId: 8, minXP: 12500, maxTries: 6, color: "#d84315", stageName: ARENAS[8].name },
+  { level: 9, name: "Legend", arenaId: 9, minXP: 18000, maxTries: 6, color: "#b71c1c", stageName: ARENAS[9].name },
+  { level: 10, name: "Word Papa", arenaId: 10, minXP: 25000, maxTries: 5, color: "#4a148c", stageName: ARENAS[10].name },
 ];
 
 // 3. WORDS POOL (15 words per stage)
@@ -352,6 +217,12 @@ export const GAME_STAKES = {
     BASE_COINS: 5,
     XP_LOSS_PER_LIFE: 2,
     STREAK_BONUS_MULTIPLIER: 1.5,
+  },
+  ENDLESS: {
+    BASE_XP: 100,
+    BASE_COINS: 10,
+    HEALTH_BONUS_XP: 10, // XP per remaining life at the end of a word
+    HEALTH_BONUS_COINS: 2, // Coins per remaining life
   },
   ENERGY: { MAX_LIVES: 10, RECOVERY_MINUTES: 180 },
 
