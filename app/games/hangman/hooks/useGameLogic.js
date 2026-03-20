@@ -15,14 +15,15 @@ export function useGameLogic(dailyWord, playerXP = 0) {
     return { ...rank, theme };
   }, [playerXP]);
 
-  // --- 2. Derived State (The Engine) ---
+  // --- 2. Derived State ---
+  // Ensure we handle potential undefined word property safely
   const wordLetters = useMemo(
-    () => currentGame?.word.toUpperCase().split("") || [],
+    () => currentGame?.word?.toUpperCase().split("") || [],
     [currentGame],
   );
 
   const alphabeticLetters = useMemo(
-    () => wordLetters.filter((char) => char !== " "),
+    () => wordLetters.filter((char) => /[A-Z]/.test(char)),
     [wordLetters],
   );
 
@@ -39,49 +40,69 @@ export function useGameLogic(dailyWord, playerXP = 0) {
   // --- 3. Win/Loss States ---
   const isWon = useMemo(() => {
     if (alphabeticLetters.length === 0) return false;
+    // Check if every unique letter in the word has been guessed
     return alphabeticLetters.every((l) => guessedLetters.includes(l));
   }, [alphabeticLetters, guessedLetters]);
 
-  const isLost = useMemo(() => wrongGuesses.length >= maxWrong, [wrongGuesses.length, maxWrong]);
+  const isLost = useMemo(
+    () => wrongGuesses.length >= maxWrong,
+    [wrongGuesses.length, maxWrong],
+  );
 
   // --- 4. Core Actions ---
   const initGameSession = useCallback(
     (mode, serverData = null) => {
       let nextWord;
 
-      if (mode === "daily" && dailyWord) {
+      // PRIORITY 1: Manual Injection (Endless Mode weighted word)
+      if (serverData) {
+        nextWord = {
+          word: serverData.word,
+          category: serverData.category,
+          hint: serverData.hint,
+          // Attach arena metadata for UI consistency
+          arena: arenaInfo.stageName,
+          arenaId: arenaInfo.arenaId,
+        };
+      }
+      // PRIORITY 2: Daily Challenge
+      else if (mode === "daily" && dailyWord) {
         nextWord = dailyWord;
-      } else if (serverData) {
-        nextWord = { word: serverData.word, category: serverData.category };
-      } else {
-        // Pulls from your WORDS_POOL in constants.js
+      }
+      // PRIORITY 3: Fallback random selection (Classic Mode)
+      else {
         const levelPool = WORDS_POOL[arenaInfo.level] || WORDS_POOL[1];
         const next = levelPool[Math.floor(Math.random() * levelPool.length)];
 
         nextWord = {
-          word: next.word,
-          category: next.category,
+          ...next,
           arena: arenaInfo.stageName,
           arenaId: arenaInfo.arenaId,
           cefr: arenaInfo.cefr,
         };
       }
 
+      // Reset interaction state for the new word
       setGuessedLetters([]);
       setCurrentGame(nextWord);
-      // NOTE: We do NOT touch isTransitioning here anymore.
-      // This allows the Mode components to finish their animations in their own time.
     },
     [dailyWord, arenaInfo],
   );
 
+  /**
+   * Reveal Letter Hint (Consumable)
+   */
   const useHint = useCallback(
     (currentCoins, cost = 50) => {
       if (currentCoins < cost || isWon || isLost) return null;
-      const missingLetters = alphabeticLetters.filter(l => !guessedLetters.includes(l));
+
+      const missingLetters = alphabeticLetters.filter(
+        (l) => !guessedLetters.includes(l),
+      );
 
       if (missingLetters.length > 0) {
-        const randomHint = missingLetters[Math.floor(Math.random() * missingLetters.length)];
+        const randomHint =
+          missingLetters[Math.floor(Math.random() * missingLetters.length)];
         setGuessedLetters((prev) => [...prev, randomHint]);
         return randomHint;
       }

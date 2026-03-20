@@ -4,40 +4,43 @@ import { useProfile } from "../../ProfileContext";
 
 export default function GameClientHeader() {
   const { profile } = useProfile();
-  const { papaPoints, highestStreak, lives } = profile;
+  // Destructure for cleaner access
+  const { papaPoints = 0, highestStreak = 0, lives = 0 } = profile;
 
   return (
-    <nav className="relative w-full max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
-      <div className="flex items-center gap-2">
-        <div className="bg-[#75c32c] p-1.5 rounded-lg">
+    <nav className="relative w-full max-w-6xl mx-auto px-4 py-3 flex justify-between items-center bg-transparent">
+      {/* BRAND SECTION */}
+      <div className="flex items-center gap-2 group cursor-pointer">
+        <div className="bg-[#75c32c] p-1.5 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-transform group-hover:-translate-y-0.5">
           <GraduationCap className="text-black w-5 h-5" />
         </div>
-        {/* Change 1: Text hidden on mobile, visible from md upwards */}
-        <span className="hidden md:block font-black tracking-tighter text-xl dark:text-white uppercase">
-          HangMan
+        <span className="hidden sm:block font-black tracking-tighter text-lg dark:text-white uppercase italic">
+          HangMan <span className="text-[#75c32c]">Arcade</span>
         </span>
       </div>
 
-      {/* Change 2: Removed border and shadow-lg from the container */}
-      <div className="flex items-center gap-4 bg-white/5 dark:bg-zinc-900/50 px-4 py-2 rounded-full backdrop-blur-md">
-        {/* Lives */}
-        <div className="flex items-center gap-1.5  border-zinc-200 dark:border-zinc-700 pr-3">
+      {/* STATS CAPSULE */}
+      <div className="flex items-center gap-5 bg-white/5 dark:bg-zinc-900/40 px-5 py-2 rounded-2xl backdrop-blur-sm border border-white/10">
+        {/* Lives - Vital for knowing when a Revive might be needed */}
+        <div className="flex items-center gap-1.5">
           <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
-          <span className="text-sm font-bold dark:text-white">{lives}</span>
+          <span className="text-sm font-black dark:text-white">{lives}</span>
         </div>
 
-        {/* Streak */}
-        <div className="flex items-center gap-1.5 border-zinc-200 dark:border-zinc-700 pr-3">
+        {/* Global Streak - The "All Time" Pride stat */}
+        <div className="flex items-center gap-1.5">
           <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-          <span className="text-sm font-bold dark:text-white">
+          <span className="text-sm font-black dark:text-white">
             {highestStreak.toLocaleString()}
           </span>
         </div>
 
-        {/* Points */}
+        {/* Papa Points - Essential for buying Shatters/Revives */}
         <div className="flex items-center gap-1.5">
-          <Coins className="w-4 h-4 text-yellow-400 fill-yellow-400/20" />
-          <span className="text-sm font-bold dark:text-white">
+          <div className="p-0.5 bg-yellow-400/10 rounded-md">
+            <Coins className="w-4 h-4 text-yellow-400 fill-yellow-400/20" />
+          </div>
+          <span className="text-sm font-black dark:text-white">
             {papaPoints.toLocaleString()}
           </span>
         </div>

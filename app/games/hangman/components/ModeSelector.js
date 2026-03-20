@@ -32,7 +32,7 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* ENDLESS CLASSIC MODE */}
-        <button
+        {/* <button
           onClick={() => onSelect("classic")}
           className="group relative p-8 rounded-[2rem] bg-gray-50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 border-2 border-transparent hover:border-[#75c32c] transition-all duration-500 text-left flex flex-col h-full shadow-sm hover:shadow-2xl hover:-translate-y-1"
         >
@@ -66,7 +66,7 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
               className="group-hover:translate-x-1 transition-transform"
             />
           </div>
-        </button>
+        </button> */}
 
         {/* DAILY CHALLENGE MODE */}
         <Link href="/games/hangman/daily" className="block h-full">
@@ -118,10 +118,14 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
             <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6">
               <Flame className="text-red-500" size={30} />
             </div>
-            <h3 className="font-black text-2xl uppercase tracking-tighter">Endless Run</h3>
+            <h3 className="font-black text-2xl uppercase tracking-tighter">
+              Endless Run
+            </h3>
             <p className="text-[11px] text-gray-500 mt-2 uppercase">
               Global Health Bar. <br />
-              <span className="text-red-500 font-black">How long can you last?</span>
+              <span className="text-red-500 font-black">
+                How long can you last?
+              </span>
             </p>
           </div>
         </button>

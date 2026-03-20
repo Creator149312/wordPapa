@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 
 // UI Components
@@ -19,7 +19,7 @@ import EndlessRunMode from "./modes/EndlessRunMode";
 // Hooks & Logic
 import { useProfile } from "./../../ProfileContext";
 import { useHangmanSocket } from "./hooks/useHangmanSocket";
-import { RANKS } from "./constants";
+import { RANKS, WORDS_POOL } from "./constants";
 
 const ONLINE_REQUIREMENTS = { MIN_XP: 0, MIN_COINS: 10 };
 
@@ -43,45 +43,81 @@ export default function Hangman({
   const [gameMode, setGameMode] = useState(initialMode);
   const [gameState, setGameState] = useState(initialMode ? "playing" : "menu");
   const [showSavePrompt, setShowSavePrompt] = useState(false);
-  // Inside Hangman.js
-  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [leaderboards, setLeaderboards] = useState({ global: [], endless: [] });
 
-
-  // 1. MASTER RANK CALCULATION
-  // This drives the "Color Sweep" across all components
+  // --- 1. UPDATED RANK LOGIC ---
+  // Now uses highestEndlessXP as the primary driver for Rank/Title
   const currentRank = useMemo(() => {
     return (
-      RANKS.find(
-        (r) =>
-          profile.xp >= r.minXP &&
-          profile.xp < (RANKS[RANKS.indexOf(r) + 1]?.minXP || Infinity),
-      ) || RANKS[0]
+      [...RANKS]
+        .reverse()
+        .find((r) => (profile.highestEndlessXP || 0) >= r.minXP) || RANKS[0]
     );
-  }, [profile.xp]);
+  }, [profile.highestEndlessXP]);
 
-  const syncToDatabase = async (updatedProfile) => {
+  // Master Selector Logic (Weighting Level Number)
+  const getNextWeightedWord = useCallback((userLevel, usedWords = []) => {
+    const safeLevel = Math.max(1, Math.min(userLevel, 10));
+    let levelPickerPool = [];
+
+    for (let lvl = 1; lvl <= safeLevel; lvl++) {
+      for (let i = 0; i < lvl; i++) {
+        levelPickerPool.push(lvl);
+      }
+    }
+
+    const selectedLevel =
+      levelPickerPool[Math.floor(Math.random() * levelPickerPool.length)];
+    let levelWords = WORDS_POOL[selectedLevel] || WORDS_POOL[1];
+
+    let availableWords = levelWords.filter(
+      (item) => !usedWords.includes(item.word),
+    );
+
+    if (availableWords.length === 0) availableWords = levelWords;
+
+    const chosenEntry =
+      availableWords[Math.floor(Math.random() * availableWords.length)];
+    return { ...chosenEntry, wordLevel: selectedLevel };
+  }, []);
+
+  const calculateEarnedXP = useCallback(
+    (mistakes) => Math.max(0, 100 - mistakes * 5),
+    [],
+  );
+
+  // --- 2. UPDATED SYNC LOGIC ---
+  // Points to the new /api/profile/sync and handles the updated snapshot keys
+  const syncToDatabase = async (updatedSnapshot) => {
     if (profile.isGhost) return;
+
     try {
-      const response = await fetch("/api/game/hangman/sync", {
+      const response = await fetch("/api/games/hangman/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedProfile),
+        body: JSON.stringify(updatedSnapshot),
       });
+
       const data = await response.json();
       if (data.success && updateLocalProfile) {
         updateLocalProfile(data.profile);
       }
     } catch (error) {
-      console.error("DB Sync failed:", error);
+      console.error("Hangman DB Sync failed:", error);
     }
   };
 
-
+  // --- 3. UPDATED LEADERBOARD FETCH ---
   const fetchLeaderboard = async () => {
     try {
-      const res = await fetch("/api/game/hangman/leaderboard");
+      const res = await fetch("/api/games/hangman/leaderboard");
       const data = await res.json();
-      if (data.success) setLeaderboardData(data.leaderboard);
+      if (data.success) {
+        setLeaderboards({
+          global: data.global || [],
+          endless: data.endless || [],
+        });
+      }
     } catch (err) {
       console.error("Leaderboard fetch failed", err);
     }
@@ -99,7 +135,7 @@ export default function Hangman({
       return alert(`❤️ Out of lives!`);
 
     if (mode === "online") {
-      if (profile.papaPoints < ONLINE_REQUIREMENTS.MIN_COINS)
+      if ((profile.papaPoints || 0) < ONLINE_REQUIREMENTS.MIN_COINS)
         return alert(`💰 Not enough coins!`);
       setGameMode(mode);
       joinQueue();
@@ -117,25 +153,22 @@ export default function Hangman({
     if (profile.isGhost) setShowSavePrompt(true);
   };
 
-  // Trigger fetch when component mounts or returns to menu
   useEffect(() => {
     if (gameState === "menu") fetchLeaderboard();
   }, [gameState]);
 
-  // --- VIEW: MENU / LOBBY ---
+  // LOBBY / MENU VIEW
   if (gameState === "menu" || gameState === "lobby") {
     return (
       <div className="flex flex-col w-full transition-colors duration-1000">
         <GameClientHeader />
-
         <div className="max-w-5xl w-full mx-auto px-1 md:px-4">
           <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
             <LevelBar />
           </div>
-
           <GameLobbyView
             gameState={gameState}
-            leaderboard={leaderboardData}
+            leaderboard={leaderboards}
             handleModeSelect={handleModeSelect}
             profile={profile}
             requirements={ONLINE_REQUIREMENTS}
@@ -143,7 +176,6 @@ export default function Hangman({
             startNewGame={() => setGameState("playing")}
           />
         </div>
-
         <SaveProgressModal
           isOpen={showSavePrompt}
           onClose={() => setShowSavePrompt(false)}
@@ -154,14 +186,11 @@ export default function Hangman({
     );
   }
 
-  // --- VIEW: ACTIVE GAMEPLAY (COLOR SWEEP ENABLED) ---
+  // ACTIVE GAMEPLAY VIEW
   return (
     <div className="min-h-screen p-1 md:p-4 bg-white dark:bg-zinc-950 transition-colors duration-1000">
-
       <Card className="max-w-5xl w-full mx-auto mt-4 p-3 md:p-6 rounded-[2rem] bg-zinc-50/50 dark:bg-zinc-900/40 relative overflow-hidden border-none shadow-none">
-
-        {/* THE COLOR SWEEP GLOW */}
-        {/* This element transitions its background color smoothly as the rank changes */}
+        {/* Decorative Rank Glow */}
         <div
           className="absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 blur-[100px] opacity-20 pointer-events-none transition-colors duration-1000"
           style={{ backgroundColor: currentRank.color }}
@@ -175,10 +204,11 @@ export default function Hangman({
               applyOnlineResults={applyOnlineResults}
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
-              accent={currentRank.color} // Passing the master color
+              accent={currentRank.color}
+              getWord={getNextWeightedWord}
+              calculateXP={calculateEarnedXP}
             />
           )}
-
           {gameMode === "endless" && (
             <EndlessRunMode
               profile={profile}
@@ -187,11 +217,11 @@ export default function Hangman({
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
               deductCoins={deductCoins}
-              // CRITICAL: We pass the Rank color to keep all internal animations in sync
               accent={currentRank.color}
+              getWord={getNextWeightedWord}
+              calculateXP={calculateEarnedXP}
             />
           )}
-
           {gameMode === "classic" && (
             <ClassicMode
               profile={profile}
@@ -200,9 +230,10 @@ export default function Hangman({
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
               accent={currentRank.color}
+              getWord={getNextWeightedWord}
+              calculateXP={calculateEarnedXP}
             />
           )}
-
           {gameMode === "daily" && (
             <DailyMode
               dailyWord={dailyWord}
@@ -212,12 +243,12 @@ export default function Hangman({
               addDailyRewards={addDailyRewards}
               triggerSavePrompt={() => setShowSavePrompt(true)}
               accent={currentRank.color}
+              calculateXP={calculateEarnedXP}
             />
           )}
         </div>
       </Card>
 
-      {/* The Modal handles the "Flash" and the "Identity Shift" confirmation */}
       <LevelUpModal
         isOpen={showLevelUp}
         rank={currentRank}

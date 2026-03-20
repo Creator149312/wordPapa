@@ -2,8 +2,7 @@ import mongoose, { Schema, models } from "mongoose";
 
 const gameProfileSchema = new Schema(
   {
-    // Link to the user via email (matching your List model logic) 
-    // or use userEmail: { type: String, required: true, unique: true }
+    // --- IDENTITY & ACCOUNT STATE ---
     userEmail: {
       type: String,
       required: true,
@@ -14,23 +13,56 @@ const gameProfileSchema = new Schema(
       type: String,
       default: "Player",
     },
+    isGhost: {
+      type: Boolean,
+      default: true,
+    },
+
+    // --- GLOBAL CAREER PROGRESSION ---
+    // Combined stats from all game modes
     xp: {
       type: Number,
       default: 0,
     },
     papaPoints: {
       type: Number,
-      default: 50,
+      default: 50, // Initial currency for power-ups
+    },
+    totalWordsSolved: {
+      type: Number,
+      default: 0, // Lifetime activity counter
     },
     lives: {
       type: Number,
-      default: 5, // Assuming MAX_LIVES is 5
+      default: 5,
     },
     lastLifeLost: {
       type: Date,
       default: Date.now,
     },
-    // --- Hangman Classic Stats ---
+
+    // --- ENDLESS MODE RECORDS ---
+    // Specifically for the Endless Leaderboard
+    highestEndlessRun: {
+      type: Number,
+      default: 0, // Most words solved in one session
+    },
+    highestEndlessXP: {
+      type: Number,
+      default: 0, // Most XP earned in one session
+    },
+
+    // --- DAILY CHALLENGE ---
+    dailyStreak: {
+      type: Number,
+      default: 0,
+    },
+    lastDailyDate: {
+      type: String, // Stored as "YYYY-MM-DD" for easy daily locking
+      default: null,
+    },
+
+    // --- CLASSIC MODE ---
     currentStreak: {
       type: Number,
       default: 0,
@@ -39,7 +71,8 @@ const gameProfileSchema = new Schema(
       type: Number,
       default: 0,
     },
-    // --- Multiplayer / Online Stats ---
+
+    // --- ONLINE MULTIPLAYER ---
     onlineWinStreak: {
       type: Number,
       default: 0,
@@ -48,16 +81,8 @@ const gameProfileSchema = new Schema(
       type: Number,
       default: 0,
     },
-    // --- Daily Retention ---
-    dailyStreak: {
-      type: Number,
-      default: 0,
-    },
-    lastDailyDate: {
-      type: Date,
-      default: null,
-    },
-    // --- Customization ---
+
+    // --- CUSTOMIZATION ---
     unlockedThemes: {
       type: [String],
       default: ["classic"],
@@ -66,17 +91,14 @@ const gameProfileSchema = new Schema(
       type: String,
       default: "classic",
     },
-    // --- Player State ---
-    isGhost: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
-    timestamps: true, // Automatically manages createdAt and updatedAt
-  }
+    timestamps: true, // Auto-manages createdAt and updatedAt
+  },
 );
 
-const GameProfile = models.GameProfile || mongoose.model("GameProfile", gameProfileSchema);
+// Middleware/Helper to prevent model re-definition errors in Next.js
+const GameProfile =
+  models.GameProfile || mongoose.model("GameProfile", gameProfileSchema);
 
 export default GameProfile;
