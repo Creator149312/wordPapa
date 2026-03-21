@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Lightbulb, Eraser, Activity } from "lucide-react";
+import { motion } from "framer-motion";
 
 // UI Components
 import GameHeader from "../components/GameHeader";
@@ -8,14 +9,15 @@ import WordDisplay from "../components/WordDisplay";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import GameResults from "../components/GameResults";
 import DynamicPapa from "../components/DynamicPapa";
-import GameTransitionOverlay from "../components/GameTransitionOverlay";
 import MilestoneBanner from "../components/MilestoneBanner";
 import SessionProgress from "../components/SessionProgress";
+import LevelUpModal from "../components/LevelUpModal";
 
 // Hooks, Constants
 import { useGameLogic } from "../hooks/useGameLogic";
 import { useAudio } from "../hooks/useAudio";
-import { RANKS } from "../constants";
+import { RANKS, WORDS_POOL } from "../constants";
+import { calculateLevel } from "../lib/progression";
 
 export default function EndlessRunMode({
   profile,
@@ -24,9 +26,8 @@ export default function EndlessRunMode({
   triggerSavePrompt,
   applyEndlessResult,
   deductCoins,
-  getWord,
 }) {
-  // --- Game State ---
+  // --- 1. GAME STATE ---
   const [globalMistakes, setGlobalMistakes] = useState(0);
   const [totalWordsSolved, setTotalWordsSolved] = useState(0);
   const [totalXPEarned, setTotalXPEarned] = useState(0);
@@ -34,28 +35,94 @@ export default function EndlessRunMode({
   const [usedWordTexts, setUsedWordTexts] = useState([]);
   const [hasClaimedResult, setHasClaimedResult] = useState(false);
 
-  // --- Hill Climb Refill State ---
-  const [isRefilling, setIsRefilling] = useState(false);
+  const [nextMilestone, setNextMilestone] = useState(5);
+  const [milestoneStep, setMilestoneStep] = useState(6);
 
-  // --- Mentor & Hint States ---
+  // Juice States
+  const [currentWordXP, setCurrentWordXP] = useState(0);
+  const [isShaking, setIsShaking] = useState(false);
+
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [sessionMaxRankLevel, setSessionMaxRankLevel] = useState(
+    calculateLevel(profile.highestEndlessXP || 0).level,
+  );
+
+  // --- 2. WORD SELECTION LOGIC ---
+  const getNextWeightedWord = useCallback(
+    (userLevel, usedWords = []) => {
+      const effectiveXP = Math.max(
+        profile.highestEndlessXP || 0,
+        totalXPEarned,
+      );
+      const maxUnlockedRank =
+        [...RANKS].reverse().find((r) => effectiveXP >= r.minXP) || RANKS[0];
+      const safeLevel = Math.max(1, Math.min(userLevel, maxUnlockedRank.level));
+
+      let levelPickerPool = [];
+      for (let lvl = 1; lvl <= safeLevel; lvl++) {
+        for (let i = 0; i < lvl; i++) {
+          levelPickerPool.push(lvl);
+        }
+      }
+
+      const selectedLevel =
+        levelPickerPool[Math.floor(Math.random() * levelPickerPool.length)];
+      let levelWords = WORDS_POOL[selectedLevel] || WORDS_POOL[1];
+
+      let availableWords = levelWords.filter(
+        (item) => !usedWords.includes(item.word),
+      );
+      if (availableWords.length === 0) availableWords = levelWords;
+
+      const chosenEntry =
+        availableWords[Math.floor(Math.random() * availableWords.length)];
+      return { ...chosenEntry, wordLevel: selectedLevel };
+    },
+    [profile.highestEndlessXP, totalXPEarned],
+  );
+
+  // --- 3. BASELINE RANK CALCULATION ---
+  const initialRank = useMemo(() => {
+    return calculateLevel(profile.highestEndlessXP || 0);
+  }, [profile.highestEndlessXP]);
+
+  // --- 4. PROGRESSIVE SYNC ---
+  const syncProgressToLocal = useCallback(() => {
+    const snapshot = {
+      xp: (profile.xp || 0) + totalXPEarned,
+      totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
+      papaPoints: (profile.papaPoints || 0) + totalCoinsEarned,
+      highestEndlessRun: Math.max(
+        profile.highestEndlessRun || 0,
+        totalWordsSolved,
+      ),
+      highestEndlessXP: Math.max(profile.highestEndlessXP || 0, totalXPEarned),
+    };
+    applyEndlessResult(snapshot);
+  }, [
+    totalWordsSolved,
+    totalXPEarned,
+    totalCoinsEarned,
+    profile,
+    applyEndlessResult,
+  ]);
+
+  // --- 5. CONSTANTS & UI STATES ---
+  const [isRefilling, setIsRefilling] = useState(false);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [showMentorMsg, setShowMentorMsg] = useState(false);
   const [hintRevealed, setHintRevealed] = useState(false);
-
-  // --- Animation/UI States ---
   const [showMilestone, setShowMilestone] = useState(false);
   const [isReviving, setIsReviving] = useState(false);
   const [isRunEnded, setIsRunEnded] = useState(false);
   const [revivesUsed, setRevivesUsed] = useState(0);
-
-  // --- NEW: Block Blast Style Revive Timer ---
   const [reviveCountdown, setReviveCountdown] = useState(null);
 
   const { playSynth } = useAudio();
   const MAX_GLOBAL_LIVES = 5;
   const REVIVE_COST = 50;
   const SHATTER_COST = 15;
-  const TRANSITION_MS = 2000;
+  const TRANSITION_MS = 1500;
   const REVIVE_WINDOW_SECONDS = 6;
 
   const syncLock = useRef(false);
@@ -63,17 +130,15 @@ export default function EndlessRunMode({
   const transitionLock = useRef(false);
   const isShatteringInternal = useRef(false);
 
-  // --- 1. RANK & PROGRESS LOGIC ---
-  const playerRank = useMemo(() => {
+  // --- 6. RANK LOGIC ---
+  const sessionRank = useMemo(() => {
     return (
-      [...RANKS]
-        .reverse()
-        .find((r) => (profile.highestEndlessXP || 0) >= r.minXP) || RANKS[0]
+      [...RANKS].reverse().find((r) => totalXPEarned >= r.minXP) || RANKS[0]
     );
-  }, [profile.highestEndlessXP]);
+  }, [totalXPEarned]);
 
   const currentLevel = Math.min(
-    (playerRank.level || 1) + Math.floor(totalWordsSolved / 5),
+    (initialRank.level || 1) + Math.floor(totalWordsSolved / 5),
     10,
   );
 
@@ -87,13 +152,7 @@ export default function EndlessRunMode({
     wrongGuesses,
     isWon,
     initGameSession,
-  } = useGameLogic(null, profile.xp);
-
-  // --- 2. SESSION PROGRESS CALCULATIONS ---
-  const isBreakingXPRecord = useMemo(() => {
-    const previousBest = profile.highestEndlessXP || 0;
-    return totalXPEarned > previousBest && totalXPEarned > 0;
-  }, [totalXPEarned, profile.highestEndlessXP]);
+  } = useGameLogic(null, profile.xp || 0, profile.highestEndlessXP || 0);
 
   const xpPercent = useMemo(() => {
     const previousBest = profile.highestEndlessXP || 0;
@@ -101,80 +160,76 @@ export default function EndlessRunMode({
     return Math.min((totalXPEarned / previousBest) * 100, 100);
   }, [totalXPEarned, profile.highestEndlessXP]);
 
-  // --- 3. SESSION TIMERS & INIT ---
+  const isBreakingXPRecord = useMemo(() => {
+    return totalXPEarned > (profile.highestEndlessXP || 0) && totalXPEarned > 0;
+  }, [totalXPEarned, profile.highestEndlessXP]);
+
+  // --- 7. TIMERS & INIT ---
   useEffect(() => {
     if (!currentGame && !hasClaimedResult) {
-      const firstWord = getWord(currentLevel, []);
+      const firstWord = getNextWeightedWord(currentLevel, []);
       setUsedWordTexts([firstWord.word]);
       initGameSession("endless", firstWord);
     }
     setSecondsElapsed(0);
     setHintRevealed(false);
-    setShowMentorMsg(false);
 
-    const timer = setInterval(() => {
-      setSecondsElapsed((prev) => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [currentGame, initGameSession, hasClaimedResult, currentLevel, getWord]);
-
-  // --- 4. REVIVE COUNTDOWN LOGIC (The "Block Blast" heart) ---
-  useEffect(() => {
-    let timer;
-    const isGameOver = globalMistakes >= MAX_GLOBAL_LIVES;
-
-    if (isGameOver && !isReviving && !isRunEnded && !hasClaimedResult) {
-      // Start countdown if it's null
-      if (reviveCountdown === null) {
-        setReviveCountdown(REVIVE_WINDOW_SECONDS);
-      }
-
-      if (reviveCountdown > 0) {
-        timer = setInterval(() => {
-          setReviveCountdown((prev) => prev - 1);
-        }, 1000);
-      } else if (reviveCountdown === 0) {
-        // TIME EXPIRED
-        setIsRunEnded(true);
-        setReviveCountdown(null);
-      }
-    } else {
-      // Reset if game state changes
-      if (reviveCountdown !== null) setReviveCountdown(null);
-    }
-
+    const timer = setInterval(
+      () => setSecondsElapsed((prev) => prev + 1),
+      1000,
+    );
     return () => clearInterval(timer);
   }, [
-    globalMistakes,
-    isReviving,
-    isRunEnded,
-    reviveCountdown,
+    currentGame,
+    initGameSession,
     hasClaimedResult,
+    currentLevel,
+    getNextWeightedWord,
   ]);
 
-  // --- 5. REFILL LOGIC ---
+  // --- 8. MILESTONE & LEVEL UP ---
   useEffect(() => {
-    if (totalWordsSolved > 0) {
-      const isInitialStation = totalWordsSolved === 5;
-      const isRecurringStation = (totalWordsSolved - 5) % 6 === 0;
-
-      if (isInitialStation || isRecurringStation) {
-        setIsRefilling(true);
-        setGlobalMistakes(0);
-        playSynth("REFILL");
-        setTimeout(() => setIsRefilling(false), 3000);
-      }
+    if (totalWordsSolved > 0 && totalWordsSolved === nextMilestone) {
+      setIsRefilling(true);
+      setGlobalMistakes(0);
+      playSynth("REFILL");
+      syncProgressToLocal();
+      setNextMilestone((prev) => prev + milestoneStep);
+      setMilestoneStep((prev) => prev + 1);
+      setShowMilestone(true);
+      setTimeout(() => setShowMilestone(false), 5000);
+      setTimeout(() => setIsRefilling(false), 3000);
     }
-  }, [totalWordsSolved, playSynth]);
 
-  // --- 6. MISTAKE TRACKING ---
+    if (sessionRank.level > sessionMaxRankLevel) {
+      if (sessionRank.level > 1) {
+        setShowLevelUp(true);
+        playSynth("MILESTONE");
+        syncProgressToLocal();
+      }
+      setSessionMaxRankLevel(sessionRank.level);
+    }
+  }, [
+    totalWordsSolved,
+    sessionRank.level,
+    sessionMaxRankLevel,
+    syncProgressToLocal,
+    playSynth,
+    nextMilestone,
+    milestoneStep,
+  ]);
+
+  // --- 9. MISTAKES (Shake Logic) ---
   useEffect(() => {
     if (wrongGuesses.length > prevWrongCount.current) {
       const delta = wrongGuesses.length - prevWrongCount.current;
       if (!isShatteringInternal.current) {
         setGlobalMistakes((prev) => prev + delta);
         playSynth("POP");
+
+        // Trigger Screen Shake & Red Flash locally
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 400);
       }
       prevWrongCount.current = wrongGuesses.length;
     }
@@ -186,14 +241,29 @@ export default function EndlessRunMode({
 
   const isGameOver = globalMistakes >= MAX_GLOBAL_LIVES;
 
-  // --- 7. POWER-UPS & REVIVES ---
+  useEffect(() => {
+    let timer;
+    if (isGameOver && !isReviving && !isRunEnded && !hasClaimedResult) {
+      if (reviveCountdown === null) setReviveCountdown(REVIVE_WINDOW_SECONDS);
+      if (reviveCountdown > 0) {
+        timer = setInterval(() => setReviveCountdown((prev) => prev - 1), 1000);
+      } else if (reviveCountdown === 0) {
+        setIsRunEnded(true);
+        setReviveCountdown(null);
+      }
+    } else {
+      if (reviveCountdown !== null) setReviveCountdown(null);
+    }
+    return () => clearInterval(timer);
+  }, [isGameOver, isReviving, isRunEnded, reviveCountdown, hasClaimedResult]);
+
+  // --- 10. ACTIONS ---
   const handleShatter = () => {
     if (profile.papaPoints < SHATTER_COST) return;
     const wrongOptions = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       .split("")
       .filter((l) => !wordLetters.includes(l) && !guessedLetters.includes(l));
     if (wrongOptions.length === 0) return;
-
     isShatteringInternal.current = true;
     deductCoins(SHATTER_COST);
     playSynth("CORRECT");
@@ -213,12 +283,11 @@ export default function EndlessRunMode({
     if (profile.papaPoints >= REVIVE_COST) {
       const success = deductCoins(REVIVE_COST);
       if (success) {
-        setReviveCountdown(null); // Stop the clock immediately
+        setReviveCountdown(null);
         setIsReviving(true);
         playSynth("MILESTONE");
         setHasClaimedResult(false);
         syncLock.current = false;
-
         setTimeout(() => {
           setGlobalMistakes(0);
           setRevivesUsed((prev) => prev + 1);
@@ -228,35 +297,38 @@ export default function EndlessRunMode({
     }
   };
 
-  // --- 8. WIN LOGIC ---
+  const handleGuess = (letter) => {
+    if (
+      guessedLetters.includes(letter) ||
+      isGameOver ||
+      isTransitioning ||
+      isReviving
+    )
+      return;
+    if (wordLetters.includes(letter)) playSynth("CORRECT");
+    setGuessedLetters((prev) => [...prev, letter]);
+  };
+
+  // --- 11. WIN & JUICE LOGIC ---
   useEffect(() => {
     if (isWon && !isGameOver && !transitionLock.current) {
       transitionLock.current = true;
-      setIsTransitioning(true);
-
-      const nextSolvedCount = totalWordsSolved + 1;
-      setTotalWordsSolved(nextSolvedCount);
 
       const wordLevel = currentGame?.wordLevel || 1;
-      const xpGain = currentGame.word.length * 10 + wordLevel * 15;
+      const xpGain = (currentGame?.word?.length || 0) * 10 + wordLevel * 15;
       const coinGain = Math.ceil(xpGain / 10);
 
+      setCurrentWordXP(xpGain);
+      setTotalWordsSolved((prev) => prev + 1);
       setTotalXPEarned((x) => x + xpGain);
       setTotalCoinsEarned((c) => c + coinGain);
 
-      if (nextSolvedCount % 5 === 0) {
-        setTimeout(() => {
-          setShowMilestone(true);
-          playSynth("MILESTONE");
-        }, 500);
-        setTimeout(() => setShowMilestone(false), 7000);
-      }
-
-      const nextWordEntry = getWord(currentLevel, usedWordTexts);
+      setIsTransitioning(true);
+      const nextWordEntry = getNextWeightedWord(currentLevel, usedWordTexts);
       setUsedWordTexts((prev) => [...prev, nextWordEntry.word]);
 
-      setTimeout(() => setGuessedLetters([]), 400);
-      setTimeout(() => initGameSession("endless", nextWordEntry), 800);
+      setTimeout(() => setGuessedLetters([]), 500);
+      setTimeout(() => initGameSession("endless", nextWordEntry), 900);
       setTimeout(() => {
         setIsTransitioning(false);
         transitionLock.current = false;
@@ -265,26 +337,22 @@ export default function EndlessRunMode({
   }, [
     isWon,
     isGameOver,
+    currentGame,
+    currentLevel,
+    usedWordTexts,
+    getNextWeightedWord,
     initGameSession,
     setIsTransitioning,
     setGuessedLetters,
-    totalWordsSolved,
-    playSynth,
-    currentLevel,
-    usedWordTexts,
-    getWord,
-    currentGame,
   ]);
 
-  // --- 9. DATABASE SYNC ---
+  // --- 12. FINAL SYNC ---
   useEffect(() => {
     const shouldSync =
       isRunEnded || (isGameOver && !isReviving && reviveCountdown === 0);
-
     if (shouldSync && !hasClaimedResult && !syncLock.current) {
       syncLock.current = true;
-
-      const profileSnapshot = {
+      const snapshot = {
         xp: (profile.xp || 0) + totalXPEarned,
         totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
         papaPoints: (profile.papaPoints || 0) + totalCoinsEarned,
@@ -297,18 +365,11 @@ export default function EndlessRunMode({
           totalXPEarned,
         ),
       };
-
-      applyEndlessResult(profileSnapshot);
-
-      if (!profile.isGhost && syncToDatabase) {
-        syncToDatabase(profileSnapshot);
-      }
-
+      applyEndlessResult(snapshot);
+      if (!profile.isGhost && syncToDatabase) syncToDatabase(snapshot);
       setHasClaimedResult(true);
-
-      if (profile.isGhost && triggerSavePrompt) {
+      if (profile.isGhost && triggerSavePrompt)
         setTimeout(() => triggerSavePrompt(), 1500);
-      }
     }
   }, [
     isRunEnded,
@@ -325,18 +386,6 @@ export default function EndlessRunMode({
     triggerSavePrompt,
   ]);
 
-  const handleGuess = (letter) => {
-    if (
-      guessedLetters.includes(letter) ||
-      isGameOver ||
-      isTransitioning ||
-      isReviving
-    )
-      return;
-    if (wordLetters.includes(letter)) playSynth("CORRECT");
-    setGuessedLetters((prev) => [...prev, letter]);
-  };
-
   const handleRestart = useCallback(() => {
     setGlobalMistakes(0);
     setTotalWordsSolved(0);
@@ -348,10 +397,13 @@ export default function EndlessRunMode({
     setRevivesUsed(0);
     setGuessedLetters([]);
     setReviveCountdown(null);
+    setSessionMaxRankLevel(initialRank.level);
+    setNextMilestone(5);
+    setMilestoneStep(6);
     syncLock.current = false;
     transitionLock.current = false;
     initGameSession("endless");
-  }, [initGameSession, setGuessedLetters]);
+  }, [initGameSession, setGuessedLetters, initialRank.level]);
 
   return (
     <div className="flex flex-col space-y-2 md:space-y-4 relative w-full max-w-5xl mx-auto px-2 md:px-0 pb-10">
@@ -361,14 +413,14 @@ export default function EndlessRunMode({
         isBreakingXPRecord={isBreakingXPRecord}
         isRefilling={isRefilling}
         highestXP={profile.highestEndlessXP}
-        accent={playerRank.color}
+        accent={sessionRank.color}
       />
 
       <GameHeader
         gameMode="endless"
         category={currentGame?.category || "Loading..."}
         onQuit={onQuit}
-        playerRank={playerRank}
+        playerRank={sessionRank}
         wrongCount={globalMistakes}
         maxTries={MAX_GLOBAL_LIVES}
         streak={totalWordsSolved}
@@ -377,8 +429,8 @@ export default function EndlessRunMode({
       {showMilestone && (
         <MilestoneBanner
           streak={totalWordsSolved}
-          stageName={playerRank.name}
-          currentXP={profile.xp + totalXPEarned}
+          stageName={sessionRank.name}
+          currentXP={totalXPEarned}
         />
       )}
 
@@ -388,18 +440,34 @@ export default function EndlessRunMode({
             errors={globalMistakes}
             maxErrors={MAX_GLOBAL_LIVES}
             isWinner={isWon}
-            accent={playerRank.color}
+            accent={sessionRank.color}
             secondsElapsed={secondsElapsed}
             showMentorMsg={showMentorMsg}
-            currentRankName={playerRank.name}
+            currentRankName={sessionRank.name}
             streak={totalWordsSolved}
           />
         </div>
 
-        <div className="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-6 order-2">
-          <div className="py-4 md:py-8 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl md:rounded-3xl min-h-[140px] md:min-h-[180px] relative overflow-hidden border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+        {/* MOTION WRAPPER FOR SHAKE & FLASH */}
+        <motion.div
+          animate={
+            isShaking
+              ? {
+                  x: [-6, 6, -6, 6, 0],
+                  backgroundColor: [
+                    "rgba(239, 68, 68, 0)",
+                    "rgba(239, 68, 68, 0.2)",
+                    "rgba(239, 68, 68, 0)",
+                  ],
+                }
+              : {}
+          }
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-6 order-2 rounded-3xl"
+        >
+          <div className="py-4 md:py-8 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl md:rounded-3xl min-h-[140px] md:min-h-[180px] relative overflow-visible border-2 border-dashed border-zinc-200 dark:border-zinc-800">
             <div className="absolute top-2 left-3 flex items-center gap-1 opacity-40">
-              <Activity size={10} style={{ color: playerRank.color }} />
+              <Activity size={10} style={{ color: sessionRank.color }} />
               <span className="text-[9px] font-bold uppercase tracking-widest">
                 Stage {currentLevel}
               </span>
@@ -410,6 +478,9 @@ export default function EndlessRunMode({
               guessedLetters={guessedLetters}
               isLost={isRunEnded || (isGameOver && !isReviving)}
               isWon={isWon}
+              wrongCount={globalMistakes} // Pass global mistakes for juice
+              xpGained={currentWordXP}
+              accent={sessionRank.color}
             />
 
             {(wrongGuesses.length >= 2 || secondsElapsed >= 10) &&
@@ -475,14 +546,14 @@ export default function EndlessRunMode({
               />
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
-      {isTransitioning && !isGameOver && (
-        <GameTransitionOverlay
-          duration={TRANSITION_MS}
-          accent={playerRank.color}
-        />
-      )}
+
+      <LevelUpModal
+        isOpen={showLevelUp}
+        rank={sessionRank}
+        onClose={() => setShowLevelUp(false)}
+      />
     </div>
   );
 }

@@ -5,7 +5,8 @@ import { connectMongoDB } from "@/lib/mongodb";
 import GameProfile from "@/models/gameprofile";
 
 /**
- * GET: Retrieves or Initializes the user's profile.
+ * GET: Retrieves the user's profile if it exists.
+ * We REMOVED the "upsert" here so the client can detect if this is a first-time login.
  */
 export async function GET() {
   try {
@@ -16,38 +17,33 @@ export async function GET() {
 
     await connectMongoDB();
 
-    // Lazy Create: If no profile exists, create one with default starter stats.
-    const profile = await GameProfile.findOneAndUpdate(
-      { userEmail: session.user.email },
-      {
-        $setOnInsert: {
-          userEmail: session.user.email,
-          name: session.user.name || "Player",
-          xp: 0,
-          papaPoints: 50,
-          totalWordsSolved: 0,
-          highestEndlessRun: 0,
-          highestEndlessXP: 0,
-          isGhost: false,
-          unlockedThemes: ["classic"],
-          currentTheme: "classic",
-        },
-      },
-      { upsert: true, new: true }
-    );
+    // Look for the profile without creating one automatically
+    const profile = await GameProfile.findOne({
+      userEmail: session.user.email,
+    });
+
+    if (!profile) {
+      // Return success: false so the client knows to push the LocalStorage (Ghost) data
+      return NextResponse.json({ success: false, message: "No profile found" });
+    }
+
+    // If found, ensure the name is updated from the latest session
+    profile.name = session.user.name || profile.name || "Player";
+    await profile.save();
 
     return NextResponse.json({ success: true, profile });
   } catch (error) {
     console.error("GET Sync Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 /**
- * POST: Updates the cloud profile with the latest game session snapshot.
+ * POST: Updates or Creates the cloud profile.
+ * Handles the initial migration from Ghost -> Real User.
  */
 export async function POST(req) {
   try {
@@ -59,34 +55,48 @@ export async function POST(req) {
     const updateData = await req.json();
     await connectMongoDB();
 
-    // 1. Destructure to strip out sensitive/DB-generated fields.
-    // We explicitly exclude 'isGhost' because once they sync to DB, they aren't ghosts.
-    const { 
-      _id, 
-      __v, 
-      userEmail, 
-      createdAt, 
-      updatedAt, 
-      isGhost, 
-      ...safeUpdateData 
+    // 1. Destructure to protect high-score integrity and prevent meta-data overwrites
+    const {
+      _id,
+      __v,
+      userEmail,
+      createdAt,
+      updatedAt,
+      isGhost,
+      name,
+      xp,
+      highestEndlessXP,
+      highestEndlessRun,
+      highestStreak,
+      highestWinStreak,
+      ...otherData
     } = updateData;
 
-    // 2. Perform a deep update.
-    // Since EndlessRunMode sends the FULL calculated snapshot, we use $set.
+    // 2. The Migration & Sync Update:
+    // $set: Updates dynamic values (coins, current theme, etc.)
+    // $max: Ensures records/XP never go backwards during syncs
     const updatedProfile = await GameProfile.findOneAndUpdate(
       { userEmail: session.user.email },
       {
         $set: {
-          ...safeUpdateData,
-          userEmail: session.user.email, // Final integrity check
-          isGhost: false, // Ensure they are marked as a registered user
+          ...otherData,
+          name: session.user.name || name || "Player",
+          userEmail: session.user.email,
+          isGhost: false, // Permanently convert to a real user
+        },
+        $max: {
+          xp: xp || 0,
+          highestEndlessXP: highestEndlessXP || 0,
+          highestEndlessRun: highestEndlessRun || 0,
+          highestStreak: highestStreak || 0,
+          highestWinStreak: highestWinStreak || 0,
         },
       },
       {
         new: true,
-        upsert: true,
+        upsert: true, // This allows the FIRST POST (the migration) to create the document
         runValidators: true,
-      }
+      },
     );
 
     return NextResponse.json({
@@ -97,7 +107,7 @@ export async function POST(req) {
     console.error("POST Sync Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to sync profile" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

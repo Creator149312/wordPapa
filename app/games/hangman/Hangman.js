@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import GameClientHeader from "./GameClientHeader";
 import LevelBar from "./components/LevelBar";
 import GameLobbyView from "./components/GameLobbyView";
-import LevelUpModal from "./components/LevelUpModal";
 import SaveProgressModal from "./components/SaveProgressModal";
 
 // Segregated Modes
@@ -19,7 +18,7 @@ import EndlessRunMode from "./modes/EndlessRunMode";
 // Hooks & Logic
 import { useProfile } from "./../../ProfileContext";
 import { useHangmanSocket } from "./hooks/useHangmanSocket";
-import { RANKS, WORDS_POOL } from "./constants";
+import { calculateLevel } from "./lib/progression";
 
 const ONLINE_REQUIREMENTS = { MIN_XP: 0, MIN_COINS: 10 };
 
@@ -30,9 +29,8 @@ export default function Hangman({
 }) {
   const {
     profile,
+    isLoaded,
     applyClassicResult,
-    showLevelUp,
-    setShowLevelUp,
     deductCoins,
     applyOnlineResults,
     addDailyRewards,
@@ -45,69 +43,44 @@ export default function Hangman({
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [leaderboards, setLeaderboards] = useState({ global: [], endless: [] });
 
-  // --- 1. UPDATED RANK LOGIC ---
-  // Now uses highestEndlessXP as the primary driver for Rank/Title
   const currentRank = useMemo(() => {
-    return (
-      [...RANKS]
-        .reverse()
-        .find((r) => (profile.highestEndlessXP || 0) >= r.minXP) || RANKS[0]
-    );
-  }, [profile.highestEndlessXP]);
-
-  // Master Selector Logic (Weighting Level Number)
-  const getNextWeightedWord = useCallback((userLevel, usedWords = []) => {
-    const safeLevel = Math.max(1, Math.min(userLevel, 10));
-    let levelPickerPool = [];
-
-    for (let lvl = 1; lvl <= safeLevel; lvl++) {
-      for (let i = 0; i < lvl; i++) {
-        levelPickerPool.push(lvl);
-      }
-    }
-
-    const selectedLevel =
-      levelPickerPool[Math.floor(Math.random() * levelPickerPool.length)];
-    let levelWords = WORDS_POOL[selectedLevel] || WORDS_POOL[1];
-
-    let availableWords = levelWords.filter(
-      (item) => !usedWords.includes(item.word),
-    );
-
-    if (availableWords.length === 0) availableWords = levelWords;
-
-    const chosenEntry =
-      availableWords[Math.floor(Math.random() * availableWords.length)];
-    return { ...chosenEntry, wordLevel: selectedLevel };
-  }, []);
+    return calculateLevel(profile.xp || 0);
+  }, [profile.xp]);
 
   const calculateEarnedXP = useCallback(
     (mistakes) => Math.max(0, 100 - mistakes * 5),
     [],
   );
 
-  // --- 2. UPDATED SYNC LOGIC ---
-  // Points to the new /api/profile/sync and handles the updated snapshot keys
-  const syncToDatabase = async (updatedSnapshot) => {
-    if (profile.isGhost) return;
+  /**
+   * syncToDatabase
+   * Handles pushing mid-game or end-game results to the cloud.
+   * If the user is a Ghost, it skips the network call (local storage handles it).
+   */
+  const syncToDatabase = useCallback(
+    async (updatedSnapshot) => {
+      // Ghost users only sync locally via the ProfileContext actions
+      if (profile.isGhost) return;
 
-    try {
-      const response = await fetch("/api/games/hangman/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedSnapshot),
-      });
+      try {
+        const response = await fetch("/api/games/hangman/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedSnapshot),
+        });
+        const data = await response.json();
 
-      const data = await response.json();
-      if (data.success && updateLocalProfile) {
-        updateLocalProfile(data.profile);
+        // Update local context with fresh data from DB (ensures $max logic is reflected)
+        if (data.success && data.profile) {
+          updateLocalProfile(data.profile);
+        }
+      } catch (error) {
+        console.error("Hangman DB Sync failed:", error);
       }
-    } catch (error) {
-      console.error("Hangman DB Sync failed:", error);
-    }
-  };
+    },
+    [profile.isGhost, updateLocalProfile],
+  );
 
-  // --- 3. UPDATED LEADERBOARD FETCH ---
   const fetchLeaderboard = async () => {
     try {
       const res = await fetch("/api/games/hangman/leaderboard");
@@ -131,12 +104,13 @@ export default function Hangman({
   });
 
   const handleModeSelect = (mode) => {
-    if (mode === "classic" && profile.lives <= 0)
-      return alert(`❤️ Out of lives!`);
+    if (mode === "classic" && (profile.lives || 0) <= 0) {
+      return alert(`❤️ Out of fuel! Wait for recovery or play Endless Mode.`);
+    }
 
     if (mode === "online") {
       if ((profile.papaPoints || 0) < ONLINE_REQUIREMENTS.MIN_COINS)
-        return alert(`💰 Not enough coins!`);
+        return alert(`💰 Not enough coins for the entry fee!`);
       setGameMode(mode);
       joinQueue();
       setGameState("lobby");
@@ -150,14 +124,26 @@ export default function Hangman({
     disconnect();
     setGameMode(null);
     setGameState("menu");
-    if (profile.isGhost) setShowSavePrompt(true);
+
+    // Trigger save prompt if ghost has made significant progress
+    if (profile.isGhost && (profile.xp > 50 || profile.papaPoints > 100)) {
+      setShowSavePrompt(true);
+    }
   };
 
   useEffect(() => {
     if (gameState === "menu") fetchLeaderboard();
   }, [gameState]);
 
-  // LOBBY / MENU VIEW
+  // Prevent UI flickering or "ghosting" while the profile sync is resolving
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zinc-500"></div>
+      </div>
+    );
+  }
+
   if (gameState === "menu" || gameState === "lobby") {
     return (
       <div className="flex flex-col w-full transition-colors duration-1000">
@@ -186,11 +172,9 @@ export default function Hangman({
     );
   }
 
-  // ACTIVE GAMEPLAY VIEW
   return (
     <div className="min-h-screen p-1 md:p-4 bg-white dark:bg-zinc-950 transition-colors duration-1000">
       <Card className="max-w-5xl w-full mx-auto mt-4 p-3 md:p-6 rounded-[2rem] bg-zinc-50/50 dark:bg-zinc-900/40 relative overflow-hidden border-none shadow-none">
-        {/* Decorative Rank Glow */}
         <div
           className="absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 blur-[100px] opacity-20 pointer-events-none transition-colors duration-1000"
           style={{ backgroundColor: currentRank.color }}
@@ -205,7 +189,6 @@ export default function Hangman({
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
               accent={currentRank.color}
-              getWord={getNextWeightedWord}
               calculateXP={calculateEarnedXP}
             />
           )}
@@ -217,9 +200,6 @@ export default function Hangman({
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
               deductCoins={deductCoins}
-              accent={currentRank.color}
-              getWord={getNextWeightedWord}
-              calculateXP={calculateEarnedXP}
             />
           )}
           {gameMode === "classic" && (
@@ -230,7 +210,6 @@ export default function Hangman({
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
               accent={currentRank.color}
-              getWord={getNextWeightedWord}
               calculateXP={calculateEarnedXP}
             />
           )}
@@ -248,12 +227,6 @@ export default function Hangman({
           )}
         </div>
       </Card>
-
-      <LevelUpModal
-        isOpen={showLevelUp}
-        rank={currentRank}
-        onClose={() => setShowLevelUp(false)}
-      />
     </div>
   );
 }

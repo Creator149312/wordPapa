@@ -1,22 +1,37 @@
 "use client";
 import { useState, useMemo, useCallback } from "react";
-import { WORDS_POOL, GAME_CONFIG, ARENAS } from "../constants";
+import { WORDS_POOL, GAME_CONFIG, ARENAS, RANKS } from "../constants";
+// Assuming calculateLevel is a helper that finds the rank in RANKS based on XP
 import { calculateLevel } from "../lib/progression";
 
-export function useGameLogic(dailyWord, playerXP = 0) {
+/**
+ * @param {Object} dailyWord - The daily word object
+ * @param {number} playerXP - Total Profile XP (for Career Ranks)
+ * @param {number} highestEndlessXP - The user's PB (for Word Pool selection)
+ */
+export function useGameLogic(dailyWord, playerXP = 0, highestEndlessXP = 0) {
   const [currentGame, setCurrentGame] = useState(dailyWord || null);
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // --- 1. Arena & Rank Logic ---
   const arenaInfo = useMemo(() => {
+    // FIX: Rank calculation now uses total profile XP for the "Label"
     const rank = calculateLevel(playerXP);
     const theme = ARENAS[rank.arenaId];
     return { ...rank, theme };
   }, [playerXP]);
 
-  // --- 2. Derived State ---
-  // Ensure we handle potential undefined word property safely
+  // --- 2. Word Pool Difficulty Logic ---
+  const wordSelectionRank = useMemo(() => {
+    // FIX 2: Word selection is now driven by highestEndlessRunXP
+    // We find the highest rank achieved in Endless to determine the pool limit
+    const effectiveRank =
+      [...RANKS].reverse().find((r) => highestEndlessXP >= r.minXP) || RANKS[0];
+    return effectiveRank;
+  }, [highestEndlessXP]);
+
+  // --- 3. Derived State ---
   const wordLetters = useMemo(
     () => currentGame?.word?.toUpperCase().split("") || [],
     [currentGame],
@@ -37,10 +52,9 @@ export function useGameLogic(dailyWord, playerXP = 0) {
     [arenaInfo],
   );
 
-  // --- 3. Win/Loss States ---
+  // --- 4. Win/Loss States ---
   const isWon = useMemo(() => {
     if (alphabeticLetters.length === 0) return false;
-    // Check if every unique letter in the word has been guessed
     return alphabeticLetters.every((l) => guessedLetters.includes(l));
   }, [alphabeticLetters, guessedLetters]);
 
@@ -49,7 +63,7 @@ export function useGameLogic(dailyWord, playerXP = 0) {
     [wrongGuesses.length, maxWrong],
   );
 
-  // --- 4. Core Actions ---
+  // --- 5. Core Actions ---
   const initGameSession = useCallback(
     (mode, serverData = null) => {
       let nextWord;
@@ -57,10 +71,8 @@ export function useGameLogic(dailyWord, playerXP = 0) {
       // PRIORITY 1: Manual Injection (Endless Mode weighted word)
       if (serverData) {
         nextWord = {
-          word: serverData.word,
-          category: serverData.category,
-          hint: serverData.hint,
-          // Attach arena metadata for UI consistency
+          ...serverData,
+          // Attach session-specific arena metadata
           arena: arenaInfo.stageName,
           arenaId: arenaInfo.arenaId,
         };
@@ -69,29 +81,26 @@ export function useGameLogic(dailyWord, playerXP = 0) {
       else if (mode === "daily" && dailyWord) {
         nextWord = dailyWord;
       }
-      // PRIORITY 3: Fallback random selection (Classic Mode)
+      // PRIORITY 3: Fallback random selection (Classic/Endless)
       else {
-        const levelPool = WORDS_POOL[arenaInfo.level] || WORDS_POOL[1];
+        // FIX: Use wordSelectionRank (based on high score) instead of current arenaInfo
+        const targetLevel = wordSelectionRank.level;
+        const levelPool = WORDS_POOL[targetLevel] || WORDS_POOL[1];
         const next = levelPool[Math.floor(Math.random() * levelPool.length)];
 
         nextWord = {
           ...next,
           arena: arenaInfo.stageName,
           arenaId: arenaInfo.arenaId,
-          cefr: arenaInfo.cefr,
         };
       }
 
-      // Reset interaction state for the new word
       setGuessedLetters([]);
       setCurrentGame(nextWord);
     },
-    [dailyWord, arenaInfo],
+    [dailyWord, arenaInfo, wordSelectionRank],
   );
 
-  /**
-   * Reveal Letter Hint (Consumable)
-   */
   const useHint = useCallback(
     (currentCoins, cost = 50) => {
       if (currentCoins < cost || isWon || isLost) return null;

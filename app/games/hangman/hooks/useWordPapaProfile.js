@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   calculateLevel,
@@ -13,36 +13,23 @@ const MAX_LIVES = 10;
 const RECOVERY_MS = 3 * 60 * 60 * 1000;
 
 const INITIAL_STATE = {
-  // --- IDENTITY ---
   name: "Player",
   userEmail: null,
   isGhost: true,
-
-  // --- GLOBAL PROGRESSION ---
   xp: 0,
   papaPoints: 50,
   lives: MAX_LIVES,
   lastLifeLost: Date.now(),
   totalWordsSolved: 0,
-
-  // --- CLASSIC MODE ---
   currentStreak: 0,
   highestStreak: 0,
-
-  // --- ENDLESS MODE RECORDS ---
   highestEndlessRun: 0,
   highestEndlessXP: 0,
   totalEndlessXP: 0,
-
-  // --- ONLINE MULTIPLAYER ---
   onlineWinStreak: 0,
   highestWinStreak: 0,
-
-  // --- DAILY CHALLENGE ---
   dailyStreak: 0,
   lastDailyDate: null,
-
-  // --- CUSTOMIZATION ---
   unlockedThemes: ["classic"],
   currentTheme: "classic",
 };
@@ -53,7 +40,10 @@ export function useWordPapaProfile() {
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // --- 1. Sync local state with DB data ---
+  // Ref to track if we've already performed the initial auth sync to avoid loops
+  const hasSyncedAuth = useRef(false);
+
+  // --- 1. Sync local state with provided data ---
   const updateLocalProfile = useCallback((newProfileData) => {
     setProfile((prev) => {
       const merged = { ...prev, ...newProfileData };
@@ -64,32 +54,77 @@ export function useWordPapaProfile() {
     });
   }, []);
 
-  // --- 2. Auth Effect ---
+  // --- 2. Database Sync Helper (Push to Cloud) ---
+  const syncToRemoteDB = useCallback(async (profileData) => {
+    try {
+      await fetch("/api/games/hangman/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profileData),
+      });
+    } catch (err) {
+      console.error("Failed to sync to DB:", err);
+    }
+  }, []);
+
+  // --- 3. Auth Effect: The Sync/Migration Engine ---
   useEffect(() => {
     const syncWithAuth = async () => {
-      if (status === "authenticated" && session?.user) {
+      // Only run when authenticated and only once per session
+      if (
+        status === "authenticated" &&
+        session?.user &&
+        !hasSyncedAuth.current
+      ) {
         try {
-          const res = await fetch("/api/game/hangman/sync");
+          // 1. Check if user has an existing profile in Online DB
+          const res = await fetch("/api/games/hangman/sync");
           const data = await res.json();
 
+          // 2. Get the current progress from Local Storage (Ghost data)
+          const saved = localStorage.getItem(STORAGE_KEY);
+          const localData = saved ? JSON.parse(saved) : profile;
+
           if (data.success && data.profile) {
-            updateLocalProfile({ ...data.profile, isGhost: false });
-          } else {
-            // New user or no profile found
-            convertGhostToUser({
-              name: session.user.name,
+            /**
+             * CASE: RETURNING USER
+             * We prioritize the Database data. This overrides the local Ghost data
+             * to ensure the user is back where they left off on their account.
+             */
+            const syncedProfile = {
+              ...data.profile,
+              name: session.user.name || data.profile.name || "Player",
               userEmail: session.user.email,
-            });
+              isGhost: false, // Explicitly false now that they are logged in
+            };
+
+            updateLocalProfile(syncedProfile);
+          } else {
+            /**
+             * CASE: NEW USER / FIRST LOGIN
+             * We take the progress they made as a "Ghost" and save it to the DB.
+             */
+            const newCloudProfile = {
+              ...localData,
+              name: session.user.name || "Player",
+              userEmail: session.user.email,
+              isGhost: false, // Turn off ghost mode
+            };
+
+            updateLocalProfile(newCloudProfile);
+            await syncToRemoteDB(newCloudProfile);
           }
+
+          hasSyncedAuth.current = true;
         } catch (err) {
           console.error("Auth Sync Error:", err);
         }
       }
     };
     syncWithAuth();
-  }, [status, session, updateLocalProfile]);
+  }, [status, session, profile, updateLocalProfile, syncToRemoteDB]);
 
-  // --- 3. Initial Load & Life Recovery ---
+  // --- 4. Initial Load & Life Recovery Logic ---
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -100,6 +135,7 @@ export function useWordPapaProfile() {
         let updatedLives = parsed.lives ?? MAX_LIVES;
         let lastLifeTimestamp = parsed.lastLifeLost ?? now;
 
+        // Calculate life recovery
         if (updatedLives < MAX_LIVES) {
           const timePassed = now - lastLifeTimestamp;
           const recovered = Math.floor(timePassed / RECOVERY_MS);
@@ -120,36 +156,36 @@ export function useWordPapaProfile() {
           lastLifeLost: lastLifeTimestamp,
         }));
       } catch (e) {
-        console.error("Failed to parse profile", e);
+        console.error("Failed to parse local profile", e);
       }
     }
     setIsLoaded(true);
   }, []);
 
-  // --- 4. Centralized Save Function ---
+  // --- 5. Internal Update Logic (Handles Level Ups) ---
   const updateProfile = useCallback((updateFn) => {
     setProfile((prev) => {
       const newProfile = updateFn(prev);
+      const oldRank = calculateLevel(prev.xp);
+      const newRank = calculateLevel(newProfile.xp);
 
-      // Level Up Logic
-      const oldLevel = calculateLevel(prev.xp).level;
-      const newLevel = calculateLevel(newProfile.xp).level;
-
-      if (newLevel > oldLevel) {
+      // Check for Level Up
+      if (newRank.level > oldRank.level) {
         setShowLevelUp(true);
-        const arenaBonus = getArenaUnlockBonus(newLevel);
+        const arenaBonus = getArenaUnlockBonus(newRank.level);
         if (arenaBonus > 0) {
           newProfile.papaPoints += arenaBonus;
         }
       }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newProfile));
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newProfile));
+      }
       return newProfile;
     });
   }, []);
 
-  // --- 5. Game Mode Results ---
-
+  // --- 6. Game Actions ---
   const applyClassicResult = (isWin) => {
     updateProfile((prev) => {
       const newStreak = isWin ? prev.currentStreak + 1 : 0;
@@ -180,23 +216,15 @@ export function useWordPapaProfile() {
     });
   };
 
-  /**
-   * applyEndlessResult
-   * Keeps local state in sync with the session results generated in EndlessRunMode.js
-   */
-  const applyEndlessResult = (wordsSolved, totalXpEarned, totalCoinsEarned) => {
-    updateProfile((prev) => ({
-      ...prev,
-      // Update Career Stats
-      xp: prev.xp + totalXpEarned,
-      papaPoints: prev.papaPoints + totalCoinsEarned,
-      totalWordsSolved: (prev.totalWordsSolved || 0) + wordsSolved,
-
-      // Update Endless Records
-      highestEndlessRun: Math.max(prev.highestEndlessRun || 0, wordsSolved),
-      highestEndlessXP: Math.max(prev.highestEndlessXP || 0, totalXpEarned),
-      totalEndlessXP: (prev.totalEndlessXP || 0) + totalXpEarned,
-    }));
+  const applyEndlessResult = (snapshot) => {
+    updateProfile((prev) => {
+      const runXpEarned = Math.max(0, (snapshot.xp || 0) - (prev.xp || 0));
+      return {
+        ...prev,
+        ...snapshot,
+        totalEndlessXP: (prev.totalEndlessXP || 0) + runXpEarned,
+      };
+    });
   };
 
   const applyOnlineResults = (isWinner) => {
@@ -230,39 +258,33 @@ export function useWordPapaProfile() {
     });
   };
 
-  // --- 6. Utilities ---
-
   const deductCoins = (amount) => {
-    if (profile.papaPoints < amount) return false;
-    updateProfile((prev) => ({
-      ...prev,
-      papaPoints: prev.papaPoints - amount,
-    }));
-    return true;
+    let success = false;
+    updateProfile((prev) => {
+      if (prev.papaPoints >= amount) {
+        success = true;
+        return { ...prev, papaPoints: prev.papaPoints - amount };
+      }
+      return prev;
+    });
+    return success;
   };
 
   const purchaseTheme = (themeId, price) => {
-    if (
-      profile.papaPoints >= price &&
-      !profile.unlockedThemes.includes(themeId)
-    ) {
-      updateProfile((prev) => ({
-        ...prev,
-        papaPoints: prev.papaPoints - price,
-        unlockedThemes: [...prev.unlockedThemes, themeId],
-        currentTheme: themeId,
-      }));
-      return true;
-    }
-    return false;
-  };
-
-  const convertGhostToUser = (userData) => {
-    updateProfile((prev) => ({
-      ...prev,
-      ...userData,
-      isGhost: false,
-    }));
+    let success = false;
+    updateProfile((prev) => {
+      if (prev.papaPoints >= price && !prev.unlockedThemes.includes(themeId)) {
+        success = true;
+        return {
+          ...prev,
+          papaPoints: prev.papaPoints - price,
+          unlockedThemes: [...prev.unlockedThemes, themeId],
+          currentTheme: themeId,
+        };
+      }
+      return prev;
+    });
+    return success;
   };
 
   return {
@@ -276,7 +298,6 @@ export function useWordPapaProfile() {
     purchaseTheme,
     showLevelUp,
     setShowLevelUp,
-    convertGhostToUser,
     updateLocalProfile,
   };
 }
