@@ -11,7 +11,10 @@ import {
   Activity,
   Layers,
   Trophy,
+  Coins,
 } from "lucide-react";
+
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function GameHeader({
   gameMode,
@@ -20,6 +23,7 @@ export default function GameHeader({
   onQuit,
   streak,
   playerRank,
+  papaPoints = 0, // Added points prop
   wrongCount = 0,
   maxTries = 6,
 }) {
@@ -38,7 +42,6 @@ export default function GameHeader({
 
   return (
     <div className="flex justify-between items-center mb-2 sm:mb-4 relative px-1 transition-colors duration-300">
-      
       {/* LEFT SIDE: ACTIONS & RANK STATUS */}
       <div className="flex items-center gap-2 md:gap-3">
         {!showConfirm ? (
@@ -83,9 +86,9 @@ export default function GameHeader({
             {/* If the rank has a specific icon string, you can render it, 
                 otherwise we use a fallback Trophy icon */}
             {playerRank?.icon ? (
-               <span className="text-sm">{playerRank.icon}</span>
+              <span className="text-sm">{playerRank.icon}</span>
             ) : (
-               <Trophy size={14} />
+              <Trophy size={14} />
             )}
           </div>
           <span className="hidden md:block text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100">
@@ -144,8 +147,8 @@ export default function GameHeader({
         {isOnline && (
           <div
             className={`flex items-center gap-2 px-4 py-2 rounded-full font-black text-xs tabular-nums transition-all ${
-              timeLeft < 15 
-                ? "bg-red-500 text-white animate-pulse" 
+              timeLeft < 15
+                ? "bg-red-500 text-white animate-pulse"
                 : "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
             }`}
           >
@@ -153,6 +156,24 @@ export default function GameHeader({
             <span>{timeLeft}s</span>
           </div>
         )}
+
+        {/* --- PAPA COINS (The very right) --- */}
+        <motion.div
+          key={papaPoints} // Triggers animation on value change
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+        >
+          <Coins
+            size={14}
+            className="animate-pulse"
+            fill="currentColor"
+            fillOpacity={0.2}
+          />
+          <span className="text-[11px] sm:text-xs font-black tabular-nums tracking-tight">
+            {papaPoints.toLocaleString()}
+          </span>
+        </motion.div>
       </div>
     </div>
   );

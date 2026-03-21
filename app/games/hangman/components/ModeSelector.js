@@ -69,9 +69,8 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
         </button> */}
 
         {/* DAILY CHALLENGE MODE */}
-        <Link href="/games/hangman/daily" className="block h-full">
+        {/* <Link href="/games/hangman/daily" className="block h-full">
           <button className="w-full group relative p-8 rounded-[2rem] bg-zinc-900 hover:bg-black border-2 border-transparent hover:border-amber-400 transition-all duration-500 text-left flex flex-col h-full shadow-xl hover:-translate-y-1 overflow-hidden">
-            {/* Subtle Glow Effect */}
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-colors duration-500" />
 
             <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 bg-amber-400 text-black rounded-full shadow-lg">
@@ -107,7 +106,7 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
               />
             </div>
           </button>
-        </Link>
+        </Link> */}
 
         {/* ENDLESS RUN MODE */}
         <button

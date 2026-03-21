@@ -48,10 +48,10 @@ export default function SessionProgress({
   const progressWidth = Math.min(xpPercent, 100);
 
   return (
-    <div className="w-full animate-in fade-in slide-in-from-top-2 duration-500 mb-3">
+    <div className="w-full animate-in fade-in slide-in-from-top-2 duration-500 mb-1 md:mb-2">
       <div className="relative bg-white dark:bg-zinc-900 border-[3px] border-zinc-900 dark:border-zinc-100 rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
         {/* PROGRESS FILL CONTAINER */}
-        <div className="absolute bottom-0 left-0 w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 z-10">
+        <div className="absolute bottom-0 left-0 w-full h-1 md:h-1.5 bg-zinc-100 dark:bg-zinc-800 z-10">
           <div
             className={`h-full transition-all duration-1000 ease-in-out relative ${
               isBreakingXPRecord ? "animate-shimmer" : ""
@@ -94,10 +94,10 @@ export default function SessionProgress({
           </div>
         )}
 
-        <div className="flex items-center justify-between px-3 py-2.5 relative z-20">
+        <div className="flex items-center justify-between px-2 py-2 relative z-20">
           <div className="flex items-center gap-3">
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center border-2 border-zinc-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-500 ${
+              className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 border-zinc-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-500 ${
                 isBreakingXPRecord ? "bg-indigo-600 animate-bounce-subtle" : ""
               }`}
               style={{

@@ -147,7 +147,7 @@ export default function Hangman({
   if (gameState === "menu" || gameState === "lobby") {
     return (
       <div className="flex flex-col w-full transition-colors duration-1000">
-        <GameClientHeader />
+        {/* <GameClientHeader /> */}
         <div className="max-w-5xl w-full mx-auto px-1 md:px-4">
           <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
             <LevelBar />
@@ -174,7 +174,7 @@ export default function Hangman({
 
   return (
     <div className="min-h-screen p-1 md:p-4 bg-white dark:bg-zinc-950 transition-colors duration-1000">
-      <Card className="max-w-5xl w-full mx-auto mt-4 p-3 md:p-6 rounded-[2rem] bg-zinc-50/50 dark:bg-zinc-900/40 relative overflow-hidden border-none shadow-none">
+      <Card className="max-w-5xl w-full mx-auto mt-2 p-3 md:p-6 rounded-[2rem] bg-zinc-50/50 dark:bg-zinc-900/40 relative overflow-hidden border-none shadow-none">
         <div
           className="absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 blur-[100px] opacity-20 pointer-events-none transition-colors duration-1000"
           style={{ backgroundColor: currentRank.color }}

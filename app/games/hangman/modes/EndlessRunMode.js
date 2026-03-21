@@ -40,6 +40,8 @@ export default function EndlessRunMode({
 
   // Juice States
   const [currentWordXP, setCurrentWordXP] = useState(0);
+  // NEW: Track the coin gain for the specific word animation
+  const [currentWordCoins, setCurrentWordCoins] = useState(0);
   const [isShaking, setIsShaking] = useState(false);
 
   const [showLevelUp, setShowLevelUp] = useState(false);
@@ -47,7 +49,13 @@ export default function EndlessRunMode({
     calculateLevel(profile.highestEndlessXP || 0).level,
   );
 
-  // --- 2. WORD SELECTION LOGIC ---
+  // --- 2. LIVE CURRENCY CALCULATION ---
+  // This ensures the GameHeader shows: (Original Points - Spent) + Earned
+  const livePapaPoints = useMemo(() => {
+    return (profile.papaPoints || 0) + totalCoinsEarned;
+  }, [profile.papaPoints, totalCoinsEarned]);
+
+  // --- 3. WORD SELECTION LOGIC ---
   const getNextWeightedWord = useCallback(
     (userLevel, usedWords = []) => {
       const effectiveXP = Math.max(
@@ -81,7 +89,6 @@ export default function EndlessRunMode({
     [profile.highestEndlessXP, totalXPEarned],
   );
 
-  // --- 3. BASELINE RANK CALCULATION ---
   const initialRank = useMemo(() => {
     return calculateLevel(profile.highestEndlessXP || 0);
   }, [profile.highestEndlessXP]);
@@ -91,7 +98,7 @@ export default function EndlessRunMode({
     const snapshot = {
       xp: (profile.xp || 0) + totalXPEarned,
       totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
-      papaPoints: (profile.papaPoints || 0) + totalCoinsEarned,
+      papaPoints: livePapaPoints, // Use the live calculated value
       highestEndlessRun: Math.max(
         profile.highestEndlessRun || 0,
         totalWordsSolved,
@@ -102,7 +109,7 @@ export default function EndlessRunMode({
   }, [
     totalWordsSolved,
     totalXPEarned,
-    totalCoinsEarned,
+    livePapaPoints,
     profile,
     applyEndlessResult,
   ]);
@@ -219,15 +226,13 @@ export default function EndlessRunMode({
     milestoneStep,
   ]);
 
-  // --- 9. MISTAKES (Shake Logic) ---
+  // --- 9. MISTAKES ---
   useEffect(() => {
     if (wrongGuesses.length > prevWrongCount.current) {
       const delta = wrongGuesses.length - prevWrongCount.current;
       if (!isShatteringInternal.current) {
         setGlobalMistakes((prev) => prev + delta);
         playSynth("POP");
-
-        // Trigger Screen Shake & Red Flash locally
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 400);
       }
@@ -259,7 +264,7 @@ export default function EndlessRunMode({
 
   // --- 10. ACTIONS ---
   const handleShatter = () => {
-    if (profile.papaPoints < SHATTER_COST) return;
+    if (livePapaPoints < SHATTER_COST) return; // Use live points check
     const wrongOptions = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       .split("")
       .filter((l) => !wordLetters.includes(l) && !guessedLetters.includes(l));
@@ -280,7 +285,7 @@ export default function EndlessRunMode({
   };
 
   const handleRevive = () => {
-    if (profile.papaPoints >= REVIVE_COST) {
+    if (livePapaPoints >= REVIVE_COST) {
       const success = deductCoins(REVIVE_COST);
       if (success) {
         setReviveCountdown(null);
@@ -318,7 +323,10 @@ export default function EndlessRunMode({
       const xpGain = (currentGame?.word?.length || 0) * 10 + wordLevel * 15;
       const coinGain = Math.ceil(xpGain / 10);
 
+      // Trigger animations
       setCurrentWordXP(xpGain);
+      setCurrentWordCoins(coinGain);
+
       setTotalWordsSolved((prev) => prev + 1);
       setTotalXPEarned((x) => x + xpGain);
       setTotalCoinsEarned((c) => c + coinGain);
@@ -355,7 +363,7 @@ export default function EndlessRunMode({
       const snapshot = {
         xp: (profile.xp || 0) + totalXPEarned,
         totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
-        papaPoints: (profile.papaPoints || 0) + totalCoinsEarned,
+        papaPoints: livePapaPoints,
         highestEndlessRun: Math.max(
           profile.highestEndlessRun || 0,
           totalWordsSolved,
@@ -378,7 +386,7 @@ export default function EndlessRunMode({
     reviveCountdown,
     hasClaimedResult,
     totalXPEarned,
-    totalCoinsEarned,
+    livePapaPoints,
     totalWordsSolved,
     profile,
     syncToDatabase,
@@ -424,6 +432,7 @@ export default function EndlessRunMode({
         wrongCount={globalMistakes}
         maxTries={MAX_GLOBAL_LIVES}
         streak={totalWordsSolved}
+        papaPoints={livePapaPoints} // LIVE UPDATE PASSED HERE
       />
 
       {showMilestone && (
@@ -448,7 +457,6 @@ export default function EndlessRunMode({
           />
         </div>
 
-        {/* MOTION WRAPPER FOR SHAKE & FLASH */}
         <motion.div
           animate={
             isShaking
@@ -465,7 +473,7 @@ export default function EndlessRunMode({
           transition={{ duration: 0.4, ease: "easeInOut" }}
           className="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-6 order-2 rounded-3xl"
         >
-          <div className="py-4 md:py-8 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl md:rounded-3xl min-h-[140px] md:min-h-[180px] relative overflow-visible border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+          <div className="py-2 md:py-4 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl md:rounded-3xl min-h-[140px] md:min-h-[180px] relative overflow-visible border-2 border-dashed border-zinc-200 dark:border-zinc-800">
             <div className="absolute top-2 left-3 flex items-center gap-1 opacity-40">
               <Activity size={10} style={{ color: sessionRank.color }} />
               <span className="text-[9px] font-bold uppercase tracking-widest">
@@ -478,14 +486,15 @@ export default function EndlessRunMode({
               guessedLetters={guessedLetters}
               isLost={isRunEnded || (isGameOver && !isReviving)}
               isWon={isWon}
-              wrongCount={globalMistakes} // Pass global mistakes for juice
+              wrongCount={globalMistakes}
               xpGained={currentWordXP}
+              coinsGained={currentWordCoins} // PASSED PROP FOR ANIMATION
               accent={sessionRank.color}
             />
 
             {(wrongGuesses.length >= 2 || secondsElapsed >= 10) &&
               currentGame?.hint && (
-                <div className="mt-4 flex flex-col items-center">
+                <div className="mt-2 md:mt-4 flex flex-col items-center">
                   {!hintRevealed ? (
                     <button
                       onClick={handleRevealHint}
@@ -516,7 +525,8 @@ export default function EndlessRunMode({
                 <div className="flex justify-center">
                   <button
                     onClick={handleShatter}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-zinc-900 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all group"
+                    disabled={livePapaPoints < SHATTER_COST}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-zinc-900 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all group disabled:opacity-50 disabled:grayscale"
                   >
                     <Eraser
                       size={16}
