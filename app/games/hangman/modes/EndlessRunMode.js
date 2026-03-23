@@ -414,7 +414,7 @@ export default function EndlessRunMode({
   }, [initGameSession, setGuessedLetters, initialRank.level]);
 
   return (
-    <div className="flex flex-col space-y-2 md:space-y-4 relative w-full max-w-5xl mx-auto px-2 md:px-0 pb-10">
+    <div className="flex flex-col space-y-1 md:space-y-2 relative w-full max-w-5xl mx-auto px-2 md:px-0 pb-5 md:pb-10">
       <SessionProgress
         totalXPEarned={totalXPEarned}
         xpPercent={xpPercent}
@@ -473,7 +473,7 @@ export default function EndlessRunMode({
           transition={{ duration: 0.4, ease: "easeInOut" }}
           className="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-6 order-2 rounded-3xl"
         >
-          <div className="py-2 md:py-4 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl md:rounded-3xl min-h-[140px] md:min-h-[180px] relative overflow-visible border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+          <div className="py-1 md:py-2 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl md:rounded-3xl min-h-[140px] md:min-h-[180px] relative overflow-visible border-2 border-dashed border-zinc-200 dark:border-zinc-800">
             <div className="absolute top-2 left-3 flex items-center gap-1 opacity-40">
               <Activity size={10} style={{ color: sessionRank.color }} />
               <span className="text-[9px] font-bold uppercase tracking-widest">
@@ -494,11 +494,11 @@ export default function EndlessRunMode({
 
             {(wrongGuesses.length >= 2 || secondsElapsed >= 10) &&
               currentGame?.hint && (
-                <div className="mt-2 md:mt-4 flex flex-col items-center">
+                <div className="mt-1 md:mt-2 flex flex-col items-center">
                   {!hintRevealed ? (
                     <button
                       onClick={handleRevealHint}
-                      className="flex items-center gap-2 px-4 py-1.5 bg-yellow-400 text-black rounded-full font-black text-[10px] uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all"
+                      className="flex items-center gap-2 px-4 py-1 bg-yellow-400 text-black rounded-full font-black text-[10px] uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all"
                     >
                       <Lightbulb size={12} fill="currentColor" /> Free Hint
                     </button>

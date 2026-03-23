@@ -83,7 +83,9 @@ export default function Hangman({
 
   const fetchLeaderboard = async () => {
     try {
-      const res = await fetch("/api/games/hangman/leaderboard");
+      const res = await fetch("/api/games/hangman/leaderboard", {
+        next: { revalidate: 60 }, // Fresh every minute
+      });
       const data = await res.json();
       if (data.success) {
         setLeaderboards({

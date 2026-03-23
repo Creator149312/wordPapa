@@ -163,7 +163,7 @@ export default function SessionProgress({
               style={{ backgroundColor: accent }}
             >
               <Zap size={12} fill="currentColor" className="animate-pulse" />{" "}
-              Energy Refilled!
+              Balloons Refilled!
             </div>
           </div>
         )}

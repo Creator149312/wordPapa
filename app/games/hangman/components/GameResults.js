@@ -11,6 +11,7 @@ import {
   HeartCrack,
   Heart,
   Timer,
+  Wind, // Added Wind for the air/refill theme
 } from "lucide-react";
 import ShareResult from "./ShareResult";
 
@@ -27,11 +28,10 @@ export default function GameResults({
   isRunEnded,
   revivesUsed = 0,
   reviveCost = 50,
-  countdown = null, // Passed from EndlessRunMode
+  countdown = null,
 }) {
   const isEndless = mode === "endless";
 
-  // Only offer revive if in Endless, they lost, and the run hasn't officially ended
   const showReviveOffer =
     isEndless && !isWon && !isRunEnded && countdown !== null;
   const isRunEndedStatus = (!isWon && streak > 0) || (isEndless && isRunEnded);
@@ -53,7 +53,7 @@ export default function GameResults({
             }`}
           >
             {showReviveOffer ? (
-              <HeartCrack size={20} />
+              <Wind size={20} className="animate-bounce-subtle" /> // Changed icon to Wind
             ) : isWon || (isEndless && streak > 5) ? (
               <Trophy size={20} />
             ) : isRunEndedStatus ? (
@@ -75,7 +75,7 @@ export default function GameResults({
               }`}
             >
               {showReviveOffer
-                ? "Fuel is Empty!"
+                ? "Balloons Popped!" // Changed from Fuel is Empty
                 : isEndless
                   ? "Run Complete!"
                   : isWon
@@ -86,7 +86,7 @@ export default function GameResults({
             </h2>
             <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter mt-1">
               {showReviveOffer
-                ? `Last chance to continue...`
+                ? `Quick! Refill your air...` // Changed text
                 : isEndless
                   ? `Mastered ${streak} words`
                   : `Word: ${word}`}
@@ -148,14 +148,14 @@ export default function GameResults({
               }`}
             >
               {showReviveOffer
-                ? "Revive Timer"
+                ? "Air Supply Timer" // Changed from Revive Timer
                 : isEndless
                   ? "Words Mastered"
                   : "Current Streak"}
             </p>
             <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-tight mt-0.5">
               {showReviveOffer
-                ? "Quick! Your run is about to end."
+                ? "Don't fall! Refill air to stay afloat." // Changed text
                 : "You're becoming a legend!"}
             </p>
           </div>
@@ -170,21 +170,21 @@ export default function GameResults({
               onClick={onEndRun}
               className="flex-1 h-12 rounded-2xl bg-zinc-200 dark:bg-zinc-800 text-zinc-500 font-black uppercase text-[10px] tracking-widest hover:bg-zinc-300 transition-all active:scale-95"
             >
-              Give Up
+              Let Fall
             </Button>
             <Button
               onClick={onRevive}
               className="flex-[2] h-12 rounded-2xl bg-amber-500 text-white font-black uppercase text-[11px] tracking-widest shadow-lg shadow-amber-500/40 hover:bg-amber-600 hover:scale-[1.02] transition-all relative overflow-hidden group"
             >
-              {/* SHOCK BAR: Visual drain effect */}
+              {/* PRESSURE GAUGE: Visual air refill effect */}
               <div
                 className="absolute bottom-0 left-0 h-1.5 bg-white/40 transition-all duration-1000 ease-linear"
                 style={{ width: `${(countdown / 6) * 100}%` }}
               />
 
               <div className="flex items-center justify-center gap-2 relative z-10">
-                <Heart size={14} className="fill-white animate-pulse" />
-                <span>Revive ({reviveCost})</span>
+                <Wind size={14} className="animate-pulse" />
+                <span>Refill Air ({reviveCost})</span>
               </div>
             </Button>
           </>
@@ -198,6 +198,7 @@ export default function GameResults({
                 mode={mode}
                 variant="icon"
               />
+              
             </div>
             <Button
               onClick={onRestart}
@@ -207,7 +208,7 @@ export default function GameResults({
                   : "bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90"
               }`}
             >
-              {isEndless ? "New Run" : isWon ? "Next Word" : "Try Again"}
+              {isEndless ? "New Flight" : isWon ? "Next Word" : "Try Again"}
               <RefreshCw size={14} className="ml-2" />
             </Button>
           </>
