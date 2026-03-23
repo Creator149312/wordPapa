@@ -76,7 +76,7 @@ export default function WordDisplay({
   };
 
   return (
-    <div className="relative flex flex-wrap gap-2 md:gap-3 justify-center items-center py-6 md:py-12 w-full max-w-full mx-auto select-none overflow-visible">
+    <div className="relative flex flex-wrap gap-2 md:gap-3 justify-center items-center py-3 md:py-8 w-full max-w-full mx-auto select-none overflow-visible">
       {/* BACKGROUND GLOW */}
       <AnimatePresence>
         {showWinJuice && (

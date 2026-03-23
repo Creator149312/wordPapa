@@ -4,7 +4,7 @@ import { getMentorMessage } from "../constants/mentorMessages";
 
 export default function DynamicPapa({
   errors,
-  maxErrors = 5, // Updated to 5 as per your new rules
+  maxErrors = 5,
   accent = "#75c32c",
   isWinner = false,
   secondsElapsed = 0,
@@ -16,7 +16,6 @@ export default function DynamicPapa({
   const [celebrate, setCelebrate] = useState(false);
   const [isRefilling, setIsRefilling] = useState(false);
 
-  // Milestone thresholds provided: 5, 11, 18, 26...
   const MILESTONES = [5, 11, 18, 26, 35, 45, 56, 68, 81, 95];
 
   useEffect(() => {
@@ -26,24 +25,20 @@ export default function DynamicPapa({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Detect Milestones for Refill & Celebration
   useEffect(() => {
     if (streak > 0 && MILESTONES.includes(streak)) {
-      // Trigger Air Pump Inflation
       setIsRefilling(true);
       setCelebrate(true);
-
       const timer = setTimeout(() => {
         setIsRefilling(false);
         setCelebrate(false);
       }, 3000);
-
       return () => clearTimeout(timer);
     }
   }, [streak]);
 
   const getExpression = () => {
-    if (isRefilling) return "o(>_<)o"; // Pumping expression
+    if (isRefilling) return "o(>_<)o";
     if (errors >= maxErrors) return "(x_x)";
     if (isWinner) return "٩(^‿^)۶";
     if (errors >= maxErrors * 0.8) return "(╥﹏╥)";
@@ -60,33 +55,35 @@ export default function DynamicPapa({
 
   const isDead = errors >= maxErrors;
 
-  // PHYSICS: Starting at Center, Sinking as Balloons Pop
-  const sinkDistance = isMobile ? 40 : 80;
+  // PHYSICS: Proportions for 200px vs 450px height
+  const sinkDistance = isMobile ? 35 : 80;
   const currentSink = (errors / maxErrors) * sinkDistance;
-  const finalDrop = isDead ? (isMobile ? 60 : 130) : 0;
+  const finalDrop = isDead ? (isMobile ? 55 : 130) : 0;
 
   return (
-    <div className="relative flex items-start justify-center h-[225px] lg:h-[450px] w-full lg:max-w-[300px] overflow-hidden bg-gradient-to-r lg:bg-gradient-to-b from-sky-300 via-sky-100 to-white dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-950 rounded-2xl border-[3px] border-zinc-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] lg:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mx-auto">
+    <div className="relative flex items-start justify-center h-[200px] lg:h-[450px] w-full lg:max-w-[300px] overflow-hidden bg-gradient-to-r lg:bg-gradient-to-b from-sky-300 via-sky-100 to-white dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-950 rounded-2xl border-[3px] border-zinc-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] lg:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mx-auto">
       {/* BACKGROUND DECORATIONS */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-8 left-[-15%] animate-cloud-slow text-[30px] lg:text-[40px] opacity-30">
+        <div className="absolute top-6 left-[-15%] animate-cloud-slow text-[30px] lg:text-[40px] opacity-30">
           ☁️
         </div>
-        <div className="absolute top-24 left-[-20%] animate-cloud-med text-[25px] lg:text-[35px] opacity-20">
+        <div className="absolute top-20 left-[-20%] animate-cloud-med text-[25px] lg:text-[35px] opacity-20">
           ☁️
         </div>
-        <div className="absolute top-48 right-[-15%] animate-cloud-fast text-[35px] lg:text-[50px] opacity-25">
+        <div className="absolute top-40 right-[-15%] animate-cloud-fast text-[35px] lg:text-[50px] opacity-25">
           ☁️
         </div>
-        <div className="absolute top-16 left-[-10%] animate-bird-one text-[14px] opacity-40">
+
+        {/* Adjusted bird heights for 200px fixed height */}
+        <div className="absolute top-12 left-[-10%] animate-bird-one text-[14px] opacity-40">
           🐦
         </div>
-        <div className="absolute top-32 left-[-10%] animate-bird-two text-[12px] opacity-30">
+        <div className="absolute top-28 left-[-10%] animate-bird-two text-[12px] opacity-30">
           🐦
         </div>
       </div>
 
-      {/* ASSEMBLY GROUP (Balloons + Character) */}
+      {/* ASSEMBLY GROUP */}
       <div
         className={`absolute left-1/2 z-40 transition-all duration-[1000ms] ease-out 
           ${isRefilling ? "scale-110" : "scale-100"}`}
@@ -95,18 +92,20 @@ export default function DynamicPapa({
           transform: `translate(-50%, calc(-50% + ${currentSink + finalDrop}px)) rotate(${isDead ? "25deg" : "0deg"})`,
         }}
       >
-        {/* GEOMETRIC ANCHOR: The Meeting Point */}
+        {/* BALLOON ANCHOR */}
         <div className="absolute top-0 left-0 w-0 h-0 z-30">
           {Array.from({ length: maxErrors }).map((_, i) => {
             const isPopped = i < errors;
             if (isPopped) return null;
 
-            const colsPerRow = isMobile ? 5 : 4;
+            // GRID OF 3 BALLOONS
+            const colsPerRow = 3;
             const row = Math.floor(i / colsPerRow);
             const col = i % colsPerRow;
 
-            const tx = (col - (colsPerRow - 1) / 2) * (isMobile ? 24 : 36);
-            const ty = isMobile ? -(row * 18 + 55) : -(row * 28 + 100);
+            // Positioning for clean grid
+            const tx = (col - (colsPerRow - 1) / 2) * (isMobile ? 28 : 40);
+            const ty = isMobile ? -(row * 22 + 50) : -(row * 32 + 110);
 
             const length = Math.sqrt(tx * tx + ty * ty);
             const angle = Math.atan2(tx, -ty) * (180 / Math.PI);
@@ -128,7 +127,7 @@ export default function DynamicPapa({
                     left: `${tx}px`,
                     top: `${ty}px`,
                     transform: "translateX(-50%)",
-                    animationDelay: `${i * 0.1}s`,
+                    animationDelay: `${i * 0.15}s`,
                     boxShadow: `inset -2px -2px 0px rgba(0,0,0,0.1)`,
                   }}
                 >
@@ -145,7 +144,6 @@ export default function DynamicPapa({
             ${isWinner || isRefilling ? "animate-bounce" : !isDead ? "animate-float" : ""}`}
           style={{ transform: "translate(-50%, -50%)" }}
         >
-          {/* MENTOR / REFILL MSG */}
           {(showMentorMsg || isRefilling) && !isDead && (
             <div className="absolute top-[-55px] lg:top-[-75px] left-1/2 -translate-x-1/2 z-50 animate-bounce">
               <div
@@ -154,18 +152,6 @@ export default function DynamicPapa({
               >
                 {mentorText}
               </div>
-            </div>
-          )}
-
-          {/* Air Refill Particles */}
-          {isRefilling && (
-            <div className="absolute inset-0 z-0">
-              <span className="absolute -top-4 -left-4 animate-ping text-xl">
-                💨
-              </span>
-              <span className="absolute -bottom-4 -right-4 animate-ping text-xl">
-                💨
-              </span>
             </div>
           )}
 
@@ -185,7 +171,7 @@ export default function DynamicPapa({
         </div>
       </div>
 
-      {/* CELEBRATION OVERLAY */}
+      {/* CELEBRATION */}
       {celebrate && (
         <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
           {Array.from({ length: 15 }).map((_, i) => (
@@ -205,11 +191,11 @@ export default function DynamicPapa({
       )}
 
       {/* Ground Spikes */}
-      <div className="absolute bottom-0 left-0 w-full h-[20px] flex justify-around items-end z-10 bg-zinc-200 dark:bg-zinc-800">
+      <div className="absolute bottom-0 left-0 w-full h-[18px] flex justify-around items-end z-10 bg-zinc-200 dark:bg-zinc-800">
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
-            className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[20px] border-b-zinc-900 dark:border-b-white"
+            className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[18px] border-b-zinc-900 dark:border-b-white"
           />
         ))}
       </div>
@@ -255,12 +241,14 @@ export default function DynamicPapa({
             opacity: 0;
           }
         }
+
+        /* Adjusted bird-fly to dip less vertically for 200px mobile view */
         @keyframes bird-fly {
           0% {
             transform: translate3d(-50px, 0, 0);
           }
           50% {
-            transform: translate3d(150px, -15px, 0);
+            transform: translate3d(150px, -8px, 0);
           }
           100% {
             transform: translate3d(350px, 0, 0);
@@ -279,7 +267,6 @@ export default function DynamicPapa({
         .animate-celebrate-balloon {
           animation: celebrate-balloon 3s ease-out forwards;
         }
-
         .animate-cloud-slow {
           animation: cloud-slow 75s linear infinite;
           will-change: transform;
@@ -292,7 +279,6 @@ export default function DynamicPapa({
           animation: cloud-fast 35s linear infinite;
           will-change: transform;
         }
-
         .animate-bird-one {
           animation: bird-fly 20s linear infinite;
           will-change: transform;

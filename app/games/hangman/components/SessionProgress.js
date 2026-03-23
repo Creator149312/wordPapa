@@ -94,7 +94,7 @@ export default function SessionProgress({
           </div>
         )}
 
-        <div className="flex items-center justify-between px-2 py-2 relative z-20">
+        <div className="flex items-center justify-between px-2 py-1 md:py-2 relative z-20">
           <div className="flex items-center gap-3">
             <div
               className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 border-zinc-900 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-500 ${
@@ -159,7 +159,7 @@ export default function SessionProgress({
         {isRefilling && (
           <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-40 animate-in fade-in zoom-in duration-300">
             <div
-              className="flex items-center gap-2 px-4 py-1.5 text-white rounded-full text-[10px] font-black uppercase shadow-lg border-2 border-white/20"
+              className="flex items-center gap-2 px-4 py-1 md:py-1.5 text-white rounded-full text-[10px] font-black uppercase shadow-lg border-2 border-white/20"
               style={{ backgroundColor: accent }}
             >
               <Zap size={12} fill="currentColor" className="animate-pulse" />{" "}

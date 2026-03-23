@@ -4,7 +4,7 @@ export default function VirtualKeyboard({ guessedLetters, wordLetters, onGuess, 
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   return (
-    <div className="flex flex-wrap justify-center gap-2 md:gap-3 w-full max-w-2xl mx-auto px-2 select-none">
+    <div className="flex flex-wrap justify-center gap-2 md:gap-3 w-full max-w-2xl mx-auto md:px-2 select-none">
       {letters.map((char) => {
         const isGuessed = guessedLetters.includes(char);
         const isCorrect = isGuessed && wordLetters.includes(char);
@@ -17,7 +17,7 @@ export default function VirtualKeyboard({ guessedLetters, wordLetters, onGuess, 
             disabled={disabled || isGuessed}
             className={`
               /* Tactile Sketch Style */
-              w-10 h-11 md:w-12 md:h-12 flex items-center justify-center
+              w-10 h-10 md:w-12 md:h-12 flex items-center justify-center
               text-sm md:text-lg font-black rounded-lg
               border-2 border-b-4 transition-all duration-75
               
