@@ -95,7 +95,7 @@ export default function GameLobbyView({
       </div>
 
       {/* Decorative Footer Detail */}
-      <div className="flex justify-center opacity-20 pointer-events-none pb-8">
+      <div className="flex justify-center opacity-20 pointer-events-none pb-4 md:pb-8">
         <svg width="100" height="20" viewBox="0 0 100 20">
           <path
             d="M0 10 Q 25 0, 50 10 T 100 10"

@@ -154,7 +154,7 @@ export default function WordDisplay({
       </AnimatePresence>
 
       {/* WORD LETTERS */}
-      {wordLetters.map((letter, index) => {
+      {/* {wordLetters.map((letter, index) => {
         if (letter === " ")
           return <div key={`space-${index}`} className="w-4 md:w-8 h-1" />;
         const isRevealed = guessedLetters.includes(letter);
@@ -176,6 +176,47 @@ export default function WordDisplay({
                 ${getFontSize()}
                 ${isRevealed ? "text-[#75c32c]" : "text-zinc-800 dark:text-zinc-100"}
                 ${showMissed ? "text-red-500 animate-pulse" : ""}
+                ${!isRevealed && !showMissed ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}
+                ${isWon ? "animate-bounce" : ""}
+              `}
+              style={{
+                color: isRevealed && !isLost ? accent : undefined,
+                animationDelay: `${index * 50}ms`,
+              }}
+            >
+              {isRevealed || isLost ? letter : ""}
+            </span>
+          </div>
+        );
+      })} */}
+      {/* WORD LETTERS */}
+      {wordLetters.map((letter, index) => {
+        if (letter === " ")
+          return <div key={`space-${index}`} className="w-4 md:w-8 h-1" />;
+        const isRevealed = guessedLetters.includes(letter);
+        const showMissed = isLost && !isRevealed;
+
+        return (
+          <div
+            key={`${currentWordStr}-${index}`}
+            className={`
+              relative flex items-center justify-center transition-all duration-300
+              ${getBoxSize()} 
+              border-b-[4px] md:border-b-[6px]
+              ${isRevealed ? "" : showMissed ? "border-red-500" : "border-zinc-800 dark:border-zinc-200"}
+            `}
+            style={{
+              // This dynamically "replaces" the blank with the accent color
+              borderBottomColor: isRevealed && !isLost ? accent : undefined,
+              // backgroundColor:
+              //   isRevealed && !isLost ? `${accent}15` : undefined, // Optional 15% opacity tint
+            }}
+          >
+            <span
+              className={`
+                font-black transition-all duration-300 uppercase
+                ${getFontSize()}
+                ${showMissed ? "text-red-500 animate-pulse" : "text-zinc-800 dark:text-zinc-100"}
                 ${!isRevealed && !showMissed ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}
                 ${isWon ? "animate-bounce" : ""}
               `}

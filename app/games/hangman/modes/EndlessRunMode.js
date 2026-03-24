@@ -414,7 +414,7 @@ export default function EndlessRunMode({
   }, [initGameSession, setGuessedLetters, initialRank.level]);
 
   return (
-    <div className="flex flex-col space-y-1 md:space-y-2 relative w-full max-w-5xl mx-auto px-2 md:px-0 pb-5 md:pb-10">
+    <div className="flex flex-col space-y-1 md:space-y-2 relative w-full max-w-5xl mx-auto  md:px-0 pb-5 md:pb-10">
       <SessionProgress
         totalXPEarned={totalXPEarned}
         xpPercent={xpPercent}
@@ -521,6 +521,7 @@ export default function EndlessRunMode({
                   wordLetters={wordLetters}
                   onGuess={handleGuess}
                   disabled={isTransitioning || isReviving}
+                  accent={sessionRank.color}
                 />
                 <div className="flex justify-center">
                   <button

@@ -74,7 +74,6 @@ export default function DynamicPapa({
           ☁️
         </div>
 
-        {/* Adjusted bird heights for 200px fixed height */}
         <div className="absolute top-12 left-[-10%] animate-bird-one text-[14px] opacity-40">
           🐦
         </div>
@@ -92,18 +91,15 @@ export default function DynamicPapa({
           transform: `translate(-50%, calc(-50% + ${currentSink + finalDrop}px)) rotate(${isDead ? "25deg" : "0deg"})`,
         }}
       >
-        {/* BALLOON ANCHOR */}
         <div className="absolute top-0 left-0 w-0 h-0 z-30">
           {Array.from({ length: maxErrors }).map((_, i) => {
             const isPopped = i < errors;
             if (isPopped) return null;
 
-            // GRID OF 3 BALLOONS
             const colsPerRow = 3;
             const row = Math.floor(i / colsPerRow);
             const col = i % colsPerRow;
 
-            // Positioning for clean grid
             const tx = (col - (colsPerRow - 1) / 2) * (isMobile ? 28 : 40);
             const ty = isMobile ? -(row * 22 + 50) : -(row * 32 + 110);
 
@@ -164,7 +160,7 @@ export default function DynamicPapa({
               className="absolute top-0 left-0 right-0 h-2.5 border-b-2 border-zinc-900 rounded-t-[0.8rem] lg:rounded-t-[1.1rem]"
               style={{ backgroundColor: accent }}
             />
-            <span className="text-xl lg:text-2xl font-black text-zinc-900 dark:text-zinc-100 select-none">
+            <span className="text-sm lg:text-xl font-black text-zinc-900 dark:text-zinc-100 select-none">
               {getExpression()}
             </span>
           </div>
@@ -190,12 +186,12 @@ export default function DynamicPapa({
         </div>
       )}
 
-      {/* Ground Spikes */}
-      <div className="absolute bottom-0 left-0 w-full h-[18px] flex justify-around items-end z-10 bg-zinc-200 dark:bg-zinc-800">
+      {/* Ground Spikes - Updated for Mobile/Desktop Scaling */}
+      <div className="absolute bottom-0 left-0 w-full h-[9px] lg:h-[18px] flex justify-around items-end z-10 bg-zinc-200 dark:bg-zinc-800">
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
-            className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[18px] border-b-zinc-900 dark:border-b-white"
+            className="w-0 h-0 border-l-[4px] lg:border-l-[8px] border-l-transparent border-r-[4px] lg:border-r-[8px] border-r-transparent border-b-[9px] lg:border-b-[18px] border-b-zinc-900 dark:border-b-white"
           />
         ))}
       </div>
@@ -242,7 +238,6 @@ export default function DynamicPapa({
           }
         }
 
-        /* Adjusted bird-fly to dip less vertically for 200px mobile view */
         @keyframes bird-fly {
           0% {
             transform: translate3d(-50px, 0, 0);

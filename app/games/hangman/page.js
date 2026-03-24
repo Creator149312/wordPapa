@@ -13,39 +13,38 @@ import {
 
 // 1. SEO & Social Metadata
 export const metadata = {
-  title: "Hangman Online - Challenge Friends & Beat XP Milestones",
+  title: "Hangman Arcade - Play Online and Challenge Friends",
   description:
-    "Play the ultimate Hangman game! Earn XP, reach new milestones, and challenge your friends to beat your high score. A free classic word game with a competitive twist.",
+    "Play the ultimate Hangman game! Earn XP, reach new milestones, and challenge your friends to beat your high score. A free classic word guessing game with a competitive twist.",
   keywords: [
     "Hangman game online",
     "challenge friends hangman",
     "word game milestones",
     "play hangman with friends",
-    "Block Blast style word game",
   ],
-  openGraph: {
-    title: "Can you beat my Hangman score?",
-    description:
-      "I'm crushing milestones in Hangman Online. Think you can guess the words faster?",
-    url: "https://yourhangman.com", // Change to your real URL
-    siteName: "Hangman Online",
-    images: [
-      {
-        url: "https://yourhangman.com/og-image.jpg", // Create a 1200x630 image
-        width: 1200,
-        height: 630,
-        alt: "Hangman Challenge Mode",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Hangman Online: XP & Milestones",
-    description: "Beat the gallows, earn XP, and challenge your rivals.",
-    images: ["https://yourhangman.com/twitter-image.jpg"],
-  },
+  // openGraph: {
+  //   title: "Can you beat my Hangman score?",
+  //   description:
+  //     "I'm crushing milestones in Hangman Online. Think you can guess the words faster?",
+  //   url: "https://words.englishbix.com/games/hangman", // Change to your real URL
+  //   siteName: "Hangman Online",
+  //   images: [
+  //     {
+  //       url: "https://yourhangman.com/og-image.jpg", // Create a 1200x630 image
+  //       width: 1200,
+  //       height: 630,
+  //       alt: "Hangman Challenge Mode",
+  //     },
+  //   ],
+  //   locale: "en_US",
+  //   type: "website",
+  // },
+  // twitter: {
+  //   card: "summary_large_image",
+  //   title: "Hangman Online: XP & Milestones",
+  //   description: "Beat the gallows, earn XP, and challenge your rivals.",
+  //   images: ["https://yourhangman.com/twitter-image.jpg"],
+  // },
 };
 
 export default function Page() {
@@ -81,9 +80,9 @@ export default function Page() {
 
       <main className="flex-grow w-full mx-auto px-2 sm:px-4 lg:px-6 pt-2 pb-16 relative z-20">
         {/* SEO Hidden H1 */}
-        <h1 className="sr-only">
-          Hangman - Play Online & Challenge Friends to Beat XP High Scores
-        </h1>
+        {/* <h1 className="sr-only">
+          Hangman Arcade - Play Online & Challenge Friends to Beat XP High Scores
+        </h1> */}
 
         {/* CLIENT COMPONENT: The Game Logic */}
         <div className="w-full max-w-5xl mx-auto">

@@ -19,8 +19,8 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
   const isLocked = isXPLocked || isCoinLocked;
 
   return (
-    <Card className="p-8 md:p-8 rounded-[2.5rem] border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl max-w-4xl mx-auto animate-in fade-in zoom-in duration-700">
-      <div className="space-y-2 mb-6">
+    <Card className="p-4 md:p-8 rounded-[2.5rem] border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl max-w-4xl mx-auto animate-in fade-in zoom-in duration-700">
+      <div className="space-y-2 mb-3 md:mb-6">
         {/* Minimalist Top Nav/Header Area */}
         <header className="relative z-10 pt-2 pb-2 px-6 flex flex-col items-center gap-2">
           <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-gray-900 dark:text-white leading-none">

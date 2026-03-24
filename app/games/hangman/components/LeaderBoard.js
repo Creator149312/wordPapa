@@ -58,7 +58,7 @@ export default function LeaderBoard({
 
       {/* 2. HALL OF FAME CARD */}
       <div className="p-4 md:p-8 bg-white dark:bg-zinc-900 border-[4px] border-zinc-900 rounded-[2.5rem] shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-        <div className="text-center mb-8">
+        <div className="text-center mb-3 md:mb-6">
           <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter flex items-center justify-center gap-3">
             <Trophy className="text-yellow-500 w-8 h-8" />
             Hall of Fame
