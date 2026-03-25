@@ -1,14 +1,13 @@
 import commonLinks from "@utils/commonLinks";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { 
-  Book, 
-  Sparkles, 
-  Layers, 
-  Music, 
-  Search, 
-  Hash, 
-  GraduationCap 
+import {
+  Book,
+  Sparkles,
+  Layers,
+  Music,
+  Search,
+  Hash,
+  GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 
@@ -73,13 +72,13 @@ const Page = () => {
             <GraduationCap size={14} strokeWidth={3} />
             Language Mastery
           </div>
-          
+
           <h1 className="text-7xl md:text-9xl font-black tracking-tighter text-gray-900 dark:text-white">
             Word<span className="text-[#75c32c]">Papa</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
-            The fun and effective way to master words. 
+            The fun and effective way to master words.
             <span className="block text-sm font-bold text-[#75c32c] mt-2 uppercase tracking-widest">by EnglishBix</span>
           </p>
         </div>
@@ -98,7 +97,7 @@ const Page = () => {
                   <div className={`w-16 h-16 mx-auto md:mx-0 rounded-[1.25rem] ${tool.bg} ${tool.color} flex items-center justify-center transition-all group-hover:rotate-6 group-hover:scale-110 shadow-inner`}>
                     {tool.icon}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h3 className="text-2xl font-black text-gray-900 dark:text-white">
                       {tool.title}

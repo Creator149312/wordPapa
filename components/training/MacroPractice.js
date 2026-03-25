@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import QuizFlow from "./QuizFlow";
 import { Sparkles, Loader2 } from "lucide-react";
 
-export default function MacroPractice({ wordList, listTitle }) {
+export default function MacroPractice({ wordList, listTitle, listId }) {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -108,7 +108,7 @@ export default function MacroPractice({ wordList, listTitle }) {
 
       {/* The Quiz Engine */}
       <div className="relative min-h-[500px]">
-        <QuizFlow questions={questions} />
+        <QuizFlow questions={questions} listTitle={listTitle} listId={listId} />
       </div>
 
       {/* Footer Branding */}
@@ -125,90 +125,3 @@ export default function MacroPractice({ wordList, listTitle }) {
     </div>
   );
 }
-
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import QuizFlow from "./QuizFlow";
-
-// export default function MacroPractice({ wordList }) {
-//   const [questions, setQuestions] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     function generateMacroQuestions() {
-//       try {
-//         const allQuestions = wordList.flatMap((item) => {
-//           const { word, wordData } = item;
-
-//           return [
-//             // Challenge 1: Spelling/Audio
-//             {
-//               type: "audioTyping",
-//               word: word,
-//             },
-//             // Challenge 2: Context/Definition Placement
-//             // {
-//             //   type: "wordPlacement",
-//             //   sentence: wordData || `Identify the correct usage of "${word}".`,
-//             //   practiceWord: word
-//             // },
-//             // Challenge 3: Matching (The new mode)
-//             {
-//               type: "match",
-//               word: word, // The target answer
-//               wordData: wordData, // The prompt
-//               fullList: wordList, // Pass the list to generate distractors
-//             },
-//             { type: "speaking", word },
-//           ];
-//         });
-
-//         // SHUFFLE: High retention trick - mix up the types so it's not predictable
-//         const shuffled = allQuestions.sort(() => Math.random() - 0.5);
-
-//         setQuestions(shuffled);
-//       } catch (err) {
-//         console.error("Error generating word list practice:", err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-
-//     if (wordList && wordList.length > 0) {
-//       generateMacroQuestions();
-//     }
-//   }, [wordList]);
-
-//   if (loading) {
-//     return (
-//       <div className="flex flex-col items-center justify-center p-12 space-y-4">
-//         <div className="w-12 h-12 border-4 border-[#75c32c]/20 border-t-[#75c32c] rounded-full animate-spin" />
-//         <p className="text-gray-500 font-bold animate-pulse">
-//           Curating your session...
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-//       <div className="flex items-center gap-3 mb-2 px-2">
-//         <div className="h-6 w-1.5 bg-[#75c32c] rounded-full" />
-//         <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">
-//           Mixed Practice Mode
-//         </h2>
-//       </div>
-
-//       <div className="relative">
-//         <QuizFlow questions={questions} />
-//       </div>
-
-//       <div className="text-center pb-8">
-//         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest opacity-60">
-//           {questions.length} Challenges • {wordList.length} Words
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }

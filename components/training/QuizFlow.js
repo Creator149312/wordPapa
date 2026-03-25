@@ -1,19 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProgressBar from "./ProgressBar"; 
 import AudioTypingPractice from "../AudioTypingPractice";
 import SpeakingPractice from "../SpeakingPractice";
 import SentenceMakingPractice from "../SentenceMakingPractice";
 import WordPlacementPractice from "../WordPlacementPractice";
 import MatchingPractice from "../MatchingPractice";
-import { Trophy, ArrowRight, RotateCcw, AlertCircle, Home } from "lucide-react";
+import { Trophy, ArrowRight, RotateCcw, AlertCircle, Home, Sparkles, TrendingUp } from "lucide-react";
 
-export default function QuizFlow({ questions, listTitle }) {
+export default function QuizFlow({ questions, listTitle, listId }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [xpData, setXpData] = useState(null);
+  const [isLoadingXP, setIsLoadingXP] = useState(false);
 
   const currentQuestion = questions[currentIndex];
+
+  // Award XP when session finishes
+  useEffect(() => {
+    if (isFinished && !xpData && !isLoadingXP) {
+      const awardXP = async () => {
+        setIsLoadingXP(true);
+        try {
+          const response = await fetch("/api/lists/practice", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              listId: listId || "unknown",
+              listTitle: listTitle || "Practice",
+              questionsCount: questions.length,
+              isQuizMode: true,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setXpData(data);
+          } else {
+            console.error("Failed to award XP");
+            setXpData({ error: true }); // Still mark as done to not retry
+          }
+        } catch (error) {
+          console.error("Error awarding XP:", error);
+          setXpData({ error: true });
+        } finally {
+          setIsLoadingXP(false);
+        }
+      };
+      awardXP();
+    }
+  }, [isFinished, xpData, isLoadingXP, questions.length, listId, listTitle]);
 
   const nextQuestion = () => {
     if (currentIndex < questions.length - 1) {
@@ -102,14 +139,63 @@ export default function QuizFlow({ questions, listTitle }) {
         </div>
 
         <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tighter">Session Clear!</h2>
-        <p className="text-gray-500 dark:text-gray-400 font-medium mb-10 max-w-[280px] mx-auto leading-relaxed">
+        <p className="text-gray-500 dark:text-gray-400 font-medium mb-8 max-w-[280px] mx-auto leading-relaxed">
           You've mastered these challenges {listTitle ? `for ${listTitle}` : ""}. Ready for more?
         </p>
+
+        {/* XP Rewards Section */}
+        {isLoadingXP ? (
+          <div className="w-full mb-6 p-4 bg-gradient-to-r from-[#75c32c]/10 to-orange-500/10 rounded-2xl border border-[#75c32c]/20 animate-pulse">
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles size={16} className="text-[#75c32c] animate-spin" />
+              <p className="text-sm font-bold text-gray-600 dark:text-gray-300">
+                Calculating rewards...
+              </p>
+            </div>
+          </div>
+        ) : xpData && !xpData.error ? (
+          <div className="w-full mb-6 space-y-3">
+            {/* XP Earned Card */}
+            <div className="p-4 bg-gradient-to-r from-[#75c32c]/10 to-[#75c32c]/5 rounded-2xl border border-[#75c32c]/30 shadow-lg shadow-[#75c32c]/10">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <Sparkles size={16} className="text-[#75c32c]" />
+                <p className="text-xs font-black uppercase tracking-wider text-gray-500">XP Awarded</p>
+              </div>
+              <p className="text-3xl font-black text-[#75c32c]">
+                +{xpData.xpEarned}
+              </p>
+            </div>
+
+            {/* Rank Info */}
+            {xpData.rankedUp && (
+              <div className="p-4 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 rounded-2xl border border-orange-500/30 shadow-lg shadow-orange-500/10 animate-bounce">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <TrendingUp size={16} className="text-orange-500" />
+                  <p className="text-xs font-black uppercase tracking-wider text-gray-500">Rank Up!</p>
+                </div>
+                <p className="text-sm font-black text-orange-600 dark:text-orange-400 mb-1">
+                  {xpData.newRank.name}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                  Level {xpData.newRank.level} • Total XP: {xpData.totalXP}
+                </p>
+              </div>
+            )}
+
+            {/* XP Summary */}
+            <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+                📊 {questions.length} questions × 2 XP + 75 bonus = {xpData.xpEarned} XP
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         <div className="flex flex-col w-full gap-3">
           <button
             onClick={() => window.location.reload()}
-            className="w-full flex items-center justify-center gap-2 px-8 py-5 bg-[#75c32c] text-white rounded-2xl font-black text-lg shadow-lg shadow-[#75c32c]/20 active:scale-95 transition-all hover:opacity-90"
+            className="w-full flex items-center justify-center gap-2 px-8 py-5 bg-[#75c32c] text-white rounded-2xl font-black text-lg shadow-lg shadow-[#75c32c]/20 active:scale-95 transition-all hover:opacity-90 disabled:opacity-50"
+            disabled={isLoadingXP}
           >
             <RotateCcw size={20} strokeWidth={3} />
             Practice Again
@@ -172,198 +258,3 @@ export default function QuizFlow({ questions, listTitle }) {
     </div>
   );
 }
-
-// "use client";
-
-// import { useState } from "react";
-// import ProgressBar from "./ProgressBar"; 
-// import AudioTypingPractice from "../AudioTypingPractice";
-// import SpeakingPractice from "../SpeakingPractice";
-// import SentenceMakingPractice from "../SentenceMakingPractice";
-// import WordPlacementPractice from "../WordPlacementPractice";
-// import MatchingPractice from "../MatchingPractice";
-// import { Trophy, ArrowRight, RotateCcw, AlertCircle } from "lucide-react";
-
-// export default function QuizFlow({ questions }) {
-//   const [currentIndex, setCurrentIndex] = useState(0);
-//   const [isFinished, setIsFinished] = useState(false);
-
-//   const currentQuestion = questions[currentIndex];
-
-//   const nextQuestion = () => {
-//     if (currentIndex < questions.length - 1) {
-//       setCurrentIndex((prev) => prev + 1);
-//     } else {
-//       setIsFinished(true);
-//     }
-//   };
-
-//   const renderQuestion = () => {
-//     if (!currentQuestion) return null;
-
-//     switch (currentQuestion.type) {
-//       case "speaking":
-//         return (
-//           <SpeakingPractice
-//             key={currentIndex}
-//             words={[{ word: currentQuestion.word }]}
-//           />
-//         );
-
-//       case "audioTyping":
-//         return (
-//           <AudioTypingPractice
-//             key={currentIndex}
-//             words={[{ word: currentQuestion.word }]}
-//           />
-//         );
-
-//       case "sentenceMaking":
-//         return (
-//           <SentenceMakingPractice
-//             key={currentIndex}
-//             sentence={currentQuestion.sentence}
-//           />
-//         );
-
-//       case "match":
-//         // Only render if there are enough distractors (4 total words needed)
-//         if (currentQuestion.fullList && currentQuestion.fullList.length >= 4) {
-//           return (
-//             <MatchingPractice
-//               key={currentIndex}
-//               wordList={currentQuestion.fullList}
-//               // Optional: if your MatchingPractice needs to know which word to target
-//               targetWord={currentQuestion.word} 
-//               isSingleRound={true}
-//               onComplete={nextQuestion}
-//             />
-//           );
-//         } else {
-//           // Fallback for short lists
-//           return (
-//             <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-gray-50 dark:bg-gray-800/40 rounded-[2.5rem] border-2 border-dashed border-gray-200 dark:border-gray-700">
-//               <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center text-orange-500 mb-4">
-//                 <AlertCircle size={32} />
-//               </div>
-//               <h3 className="text-lg font-black text-gray-800 dark:text-white mb-2">
-//                 Match Mode Locked
-//               </h3>
-//               <p className="text-xs text-gray-500 dark:text-gray-400 max-w-[220px] mb-6 font-medium">
-//                 This challenge requires a list of at least 4 words to generate options.
-//               </p>
-//               <button
-//                 onClick={nextQuestion}
-//                 className="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold text-xs transition-transform active:scale-95"
-//               >
-//                 Skip to Next
-//               </button>
-//             </div>
-//           );
-//         }
-
-//       case "wordPlacement":
-//         return (
-//           <WordPlacementPractice
-//             key={currentIndex}
-//             sentence={currentQuestion.sentence}
-//             practiceWord={currentQuestion.practiceWord}
-//           />
-//         );
-
-//       default:
-//         return (
-//           <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-[2rem]">
-//             <p className="text-gray-500 font-bold">New challenge coming soon!</p>
-//           </div>
-//         );
-//     }
-//   };
-
-//   if (isFinished) {
-//     return (
-//       <div className="flex flex-col items-center text-center py-12 px-6 bg-white dark:bg-gray-900 rounded-[3rem] border border-gray-100 dark:border-gray-800 shadow-xl animate-in fade-in zoom-in duration-500">
-//         <div className="relative mb-6">
-//           <div className="absolute inset-0 bg-[#75c32c]/20 rounded-full animate-ping" />
-//           <div className="relative flex items-center justify-center w-24 h-24 bg-[#75c32c] rounded-full text-white shadow-lg shadow-[#75c32c]/30">
-//             <Trophy size={48} strokeWidth={2.5} />
-//           </div>
-//         </div>
-
-//         <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tighter">
-//           Great Work!
-//         </h2>
-//         <p className="text-gray-500 dark:text-gray-400 font-medium mb-10 max-w-[250px] mx-auto">
-//           You've completed all challenges for this session.
-//         </p>
-
-//         <div className="flex flex-col w-full gap-3">
-//           <button
-//             onClick={() => window.location.reload()}
-//             className="w-full flex items-center justify-center gap-2 px-8 py-5 bg-[#75c32c] text-white rounded-2xl font-black text-lg shadow-lg shadow-[#75c32c]/20 active:scale-95 transition-all"
-//           >
-//             <RotateCcw size={20} />
-//             Practice More
-//           </button>
-
-//           <button
-//             onClick={() => window.history.back()}
-//             className="w-full py-4 text-gray-400 font-bold text-sm active:text-gray-600"
-//           >
-//             Return to List
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="flex flex-col gap-6">
-//       {/* Fixed Header: Progress */}
-//       <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md pt-2 pb-4">
-//         <ProgressBar current={currentIndex + 1} total={questions.length} />
-//       </div>
-
-//       {/* Content Area */}
-//       <div
-//         key={currentIndex}
-//         className="min-h-[420px] animate-in fade-in slide-in-from-bottom-4 duration-500"
-//       >
-//         {renderQuestion()}
-//       </div>
-
-//       {/* Navigation Footer */}
-//       <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-//         <div className="flex items-center gap-3">
-//           <div className="flex-1 min-w-0 px-1">
-//             <p className="text-[9px] font-black text-gray-400 uppercase tracking-tighter truncate">
-//               Current Mode
-//             </p>
-//             <p className="text-xs font-bold text-gray-700 dark:text-gray-300 truncate capitalize">
-//               {currentQuestion?.type?.replace(/([A-Z])/g, ' $1') || "Practice"}
-//             </p>
-//           </div>
-
-//           <button
-//             onClick={nextQuestion}
-//             className={`
-//               flex items-center gap-2 px-8 py-4 rounded-2xl font-black text-sm 
-//               transition-all active:scale-95 shadow-lg
-//               ${
-//                 currentIndex < questions.length - 1
-//                   ? "bg-[#75c32c] text-white shadow-[#75c32c]/20"
-//                   : "bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-gray-900/10"
-//               }
-//             `}
-//           >
-//             <span>
-//               {currentIndex < questions.length - 1 ? "Next" : "Finish"}
-//             </span>
-//             <ArrowRight size={16} strokeWidth={3} />
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-

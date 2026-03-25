@@ -1,12 +1,18 @@
 // Mylinks.js
 export const links = [
-  // {
-  //   name: "Arena",
-  //   items: [
-  //     { name: "Leaderboard", link: "/leaderboard" },
-  //     { name: "Games", link: "/games" },
-  //   ],
-  // },
+  {
+    name: "Journey",
+    items: [
+      { name: "My Journey", link: "/journey" },
+    ],
+  },
+  {
+    name: "Arena",
+    items: [
+      { name: "Leaderboard", link: "/leaderboard" },
+      { name: "Games", link: "/games" },
+    ],
+  },
   {
     name: "Lab",
     items: [
@@ -37,6 +43,13 @@ export const links = [
     name: "Library",
     items: [
       { name: "Lists", link: "/lists" },
+    ],
+  },
+  {
+    name: "Profile",
+    items: [
+      { name: "My Profile", link: "/dashboard" },
+      { name: "Settings", link: "/settings" },
     ],
   },
 ];

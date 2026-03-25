@@ -31,8 +31,8 @@ export async function GET() {
     profile.name = session.user.name || profile.name || "Player";
     await profile.save();
 
-    return NextResponse.json({ success: true, profile });
-  } catch (error) {
+    // Get the global user XP
+    catch (error) {
     console.error("GET Sync Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -99,11 +99,11 @@ export async function POST(req) {
       },
     );
 
-    return NextResponse.json({
-      success: true,
-      profile: updatedProfile,
-    });
-  } catch (error) {
+    // Sync GameProfile XP to global User XP (centralized)
+    if (updatedProfile && updatedProfile.xp > 0) {
+      const user = await User.findOne({ email: session.user.email });
+      if (user) {
+        // Only update if GameProfile XP is higher than User XP
     console.error("POST Sync Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to sync profile" },

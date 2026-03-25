@@ -72,7 +72,7 @@ export default function ListClientWrapper({ wordsList, listerror }) {
             </div>
           ) : (
             <div className="py-2">
-              <MacroPractice wordList={wordsList.words} listTitle={wordsList.title} />
+              <MacroPractice wordList={wordsList.words} listTitle={wordsList.title} listId={wordsList._id} />
             </div>
           )}
         </main>
