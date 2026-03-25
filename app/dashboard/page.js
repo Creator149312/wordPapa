@@ -137,7 +137,7 @@ export default function Page() {
             </div>
 
             {/* Stats Grid - High Streak */}
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col justify-center">
+            {/* <div className="bg-white dark:bg-gray-900 p-6 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col justify-center">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center">
                   <Flame size={24} fill="currentColor" />
@@ -151,7 +151,7 @@ export default function Page() {
                   </p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Stats Grid - Papa Points */}
             <div className="bg-white dark:bg-gray-900 p-6 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col justify-center">
@@ -161,7 +161,7 @@ export default function Page() {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                    Papa Points
+                    Coins
                   </p>
                   <p className="text-2xl font-black dark:text-white">
                     {profile.papaPoints?.toLocaleString()}
@@ -171,7 +171,7 @@ export default function Page() {
             </div>
 
             {/* Stats Grid - Energy (Added for visibility) */}
-            <div className="lg:col-span-4 bg-white dark:bg-gray-900 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+            {/* <div className="lg:col-span-4 bg-white dark:bg-gray-900 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center">
@@ -192,12 +192,12 @@ export default function Page() {
                   </span>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </section>
-        <div className="space-y-6">
+        {/* <div className="space-y-6">
           <GameShop />
-        </div>
+        </div> */}
         {/* COLLECTIONS SECTION */}
         <div className="space-y-6">
           <div className="flex items-center gap-3 ml-2">

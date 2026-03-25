@@ -30,7 +30,7 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
         {/* <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.4em]">Select your battleground</p> */}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid gap-6">
         {/* ENDLESS CLASSIC MODE */}
         {/* <button
           onClick={() => onSelect("classic")}
