@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, ChevronRight, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const Dropdown = ({ name, items }) => {
   const [openMobile, setOpenMobile] = useState(false);
+  const [openSubmobileIndex, setOpenSubmobileIndex] = useState(null);
 
   const handleAction = (item) => {
     if (item.action === "signout") {
@@ -30,13 +31,36 @@ const Dropdown = ({ name, items }) => {
 
       {/* Desktop Dropdown Menu */}
       <div className="absolute right-0 top-full hidden md:group-hover:block pt-2 z-50">
-        <div className="bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 shadow-xl rounded-2xl min-w-[180px] overflow-hidden">
+        <div className="bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 shadow-xl rounded-2xl min-w-[180px] overflow-visible">
           {items.map((item, i) => (
-            <div key={i}>
-              {item.action === "signout" ? (
+            <div key={i} className="relative group/submenu">
+              {item.submenu ? (
+                <>
+                  <button
+                    className="w-full text-left px-5 py-3 text-[12px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-[#75c32c] transition-colors border-b border-gray-50 dark:border-gray-800/50 last:border-0 flex items-center justify-between"
+                  >
+                    {item.name}
+                    <ChevronRight size={14} className="group-hover/submenu:rotate-90 transition-transform" />
+                  </button>
+                  {/* Nested Submenu - Desktop */}
+                  <div className="absolute left-full top-0 hidden group-hover/submenu:block pt-0 pl-1 z-50">
+                    <div className="bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 shadow-xl rounded-2xl min-w-[200px] overflow-hidden">
+                      {item.submenu.map((subitem, j) => (
+                        <a
+                          key={j}
+                          href={subitem.link}
+                          className="block px-5 py-3 text-[12px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-[#75c32c] transition-colors border-b border-gray-50 dark:border-gray-800/50 last:border-0"
+                        >
+                          {subitem.name}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : item.action === "signout" ? (
                 <button
                   onClick={() => handleAction(item)}
-                  className="w-full text-left px-5 py-3 text-[12px] font-black uppercase tracking-wider text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-between transition-colors"
+                  className="w-full text-left px-5 py-3 text-[12px] font-black uppercase tracking-wider text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-between transition-colors border-b border-gray-50 dark:border-gray-800/50 last:border-0"
                 >
                   {item.name}
                   <LogOut size={14} />
@@ -55,20 +79,47 @@ const Dropdown = ({ name, items }) => {
       </div>
 
       {/* Mobile Accordion Menu */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${openMobile ? 'max-h-[500px] mt-2' : 'max-h-0'}`}>
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${openMobile ? 'max-h-[800px] mt-2' : 'max-h-0'}`}>
         <div className="flex flex-col gap-1 bg-gray-50 dark:bg-white/5 rounded-2xl p-2">
           {items.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => item.action === "signout" ? handleAction(item) : (window.location.href = item.link)}
-              className={`w-full text-left px-5 py-3 text-sm font-black uppercase tracking-widest rounded-xl transition-all ${
-                item.action === "signout" 
-                ? "text-red-500 hover:bg-red-50" 
-                : "text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:text-[#75c32c]"
-              }`}
-            >
-              {item.name}
-            </button>
+            <div key={i}>
+              {item.submenu ? (
+                <>
+                  <button
+                    onClick={() => setOpenSubmobileIndex(openSubmobileIndex === i ? null : i)}
+                    className="w-full text-left px-5 py-3 text-sm font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:text-[#75c32c] rounded-xl transition-all flex items-center justify-between"
+                  >
+                    {item.name}
+                    <ChevronRight size={16} className={`transition-transform ${openSubmobileIndex === i ? 'rotate-90' : ''}`} />
+                  </button>
+                  {/* Mobile Submenu */}
+                  <div className={`overflow-hidden transition-all duration-300 pl-4 ${openSubmobileIndex === i ? 'max-h-[400px]' : 'max-h-0'}`}>
+                    <div className="flex flex-col gap-1 py-2">
+                      {item.submenu.map((subitem, j) => (
+                        <a
+                          key={j}
+                          href={subitem.link}
+                          className="block px-5 py-2 text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:text-[#75c32c] rounded-xl transition-all"
+                        >
+                          {subitem.name}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <button
+                  onClick={() => item.action === "signout" ? handleAction(item) : (window.location.href = item.link)}
+                  className={`w-full text-left px-5 py-3 text-sm font-black uppercase tracking-widest rounded-xl transition-all ${
+                    item.action === "signout" 
+                    ? "text-red-500 hover:bg-red-50" 
+                    : "text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 hover:text-[#75c32c]"
+                  }`}
+                >
+                  {item.name}
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>

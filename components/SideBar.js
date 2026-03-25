@@ -9,18 +9,9 @@ const SideBar = () => {
 
   return (
     <aside className="space-y-6">
-      {/* <a
-        href="./games/hangman"
-        className="inline-flex items-center justify-center gap-2 bg-[#75c32c] text-white px-6 py-4 rounded-2xl font-bold shadow-lg shadow-[#75c32c]/30 hover:bg-[#66aa26] transition-all hover:scale-105 active:scale-95"
-      >
-        <Gamepad2 size={20} strokeWidth={3} />
-        Play Hangman Arcade
-        <span className="text-xs"></span>
-      </a> */}
-
       <a
         href="/games/hangman"
-        className="group relative flex flex-col items-center justify-center gap-1 bg-[#75c32c] text-white px-8 py-5 rounded-[2rem] border-2 border-b-8 border-black/20 hover:border-b-4 hover:translate-y-[4px] active:translate-y-[6px] active:border-b-2 transition-all duration-75 shadow-2xl shadow-[#75c32c]/30 min-w-[280px]"
+        className="group relative flex flex-col items-center justify-center gap-1 bg-[#75c32c] text-white px-6 py-4 rounded-[2rem] border-2 border-b-8 border-black/20 hover:border-b-4 hover:translate-y-[4px] active:translate-y-[6px] active:border-b-2 transition-all duration-75 shadow-2xl shadow-[#75c32c]/30 min-w-[280px]"
       >
         {/* The Main Action */}
         <div className="flex items-center gap-3">
@@ -29,14 +20,11 @@ const SideBar = () => {
             strokeWidth={3}
             className="group-hover:rotate-12 transition-transform"
           />
-          <span className="text-2xl font-black uppercase italic tracking-tighter">
-            Enter the Arena
-          </span>
         </div>
 
         {/* The Narrative Subtext */}
         <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 group-hover:opacity-100">
-        How long can you last in Endless Run?
+        Flex your vocabulary, see How long can you last in Endless Run?
         </span>
 
         {/* Optional: A small "sparkle" or glow effect */}
