@@ -169,7 +169,17 @@ export default function OnlineMode({ profile, onQuit, applyOnlineResults, syncTo
         </div>
 
         <div className="lg:col-span-4 flex flex-col items-center space-y-4">
-          <DynamicPapa wrongCount={wrongGuesses.length} isWon={isWon} isLost={isLost} maxTries={6} arenaId={currentRank.arenaId} streak={hasClaimedResult ? sessionSnapshot.streak : profile.onlineWinStreak} />
+          <DynamicPapa
+            errors={wrongGuesses.length}
+            isWinner={isWon}
+            isLost={isLost}
+            maxErrors={6}
+            accent={currentRank.color}
+            currentRankName={currentRank.name}
+            rankLevel={currentRank.level}
+            streak={hasClaimedResult ? sessionSnapshot.streak : profile.onlineWinStreak}
+            wordLength={currentGame?.word?.length || 0}
+          />
           {opponent && (
             <div className="w-full px-4 py-3 bg-blue-50/50 dark:bg-blue-900/20 rounded-2xl backdrop-blur-sm">
               <OnlineRaceTracker myCount={correctGuessesCount} oppCount={opponent.progress} total={wordLetters.length} oppName={opponent.name} />

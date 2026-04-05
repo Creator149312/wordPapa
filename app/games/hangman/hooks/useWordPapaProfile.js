@@ -5,7 +5,6 @@ import {
   calculateLevel,
   getClassicRewards,
   getOnlineMatchRewards,
-  getArenaUnlockBonus,
 } from "../lib/progression";
 
 const STORAGE_KEY = "wordpapa_profile";
@@ -17,7 +16,7 @@ const INITIAL_STATE = {
   userEmail: null,
   isGhost: true,
   xp: 0,
-  papaPoints: 50,
+  papaPoints: 100,
   lives: MAX_LIVES,
   lastLifeLost: Date.now(),
   totalWordsSolved: 0,
@@ -25,7 +24,8 @@ const INITIAL_STATE = {
   highestStreak: 0,
   highestEndlessRun: 0,
   highestEndlessXP: 0,
-  totalEndlessXP: 0,
+  endlessXP: 0,
+  journeyXP: 0,
   onlineWinStreak: 0,
   highestWinStreak: 0,
   dailyStreak: 0,
@@ -43,16 +43,52 @@ export function useWordPapaProfile() {
   // Ref to track if we've already performed the initial auth sync to avoid loops
   const hasSyncedAuth = useRef(false);
 
+  // Helper to safely write to localStorage with error handling
+  const safeLocalStorageWrite = useCallback((key, value) => {
+    if (typeof window === "undefined") return false;
+    
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (err) {
+      if (err.name === "QuotaExceededError") {
+        console.warn("LocalStorage quota exceeded, attempting cleanup...");
+        // Try to clear old data to free up space
+        try {
+          const allKeys = Object.keys(localStorage);
+          // Remove least important items (e.g., old game caches if available)
+          const nonCriticalPattern = /^wordpapa_cache_|^game_session_/;
+          for (const k of allKeys) {
+            if (nonCriticalPattern.test(k)) {
+              localStorage.removeItem(k);
+            }
+          }
+          // Retry the write
+          localStorage.setItem(key, value);
+          return true;
+        } catch (cleanupErr) {
+          console.error("Failed to recover localStorage quota:", cleanupErr);
+          return false;
+        }
+      }
+      console.error("LocalStorage write error:", err);
+      return false;
+    }
+  }, []);
+
   // --- 1. Sync local state with provided data ---
   const updateLocalProfile = useCallback((newProfileData) => {
     setProfile((prev) => {
       const merged = { ...prev, ...newProfileData };
       if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+        const success = safeLocalStorageWrite(STORAGE_KEY, JSON.stringify(merged));
+        if (!success) {
+          console.warn("Failed to persist profile to localStorage");
+        }
       }
       return merged;
     });
-  }, []);
+  }, [safeLocalStorageWrite]);
 
   // --- 2. Database Sync Helper (Push to Cloud) ---
   const syncToRemoteDB = useCallback(async (profileData) => {
@@ -80,20 +116,21 @@ export function useWordPapaProfile() {
           // 1. Check if user has an existing profile in Online DB
           const res = await fetch("/api/games/hangman/sync");
           const data = await res.json();
+          const remoteProfile = data.profile || data.data || null;
 
           // 2. Get the current progress from Local Storage (Ghost data)
           const saved = localStorage.getItem(STORAGE_KEY);
           const localData = saved ? JSON.parse(saved) : profile;
 
-          if (data.success && data.profile) {
+          if (data.success && remoteProfile) {
             /**
              * CASE: RETURNING USER
              * We prioritize the Database data. This overrides the local Ghost data
              * to ensure the user is back where they left off on their account.
              */
             const syncedProfile = {
-              ...data.profile,
-              name: session.user.name || data.profile.name || "Player",
+              ...remoteProfile,
+              name: session.user.name || remoteProfile.name || "Player",
               userEmail: session.user.email,
               isGhost: false, // Explicitly false now that they are logged in
             };
@@ -172,10 +209,6 @@ export function useWordPapaProfile() {
       // Check for Level Up
       if (newRank.level > oldRank.level) {
         setShowLevelUp(true);
-        const arenaBonus = getArenaUnlockBonus(newRank.level);
-        if (arenaBonus > 0) {
-          newProfile.papaPoints += arenaBonus;
-        }
       }
 
       if (typeof window !== "undefined") {
@@ -218,11 +251,26 @@ export function useWordPapaProfile() {
 
   const applyEndlessResult = (snapshot) => {
     updateProfile((prev) => {
-      const runXpEarned = Math.max(0, (snapshot.xp || 0) - (prev.xp || 0));
+      // Strip delta fields — they are server-bound only
+      const { journeyXPDelta, endlessXPDelta, weeklyXPDelta, papaPointsDelta, papaPoints: snapshotPapaPoints, ...rest } = snapshot;
+
+      // Apply deltas to local cumulative counters
+      const newEndlessXP = (prev.endlessXP || 0) + (endlessXPDelta || 0);
+      const newJourneyXP = (prev.journeyXP || 0) + (journeyXPDelta || 0);
+
+      // Coins: delta-based if provided, otherwise absolute fallback
+      const newPapaPoints = papaPointsDelta !== undefined
+        ? Math.max(0, (prev.papaPoints || 0) + papaPointsDelta)
+        : (snapshotPapaPoints !== undefined ? snapshotPapaPoints : prev.papaPoints);
+
       return {
         ...prev,
-        ...snapshot,
-        totalEndlessXP: (prev.totalEndlessXP || 0) + runXpEarned,
+        ...rest,
+        papaPoints: newPapaPoints,
+        endlessXP: newEndlessXP,
+        journeyXP: newJourneyXP,
+        // Global XP is always derived
+        xp: newJourneyXP + newEndlessXP,
       };
     });
   };
@@ -299,5 +347,6 @@ export function useWordPapaProfile() {
     showLevelUp,
     setShowLevelUp,
     updateLocalProfile,
+    safeLocalStorageWrite,
   };
 }

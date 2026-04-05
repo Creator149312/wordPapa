@@ -159,6 +159,101 @@ export const RANKS = [
   },
 ];
 
+// Test Ranks (for testing rank up mechanics without needing to earn tons of XP)
+// export const RANKS = [
+//   {
+//     level: 1,
+//     name: "Infant",
+//     arenaId: 1,
+//     minXP: 0,
+//     maxTries: 10,
+//     color: "#75c32c", // Original Green (Starting Point)
+//     stageName: ARENAS[1].name,
+//   },
+//   {
+//     level: 2,
+//     name: "Toddler",
+//     arenaId: 2,
+//     minXP: 100,
+//     maxTries: 10,
+//     color: "#059669", // Emerald (Healthy growth)
+//     stageName: ARENAS[2].name,
+//   },
+//   {
+//     level: 3,
+//     name: "Student",
+//     arenaId: 3,
+//     minXP: 250,
+//     maxTries: 9,
+//     color: "#0284c7", // Sky Blue (Learning/Clear mind)
+//     stageName: ARENAS[3].name,
+//   },
+//   {
+//     level: 4,
+//     name: "Scholar",
+//     arenaId: 4,
+//     minXP: 700,
+//     maxTries: 8,
+//     color: "#2563eb", // Royal Blue (Knowledge/Stability)
+//     stageName: ARENAS[4].name,
+//   },
+//   {
+//     level: 5,
+//     name: "Sage",
+//     arenaId: 5,
+//     minXP: 1500,
+//     maxTries: 8,
+//     color: "#4f46e5", // Indigo (Deep focus/Wisdom)
+//     stageName: ARENAS[5].name,
+//   },
+//   {
+//     level: 6,
+//     name: "Yogi",
+//     arenaId: 6,
+//     minXP: 2500,
+//     maxTries: 7,
+//     color: "#7c3aed", // Violet (Spiritual balance)
+//     stageName: ARENAS[6].name,
+//   },
+//   {
+//     level: 7,
+//     name: "Guru",
+//     arenaId: 7,
+//     minXP: 3700,
+//     maxTries: 7,
+//     color: "#c026d3", // Fuchsia (Vibrancy/Influence)
+//     stageName: ARENAS[7].name,
+//   },
+//   {
+//     level: 8,
+//     name: "Master",
+//     arenaId: 8,
+//     minXP: 5000,
+//     maxTries: 6,
+//     color: "#db2777", // Pink/Rose (Intensity/Skill)
+//     stageName: ARENAS[8].name,
+//   },
+//   {
+//     level: 9,
+//     name: "Legend",
+//     arenaId: 9,
+//     minXP: 7000,
+//     maxTries: 6,
+//     color: "#ea580c", // Deep Orange (Legendary Fire)
+//     stageName: ARENAS[9].name,
+//   },
+//   {
+//     level: 10,
+//     name: "Word Papa",
+//     arenaId: 10,
+//     minXP: 10000,
+//     maxTries: 5,
+//     color: "#dc2626", // Red (The Ultimate Rank/Highest Difficulty)
+//     stageName: ARENAS[10].name,
+//   },
+// ];
+
+
 // 3. WORDS POOL (15 words per stage)
 export const WORDS_POOL = {
   1: [
@@ -859,8 +954,6 @@ export const GAME_STAKES = {
     STREAK_BONUS_MULTIPLIER: 1.5,
   },
   ENDLESS: {
-    BASE_XP: 100,
-    BASE_COINS: 10,
     HEALTH_BONUS_XP: 10, // XP per remaining life at the end of a word
     HEALTH_BONUS_COINS: 2, // Coins per remaining life
   },

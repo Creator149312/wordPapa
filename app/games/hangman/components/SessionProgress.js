@@ -9,6 +9,9 @@ export default function SessionProgress({
   isRefilling,
   highestXP = 0,
   accent = "#75c32c",
+  customLabel = null,
+  customPercentLabel = null,
+  footerLabel = null,
 }) {
   const [displayXP, setDisplayXP] = useState(0);
   const [showParticles, setShowParticles] = useState(false);
@@ -109,7 +112,7 @@ export default function SessionProgress({
 
             <div className="flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-tighter text-zinc-400 leading-none">
-                Session Gain
+                {customLabel || "Session Gain"}
               </span>
               <span
                 className={`text-lg font-black italic tabular-nums mt-0.5 transition-all duration-300 ${
@@ -144,13 +147,13 @@ export default function SessionProgress({
                     fill="currentColor"
                   />
                   <p className="text-sm font-black text-zinc-900 dark:text-zinc-100 italic">
-                    {Math.round(xpPercent)}%
+                    {customPercentLabel || `${Math.round(xpPercent)}%`}
                   </p>
                 </>
               )}
             </div>
             <p className="text-[8px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mt-1">
-              Personal Best: {highestXP.toLocaleString()}
+              {footerLabel || `Personal Best: ${highestXP.toLocaleString()}`}
             </p>
           </div>
         </div>

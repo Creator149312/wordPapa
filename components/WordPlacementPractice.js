@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Info, RotateCcw, CheckCircle2, CornerRightDown } from "lucide-react";
 
-export default function WordPlacementPractice({ sentence, practiceWord }) {
+export default function WordPlacementPractice({ sentence, practiceWord, onCorrect }) {
   const { displaySentence, wordBankWords, words } = useMemo(() => {
     const wordsArray = sentence.split(" ");
     const practiceIndices = wordsArray
@@ -58,6 +58,9 @@ export default function WordPlacementPractice({ sentence, practiceWord }) {
       return true;
     });
     setFeedback(isCorrect ? "✅ Perfect!" : "❌ Check placement");
+    if (isCorrect) {
+      onCorrect?.();
+    }
   };
 
   return (

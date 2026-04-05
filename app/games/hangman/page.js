@@ -1,4 +1,5 @@
 import Hangman from "./Hangman";
+import { Suspense } from "react";
 import {
   Info,
   HelpCircle,
@@ -23,7 +24,6 @@ export const metadata = {
     "play hangman with friends",
   ],
   // openGraph: {
-  //   title: "Can you beat my Hangman score?",
   //   description:
   //     "I'm crushing milestones in Hangman Online. Think you can guess the words faster?",
   //   url: "https://words.englishbix.com/games/hangman", // Change to your real URL
@@ -86,7 +86,13 @@ export default function Page() {
 
         {/* CLIENT COMPONENT: The Game Logic */}
         <div className="w-full max-w-5xl mx-auto">
-          <Hangman />
+          <Suspense fallback={
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zinc-500"></div>
+            </div>
+          }>
+            <Hangman />
+          </Suspense>
         </div>
 
         <div className="max-w-4xl mx-auto mt-12 md:mt-20 space-y-12">

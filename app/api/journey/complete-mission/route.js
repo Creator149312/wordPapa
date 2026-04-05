@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import connectDB from "@/lib/mongodb";
+import { authOptions } from "@app/api/auth/[...nextauth]/route";
+import { connectMongoDB } from "@/lib/mongodb";
 import Journey from "@/models/journey";
 import GameProfile from "@/models/gameprofile";
 import { RANKS } from "@/app/games/hangman/constants";
@@ -14,7 +14,7 @@ export async function POST(request) {
     }
 
     const { missionId } = await request.json();
-    await connectDB();
+    await connectMongoDB();
 
     const journey = await Journey.findOne({ userEmail: session.user.email });
 

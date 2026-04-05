@@ -72,15 +72,17 @@ const Page = async ({ params }) => {
   let titleStr = `Letter ${L} Dictionary: Page ${pagenumber}`;
 
   return (
-    <>
-      <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
-      <LinkPagination
-        links={words}
-        linksPerPage={300}
-        pagenumber={pagenumber}
-        letter={params.letter}
-      />
-    </>
+    <div className="w-full">
+      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-6">
+        <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
+        <LinkPagination
+          links={words}
+          linksPerPage={300}
+          pagenumber={pagenumber}
+          letter={params.letter}
+        />
+      </div>
+    </div>
   );
 };
 

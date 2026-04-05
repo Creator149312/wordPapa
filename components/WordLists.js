@@ -7,8 +7,9 @@ import { useState, useEffect } from "react";
 import apiConfig from "@utils/apiUrlConfig";
 import { slugify } from "@utils/slugify"; // Import our slug utility
 import { BookOpen, Layers } from "lucide-react";
+import MiniProgress from "./MiniProgress";
 
-export default function WordLists({ createdBy }) {
+export default function WordLists({ createdBy, limit }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -73,7 +74,7 @@ export default function WordLists({ createdBy }) {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {data.map((item, index) => {
+      {data.slice(0, limit).map((item, index) => {
         // Construct the SEO-friendly Slug-ID
         const listSlugId = `${slugify(item.title)}-${item._id}`;
 
@@ -98,6 +99,9 @@ export default function WordLists({ createdBy }) {
               <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4 font-medium">
                 {item.description || "No description provided."}
               </p>
+
+              {/* Progress Indicator */}
+              <MiniProgress listId={item._id} />
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-gray-50 dark:border-gray-700">

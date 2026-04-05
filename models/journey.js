@@ -97,6 +97,61 @@ const journeySchema = new Schema(
       type: [String],
       default: [],
     },
+
+    // Daily streak tracking
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    lastPracticeDay: {
+      type: String, // ISO date string "YYYY-MM-DD" — timezone-safe for comparisons
+      default: null,
+    },
+
+    // Streak shields — earned every 7-day streak milestone, max 2 held at a time.
+    // When a user misses a day but holds a shield, the shield is consumed instead
+    // of resetting the streak. Removes the "guilt spiral" when life gets in the way.
+    streakShields: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 2,
+    },
+
+    // Practice history to track mastery (listId -> {attempts, bestScore, lastScore, mastered})
+    practiceHistory: {
+      type: Map,
+      of: {
+        attempts: { type: Number, default: 0 },
+        bestScore: { type: Number, default: 0 }, // percentage
+        lastScore: { type: Number, default: 0 }, // percentage
+        mastered: { type: Boolean, default: false },
+        lastPracticed: { type: Date, default: Date.now },
+      },
+      default: new Map(),
+    },
+
+    nodeWordProgress: {
+      type: Map,
+      of: {
+        wordsCompleted: { type: Number, default: 0 },
+        totalWords: { type: Number, default: 0 },
+        percent: { type: Number, default: 0 },
+        completed: { type: Boolean, default: false },
+        lastPracticed: { type: Date, default: Date.now },
+      },
+      default: new Map(),
+    },
+
+    unlockedNodes: {
+      type: [String],
+      default: ["1-1"],
+    },
+
+    currentNodeId: {
+      type: String,
+      default: "1-1",
+    },
   },
   {
     timestamps: true,

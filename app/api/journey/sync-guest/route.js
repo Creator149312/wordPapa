@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import connectDB from "@/lib/mongodb";
+import { authOptions } from "@app/api/auth/[...nextauth]/route";
+import { connectMongoDB } from "@/lib/mongodb";
 import Journey from "@/models/journey";
 import GameProfile from "@/models/gameprofile";
 import { RANKS } from "@/app/games/hangman/constants";
@@ -18,7 +18,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "No guest data provided" }, { status: 400 });
     }
 
-    await connectDB();
+    await connectMongoDB();
 
     // Check if user already has a journey
     let journey = await Journey.findOne({ userEmail: session.user.email });

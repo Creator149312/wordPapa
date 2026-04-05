@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 
 // UI Components
@@ -8,12 +9,14 @@ import GameClientHeader from "./GameClientHeader";
 import LevelBar from "./components/LevelBar";
 import GameLobbyView from "./components/GameLobbyView";
 import SaveProgressModal from "./components/SaveProgressModal";
+import JourneyNodeSelector from "./components/JourneyNodeSelector";
 
 // Segregated Modes
 import ClassicMode from "./modes/ClassicMode";
 import OnlineMode from "./modes/OnlineMode";
 import DailyMode from "./modes/DailyMode";
 import EndlessRunMode from "./modes/EndlessRunMode";
+import JourneyMode from "./modes/JourneyMode";
 
 // Hooks & Logic
 import { useProfile } from "./../../ProfileContext";
@@ -27,6 +30,18 @@ export default function Hangman({
   dailyWord = null,
   onDailyComplete = null,
 }) {
+  const setMobileChromeVisibility = useCallback((visible) => {
+    if (typeof window === "undefined" || window.innerWidth >= 768) {
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("wordpapa:mobile-chrome-visibility", {
+        detail: { visible },
+      }),
+    );
+  }, []);
+
   const {
     profile,
     isLoaded,
@@ -42,6 +57,35 @@ export default function Hangman({
   const [gameState, setGameState] = useState(initialMode ? "playing" : "menu");
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [leaderboards, setLeaderboards] = useState({ global: [], endless: [] });
+  const [showNodeSelector, setShowNodeSelector] = useState(false);
+  const [selectedJourneyNode, setSelectedJourneyNode] = useState(null);
+  const [selectedListData, setSelectedListData] = useState(null); // { id, words, title }
+
+  // Auto-launch list practice when ?listId= param is present
+  const searchParams = useSearchParams();
+  const listIdParam = searchParams.get("listId");
+
+  useEffect(() => {
+    if (!listIdParam || !isLoaded) return;
+    const fetchList = async () => {
+      try {
+        const res = await fetch(`/api/list/${listIdParam}`);
+        const data = await res.json();
+        if (data.list?.words?.length) {
+          setSelectedListData({
+            id: listIdParam,
+            words: data.list.words,
+            title: data.list.title || "List Practice",
+          });
+          setGameMode("list-practice");
+          setGameState("playing");
+        }
+      } catch (e) {
+        console.error("Failed to fetch list for hangman:", e);
+      }
+    };
+    fetchList();
+  }, [listIdParam, isLoaded]);
 
   const currentRank = useMemo(() => {
     return calculateLevel(profile.xp || 0);
@@ -60,22 +104,45 @@ export default function Hangman({
   const syncToDatabase = useCallback(
     async (updatedSnapshot) => {
       // Ghost users only sync locally via the ProfileContext actions
-      if (profile.isGhost) return;
+      if (profile.isGhost) return true;
+
+      const syncDebugEnabled =
+        typeof window !== "undefined" &&
+        window.localStorage.getItem("journey-sync-debug") === "1";
 
       try {
         const response = await fetch("/api/games/hangman/sync", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(syncDebugEnabled ? { "x-journey-sync-debug": "1" } : {}),
+          },
           body: JSON.stringify(updatedSnapshot),
         });
         const data = await response.json();
+
+        if (syncDebugEnabled) {
+          console.debug("[JourneySync] hangman.sync", {
+            request: updatedSnapshot,
+            success: !!data.success,
+          });
+        }
 
         // Update local context with fresh data from DB (ensures $max logic is reflected)
         if (data.success && data.profile) {
           updateLocalProfile(data.profile);
         }
+
+        return !!data.success;
       } catch (error) {
         console.error("Hangman DB Sync failed:", error);
+        if (syncDebugEnabled) {
+          console.debug("[JourneySync] hangman.sync.failed", {
+            request: updatedSnapshot,
+            error: error?.message || "unknown",
+          });
+        }
+        return false;
       }
     },
     [profile.isGhost, updateLocalProfile],
@@ -106,6 +173,12 @@ export default function Hangman({
   });
 
   const handleModeSelect = (mode) => {
+    if (mode === "journey") {
+      // Show node selector for journey mode
+      setShowNodeSelector(true);
+      return;
+    }
+
     if (mode === "classic" && (profile.lives || 0) <= 0) {
       return alert(`❤️ Out of fuel! Wait for recovery or play Endless Mode.`);
     }
@@ -122,10 +195,21 @@ export default function Hangman({
     }
   };
 
+  const handleNodeSelected = (nodeData) => {
+    // Node selected from JourneyNodeSelector (receives { nodeId, rankId })
+    setSelectedJourneyNode(nodeData);
+    setShowNodeSelector(false);
+    setGameMode("classic-journey");
+    setGameState("playing");
+  };
+
   const handleQuitToMenu = () => {
     disconnect();
     setGameMode(null);
     setGameState("menu");
+    setSelectedJourneyNode(null);
+    setShowNodeSelector(false);
+    setSelectedListData(null);
 
     // Trigger save prompt if ghost has made significant progress
     if (profile.isGhost && (profile.xp > 50 || profile.papaPoints > 100)) {
@@ -136,6 +220,34 @@ export default function Hangman({
   useEffect(() => {
     if (gameState === "menu") fetchLeaderboard();
   }, [gameState]);
+
+  useEffect(() => {
+    if (gameState !== "playing") {
+      setMobileChromeVisibility(true);
+      return;
+    }
+
+    setMobileChromeVisibility(false);
+
+    const hideChromeOnInteraction = () => {
+      setMobileChromeVisibility(false);
+    };
+
+    window.addEventListener("pointerdown", hideChromeOnInteraction, {
+      passive: true,
+    });
+    window.addEventListener("touchstart", hideChromeOnInteraction, {
+      passive: true,
+    });
+    window.addEventListener("keydown", hideChromeOnInteraction);
+
+    return () => {
+      window.removeEventListener("pointerdown", hideChromeOnInteraction);
+      window.removeEventListener("touchstart", hideChromeOnInteraction);
+      window.removeEventListener("keydown", hideChromeOnInteraction);
+      setMobileChromeVisibility(true);
+    };
+  }, [gameState, setMobileChromeVisibility]);
 
   // Prevent UI flickering or "ghosting" while the profile sync is resolving
   if (!isLoaded) {
@@ -148,29 +260,38 @@ export default function Hangman({
 
   if (gameState === "menu" || gameState === "lobby") {
     return (
-      <div className="flex flex-col w-full transition-colors duration-1000">
-        {/* <GameClientHeader /> */}
-        <div className="max-w-5xl w-full mx-auto px-1 md:px-4">
-          <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <LevelBar />
+      <>
+        <div className="flex flex-col w-full transition-colors duration-1000">
+          {/* <GameClientHeader /> */}
+          <div className="max-w-5xl w-full mx-auto px-1 md:px-4">
+            <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+              <LevelBar />
+            </div>
+            <GameLobbyView
+              gameState={gameState}
+              leaderboard={leaderboards}
+              handleModeSelect={handleModeSelect}
+              profile={profile}
+              requirements={ONLINE_REQUIREMENTS}
+              socket={socket}
+              startNewGame={() => setGameState("playing")}
+            />
           </div>
-          <GameLobbyView
-            gameState={gameState}
-            leaderboard={leaderboards}
-            handleModeSelect={handleModeSelect}
-            profile={profile}
-            requirements={ONLINE_REQUIREMENTS}
-            socket={socket}
-            startNewGame={() => setGameState("playing")}
+          <SaveProgressModal
+            isOpen={showSavePrompt}
+            onClose={() => setShowSavePrompt(false)}
+            xp={profile.xp}
+            points={profile.papaPoints}
           />
         </div>
-        <SaveProgressModal
-          isOpen={showSavePrompt}
-          onClose={() => setShowSavePrompt(false)}
-          xp={profile.xp}
-          points={profile.papaPoints}
-        />
-      </div>
+        {showNodeSelector && (
+          <JourneyNodeSelector
+            onSelectNode={handleNodeSelected}
+            onCancel={() => setShowNodeSelector(false)}
+            profile={profile}
+          />
+        )}
+      </>
     );
   }
 
@@ -201,7 +322,6 @@ export default function Hangman({
               applyEndlessResult={applyEndlessResult}
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}
-              deductCoins={deductCoins}
             />
           )}
           {gameMode === "classic" && (
@@ -213,6 +333,28 @@ export default function Hangman({
               triggerSavePrompt={() => setShowSavePrompt(true)}
               accent={currentRank.color}
               calculateXP={calculateEarnedXP}
+            />
+          )}
+          {gameMode === "classic-journey" && selectedJourneyNode && (
+            <JourneyMode
+              profile={profile}
+              onQuit={handleQuitToMenu}
+              applyEndlessResult={applyEndlessResult}
+              syncToDatabase={syncToDatabase}
+              triggerSavePrompt={() => setShowSavePrompt(true)}
+              journeyNode={selectedJourneyNode}
+            />
+          )}
+          {gameMode === "list-practice" && selectedListData && (
+            <JourneyMode
+              profile={profile}
+              onQuit={handleQuitToMenu}
+              applyEndlessResult={applyEndlessResult}
+              syncToDatabase={syncToDatabase}
+              triggerSavePrompt={() => setShowSavePrompt(true)}
+              listId={selectedListData.id}
+              listWords={selectedListData.words}
+              listTitle={selectedListData.title}
             />
           )}
           {gameMode === "daily" && (

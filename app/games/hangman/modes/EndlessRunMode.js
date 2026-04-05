@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { Lightbulb, Eraser, Activity } from "lucide-react";
+import { Lightbulb, Bomb, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 
 // UI Components
@@ -17,7 +17,13 @@ import LevelUpModal from "../components/LevelUpModal";
 import { useGameLogic } from "../hooks/useGameLogic";
 import { useAudio } from "../hooks/useAudio";
 import { RANKS, WORDS_POOL } from "../constants";
-import { calculateLevel } from "../lib/progression";
+import {
+  calculateLevel,
+  getArenaUnlockBonus,
+  getEndlessRewards,
+  getEndlessWordBlastCost,
+  getReviveCost,
+} from "../lib/progression";
 
 export default function EndlessRunMode({
   profile,
@@ -25,7 +31,6 @@ export default function EndlessRunMode({
   syncToDatabase,
   triggerSavePrompt,
   applyEndlessResult,
-  deductCoins,
 }) {
   // --- 1. GAME STATE ---
   const [globalMistakes, setGlobalMistakes] = useState(0);
@@ -34,6 +39,7 @@ export default function EndlessRunMode({
   const [totalCoinsEarned, setTotalCoinsEarned] = useState(0);
   const [usedWordTexts, setUsedWordTexts] = useState([]);
   const [hasClaimedResult, setHasClaimedResult] = useState(false);
+  const [totalCoinsSpent, setTotalCoinsSpent] = useState(0);
 
   const [nextMilestone, setNextMilestone] = useState(5);
   const [milestoneStep, setMilestoneStep] = useState(6);
@@ -45,15 +51,19 @@ export default function EndlessRunMode({
   const [isShaking, setIsShaking] = useState(false);
 
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [pendingLevelReward, setPendingLevelReward] = useState(0);
+  const [blastsUsed, setBlastsUsed] = useState(0);
   const [sessionMaxRankLevel, setSessionMaxRankLevel] = useState(
-    calculateLevel(profile.highestEndlessXP || 0).level,
+    calculateLevel(profile.xp || 0).level,
   );
 
   // --- 2. LIVE CURRENCY CALCULATION ---
-  // This ensures the GameHeader shows: (Original Points - Spent) + Earned
-  const livePapaPoints = useMemo(() => {
-    return (profile.papaPoints || 0) + totalCoinsEarned;
-  }, [profile.papaPoints, totalCoinsEarned]);
+  // Stable starting balance captured once; all earnings/spending tracked locally
+  const startingPapaPointsRef = useRef(profile.papaPoints || 0);
+  const livePapaPoints = useMemo(
+    () => startingPapaPointsRef.current + totalCoinsEarned - totalCoinsSpent,
+    [totalCoinsEarned, totalCoinsSpent],
+  );
 
   // --- 3. WORD SELECTION LOGIC ---
   const getNextWeightedWord = useCallback(
@@ -93,12 +103,15 @@ export default function EndlessRunMode({
     return calculateLevel(profile.highestEndlessXP || 0);
   }, [profile.highestEndlessXP]);
 
+  const liveProfileXP = useMemo(() => {
+    return (profile.xp || 0) + (hasClaimedResult ? 0 : totalXPEarned);
+  }, [hasClaimedResult, profile.xp, totalXPEarned]);
+
   // --- 4. PROGRESSIVE SYNC ---
   const syncProgressToLocal = useCallback(() => {
     const snapshot = {
-      xp: (profile.xp || 0) + totalXPEarned,
       totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
-      papaPoints: livePapaPoints, // Use the live calculated value
+      papaPoints: livePapaPoints,
       highestEndlessRun: Math.max(
         profile.highestEndlessRun || 0,
         totalWordsSolved,
@@ -114,10 +127,31 @@ export default function EndlessRunMode({
     applyEndlessResult,
   ]);
 
+  const syncProgressToServer = useCallback(async (currentXPEarned, currentCoinsEarned, currentCoinsSpent) => {
+    if (!syncToDatabase || milestoneSyncLock.current) return;
+    const xpDelta = currentXPEarned - serverSyncedXPRef.current;
+    const coinsNetDelta = (currentCoinsEarned - currentCoinsSpent) - serverSyncedCoinsNetRef.current;
+    if (xpDelta <= 0 && coinsNetDelta === 0) return;
+
+    milestoneSyncLock.current = true;
+    try {
+      await syncToDatabase({
+        totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
+        highestEndlessRun: Math.max(profile.highestEndlessRun || 0, totalWordsSolved),
+        highestEndlessXP: Math.max(profile.highestEndlessXP || 0, currentXPEarned),
+        ...(xpDelta > 0 ? { endlessXPDelta: xpDelta } : {}),
+        ...(coinsNetDelta !== 0 ? { papaPointsDelta: coinsNetDelta } : {}),
+      });
+      serverSyncedXPRef.current = currentXPEarned;
+      serverSyncedCoinsNetRef.current = currentCoinsEarned - currentCoinsSpent;
+    } finally {
+      milestoneSyncLock.current = false;
+    }
+  }, [syncToDatabase, profile, totalWordsSolved]);
+
   // --- 5. CONSTANTS & UI STATES ---
   const [isRefilling, setIsRefilling] = useState(false);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
-  const [showMentorMsg, setShowMentorMsg] = useState(false);
   const [hintRevealed, setHintRevealed] = useState(false);
   const [showMilestone, setShowMilestone] = useState(false);
   const [isReviving, setIsReviving] = useState(false);
@@ -127,22 +161,28 @@ export default function EndlessRunMode({
 
   const { playSynth } = useAudio();
   const MAX_GLOBAL_LIVES = 5;
-  const REVIVE_COST = 50;
-  const SHATTER_COST = 15;
   const TRANSITION_MS = 1500;
   const REVIVE_WINDOW_SECONDS = 6;
 
   const syncLock = useRef(false);
-  const prevWrongCount = useRef(0);
+  const prevWrongGuessesRef = useRef([]);
   const transitionLock = useRef(false);
-  const isShatteringInternal = useRef(false);
+  const shatterIgnoredLettersRef = useRef(new Set());
+  // Track cumulative totals already pushed to the server during this run
+  const serverSyncedXPRef = useRef(0);
+  const serverSyncedCoinsNetRef = useRef(0);
+  const milestoneSyncLock = useRef(false);
 
   // --- 6. RANK LOGIC ---
   const sessionRank = useMemo(() => {
-    return (
-      [...RANKS].reverse().find((r) => totalXPEarned >= r.minXP) || RANKS[0]
-    );
-  }, [totalXPEarned]);
+    return calculateLevel(liveProfileXP);
+  }, [liveProfileXP]);
+
+  const currentBlastCost = useMemo(
+    () => getEndlessWordBlastCost(blastsUsed),
+    [blastsUsed],
+  );
+  const currentReviveCost = useMemo(() => getReviveCost(revivesUsed), [revivesUsed]);
 
   const currentLevel = Math.min(
     (initialRank.level || 1) + Math.floor(totalWordsSolved / 5),
@@ -201,6 +241,9 @@ export default function EndlessRunMode({
       setGlobalMistakes(0);
       playSynth("REFILL");
       syncProgressToLocal();
+      if (!profile.isGhost) {
+        void syncProgressToServer(totalXPEarned, totalCoinsEarned, totalCoinsSpent);
+      }
       setNextMilestone((prev) => prev + milestoneStep);
       setMilestoneStep((prev) => prev + 1);
       setShowMilestone(true);
@@ -210,17 +253,30 @@ export default function EndlessRunMode({
 
     if (sessionRank.level > sessionMaxRankLevel) {
       if (sessionRank.level > 1) {
+        let reward = 0;
+        for (let level = sessionMaxRankLevel + 1; level <= sessionRank.level; level += 1) {
+          reward += getArenaUnlockBonus(level);
+        }
+        setPendingLevelReward((prev) => prev + reward);
         setShowLevelUp(true);
         playSynth("MILESTONE");
         syncProgressToLocal();
+        if (!profile.isGhost) {
+          void syncProgressToServer(totalXPEarned, totalCoinsEarned, totalCoinsSpent);
+        }
       }
       setSessionMaxRankLevel(sessionRank.level);
     }
   }, [
     totalWordsSolved,
+    totalXPEarned,
+    totalCoinsEarned,
+    totalCoinsSpent,
     sessionRank.level,
     sessionMaxRankLevel,
     syncProgressToLocal,
+    syncProgressToServer,
+    profile.isGhost,
     playSynth,
     nextMilestone,
     milestoneStep,
@@ -228,20 +284,35 @@ export default function EndlessRunMode({
 
   // --- 9. MISTAKES ---
   useEffect(() => {
-    if (wrongGuesses.length > prevWrongCount.current) {
-      const delta = wrongGuesses.length - prevWrongCount.current;
-      if (!isShatteringInternal.current) {
-        setGlobalMistakes((prev) => prev + delta);
+    const previousWrongGuesses = prevWrongGuessesRef.current;
+    const newWrongGuesses = wrongGuesses.filter(
+      (letter) => !previousWrongGuesses.includes(letter),
+    );
+
+    if (newWrongGuesses.length > 0) {
+      const countedWrongGuesses = newWrongGuesses.filter((letter) => {
+        if (shatterIgnoredLettersRef.current.has(letter)) {
+          shatterIgnoredLettersRef.current.delete(letter);
+          return false;
+        }
+        return true;
+      });
+
+      if (countedWrongGuesses.length > 0) {
+        setGlobalMistakes((prev) => prev + countedWrongGuesses.length);
         playSynth("POP");
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 400);
       }
-      prevWrongCount.current = wrongGuesses.length;
     }
+
+    prevWrongGuessesRef.current = wrongGuesses;
   }, [wrongGuesses, playSynth]);
 
   useEffect(() => {
-    prevWrongCount.current = 0;
+    prevWrongGuessesRef.current = [];
+    shatterIgnoredLettersRef.current.clear();
+    setBlastsUsed(0);
   }, [currentGame]);
 
   const isGameOver = globalMistakes >= MAX_GLOBAL_LIVES;
@@ -264,19 +335,20 @@ export default function EndlessRunMode({
 
   // --- 10. ACTIONS ---
   const handleShatter = () => {
-    if (livePapaPoints < SHATTER_COST) return; // Use live points check
+    if (livePapaPoints < currentBlastCost) return; // Use live points check
     const wrongOptions = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       .split("")
       .filter((l) => !wordLetters.includes(l) && !guessedLetters.includes(l));
     if (wrongOptions.length === 0) return;
-    isShatteringInternal.current = true;
-    deductCoins(SHATTER_COST);
+    setTotalCoinsSpent((prev) => prev + currentBlastCost);
+    setBlastsUsed((prev) => prev + 1);
     playSynth("CORRECT");
     const toRemove = wrongOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
+    shatterIgnoredLettersRef.current = new Set([
+      ...shatterIgnoredLettersRef.current,
+      ...toRemove,
+    ]);
     setGuessedLetters((prev) => [...prev, ...toRemove]);
-    setTimeout(() => {
-      isShatteringInternal.current = false;
-    }, 100);
   };
 
   const handleRevealHint = () => {
@@ -285,20 +357,18 @@ export default function EndlessRunMode({
   };
 
   const handleRevive = () => {
-    if (livePapaPoints >= REVIVE_COST) {
-      const success = deductCoins(REVIVE_COST);
-      if (success) {
-        setReviveCountdown(null);
-        setIsReviving(true);
-        playSynth("MILESTONE");
-        setHasClaimedResult(false);
-        syncLock.current = false;
-        setTimeout(() => {
-          setGlobalMistakes(0);
-          setRevivesUsed((prev) => prev + 1);
-          setIsReviving(false);
-        }, 1200);
-      }
+    if (livePapaPoints >= currentReviveCost) {
+      setTotalCoinsSpent((prev) => prev + currentReviveCost);
+      setReviveCountdown(null);
+      setIsReviving(true);
+      playSynth("MILESTONE");
+      setHasClaimedResult(false);
+      syncLock.current = false;
+      setTimeout(() => {
+        setGlobalMistakes(0);
+        setRevivesUsed((prev) => prev + 1);
+        setIsReviving(false);
+      }, 1200);
     }
   };
 
@@ -320,8 +390,12 @@ export default function EndlessRunMode({
       transitionLock.current = true;
 
       const wordLevel = currentGame?.wordLevel || 1;
-      const xpGain = (currentGame?.word?.length || 0) * 10 + wordLevel * 15;
-      const coinGain = Math.ceil(xpGain / 10);
+      const { xpGain, coinGain } = getEndlessRewards(
+        currentGame?.word?.length || 0,
+        wordLevel,
+        0, // health bonus applied only at run-end via highestEndlessXP tracking
+        wrongGuesses.length,
+      );
 
       // Trigger animations
       setCurrentWordXP(xpGain);
@@ -348,6 +422,7 @@ export default function EndlessRunMode({
     currentGame,
     currentLevel,
     usedWordTexts,
+    wrongGuesses,
     getNextWeightedWord,
     initGameSession,
     setIsTransitioning,
@@ -360,8 +435,7 @@ export default function EndlessRunMode({
       isRunEnded || (isGameOver && !isReviving && reviveCountdown === 0);
     if (shouldSync && !hasClaimedResult && !syncLock.current) {
       syncLock.current = true;
-      const snapshot = {
-        xp: (profile.xp || 0) + totalXPEarned,
+      const localSnapshot = {
         totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
         papaPoints: livePapaPoints,
         highestEndlessRun: Math.max(
@@ -373,8 +447,17 @@ export default function EndlessRunMode({
           totalXPEarned,
         ),
       };
-      applyEndlessResult(snapshot);
-      if (!profile.isGhost && syncToDatabase) syncToDatabase(snapshot);
+      applyEndlessResult(localSnapshot);
+      if (!profile.isGhost && syncToDatabase) {
+        // Only send the XP/coins delta not already committed by milestone syncs
+        const remainingXPDelta = totalXPEarned - serverSyncedXPRef.current;
+        const remainingCoinsNet = (totalCoinsEarned - totalCoinsSpent) - serverSyncedCoinsNetRef.current;
+        syncToDatabase({
+          ...localSnapshot,
+          ...(remainingXPDelta > 0 ? { endlessXPDelta: remainingXPDelta } : {}),
+          ...(remainingCoinsNet !== 0 ? { papaPointsDelta: remainingCoinsNet } : {}),
+        });
+      }
       setHasClaimedResult(true);
       if (profile.isGhost && triggerSavePrompt)
         setTimeout(() => triggerSavePrompt(), 1500);
@@ -388,6 +471,8 @@ export default function EndlessRunMode({
     totalXPEarned,
     livePapaPoints,
     totalWordsSolved,
+    totalCoinsEarned,
+    totalCoinsSpent,
     profile,
     syncToDatabase,
     applyEndlessResult,
@@ -399,19 +484,51 @@ export default function EndlessRunMode({
     setTotalWordsSolved(0);
     setTotalXPEarned(0);
     setTotalCoinsEarned(0);
+    setTotalCoinsSpent(0);
     setUsedWordTexts([]);
     setHasClaimedResult(false);
     setIsRunEnded(false);
+    setBlastsUsed(0);
     setRevivesUsed(0);
     setGuessedLetters([]);
     setReviveCountdown(null);
-    setSessionMaxRankLevel(initialRank.level);
+    setShowLevelUp(false);
+    setPendingLevelReward(0);
+    setSessionMaxRankLevel(calculateLevel(profile.xp || 0).level);
     setNextMilestone(5);
     setMilestoneStep(6);
     syncLock.current = false;
     transitionLock.current = false;
-    initGameSession("endless");
-  }, [initGameSession, setGuessedLetters, initialRank.level]);
+    startingPapaPointsRef.current = profile.papaPoints || 0;
+    serverSyncedXPRef.current = 0;
+    serverSyncedCoinsNetRef.current = 0;
+    milestoneSyncLock.current = false;
+    // Use getNextWeightedWord + explicit pass so the restart word is tracked in
+    // usedWordTexts — prevents the same word being dealt as word #2
+    const firstWord = getNextWeightedWord(initialRank.level, []);
+    setUsedWordTexts([firstWord.word]);
+    initGameSession("endless", firstWord);
+  }, [getNextWeightedWord, initGameSession, initialRank.level, profile.xp, setGuessedLetters]);
+
+  const handleLevelUpClose = useCallback(() => {
+    if (pendingLevelReward > 0) {
+      const rewardSnapshot = {
+        totalWordsSolved: (profile.totalWordsSolved || 0) + totalWordsSolved,
+        papaPoints: (profile.papaPoints || 0) + totalCoinsEarned + pendingLevelReward,
+        highestEndlessRun: Math.max(profile.highestEndlessRun || 0, totalWordsSolved),
+        highestEndlessXP: Math.max(profile.highestEndlessXP || 0, totalXPEarned),
+      };
+
+      setTotalCoinsEarned((prev) => prev + pendingLevelReward);
+      applyEndlessResult(rewardSnapshot);
+      if (!profile.isGhost && syncToDatabase) {
+        void syncToDatabase(rewardSnapshot);
+      }
+      setPendingLevelReward(0);
+    }
+
+    setShowLevelUp(false);
+  }, [applyEndlessResult, pendingLevelReward, profile, syncToDatabase, totalCoinsEarned, totalWordsSolved, totalXPEarned]);
 
   return (
     <div className="flex flex-col space-y-1 md:space-y-2 relative w-full max-w-5xl mx-auto  md:px-0 pb-5 md:pb-10">
@@ -451,9 +568,10 @@ export default function EndlessRunMode({
             isWinner={isWon}
             accent={sessionRank.color}
             secondsElapsed={secondsElapsed}
-            showMentorMsg={showMentorMsg}
             currentRankName={sessionRank.name}
+            rankLevel={sessionRank.level}
             streak={totalWordsSolved}
+            wordLength={currentGame?.word?.length || 0}
           />
         </div>
 
@@ -526,15 +644,15 @@ export default function EndlessRunMode({
                 <div className="flex justify-center">
                   <button
                     onClick={handleShatter}
-                    disabled={livePapaPoints < SHATTER_COST}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-zinc-900 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all group disabled:opacity-50 disabled:grayscale"
+                    disabled={livePapaPoints < currentBlastCost}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-red-50 border-2 border-zinc-900 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all group disabled:opacity-50 disabled:grayscale"
                   >
-                    <Eraser
+                    <Bomb
                       size={16}
-                      className="text-zinc-400 group-hover:text-red-500 transition-colors"
+                      className="text-red-400 group-hover:text-red-600 transition-colors"
                     />
-                    <span className="text-[10px] font-black uppercase italic">
-                      Shatter ({SHATTER_COST})
+                    <span className="text-[10px] font-black uppercase italic text-red-600">
+                      Blast ({currentBlastCost})
                     </span>
                   </button>
                 </div>
@@ -552,7 +670,7 @@ export default function EndlessRunMode({
                 onEndRun={() => setIsRunEnded(true)}
                 isRunEnded={isRunEnded}
                 revivesUsed={revivesUsed}
-                reviveCost={REVIVE_COST}
+                reviveCost={currentReviveCost}
                 countdown={reviveCountdown}
               />
             )}
@@ -563,7 +681,7 @@ export default function EndlessRunMode({
       <LevelUpModal
         isOpen={showLevelUp}
         rank={sessionRank}
-        onClose={() => setShowLevelUp(false)}
+        onClose={handleLevelUpClose}
       />
     </div>
   );

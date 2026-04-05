@@ -1,7 +1,5 @@
 "use client";
-import { Card } from "@/components/ui/card";
 import {
-  Coffee,
   Globe,
   Users,
   Lock,
@@ -9,9 +7,9 @@ import {
   Flame,
   Trophy,
   ChevronRight,
-  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
+import { calculateLevel, calculateProgress, getNextRank } from "../lib/progression";
 
 export default function ModeSelector({ onSelect, profile, requirements }) {
   const isXPLocked = profile.xp < requirements.MIN_XP;
@@ -19,18 +17,15 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
   const isLocked = isXPLocked || isCoinLocked;
 
   return (
-    <Card className="p-4 md:p-8 rounded-[2.5rem] border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl max-w-4xl mx-auto animate-in fade-in zoom-in duration-700">
-      <div className="space-y-2 mb-3 md:mb-6">
-        {/* Minimalist Top Nav/Header Area */}
-        <header className="relative z-10 pt-2 pb-2 px-6 flex flex-col items-center gap-2">
-          <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-gray-900 dark:text-white leading-none">
-            Hang<span className="text-[#75c32c]">Man</span>
-          </h1>
-        </header>
-        {/* <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.4em]">Select your battleground</p> */}
+    <div className="w-full mx-auto animate-in fade-in zoom-in duration-700">
+      {/* Minimalist Header */}
+      <div className="text-center mb-4">
+        <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-gray-900 dark:text-white leading-none">
+          Hang<span className="text-[#75c32c]">Man</span>
+        </h1>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 max-w-4xl mx-auto">
         {/* ENDLESS CLASSIC MODE */}
         {/* <button
           onClick={() => onSelect("classic")}
@@ -111,22 +106,91 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
         {/* ENDLESS RUN MODE */}
         <button
           onClick={() => onSelect("endless")}
-          className="group relative p-8 rounded-[2rem] bg-zinc-100 dark:bg-zinc-800/50 hover:bg-white border-2 border-transparent hover:border-red-500 transition-all duration-500 text-left flex flex-col h-full shadow-sm hover:shadow-2xl"
+          className="group relative p-4 md:p-5 rounded-xl bg-zinc-100 dark:bg-zinc-800/50 hover:bg-white dark:hover:bg-zinc-800 border-2 border-transparent hover:border-red-500 transition-all duration-300 text-left flex flex-col shadow-sm hover:shadow-lg"
         >
-          <div className="mb-8">
-            <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center mb-6">
-              <Flame className="text-red-500" size={30} />
+          {/* Best Session Badge */}
+          {profile.highestEndlessRun > 0 ? (
+            <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-red-500 text-white rounded-full shadow-md shadow-red-500/20">
+              <Flame size={9} fill="currentColor" />
+              <span className="text-[9px] font-black">Best: {profile.highestEndlessRun}</span>
+            </div>
+          ) : (
+            <div className="absolute top-3 right-3 px-2 py-0.5 bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400 rounded-full">
+              <span className="text-[8px] font-black uppercase tracking-wider">New</span>
+            </div>
+          )}
+
+          <div className="mb-3">
+            <div className="w-14 h-14 bg-red-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <Flame className="text-red-500" size={20} />
             </div>
             <h3 className="font-black text-2xl uppercase tracking-tighter">
               Endless Run
             </h3>
-            <p className="text-[11px] text-gray-500 mt-2 uppercase">
-              Global Health Bar. <br />
-              <span className="text-red-500 font-black">
-                How long can you last?
-              </span>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 uppercase leading-tight">
+              How long can you last?
             </p>
           </div>
+
+          {/* Endless XP stat */}
+          <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
+            <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider">XP</span>
+            <span className="text-[11px] font-black text-red-500">{(profile.endlessXP || 0).toLocaleString()}</span>
+          </div>
+        </button>
+
+        {/* JOURNEY MODE */}
+        <button
+          onClick={() => onSelect("journey")}
+          className="group relative p-4 md:p-5 rounded-xl bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30 hover:from-purple-100 hover:to-blue-100 dark:hover:from-purple-800/40 dark:hover:to-blue-800/40 border-2 border-transparent hover:border-purple-400 transition-all duration-300 text-left flex flex-col shadow-sm hover:shadow-lg"
+        >
+          {/* Rank Badge */}
+          {(() => {
+            const rank = calculateLevel(profile.xp || 0);
+            return (
+              <div
+                className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full shadow-sm"
+                style={{ backgroundColor: rank.color + "22", color: rank.color }}
+              >
+                <span className="text-[10px] font-black uppercase tracking-widest">{rank.name}</span>
+              </div>
+            );
+          })()}
+
+          <div className="mb-3">
+            <div className="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <Trophy className="text-purple-600 dark:text-purple-400" size={20} />
+            </div>
+            <h3 className="font-black text-2xl uppercase tracking-tighter">
+              Journey Mode
+            </h3>
+            <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 uppercase leading-tight">
+              Progress through 8 ranks
+            </p>
+          </div>
+
+          {/* XP Progress toward next rank */}
+          {(() => {
+            const progress = calculateProgress(profile.xp || 0);
+            const nextRank = getNextRank(profile.xp || 0);
+            const currentRank = calculateLevel(profile.xp || 0);
+            return (
+              <div className="mt-auto pt-4 border-t border-purple-100 dark:border-purple-900/50 space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider">
+                    {nextRank ? `→ ${nextRank.name}` : "Max"}
+                  </span>
+                  <span className="text-[10px] font-black" style={{ color: currentRank.color }}>{progress}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-purple-100 dark:bg-purple-900/40 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{ width: `${progress}%`, backgroundColor: currentRank.color }}
+                  />
+                </div>
+              </div>
+            );
+          })()}
         </button>
 
         {/* ONLINE 1v1 DUEL */}
@@ -191,6 +255,6 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
           <span>Season 1 Ends in 4d</span>
         </div>
       </div> */}
-    </Card>
+    </div>
   );
 }

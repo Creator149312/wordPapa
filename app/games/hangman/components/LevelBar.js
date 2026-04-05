@@ -2,31 +2,24 @@
 import { useMemo } from "react";
 import { Zap, Trophy, TrendingUp } from "lucide-react";
 import { useProfile } from "../../../ProfileContext";
-import { RANKS } from "../constants"; // Using your source of truth constants
+import { calculateLevel, calculateProgress, getNextRank } from "../lib/progression";
 
 export default function LevelBar() {
   const { profile } = useProfile();
 
-  // Primary stat for Rank/Leveling in Endless Mode
-  const xp = profile.highestEndlessXP || 0;
+  const xp = profile.xp || 0;
 
-  // --- Logic for Rank Calculation ---
   const currentRank = useMemo(() => {
-    return [...RANKS].reverse().find((r) => xp >= r.minXP) || RANKS[0];
+    return calculateLevel(xp);
   }, [xp]);
 
   const nextRank = useMemo(() => {
-    return RANKS.find((r) => r.minXP > xp) || null;
+    return getNextRank(xp);
   }, [xp]);
 
   const progress = useMemo(() => {
-    if (!nextRank) return 100;
-    const currentMin = currentRank.minXP;
-    const nextMin = nextRank.minXP;
-    const progressXP = xp - currentMin;
-    const totalNeeded = nextMin - currentMin;
-    return Math.min(Math.floor((progressXP / totalNeeded) * 100), 100);
-  }, [xp, currentRank, nextRank]);
+    return calculateProgress(xp);
+  }, [xp]);
 
   const isMaxLevel = !nextRank;
   const brandColor = currentRank.color || "#75c32c";
@@ -73,7 +66,7 @@ export default function LevelBar() {
               <div className="flex items-center gap-1 mt-1">
                 <Trophy size={8} className="text-zinc-400" />
                 <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 tabular-nums uppercase">
-                  Best Run: {xp.toLocaleString()} XP
+                  Total XP: {xp.toLocaleString()}
                 </span>
               </div>
             </div>

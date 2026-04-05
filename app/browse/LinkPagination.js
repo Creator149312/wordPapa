@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import commonLinks from '@utils/commonLinks';
 import Pagination from './Pagination';
 import Link from 'next/link';
+import AdsUnit from '@components/AdsUnit';
 
 function CustomLink({ word }) {
   const wordWithHyphens = word.toLowerCase().replace(/ /g, '-');
@@ -30,16 +31,65 @@ function LinkPagination({ links, linksPerPage, pagenumber, letter }) {
 
   return (
     <div className="w-full">
-      {/* Words Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-12">
-        {currentLinks.map((link, index) => (
-          <div 
-            key={index} 
-            className="group relative bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl shadow-sm hover:border-[#75c32c] hover:shadow-lg hover:shadow-[#75c32c]/10 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
-          >
-            <CustomLink word={link} />
+      {/* Words Grid with Horizontal Ads */}
+      <div className="space-y-12">
+        {/* First Grid Section */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {currentLinks.slice(0, Math.ceil(currentLinks.length / 3)).map((link, index) => (
+            <div 
+              key={index} 
+              className="group relative bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl shadow-sm hover:border-[#75c32c] hover:shadow-lg hover:shadow-[#75c32c]/10 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+            >
+              <CustomLink word={link} />
+            </div>
+          ))}
+        </div>
+
+        {/* Horizontal Ad Section 1 */}
+        {currentLinks.length > 30 && (
+          <div className="flex justify-center">
+            <div className="w-full max-w-4xl">
+              <AdsUnit slot="7782807936" />
+            </div>
           </div>
-        ))}
+        )}
+
+        {/* Second Grid Section */}
+        {currentLinks.length > Math.ceil(currentLinks.length / 3) && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {currentLinks.slice(Math.ceil(currentLinks.length / 3), Math.ceil((currentLinks.length * 2) / 3)).map((link, index) => (
+              <div 
+                key={index} 
+                className="group relative bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl shadow-sm hover:border-[#75c32c] hover:shadow-lg hover:shadow-[#75c32c]/10 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+              >
+                <CustomLink word={link} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Horizontal Ad Section 2 */}
+        {currentLinks.length > 60 && (
+          <div className="flex justify-center">
+            <div className="w-full max-w-4xl">
+              <AdsUnit slot="7782807936" />
+            </div>
+          </div>
+        )}
+
+        {/* Third Grid Section */}
+        {currentLinks.length > Math.ceil((currentLinks.length * 2) / 3) && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-12">
+            {currentLinks.slice(Math.ceil((currentLinks.length * 2) / 3)).map((link, index) => (
+              <div 
+                key={index} 
+                className="group relative bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl shadow-sm hover:border-[#75c32c] hover:shadow-lg hover:shadow-[#75c32c]/10 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+              >
+                <CustomLink word={link} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Pagination Section */}

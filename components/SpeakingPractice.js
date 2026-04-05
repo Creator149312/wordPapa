@@ -30,12 +30,13 @@ function calculateScore(spoken, target) {
   return Math.round((1 - distance / maxLen) * 100);
 }
 
-export default function SpeakingPractice({ words }) {
+export default function SpeakingPractice({ words, onCorrect }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [spokenText, setSpokenText] = useState("");
   const [score, setScore] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [hasCalledCorrect, setHasCalledCorrect] = useState(false);
 
   const currentWord = words[currentIndex]?.word;
 
@@ -61,6 +62,12 @@ export default function SpeakingPractice({ words }) {
       setSpokenText(spoken);
       setScore(simScore);
       setFeedback(simScore >= 90 ? "Excellent!" : simScore >= 70 ? "Good Effort!" : "Try Again");
+      
+      // Call onCorrect if score is good and not already called for this word
+      if (simScore >= 80 && !hasCalledCorrect) {
+        onCorrect?.();
+        setHasCalledCorrect(true);
+      }
     };
 
     recognition.onerror = () => setIsRecording(false);
@@ -120,16 +127,24 @@ export default function SpeakingPractice({ words }) {
         </div>
       </div>
 
-      {/* 3. Action Row */}
+      {/* 3. Action Row — skip only makes sense when there are multiple words */}
+      {words.length > 1 && (
       <div className="flex gap-2 items-center">
         <button
-          onClick={() => setCurrentIndex((prev) => (prev + 1) % words.length)}
+          onClick={() => {
+            setCurrentIndex((prev) => (prev + 1) % words.length);
+            setScore(null);
+            setFeedback("");
+            setSpokenText("");
+            setHasCalledCorrect(false);
+          }}
           className="flex-1 bg-white dark:bg-gray-900 border-2 border-[#75c32c] text-[#75c32c] py-3 rounded-2xl font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all"
         >
           Skip
           <ChevronRight size={16} />
         </button>
       </div>
+      )}
     </div>
   );
 }

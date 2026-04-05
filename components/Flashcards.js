@@ -13,7 +13,7 @@ const Flashcards = ({ words }) => {
     frontHTML: (
       <div className="flex flex-col items-center justify-center h-full text-center p-4">
         <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#75c32c] mb-2 opacity-80">Word</span>
-        <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-gray-800 dark:text-white capitalize">
+        <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-gray-800 capitalize">
           {w.word}
         </h2>
       </div>
@@ -21,7 +21,7 @@ const Flashcards = ({ words }) => {
     backHTML: (
       <div className="flex flex-col items-center justify-center h-full text-center p-6">
         <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#75c32c] mb-2 opacity-80">Definition</span>
-        <p className="text-sm md:text-base font-bold text-gray-600 dark:text-gray-200 leading-tight">
+        <p className="text-sm md:text-base font-bold text-gray-600 leading-tight">
           {w.wordData}
         </p>
       </div>
@@ -79,6 +79,7 @@ const Flashcards = ({ words }) => {
               frontCardStyle={{
                 borderRadius: '1.5rem',
                 border: '1px solid #f1f5f9',
+                backgroundColor: '#ffffff',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                 display: 'flex',
                 alignItems: 'center',
@@ -123,6 +124,9 @@ const Flashcards = ({ words }) => {
         /* Fix for potential left-alignment in the library's root */
         .react-quizlet-flashcard {
           margin: 0 auto !important;
+        }
+        .react-quizlet-flashcard > div {
+          background-color: #ffffff !important;
         }
       `}</style>
     </div>

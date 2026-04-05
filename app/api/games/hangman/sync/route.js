@@ -3,10 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectMongoDB } from "@/lib/mongodb";
 import GameProfile from "@/models/gameprofile";
+import User from "@/models/user";
 
 /**
  * GET: Retrieves the user's profile if it exists.
- * We REMOVED the "upsert" here so the client can detect if this is a first-time login.
  */
 export async function GET() {
   try {
@@ -17,22 +17,20 @@ export async function GET() {
 
     await connectMongoDB();
 
-    // Look for the profile without creating one automatically
     const profile = await GameProfile.findOne({
       userEmail: session.user.email,
     });
 
     if (!profile) {
-      // Return success: false so the client knows to push the LocalStorage (Ghost) data
       return NextResponse.json({ success: false, message: "No profile found" });
     }
 
-    // If found, ensure the name is updated from the latest session
+    // Update name from session if needed
     profile.name = session.user.name || profile.name || "Player";
     await profile.save();
 
-    // Get the global user XP
-    catch (error) {
+    return NextResponse.json({ success: true, data: profile, profile });
+  } catch (error) {
     console.error("GET Sync Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -43,19 +41,29 @@ export async function GET() {
 
 /**
  * POST: Updates or Creates the cloud profile.
- * Handles the initial migration from Ghost -> Real User.
+ *
+ * Delta fields (journeyXPDelta, endlessXPDelta) are handled via $inc so that
+ * stale localStorage caches can never silently overwrite DB-side progress.
+ *
+ * After incrementing, xp is recomputed as journeyXP + endlessXP.
  */
 export async function POST(req) {
   try {
+    const syncDebugEnabled = req.headers.get("x-journey-sync-debug") === "1";
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const updateData = await req.json();
+    if (syncDebugEnabled) {
+      console.log("[JourneySync][server] hangman.sync.request", {
+        userEmail: session.user.email,
+        updateData,
+      });
+    }
     await connectMongoDB();
 
-    // 1. Destructure to protect high-score integrity and prevent meta-data overwrites
     const {
       _id,
       __v,
@@ -64,17 +72,39 @@ export async function POST(req) {
       updatedAt,
       isGhost,
       name,
-      xp,
       highestEndlessXP,
       highestEndlessRun,
       highestStreak,
       highestWinStreak,
+      // Delta fields — never written as absolute values
+      journeyXPDelta,
+      endlessXPDelta,
+      papaPointsDelta,
+      // These are server-managed; ignore client values
+      xp: _ignoredXP,
+      journeyXP: _ignoredJourneyXP,
+      endlessXP: _ignoredEndlessXP,
+      papaPoints: _ignoredPapaPoints,
+      // Legacy fields — ignore if client still sends them
+      weeklyXP: _ignoredWeeklyXP,
+      weekKey: _ignoredWeekKey,
+      weeklyXPDelta: _ignoredWeeklyDelta,
       ...otherData
     } = updateData;
 
-    // 2. The Migration & Sync Update:
-    // $set: Updates dynamic values (coins, current theme, etc.)
-    // $max: Ensures records/XP never go backwards during syncs
+    // Security caps — prevent tampered deltas from inflating progress
+    const MAX_XP_PER_SYNC = 20000;
+    const MAX_COIN_DELTA_PER_SYNC = 10000;
+
+    // Build $inc object for delta fields
+    const incFields = {};
+    if (journeyXPDelta > 0) incFields.journeyXP = Math.min(journeyXPDelta, MAX_XP_PER_SYNC);
+    if (endlessXPDelta > 0) incFields.endlessXP = Math.min(endlessXPDelta, MAX_XP_PER_SYNC);
+    if (papaPointsDelta !== undefined && papaPointsDelta !== 0) {
+      incFields.papaPoints = Math.max(-MAX_COIN_DELTA_PER_SYNC, Math.min(MAX_COIN_DELTA_PER_SYNC, papaPointsDelta));
+    }
+
+    // 1. Main profile update — high-score fields protected by $max, deltas by $inc
     const updatedProfile = await GameProfile.findOneAndUpdate(
       { userEmail: session.user.email },
       {
@@ -82,28 +112,61 @@ export async function POST(req) {
           ...otherData,
           name: session.user.name || name || "Player",
           userEmail: session.user.email,
-          isGhost: false, // Permanently convert to a real user
+          isGhost: false,
         },
         $max: {
-          xp: xp || 0,
           highestEndlessXP: highestEndlessXP || 0,
           highestEndlessRun: highestEndlessRun || 0,
           highestStreak: highestStreak || 0,
           highestWinStreak: highestWinStreak || 0,
         },
+        ...(Object.keys(incFields).length > 0 && { $inc: incFields }),
       },
       {
         new: true,
-        upsert: true, // This allows the FIRST POST (the migration) to create the document
+        upsert: true,
         runValidators: true,
       },
     );
 
-    // Sync GameProfile XP to global User XP (centralized)
+    // 2. Recompute xp = journeyXP + endlessXP (the canonical Global XP)
+    if (updatedProfile) {
+      const computedXP = (updatedProfile.journeyXP || 0) + (updatedProfile.endlessXP || 0);
+      let needsSave = false;
+      if (updatedProfile.xp !== computedXP) {
+        updatedProfile.xp = computedXP;
+        needsSave = true;
+      }
+      // Floor papaPoints at 0 — $inc with negative delta could dip below zero
+      if (updatedProfile.papaPoints < 0) {
+        updatedProfile.papaPoints = 0;
+        needsSave = true;
+      }
+      if (needsSave) await updatedProfile.save();
+    }
+
+    // 3. Mirror global XP to User model for session/auth uses
     if (updatedProfile && updatedProfile.xp > 0) {
       const user = await User.findOne({ email: session.user.email });
-      if (user) {
-        // Only update if GameProfile XP is higher than User XP
+      if (user && updatedProfile.xp > (user.xp || 0)) {
+        user.xp = updatedProfile.xp;
+        await user.save();
+      }
+    }
+
+    if (syncDebugEnabled) {
+      console.log("[JourneySync][server] hangman.sync.success", {
+        userEmail: session.user.email,
+        journeyXP: updatedProfile?.journeyXP || 0,
+        endlessXP: updatedProfile?.endlessXP || 0,
+        xp: updatedProfile?.xp || 0,
+        papaPoints: updatedProfile?.papaPoints || 0,
+        totalWordsSolved: updatedProfile?.totalWordsSolved || 0,
+      });
+    }
+
+    return NextResponse.json({ success: true, profile: updatedProfile });
+  } catch (error) {
     console.error("POST Sync Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to sync profile" },

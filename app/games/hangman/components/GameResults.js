@@ -11,7 +11,8 @@ import {
   HeartCrack,
   Heart,
   Timer,
-  Wind, // Added Wind for the air/refill theme
+  Wind,
+  Map,
 } from "lucide-react";
 import ShareResult from "./ShareResult";
 
@@ -29,12 +30,24 @@ export default function GameResults({
   revivesUsed = 0,
   reviveCost = 50,
   countdown = null,
+  journeyProgress = null,
+  journeyNode = null,
+  rankCompleted = false,
+  rankBonusXP = 0,
+  arenaCompleted = false,
+  arenaBonusXP = 0,
+  onContinueJourney,
+  nextNodeId = null,
+  onBackToJourney = null,
 }) {
   const isEndless = mode === "endless";
+  const isJourney = mode === "journey";
+  const showArenaCompletion = arenaCompleted || rankCompleted;
+  const resolvedArenaBonusXP = arenaBonusXP || rankBonusXP;
 
   const showReviveOffer =
-    isEndless && !isWon && !isRunEnded && countdown !== null;
-  const isRunEndedStatus = (!isWon && streak > 0) || (isEndless && isRunEnded);
+    (isEndless || isJourney) && !isWon && !isRunEnded && countdown !== null;
+  const isRunEndedStatus = (!isWon && streak > 0) || ((isEndless || isJourney) && isRunEnded);
 
   return (
     <div className="w-full pt-1 text-center space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-500">
@@ -76,7 +89,13 @@ export default function GameResults({
             >
               {showReviveOffer
                 ? "Balloons Popped!" // Changed from Fuel is Empty
-                : isEndless
+                : isJourney
+                  ? isWon
+                    ? "Node Complete!"
+                    : isRunEndedStatus
+                      ? "Journey Halted"
+                      : "Try Again"
+                  : isEndless
                   ? "Run Complete!"
                   : isWon
                     ? "Success!"
@@ -87,7 +106,9 @@ export default function GameResults({
             <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter mt-1">
               {showReviveOffer
                 ? `Quick! Refill your air...` // Changed text
-                : isEndless
+                : isJourney
+                  ? `Cleared ${streak} words`
+                  : isEndless
                   ? `Mastered ${streak} words`
                   : `Word: ${word}`}
             </p>
@@ -148,19 +169,86 @@ export default function GameResults({
               }`}
             >
               {showReviveOffer
-                ? "Air Supply Timer" // Changed from Revive Timer
-                : isEndless
+                ? isJourney
+                  ? "Revive Window"
+                  : "Air Supply Timer"
+                : isJourney
+                  ? "Words Cleared"
+                  : isEndless
                   ? "Words Mastered"
                   : "Current Streak"}
             </p>
             <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-tight mt-0.5">
               {showReviveOffer
-                ? "Don't fall! Refill air to stay afloat." // Changed text
+                ? isJourney
+                  ? "Use a revive if you want to keep this node run alive."
+                  : "Don't fall! Refill air to stay afloat."
                 : "You're becoming a legend!"}
             </p>
           </div>
         </div>
       </div>
+
+      {/* 2.5. JOURNEY PROGRESS DISPLAY (Optional) */}
+      {journeyProgress && journeyNode && (
+        <div
+          className={`rounded-2xl px-4 py-3 border-2 animate-in fade-in slide-in-from-bottom-2 duration-500 ${
+            journeyProgress.completed
+              ? "bg-purple-500/10 border-purple-500/50 shadow-lg shadow-purple-500/20"
+              : "bg-blue-500/10 border-blue-500/30"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            {journeyProgress.completed ? (
+              <PartyPopper className="text-purple-600 dark:text-purple-400" size={20} />
+            ) : (
+              <TrendingUp className="text-blue-600 dark:text-blue-400" size={20} />
+            )}
+            <div className="text-left flex-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                {journeyProgress.completed
+                  ? `🎉 Node ${journeyNode.nodeId} Complete!`
+                  : `Node ${journeyNode.nodeId} Progress`}
+              </p>
+              <div className="mt-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full h-2">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    journeyProgress.completed
+                      ? "bg-purple-500"
+                      : "bg-blue-500"
+                  }`}
+                  style={{
+                    width: `${journeyProgress.percent}%`,
+                  }}
+                />
+              </div>
+              <p className="text-[9px] font-bold mt-1 text-zinc-500">
+                {journeyProgress.percent}% Mastered
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2.6. RANK COMPLETION BONUS */}
+      {showArenaCompletion && resolvedArenaBonusXP > 0 && (
+        <div className="rounded-2xl px-4 py-3 border-2 border-yellow-400/60 bg-yellow-400/10 animate-in fade-in slide-in-from-bottom-2 duration-700 shadow-lg shadow-yellow-400/20">
+          <div className="flex items-center gap-3">
+            <Trophy className="text-yellow-500" size={22} />
+            <div className="text-left flex-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-yellow-700 dark:text-yellow-300">
+                🏆 Arena Complete!
+              </p>
+              <p className="text-[9px] font-bold mt-0.5 text-yellow-600 dark:text-yellow-400">
+                Mastered all 5 nodes · Bonus +{resolvedArenaBonusXP} XP
+              </p>
+            </div>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-yellow-400/20 text-yellow-700 dark:text-yellow-300 font-black text-[10px] border border-yellow-400/40">
+              <TrendingUp size={10} /> +{resolvedArenaBonusXP}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3. ACTIONS */}
       <div className="flex items-center gap-2 pt-1">
@@ -170,7 +258,7 @@ export default function GameResults({
               onClick={onEndRun}
               className="flex-1 h-12 rounded-2xl bg-zinc-200 dark:bg-zinc-800 text-zinc-500 font-black uppercase text-[10px] tracking-widest hover:bg-zinc-300 transition-all active:scale-95"
             >
-              Let Fall
+              {isJourney ? "End Node" : "Let Fall"}
             </Button>
             <Button
               onClick={onRevive}
@@ -184,7 +272,7 @@ export default function GameResults({
 
               <div className="flex items-center justify-center gap-2 relative z-10">
                 <Wind size={14} className="animate-pulse" />
-                <span>Refill Air ({reviveCost})</span>
+                <span>{isJourney ? `Revive Node (${reviveCost})` : `Refill Air (${reviveCost})`}</span>
               </div>
             </Button>
           </>
@@ -200,6 +288,24 @@ export default function GameResults({
               />
               
             </div>
+            {isJourney && isWon && nextNodeId && onContinueJourney && (
+              <Button
+                onClick={onContinueJourney}
+                className="flex-1 h-12 rounded-2xl bg-[#75c32c] hover:bg-[#64a825] font-black uppercase text-[11px] tracking-widest transition-all active:scale-95 text-white"
+              >
+                Continue {nextNodeId}
+                <RefreshCw size={14} className="ml-2" />
+              </Button>
+            )}
+            {isJourney && isRunEnded && onBackToJourney && (
+              <Button
+                onClick={onBackToJourney}
+                className="flex-1 h-12 rounded-2xl bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 font-black uppercase text-[10px] tracking-widest hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all active:scale-95"
+              >
+                <Map size={13} className="mr-1.5" />
+                Journey Map
+              </Button>
+            )}
             <Button
               onClick={onRestart}
               className={`flex-1 h-12 rounded-2xl font-black uppercase text-[11px] tracking-widest transition-all active:scale-95 text-white ${
@@ -208,7 +314,7 @@ export default function GameResults({
                   : "bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90"
               }`}
             >
-              {isEndless ? "New Flight" : isWon ? "Next Word" : "Try Again"}
+              {isJourney ? (isWon ? "Replay Node" : "Retry Node") : isEndless ? "New Flight" : isWon ? "Next Word" : "Try Again"}
               <RefreshCw size={14} className="ml-2" />
             </Button>
           </>

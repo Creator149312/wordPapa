@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { Volume2, CheckCircle2, ChevronRight, X } from "lucide-react";
 
-export default function AudioTypingPractice({ words }) {
+export default function AudioTypingPractice({ words, onCorrect }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [input, setInput] = useState("");
   const [feedback, setFeedback] = useState({ message: "", type: "" });
+  const [isCorrect, setIsCorrect] = useState(false);
   const [brianVoice, setBrianVoice] = useState(null);
   const [emmaVoice, setEmmaVoice] = useState(null);
   const [shuffledLetters, setShuffledLetters] = useState([]);
@@ -44,14 +45,18 @@ export default function AudioTypingPractice({ words }) {
   const checkAnswer = () => {
     if (input.trim().toLowerCase() === currentWord.toLowerCase()) {
       setFeedback({ message: "✨ Perfect spelling!", type: "success" });
+      setIsCorrect(true);
+      onCorrect?.(); // Call the callback when answer is correct
     } else {
       setFeedback({ message: `Oops! It's "${currentWord}".`, type: "error" });
+      setIsCorrect(false);
     }
   };
 
   const nextWord = () => {
     setInput("");
     setFeedback({ message: "", type: "" });
+    setIsCorrect(false);
     setCurrentIndex((prev) => (prev + 1) % words.length);
   };
 

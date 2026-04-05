@@ -52,6 +52,17 @@ export const calculateProgress = (xp) => {
 };
 
 /**
+ * Applies a per-wrong-guess penalty to a reward value.
+ * Each wrong guess costs 6% of the base reward, floored at 40%.
+ *   0 wrong → 100%  |  3 wrong → 82%  |  5 wrong → 70%  |  10+ wrong → 40%
+ */
+export const applyWrongGuessPenalty = (baseValue, wrongCount) => {
+  const safeWrong = Math.max(0, wrongCount || 0);
+  const multiplier = Math.max(0.4, 1 - safeWrong * 0.06);
+  return Math.max(1, Math.floor(baseValue * multiplier));
+};
+
+/**
  * Calculates rewards for Endless Run mode.
  * Matches the logic: (Length * 10) + (Difficulty * 15)
  */
@@ -59,17 +70,21 @@ export const getEndlessRewards = (
   wordLength,
   wordLevel,
   remainingLives = 0,
+  wrongGuesses = 0,
 ) => {
   const { HEALTH_BONUS_XP, HEALTH_BONUS_COINS } = GAME_STAKES.ENDLESS;
 
   const baseXP = wordLength * 10 + wordLevel * 15;
-  const baseCoins = Math.ceil(baseXP / 10);
+  const baseCoins = Math.max(8, Math.ceil(baseXP / 10));
 
   const safeLives = Math.max(0, remainingLives);
 
+  const rawXP = baseXP + safeLives * HEALTH_BONUS_XP;
+  const rawCoins = baseCoins + safeLives * HEALTH_BONUS_COINS;
+
   return {
-    xpGain: baseXP + safeLives * HEALTH_BONUS_XP,
-    coinGain: baseCoins + safeLives * HEALTH_BONUS_COINS,
+    xpGain: applyWrongGuessPenalty(rawXP, wrongGuesses),
+    coinGain: applyWrongGuessPenalty(rawCoins, wrongGuesses),
   };
 };
 
@@ -128,4 +143,34 @@ export const getArenaUnlockBonus = (level) => {
 
   // Logical progression: Level 2 = 200, Level 5 = 500, etc.
   return level * 100;
+};
+const BLAST_COST_STEPS = [15, 25, 40, 60, 85];
+const REVIVE_COST_STEPS = [50, 125, 300];
+const ENDLESS_WORD_BLAST_BASE_COST = 15;
+
+export const getBlastCost = (blastsUsed = 0) => {
+  const safeUses = Math.max(0, blastsUsed || 0);
+
+  if (safeUses < BLAST_COST_STEPS.length) {
+    return BLAST_COST_STEPS[safeUses];
+  }
+
+  const overflowUses = safeUses - BLAST_COST_STEPS.length + 1;
+  return BLAST_COST_STEPS[BLAST_COST_STEPS.length - 1] + overflowUses * 30;
+};
+
+export const getEndlessWordBlastCost = (blastsUsedOnWord = 0) => {
+  const safeUses = Math.max(0, blastsUsedOnWord || 0);
+  return ENDLESS_WORD_BLAST_BASE_COST * 2 ** safeUses;
+};
+
+export const getReviveCost = (revivesUsed = 0) => {
+  const safeUses = Math.max(0, revivesUsed || 0);
+
+  if (safeUses < REVIVE_COST_STEPS.length) {
+    return REVIVE_COST_STEPS[safeUses];
+  }
+
+  const overflowUses = safeUses - REVIVE_COST_STEPS.length + 1;
+  return REVIVE_COST_STEPS[REVIVE_COST_STEPS.length - 1] * 2 ** overflowUses;
 };

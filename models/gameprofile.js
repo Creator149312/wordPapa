@@ -19,14 +19,15 @@ const gameProfileSchema = new Schema(
     },
 
     // --- GLOBAL CAREER PROGRESSION ---
-    // Combined stats from all game modes
+    // Derived value: xp = journeyXP + endlessXP (computed server-side on every sync).
+    // Stored for efficient leaderboard sorting.
     xp: {
       type: Number,
       default: 0,
     },
     papaPoints: {
       type: Number,
-      default: 50, // Initial currency for power-ups
+      default: 100, // Initial currency for power-ups
     },
     totalWordsSolved: {
       type: Number,
@@ -42,15 +43,32 @@ const gameProfileSchema = new Schema(
     },
 
     // --- ENDLESS MODE RECORDS ---
-    // Specifically for the Endless Leaderboard
     highestEndlessRun: {
       type: Number,
       default: 0, // Most words solved in one session
     },
     highestEndlessXP: {
       type: Number,
-      default: 0, // Most XP earned in one session
+      default: 0, // Best single-run XP (leaderboard only, not used for rank)
     },
+    // Cumulative XP earned from ALL Endless runs combined.
+    // Incremented via $inc (delta-based) on every sync.
+    endlessXP: {
+      type: Number,
+      default: 0,
+    },
+
+    // --- JOURNEY MODE TOTALS ---
+    // Accumulated XP earned exclusively through Journey mode.
+    // Incremented via $inc (delta-based) on every sync — never via $max —
+    // so a stale localStorage cache can never silently drop session earnings.
+    // Analogous to Clash Royale's mode-specific trophy tracks.
+    journeyXP: {
+      type: Number,
+      default: 0,
+    },
+
+
 
     // --- DAILY CHALLENGE ---
     dailyStreak: {

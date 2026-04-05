@@ -23,11 +23,33 @@ const listSchema = new Schema(
       type: String,
       required: true,
     }, //includes email of user who created the list
-    // userId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'User',
-    //   required: true
-    // }
+    tags: {
+      type: [String],
+      default: [],
+      index: true,
+    },
+    practiceCount: {
+      type: Number,
+      default: 0,
+    },
+    // System-managed lists that users cannot delete (e.g., "Tough Nuts")
+    isSystemList: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    isToughNuts: {
+      type: Boolean,
+      default: false,
+    },
+    // System tags used to hide lists from the public browse page.
+    // Values: "journey-node" (assigned to a Journey node), "tough-nuts" (spaced repetition list).
+    // Lists with any systemTag are excluded from /lists unless explicitly requested.
+    systemTags: {
+      type: [String],
+      default: [],
+      index: true,
+    },
   },
   {
     timestamps: true,

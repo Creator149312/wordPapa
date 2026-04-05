@@ -7,7 +7,10 @@ import {
   Music,
   Search,
   Hash,
-  GraduationCap
+  GraduationCap,
+  Gamepad2,
+  ListTodo,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 
@@ -87,9 +90,78 @@ const Page = () => {
         <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#75c32c]/10 rounded-full blur-[100px] -z-0" />
       </section>
 
-      {/* Tools Grid */}
-      <section className="max-w-6xl mx-auto px-6 pb-24 -mt-8 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* CTA Section - Games & Lists */}
+      <section className="max-w-6xl mx-auto px-6 pb-12 -mt-8 relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Hangman Game CTA */}
+          <Link href="/games/hangman" className="group">
+            <Card className="relative overflow-hidden h-full p-10 rounded-[2.5rem] border-2 border-gray-100 dark:border-gray-800 hover:border-[#75c32c] transition-all duration-300 group-hover:-translate-y-3 shadow-sm hover:shadow-2xl hover:shadow-[#75c32c]/20 bg-gradient-to-br from-[#75c32c]/10 to-white dark:from-[#75c32c]/10 dark:to-gray-800">
+              <div className="relative z-10 space-y-6">
+                <div className="w-16 h-16 rounded-[1.25rem] bg-[#75c32c]/20 text-[#75c32c] flex items-center justify-center transition-all group-hover:rotate-6 group-hover:scale-110 shadow-inner">
+                  <Gamepad2 className="w-8 h-8" />
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-3xl font-black text-gray-900 dark:text-white">
+                    Test Your Skills
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                    Play Hangman and challenge yourself with daily word puzzles. Compete on the leaderboard and earn rewards!
+                  </p>
+                </div>
+
+                <div className="pt-4 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Zap size={14} />
+                  Play Now <span className="text-lg">→</span>
+                </div>
+              </div>
+
+              {/* Decorative Element */}
+              <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#75c32c]/5 rounded-full blur-2xl" />
+            </Card>
+          </Link>
+
+          {/* Manage Lists CTA */}
+          <Link href="/lists" className="group">
+            <Card className="relative overflow-hidden h-full p-10 rounded-[2.5rem] border-2 border-gray-100 dark:border-gray-800 hover:border-[#75c32c] transition-all duration-300 group-hover:-translate-y-3 shadow-sm hover:shadow-2xl hover:shadow-[#75c32c]/20 bg-gradient-to-br from-[#75c32c]/10 to-white dark:from-[#75c32c]/10 dark:to-gray-800">
+              <div className="relative z-10 space-y-6">
+                <div className="w-16 h-16 rounded-[1.25rem] bg-[#75c32c]/20 text-[#75c32c] flex items-center justify-center transition-all group-hover:rotate-6 group-hover:scale-110 shadow-inner">
+                  <ListTodo className="w-8 h-8" />
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-3xl font-black text-gray-900 dark:text-white">
+                    Curate Your Lists
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                    Create and manage personalized word lists. Organize your learning journey and track your progress!
+                  </p>
+                </div>
+
+                <div className="pt-4 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Zap size={14} />
+                  Get Started <span className="text-lg">→</span>
+                </div>
+              </div>
+
+              {/* Decorative Element */}
+              <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#75c32c]/5 rounded-full blur-2xl" />
+            </Card>
+          </Link>
+        </div>
+
+        {/* Tools Section Heading */}
+        <div className="mt-24 mb-12 text-center">
+          <h2 className="text-4xl font-black text-gray-900 dark:text-white mb-3">
+            Experiment with Your Toolkit
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 font-medium max-w-2xl mx-auto">
+            Master English with our comprehensive collection of learning tools
+          </p>
+        </div>
+
+        {/* Tools Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {tools.map((tool, index) => (
             <Link href={tool.link} key={index} className="group">
               <Card className="h-full p-8 rounded-[2.5rem] border-2 border-gray-100 dark:border-gray-800 hover:border-[#75c32c] transition-all duration-300 group-hover:-translate-y-3 shadow-sm hover:shadow-2xl hover:shadow-[#75c32c]/20">

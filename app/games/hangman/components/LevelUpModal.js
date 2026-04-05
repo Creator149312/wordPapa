@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import Confetti from "./Confetti";
 import { useAudio } from "../hooks/useAudio";
+import DynamicPapa from "./DynamicPapa";
+import { RANKS } from "../constants";
 
 export default function LevelUpModal({ rank, isOpen, onClose }) {
   const [showContent, setShowContent] = useState(false);
@@ -30,6 +32,7 @@ export default function LevelUpModal({ rank, isOpen, onClose }) {
 
   const bonusAmount = rank.level * 100;
   const prevRankLevel = Math.max(1, rank.level - 1);
+  const prevRank = RANKS.find((item) => item.level === prevRankLevel) || rank;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 overflow-hidden">
@@ -44,11 +47,11 @@ export default function LevelUpModal({ rank, isOpen, onClose }) {
 
       {/* THE REWARD CARD */}
       {showContent && (
-        <div className="relative bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 text-center max-w-sm w-full border-[4px] border-zinc-900 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] animate-in zoom-in-95 duration-500">
+        <div className="relative bg-white dark:bg-zinc-900 rounded-[2rem] p-5 md:p-6 text-center max-w-sm w-full border-[3px] border-zinc-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-in zoom-in-95 duration-500 max-h-[90vh] overflow-y-auto">
           <Confetti />
 
           {/* Rank Progression Header */}
-          <div className="flex items-center justify-center gap-3 mb-6 opacity-60">
+          <div className="flex items-center justify-center gap-3 mb-3 opacity-60">
             <span className="text-xs font-black italic text-zinc-400">
               LVL {prevRankLevel}
             </span>
@@ -65,25 +68,57 @@ export default function LevelUpModal({ rank, isOpen, onClose }) {
             </span>
           </div>
 
-          {/* Icon Header with Pulsing Aura */}
-          <div className="mb-8 flex justify-center relative">
+          {/* Growth Ceremony */}
+          <div className="mb-4 flex justify-center relative">
             <div
               className="absolute inset-0 rounded-full blur-2xl opacity-20 animate-pulse"
               style={{ backgroundColor: rank.color }}
             />
-            <div
-              className="relative p-6 rounded-3xl border-2 border-b-8 border-zinc-900 animate-bounce"
-              style={{
-                backgroundColor: rank.color,
-                borderBottomColor: "rgba(0,0,0,0.3)", // Tactile shadow
-              }}
-            >
-              <Trophy size={48} className="text-white drop-shadow-md" />
+            <div className="relative w-full flex items-center justify-center gap-3">
+              <div className="flex flex-col items-center gap-2 opacity-70">
+                <DynamicPapa
+                  rankLevel={prevRankLevel}
+                  currentRankName={prevRank.name}
+                  accent={prevRank.color}
+                  compact={true}
+                />
+                <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                  Before
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <div
+                  className="relative p-4 rounded-3xl border-2 border-b-8 border-zinc-900 animate-bounce"
+                  style={{
+                    backgroundColor: rank.color,
+                    borderBottomColor: "rgba(0,0,0,0.3)",
+                  }}
+                >
+                  <Sparkles size={28} className="text-white drop-shadow-md animate-pulse" />
+                </div>
+                <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500">
+                  Evolves
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center gap-2 animate-in zoom-in-95 duration-500">
+                <DynamicPapa
+                  rankLevel={rank.level}
+                  currentRankName={rank.name}
+                  accent={rank.color}
+                  compact={true}
+                  isWinner={true}
+                />
+                <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: rank.color }}>
+                  After
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Rank Info */}
-          <div className="space-y-1 mb-8">
+          <div className="space-y-1 mb-4">
             <div className="flex items-center justify-center gap-2">
               <Zap
                 size={14}
@@ -103,7 +138,7 @@ export default function LevelUpModal({ rank, isOpen, onClose }) {
             </div>
 
             <h1
-              className="text-6xl font-black uppercase italic tracking-tighter leading-none py-2"
+              className="text-4xl font-black uppercase italic tracking-tighter leading-none py-1"
               style={{
                 color: rank.color,
                 textShadow: `3px 3px 0px rgba(0,0,0,0.1)`,
@@ -114,8 +149,8 @@ export default function LevelUpModal({ rank, isOpen, onClose }) {
           </div>
 
           {/* Reward Section */}
-          <div className="space-y-3 mb-8">
-            <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl p-5 border-2 border-dashed border-zinc-200 dark:border-zinc-700 relative overflow-hidden">
+          <div className="space-y-2 mb-4">
+            <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl p-3 border-2 border-dashed border-zinc-200 dark:border-zinc-700 relative overflow-hidden">
               <p className="text-[9px] font-black text-zinc-300 dark:text-zinc-600 uppercase tracking-widest mb-3">
                 Milestone Rewards
               </p>
@@ -159,7 +194,7 @@ export default function LevelUpModal({ rank, isOpen, onClose }) {
           {/* Continue Button (Tactile Style) */}
           <button
             onClick={onClose}
-            className="group w-full py-5 rounded-2xl font-black uppercase italic tracking-widest text-sm text-white border-2 border-b-8 border-zinc-900 transition-all active:translate-y-[4px] active:border-b-2 flex items-center justify-center gap-3"
+            className="group w-full py-3.5 rounded-2xl font-black uppercase italic tracking-widest text-sm text-white border-2 border-b-8 border-zinc-900 transition-all active:translate-y-[4px] active:border-b-2 flex items-center justify-center gap-3"
             style={{
               backgroundColor: rank.color,
               // Darker tactile bottom border using rgba overlay

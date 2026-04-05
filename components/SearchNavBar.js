@@ -2,44 +2,108 @@
 
 import commonLinks from "@utils/commonLinks";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiSearch } from "react-icons/fi";
 import FINALCLEANWORDS from "../app/browse/FINALCLEANWORDS";
+
+const TOOL_OPTIONS = [
+  { value: commonLinks.definition, label: "Dictionary", placeholder: "Define a word..." },
+  { value: commonLinks.wordfinder, label: "Finder", placeholder: "Letters to unscramble..." },
+  { value: commonLinks.thesaurus, label: "Thesaurus", placeholder: "Find synonyms..." },
+  { value: commonLinks.rhyming, label: "Rhymes", placeholder: "Find rhyming words..." },
+  { value: commonLinks.syllables, label: "Syllables", placeholder: "Count syllables..." },
+  { value: commonLinks.adjectives, label: "Adjectives", placeholder: "Find adjectives..." },
+];
 
 const SearchBarNav = () => {
   const [selectedOption, setSelectedOption] = useState("/define/");
   const [word, setWord] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [inputError, setInputError] = useState(false);
-
-  // Configuration for tools and their specific placeholders
-  const urlOptions = [
-    { value: commonLinks.definition, label: "Dictionary", placeholder: "Define a word..." },
-    { value: commonLinks.wordfinder, label: "Finder", placeholder: "Letters to unscramble..." },
-    { value: commonLinks.thesaurus, label: "Thesaurus", placeholder: "Find synonyms..." },
-    { value: commonLinks.rhyming, label: "Rhymes", placeholder: "Find rhyming words..." },
-    { value: commonLinks.syllables, label: "Syllables", placeholder: "Count syllables..." },
-    { value: commonLinks.adjectives, label: "Adjectives", placeholder: "Find adjectives..." },
-  ];
+  const isListsSearch = pathname.startsWith("/lists");
 
   // Sync state with URL on initial load
   useEffect(() => {
+    if (isListsSearch) {
+      setSelectedOption("/lists");
+      setWord(searchParams.get("search") || "");
+      setSuggestions([]);
+      setInputError(false);
+      return;
+    }
+
     let path = pathname.split("/")[1];
-    const option = urlOptions.find(opt => opt.value === `/${path}/`);
+    const option = TOOL_OPTIONS.find(opt => opt.value === `/${path}/`);
     if (option) {
       setSelectedOption(option.value);
     }
-  }, [pathname]);
+  }, [isListsSearch, pathname, searchParams]);
+
+  useEffect(() => {
+    if (!isListsSearch) {
+      return;
+    }
+
+    const query = word.trim();
+
+    if (query.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timerId = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/list?search=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        });
+        const data = await response.json();
+        const nextSuggestions = (data.lists || [])
+          .map((list) => list.title)
+          .filter(Boolean)
+          .slice(0, 6);
+        setSuggestions(nextSuggestions);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("List search suggestions failed:", error);
+        }
+      }
+    }, 160);
+
+    return () => {
+      window.clearTimeout(timerId);
+      controller.abort();
+    };
+  }, [isListsSearch, word]);
 
   // Derived state: Get the placeholder of the currently selected tool
-  const currentPlaceholder = urlOptions.find(opt => opt.value === selectedOption)?.placeholder || "Search WordPapa...";
+  const currentPlaceholder = isListsSearch
+    ? "Search public lists..."
+    : TOOL_OPTIONS.find(opt => opt.value === selectedOption)?.placeholder || "Search WordPapa...";
 
   const handleKeyPress = (e) => {
     if (!inputError && e.key === "Enter") handleLoadUrl();
   };
 
   const handleLoadUrl = () => {
+    if (isListsSearch) {
+      const query = word.trim();
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (query) {
+        params.set("search", query);
+      } else {
+        params.delete("search");
+      }
+
+      router.push(`/lists${params.toString() ? `?${params.toString()}` : ""}`);
+      setSuggestions([]);
+      return;
+    }
+
     if (selectedOption && word) {
       const cleanWord = word.toLowerCase().trim().replace(/\?/g, "_");
       window.location.href = selectedOption + encodeURIComponent(cleanWord);
@@ -48,6 +112,13 @@ const SearchBarNav = () => {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
+
+    if (isListsSearch) {
+      setWord(value);
+      setInputError(false);
+      return;
+    }
+
     if (/^[a-zA-Z' \-?0-9]*$/.test(value)) {
       setWord(value);
       setInputError(false);
@@ -69,27 +140,33 @@ const SearchBarNav = () => {
       <div className={`flex items-center bg-gray-50 dark:bg-white/5 rounded-2xl border transition-all overflow-hidden ${
         inputError ? "border-red-500/50" : "border-gray-100 dark:border-gray-800 focus-within:border-[#75c32c] focus-within:ring-1 focus-within:ring-[#75c32c]/20"
       }`}>
-        
-        {/* Tool Selector */}
-        <div className="relative flex items-center">
-          <select
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
-            className="appearance-none bg-transparent pl-4 pr-8 py-2 text-[11px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 focus:outline-none cursor-pointer border-r border-gray-100 dark:border-gray-800"
-          >
-            {urlOptions.map((option) => (
-              <option key={option.value} value={option.value} className="bg-white dark:bg-[#0a0a0a] text-gray-800 dark:text-gray-200">
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {/* Custom Chevron for Select */}
-          <div className="absolute right-3 pointer-events-none text-gray-400">
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="fill-current">
-              <path d="M7 2L4 5L1 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
+
+        {!isListsSearch && (
+          <div className="relative flex items-center">
+            <select
+              value={selectedOption}
+              onChange={(e) => setSelectedOption(e.target.value)}
+              className="appearance-none bg-transparent pl-4 pr-8 py-2 text-[11px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 focus:outline-none cursor-pointer border-r border-gray-100 dark:border-gray-800"
+            >
+              {TOOL_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value} className="bg-white dark:bg-[#0a0a0a] text-gray-800 dark:text-gray-200">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-3 pointer-events-none text-gray-400">
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="fill-current">
+                <path d="M7 2L4 5L1 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
           </div>
-        </div>
+        )}
+
+        {isListsSearch && (
+          <div className="flex items-center border-r border-gray-100 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#75c32c] dark:border-gray-800">
+            Lists
+          </div>
+        )}
 
         {/* Input Field */}
         <div className="flex-grow flex items-center relative">
@@ -122,7 +199,13 @@ const SearchBarNav = () => {
               onClick={() => {
                 setWord(s);
                 setSuggestions([]);
-                window.location.href = selectedOption + encodeURIComponent(s.toLowerCase());
+                if (isListsSearch) {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("search", s);
+                  router.push(`/lists?${params.toString()}`);
+                } else {
+                  window.location.href = selectedOption + encodeURIComponent(s.toLowerCase());
+                }
               }}
               className="w-full text-left px-5 py-3 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-[#75c32c]/10 hover:text-[#75c32c] transition-colors border-b border-gray-50 dark:border-gray-800/50 last:border-0"
             >

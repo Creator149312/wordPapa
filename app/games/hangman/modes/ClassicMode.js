@@ -225,14 +225,17 @@ export default function ClassicMode({
 
         <div className="lg:col-span-4 flex justify-center">
           <DynamicPapa
-            wrongCount={wrongGuesses.length}
-            isWon={isWon}
+            errors={wrongGuesses.length}
+            isWinner={isWon}
             isLost={isLost}
-            maxTries={currentRank.maxTries}
-            arenaId={currentRank.arenaId}
+            maxErrors={currentRank.maxTries}
+            accent={currentRank.color}
+            currentRankName={currentRank.name}
+            rankLevel={currentRank.level}
             streak={
               hasClaimedResult ? sessionSnapshot.streak : profile.currentStreak
             }
+            wordLength={currentGame?.word?.length || 0}
           />
         </div>
       </div>

@@ -178,7 +178,9 @@ export default function DailyMode({
             isLost={isLost}
             accent={currentRank.color}
             currentRankName={currentRank.name}
+            rankLevel={currentRank.level}
             streak={profile?.dailyStreak || 0}
+            wordLength={currentGame?.word?.length || 0}
           />
         </div>
         {/* Main Game Area (Left on Desktop) */}

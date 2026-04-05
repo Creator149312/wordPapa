@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 // Create a new list
 export async function POST(request) {
   try {
-    const { title, description, words, createdBy } = await request.json();
+    const { title, description, words, createdBy, tags } = await request.json();
     let error = "";
 
     const vlt = validateListTitle(title);
@@ -20,7 +20,8 @@ export async function POST(request) {
         title, 
         description: description || "My custom list", 
         words: words || [], // Ensure words is at least an empty array
-        createdBy 
+        createdBy,
+        tags: Array.isArray(tags) ? tags.map(t => t.toLowerCase().trim()).filter(Boolean) : [],
       });
 
       // Return the newList object so the frontend can use data.list
@@ -43,10 +44,29 @@ export async function POST(request) {
   }
 }
 
-// Get all lists
-export async function GET() {
+// Get all lists (with optional search by title or filter by tag)
+export async function GET(request) {
   await connectMongoDB();
-  const lists = await List.find();
+
+  const search = request.nextUrl.searchParams.get("search");
+  const tag = request.nextUrl.searchParams.get("tag");
+  const query = {};
+
+  if (search) {
+    query.title = new RegExp(search, "i");
+  }
+  if (tag) {
+    query.tags = tag.toLowerCase().trim();
+  }
+
+  // Always exclude system-tagged lists (journey-node, tough-nuts) from the public browse API.
+  // These lists are accessible via direct URL but not surfaced in /lists.
+  query.systemTags = { $not: { $elemMatch: { $in: ["journey-node", "tough-nuts"] } } };
+
+  const lists = search
+    ? await List.find(query).limit(10)
+    : await List.find(query).sort({ createdAt: -1 });
+
   return NextResponse.json({ lists }, { status: 200 });
 }
 
@@ -54,6 +74,11 @@ export async function GET() {
 export async function DELETE(request) {
   const id = request.nextUrl.searchParams.get("id");
   await connectMongoDB();
+  const list = await List.findById(id);
+  if (!list) return NextResponse.json({ message: "Not found" }, { status: 404 });
+  if (list.isSystemList) {
+    return NextResponse.json({ message: "This list is managed by the system and cannot be deleted." }, { status: 403 });
+  }
   await List.findByIdAndDelete(id);
   return NextResponse.json({ message: "List deleted" }, { status: 200 });
 }

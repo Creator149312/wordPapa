@@ -10,7 +10,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Navbar from "../components/navbar/Navbar";
 import AdsScriptLoader from "@components/AdsScriptLoader";
-import TopBar from "../components/topBar";
+import MobileAppChrome from "@components/mobile/MobileAppChrome";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -53,24 +53,23 @@ const layout = ({ children }) => {
           enableSystem
           disableTransitionOnChange
         ><ProfileProvider>
+            <MobileAppChrome />
             {/* Navbar Wrapper - Removed the harsh border-b-2 */}
-            <div className="sticky top-0 z-[100]">
+            <div className="sticky top-0 z-[100] hidden md:block">
               <Card className="rounded-none border-none shadow-none m-0 p-0 overflow-visible">
                 <Navbar />
               </Card>
             </div>
 
-            <TopBar />
-
             {/* Main Content Grid */}
-            <main className="max-w-[1600px] mx-auto grid md:grid-cols-12 gap-4 p-2 md:p-4">
+            <main className="max-w-[1600px] mx-auto grid md:grid-cols-12 gap-4 p-3 pb-16 md:p-4 md:pb-4 pt-4 md:pt-6">
               {/* Primary Content Area - Large Rounded Corners */}
-              <Card className="md:col-span-9 border-none bg-white dark:bg-gray-900 shadow-sm rounded-[2.5rem] md:p-6 overflow-hidden min-h-[80vh]">
+              <Card className="md:col-span-9 border-none bg-white dark:bg-gray-900 shadow-sm rounded-[2rem] md:rounded-[2.5rem] md:p-6 overflow-hidden min-h-[80vh]">
                 {children}
               </Card>
 
               {/* Sidebar Area - Subtle design to keep focus on main content */}
-              <Card className="md:col-span-3 border-none bg-transparent shadow-none rounded-[2.5rem]">
+              <Card className="hidden md:block md:col-span-3 border-none bg-transparent shadow-none rounded-[2.5rem]">
                 <SideBar />
               </Card>
             </main>

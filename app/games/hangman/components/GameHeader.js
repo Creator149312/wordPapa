@@ -12,6 +12,7 @@ import {
   Layers,
   Trophy,
   Coins,
+  Zap,
 } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,9 +24,10 @@ export default function GameHeader({
   onQuit,
   streak,
   playerRank,
-  papaPoints = 0, // Added points prop
+  papaPoints = 0,
   wrongCount = 0,
   maxTries = 6,
+  journeyXP = 0,
 }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const isEndless = gameMode === "endless" || gameMode === "Endless Run";
@@ -155,6 +157,26 @@ export default function GameHeader({
             <Timer size={14} strokeWidth={3} />
             <span>{timeLeft}s</span>
           </div>
+        )}
+
+        {/* Journey XP pill — shown only in Journey mode */}
+        {journeyXP > 0 && (
+          <motion.div
+            key={journeyXP}
+            initial={{ y: -8, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full border"
+            style={{
+              backgroundColor: `${themeColor}15`,
+              borderColor: `${themeColor}30`,
+              color: themeColor,
+            }}
+          >
+            <Zap size={12} fill="currentColor" fillOpacity={0.7} />
+            <span className="text-[11px] font-black tabular-nums tracking-tight">
+              {journeyXP.toLocaleString()}
+            </span>
+          </motion.div>
         )}
 
         {/* --- PAPA COINS (The very right) --- */}

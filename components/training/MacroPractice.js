@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import QuizFlow from "./QuizFlow";
-import { Sparkles, Loader2 } from "lucide-react";
+
 
 export default function MacroPractice({ wordList, listTitle, listId }) {
   const [questions, setQuestions] = useState([]);
@@ -19,13 +19,34 @@ export default function MacroPractice({ wordList, listTitle, listId }) {
           // Challenge 1: Audio/Spelling (Always include)
           challenges.push({ type: "audioTyping", word });
 
-          // Challenge 2: Matching (Only if definition exists)
+          // Challenge 2: Matching + Reverse Matching (Only if definition exists)
           if (wordData || item.definition) {
+            // Build a pool of 4 items for matching choices (current word + 3 distractors)
+            const matchingOptions = [
+              item,
+              ...wordList.filter(w => w.word !== word).slice(0, 3)
+            ];
+            // Normal match: see definition, pick word
             challenges.push({
               type: "match",
               word: word,
               wordData: wordData || item.definition,
-              fullList: wordList,
+              fullList: matchingOptions,
+            });
+            // Reverse match: see word, pick definition
+            challenges.push({
+              type: "matchReverse",
+              word: word,
+              wordData: wordData || item.definition,
+              fullList: matchingOptions,
+            });
+            // Word placement: fill in the target word in a context sentence
+            const def = (wordData || item.definition).toLowerCase().replace(/\.$/, "");
+            challenges.push({
+              type: "wordPlacement",
+              word: word,
+              sentence: `A ${word} is ${def}.`,
+              practiceWord: word,
             });
           }
 
@@ -35,23 +56,33 @@ export default function MacroPractice({ wordList, listTitle, listId }) {
           return challenges;
         });
 
-        // 2. Shuffle and Cap (Limit to 12-15 items for a "Quick Session")
-        // This prevents burnout and keeps the user coming back.
-        let shuffled = pool.sort(() => Math.random() - 0.5);
-        
-        // Smart Filter: Ensure no back-to-back identical words if possible
-        const finalQuestions = [];
-        shuffled.forEach((q, i) => {
-          if (i > 0 && q.word === finalQuestions[finalQuestions.length - 1].word) {
-            // Push to end of array if it's a duplicate of the previous one
-            shuffled.push(q);
-          } else {
-            finalQuestions.push(q);
-          }
+        // 2. Deduplicate: one (type, word) combo per session
+        const seen = new Set();
+        const deduped = pool.filter(q => {
+          const key = `${q.type}-${q.word}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
         });
 
-        // Take the first 15 curated challenges
-        setQuestions(finalQuestions.slice(0, 15));
+        // 3. Shuffle and cap at 15 questions per session
+        const shuffled = deduped.sort(() => Math.random() - 0.5);
+
+        // Reorder to avoid back-to-back questions on the same word
+        const reordered = [];
+        const remaining = [...shuffled];
+        while (remaining.length > 0) {
+          const lastWord = reordered.length > 0 ? reordered[reordered.length - 1].word : null;
+          const idx = lastWord != null ? remaining.findIndex((q) => q.word !== lastWord) : 0;
+          if (idx === -1) {
+            // All remaining items share the same word — just append them
+            reordered.push(...remaining.splice(0));
+          } else {
+            reordered.push(remaining.splice(idx, 1)[0]);
+          }
+        }
+
+        setQuestions(reordered.slice(0, 15));
       } catch (err) {
         console.error("Error generating word list practice:", err);
       } finally {
@@ -66,62 +97,27 @@ export default function MacroPractice({ wordList, listTitle, listId }) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 text-center space-y-4">
-        <div className="relative">
-          <Loader2 className="w-12 h-12 text-[#75c32c] animate-spin" />
-          <Sparkles className="absolute -top-2 -right-2 text-orange-400 animate-pulse" size={20} />
+      <div className="px-4 pt-4 space-y-4 animate-pulse">
+        {/* Fake progress bar */}
+        <div className="flex gap-1 px-0 pt-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-2 flex-1 rounded-full bg-gray-200 dark:bg-gray-800" />
+          ))}
         </div>
-        <div>
-          <p className="text-gray-900 dark:text-white font-black text-xl tracking-tight">
-            Building your quiz...
-          </p>
-          <p className="text-gray-500 text-sm font-medium">
-            Mixing challenges for {listTitle || "your list"}
-          </p>
+        {/* Fake question card */}
+        <div className="rounded-3xl bg-gray-100 dark:bg-gray-800 h-52" />
+        <div className="grid grid-cols-2 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-16 rounded-2xl bg-gray-100 dark:bg-gray-800" />
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      {/* Session Header Info */}
-      <div className="flex items-center justify-between px-2">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-1.5 bg-[#75c32c] rounded-full shadow-[0_0_10px_rgba(117,195,44,0.3)]" />
-          <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-none mb-1">
-              Active Session
-            </h2>
-            <p className="text-sm font-bold text-gray-700 dark:text-gray-200 truncate max-w-[200px]">
-              {listTitle}
-            </p>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-gray-900 px-4 py-2 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
-          <span className="text-xs font-black text-[#75c32c]">
-            {questions.length} <span className="text-gray-400 font-bold ml-1">Tasks</span>
-          </span>
-        </div>
-      </div>
-
-      {/* The Quiz Engine */}
-      <div className="relative min-h-[500px]">
-        <QuizFlow questions={questions} listTitle={listTitle} listId={listId} />
-      </div>
-
-      {/* Footer Branding */}
-      <div className="flex flex-col items-center gap-2 opacity-40 hover:opacity-100 transition-opacity pb-10">
-        <div className="flex items-center gap-2">
-          <div className="w-1 h-1 bg-gray-400 rounded-full" />
-          <div className="w-1 h-1 bg-gray-400 rounded-full" />
-          <div className="w-1 h-1 bg-gray-400 rounded-full" />
-        </div>
-        <p className="text-[9px] text-gray-400 font-black uppercase tracking-[0.3em]">
-          Powered by WordPapa AI
-        </p>
-      </div>
+    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <QuizFlow questions={questions} listTitle={listTitle} listId={listId} />
     </div>
   );
 }

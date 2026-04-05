@@ -6,19 +6,18 @@
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import BulkListCreator from "@components/BulkListCreator";
+import { isAdminEmail } from "@utils/isAdminEmail";
 
 export default function BulkListCreatorPage() {
   const { status, data: session } = useSession();
 
-  // Only allow admin users (you can customize this based on your user model)
   if (status === "unauthenticated") {
     redirect("/login");
   }
 
-  // Optional: Add admin role check if you have that field
-  // if (status === "authenticated" && session?.user?.role !== "admin") {
-  //   redirect("/");
-  // }
+  if (status === "authenticated" && !isAdminEmail(session?.user?.email)) {
+    redirect("/");
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-12 px-4">

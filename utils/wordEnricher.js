@@ -6,141 +6,70 @@ const openai = new OpenAI({
 
 /**
  * Enriches words with definitions using OpenAI API
- * Returns an array of word objects with definitions
+ * Returns an array of word objects with full entries for DB storage
  * @param {string[]} words - Array of words to enrich
- * @returns {Promise<Array<{word: string, wordData: string, source: string}>>}
+ * @returns {Promise<Array<{word: string, entries: Array, source: string}>>}
  */
 export async function enrichWordsWithAI(words) {
   if (!words || words.length === 0) return [];
 
-  // Batch words into chunks (OpenAI has token limits)
-  const batchSize = 15; // Process 15 words at a time
-  const batches = [];
-
-  for (let i = 0; i < words.length; i += batchSize) {
-    batches.push(words.slice(i, i + batchSize));
-  }
-
   const enrichedWords = [];
 
-  for (const batch of batches) {
+  for (const word of words) {
     try {
-      const prompt = buildEnrichmentPrompt(batch);
+      const prompt = `
+    For the word "${word}", provide definitions grouped by part of speech (POS).
+    For each POS, include:
+    - POS (noun, verb, adjective, etc.)
+    - A simple definition
+    - 3 short example sentences
+
+    Output as JSON:
+    {
+      "entries": [
+        {
+          "pos": "noun|verb|adjective|...",
+          "definition": "...",
+          "examples": ["...", "...", "..."]
+        }
+      ]
+    }
+    `;
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
-        max_tokens: 2048,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
       });
 
-      // Parse the response
       const responseText = response.choices[0].message.content;
-      const parsedWords = parseEnrichmentResponse(responseText, batch);
+      const parsed = JSON.parse(responseText);
 
-      enrichedWords.push(...parsedWords);
-    } catch (batchError) {
-      console.error("Error enriching batch:", batchError);
-
-      // Fallback: Create placeholder entries for failed batch
-      batch.forEach((word) => {
+      if (parsed && Array.isArray(parsed.entries)) {
         enrichedWords.push({
-          word,
-          wordData: `A word: "${word}"`,
-          source: "fallback",
+          word: word.toLowerCase(),
+          entries: parsed.entries,
+          source: "ai-openai",
         });
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (error) {
+      console.error(`Error enriching word "${word}":`, error);
+      // Fallback: Create placeholder entry
+      enrichedWords.push({
+        word: word.toLowerCase(),
+        entries: [{
+          pos: "noun",
+          definition: `Definition for "${word}" (generated)`,
+          examples: [`Example sentence with ${word}.`, `Another example using ${word}.`, `Third example featuring ${word}.`]
+        }],
+        source: "fallback",
       });
     }
   }
 
   return enrichedWords;
-}
-
-/**
- * Builds an optimized prompt for word enrichment
- * @param {string[]} words - Array of words to enrich
- * @returns {string}
- */
-function buildEnrichmentPrompt(words) {
-  const wordList = words.join(", ");
-
-  return `Act as a professional lexicographer. For each word in the following list, provide a concise definition with part of speech and one example sentence.
-
-IMPORTANT: Return your response as valid JSON only, with no markdown formatting or extra text. The JSON must be an array of objects with this exact structure:
-[
-  {
-    "word": "example",
-    "definition": "(noun) A thing characteristic of its kind or illustrating a general rule; a specimen.",
-    "example": "Our company is an example of a successful startup."
-  },
-  ...
-]
-
-Words to define: ${wordList}
-
-Return ONLY the JSON array, no additional text or markdown formatting.`;
-}
-
-/**
- * Parses the enrichment response from OpenAI
- * @param {string} responseText - Raw response from OpenAI
- * @param {string[]} originalWords - Original words that were sent
- * @returns {Array<{word: string, wordData: string, source: string}>}
- */
-function parseEnrichmentResponse(responseText, originalWords) {
-  const enrichedWords = [];
-
-  try {
-    // Try to extract JSON from the response
-    const jsonMatch = responseText.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) throw new Error("No JSON array found in response");
-
-    const parsed = JSON.parse(jsonMatch[0]);
-
-    if (!Array.isArray(parsed)) throw new Error("Response is not an array");
-
-    parsed.forEach((item) => {
-      if (item.word && item.definition) {
-        const wordData =
-          item.definition +
-          (item.example ? ` Example: ${item.example}` : "");
-
-        enrichedWords.push({
-          word: item.word.toLowerCase(),
-          wordData,
-          source: "ai-openai",
-        });
-      }
-    });
-
-    // Add any words that weren't in the response (safety fallback)
-    const returnedWords = new Set(parsed.map((w) => w.word.toLowerCase()));
-
-    originalWords.forEach((word) => {
-      if (!returnedWords.has(word.toLowerCase())) {
-        enrichedWords.push({
-          word,
-          wordData: `Definition for "${word}" (generated)`,
-          source: "ai-fallback",
-        });
-      }
-    });
-
-    return enrichedWords;
-  } catch (parseError) {
-    console.error("Error parsing enrichment response:", parseError);
-
-    // Return placeholder entries for each word
-    return originalWords.map((word) => ({
-      word,
-      wordData: `Definition generated for: ${word}`,
-      source: "fallback",
-    }));
-  }
 }
 
 /**

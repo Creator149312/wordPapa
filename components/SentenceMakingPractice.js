@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { CheckCircle2, RotateCcw, Info } from "lucide-react";
 
-export default function SentenceMakingPractice({ sentence }) {
+export default function SentenceMakingPractice({ sentence, onCorrect }) {
   const initialShuffledBank = useMemo(() => {
     return sentence.split(" ").sort(() => Math.random() - 0.5);
   }, [sentence]);
@@ -34,10 +34,16 @@ export default function SentenceMakingPractice({ sentence }) {
     setFeedback({ message: "", type: "" });
   };
 
+  const scoredRef = useRef(false);
+
   const checkAnswer = () => {
     const userSentence = answerArea.join(" ");
     if (userSentence === sentence) {
       setFeedback({ message: "Perfect!", type: "success" });
+      if (!scoredRef.current) {
+        scoredRef.current = true;
+        onCorrect?.();
+      }
     } else {
       setFeedback({ message: "Try again!", type: "error" });
     }

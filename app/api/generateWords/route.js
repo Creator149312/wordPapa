@@ -6,35 +6,42 @@ const openai = new OpenAI({
 
 export async function POST(req) {
   try {
-    const { queryType, prompt } = await req.json();
+    const { queryType, prompt, wordCount } = await req.json();
 
-    // console.log("Query Type = ", queryType);
-    // console.log("Query Prompt = ", prompt);
+    // Cap between 5 and 50 words
+    const requestedCount = Math.min(Math.max(parseInt(wordCount, 10) || 20, 5), 50);
 
     // Define prompts based on query type
     const queryPrompts = {
-      adjective: `Give a list of 10 adjective words to describe: "${prompt}". without numbering`,
-      rhymes: `Give an array of 10 words that rhymes with: "${prompt}". without numbering`,
+      adjective: `Give a list of ${requestedCount} adjective words to describe: "${prompt}" (no numbering, one per line).`,
+      rhymes: `Give an array of ${requestedCount} words that rhyme with: "${prompt}" (no numbering, one per line).`,
+      topic: `Give a list of ${requestedCount} vocabulary words a learner should practice for the topic: "${prompt}" (no numbering, one per line).`,
     };
 
-    // Choose the appropriate prompt based on queryType, default to 'tool'
-    const chosenPrompt = queryPrompts[queryType] || queryPrompts["adjective"];
+    // Choose the appropriate prompt based on queryType, default to 'topic'
+    const chosenPrompt = queryPrompts[queryType] || queryPrompts["topic"];
 
     // Send request to OpenAI
     const response = await openai.chat.completions.create({
-      model:"gpt-4o-mini", 
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: chosenPrompt }],
-      max_tokens: 100,
+      max_tokens: Math.ceil(requestedCount * 12), // ~12 tokens per word entry
     });
 
     // Get the text from OpenAI response
     const completion = response.choices[0]?.message?.content || "";
 
-    // Ensure it's split into words
+    // Parse words: handle multiple formats (comma, newline, dash, numbering)
     const words = completion
-      .split(",")
-      .map((word) => word.trim())
-      .slice(0, 8); // Ensure we only take 6 words
+      .split(/[\n,]+/)
+      .map((word) =>
+        word
+          .replace(/^[-•*\d.)\s]+/, "") // Remove leading dashes, bullets, numbers
+          .trim()
+          .toLowerCase()
+      )
+      .filter((word) => word.length > 0 && /^[a-z\s'-]+$/.test(word))
+      .slice(0, requestedCount);
 
     // Return the list of words as JSON
     return new Response(JSON.stringify({ words }), {

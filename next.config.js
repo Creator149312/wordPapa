@@ -9,6 +9,16 @@ const nextConfig = {
   env: {
     WORK_ENV: process.env.NODE_ENV,
   },
+  webpack: (config, { isServer }) => {
+    // Ignore optional AWS dependencies that aren't needed for self-hosted MongoDB
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      aws4: false,
+      '@aws-sdk/credential-providers': false,
+    };
+
+    return config;
+  },
   async redirects() {
     return [
       {
