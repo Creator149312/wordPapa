@@ -6,7 +6,7 @@ import JourneyProgress from "@/models/journeyProgress";
 import NodeList from "@/models/nodeList";
 import User from "@/models/user";
 import { RANKS } from "@/app/games/hangman/constants";
-import { authOptions } from "@app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(request) {
   try {
