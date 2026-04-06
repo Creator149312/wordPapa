@@ -1,7 +1,11 @@
 import ALLCLEANWORDS from "@app/browse/ALLCLEANWORDS";
 import DataFilterDisplaybyStartingLetter from "@/utils/DataFilterDisplaybyStartingLetter";
 
-export const revalidate = 2592000; // ✅ Cache full page HTML 
+export const revalidate = 2592000; // ✅ Cache full page HTML
+
+export async function generateStaticParams() {
+  return Array.from({ length: 20 }, (_, i) => ({ length: String(i + 1) }));
+}
 
 export async function generateMetadata({ params }) {
   const L = parseInt(decodeURIComponent(params.length), 10);

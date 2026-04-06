@@ -125,12 +125,21 @@ export async function GET(request) {
       };
     });
 
-    return NextResponse.json({
-      success: true,
-      tab,
-      leaderboard: formattedLeaderboard,
-      currentUserEntry,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        tab,
+        leaderboard: formattedLeaderboard,
+        currentUserEntry,
+      },
+      {
+        headers: {
+          // CDN caches for 30s; stale responses served for up to 60s while revalidating.
+          // Leaderboard doesn't need second-by-second accuracy.
+          "Cache-Control": "s-maxage=30, stale-while-revalidate=60",
+        },
+      }
+    );
   } catch (error) {
     console.error("Leaderboard Error:", error);
     return NextResponse.json(

@@ -1,7 +1,6 @@
 import DataFilterDisplay from "@utils/DataFilterDisplay";
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import { CardContent, CardHeader } from "@components/ui/card";
-import apiConfig from "@utils/apiUrlConfig";
 import rhymingWordsSET from "../rhyming-wordsSET";
 
 export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
@@ -31,7 +30,6 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const word = decodeURIComponent(params.word);
   const isNotCompound = word.split(" ").length === 1;
-  let isAIUsed = false;
   let rhymingWords = [];
   let similarSoundingWords = [];
 
@@ -53,11 +51,6 @@ export default async function Page({ params }) {
 
       rhymingWords = (await res.json()).map((item) => item.word);
 
-      if (rhymingWords.length < 4) {
-        isAIUsed = true;
-        rhymingWords.push(...(await fetchAIRhymes(word)));
-      }
-
       // If no rhyming words, fetch similar sounding words
       if (rhymingWords.length <= 0) {
         const SSres = await fetch(
@@ -74,9 +67,6 @@ export default async function Page({ params }) {
     } catch (error) {
       console.error("Error fetching rhyming/similar words:", error);
     }
-  } else {
-    isAIUsed = true;
-    rhymingWords = await fetchAIRhymes(word);
   }
 
   return (
@@ -108,7 +98,7 @@ export default async function Page({ params }) {
           </>
         )}
 
-        {rhymingWords.length > 0 && isNotCompound && !isAIUsed && (
+        {rhymingWords.length > 0 && isNotCompound && (
           <RelLinksonPageBottom word={word} pos={null} />
         )}
       </CardContent>
@@ -116,26 +106,3 @@ export default async function Page({ params }) {
   );
 }
 
-// ✅ Helper function for AI fallback
-async function fetchAIRhymes(word) {
-  try {
-    const response = await fetch(`${apiConfig.apiUrl}/generateWords`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ queryType: "rhymes", prompt: word }),
-      cache: "force-cache", // Optional: cache AI API response too
-    });
-
-    const data = await response.json();
-    const rawWords = data.words[0].includes("\n")
-      ? data.words[0].split("\n")
-      : data.words;
-
-    return rawWords.map((str) =>
-      str.replace(/^\W+|\W+$/, "").replace(/^\d+\.\s*/, "").trim()
-    );
-  } catch (error) {
-    console.error("Error fetching AI rhymes:", error);
-    return [];
-  }
-}

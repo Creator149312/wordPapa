@@ -1,3 +1,4 @@
+import { cache } from "react";
 import apiConfig from "@utils/apiUrlConfig";
 import { validateObjectID } from "@utils/Validator";
 import ListClientWrapper from "../ListClientWrapper";
@@ -10,64 +11,56 @@ const slugify = (text) =>
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-');
 
+// React cache() deduplicates: generateMetadata and Page call this with the same id
+// in the same request — only ONE fetch/DB round-trip happens.
+const getList = cache(async (id) => {
+  try {
+    const res = await fetch(`${apiConfig.apiUrl}/list/${id}`, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.list || null;
+  } catch {
+    return null;
+  }
+});
+
 export async function generateMetadata({ params }) {
   const { slugId } = await params;
-  
-  // Extract ID from the end (e.g., "my-list-65af2...")
+
   const parts = slugId.split("-");
-  const id = parts.length > 1 ? parts.pop() : slugId;
+  const id = parts.length > 1 ? parts[parts.length - 1] : slugId;
 
   if (!validateObjectID(id)) return { title: "Invalid List | Wordpapa" };
 
-  try {
-    const res = await fetch(`${apiConfig.apiUrl}/list/${id}`);
-    const data = await res.json();
-    if (!data.list) throw new Error();
+  const list = await getList(id);
+  if (!list) return { title: { absolute: "List Not Found | Wordpapa" } };
 
-    return {
-      title: {
-        absolute: `${data.list.title} Flashcards - Wordpapa`
-      },
-      // Updated description with list title for better SEO context
-      description: `Master the ${data.list.title} using interactive flashcards, audio, and speaking practice.`,
-    };
-  } catch {
-    return { title: { absolute: "List Not Found | Wordpapa" } };
-  }
+  return {
+    title: { absolute: `${list.title} Flashcards - Wordpapa` },
+    description: `Master the ${list.title} using interactive flashcards, audio, and speaking practice.`,
+  };
 }
 
 export default async function Page({ params }) {
   const { slugId } = await params;
 
-  // 1. Extract ID and Slug from the URL segment
   const parts = slugId.split("-");
-  const id = parts.length > 1 ? parts.pop() : slugId; 
-  const urlSlug = parts.join("-");
+  const id = parts.length > 1 ? parts[parts.length - 1] : slugId;
+  const urlSlug = parts.length > 1 ? parts.slice(0, -1).join("-") : slugId;
 
   let wordsList = null;
   let error = null;
 
   if (validateObjectID(id)) {
-    try {
-      const response = await fetch(`${apiConfig.apiUrl}/list/${id}`, {
-        cache: "no-store",
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        wordsList = data.list;
-
-        // 2. SEO CHECK: Is the slug correct?
-        const currentSlug = slugify(wordsList.title);
-        if (urlSlug !== currentSlug) {
-          // Redirect to the "Canonical" version of this URL
-          redirect(`/lists/${currentSlug}-${id}`);
-        }
-      } else {
-        error = "Failed to fetch list";
+    const list = await getList(id);
+    if (list) {
+      wordsList = list;
+      const currentSlug = slugify(wordsList.title);
+      if (urlSlug !== currentSlug) {
+        redirect(`/lists/${currentSlug}-${id}`);
       }
-    } catch (err) {
-      error = err.message;
+    } else {
+      error = "Failed to fetch list";
     }
   } else {
     error = "Invalid ID";

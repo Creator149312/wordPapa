@@ -9,11 +9,10 @@ const SideBar = () => {
 
   return (
     <aside className="space-y-6">
-      <a
+      {/* <a
         href="/games/hangman"
         className="group relative flex flex-col items-center justify-center gap-1 bg-[#75c32c] text-white px-6 py-4 rounded-[2rem] border-2 border-b-8 border-black/20 hover:border-b-4 hover:translate-y-[4px] active:translate-y-[6px] active:border-b-2 transition-all duration-75 shadow-2xl shadow-[#75c32c]/30 min-w-[280px]"
       >
-        {/* The Main Action */}
         <div className="flex items-center gap-3">
           <Gamepad2
             size={28}
@@ -21,17 +20,13 @@ const SideBar = () => {
             className="group-hover:rotate-12 transition-transform"
           />
         </div>
-
-        {/* The Narrative Subtext */}
         <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 group-hover:opacity-100">
         Flex your vocabulary, see How long can you last in Endless Run?
         </span>
-
-        {/* Optional: A small "sparkle" or glow effect */}
         <div className="absolute -top-2 -right-2 bg-yellow-400 text-black text-[9px] font-bold px-2 py-0.5 rounded-lg border-2 border-zinc-900 rotate-12 shadow-md">
           +XP
         </div>
-      </a>
+      </a> */}
       {/* Top Ad Unit */}
       <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
         <AdsUnit slot="3722270586" />

@@ -27,7 +27,7 @@ const NAV_ITEMS = [
     exact: true,
   },
   {
-    label: "Lists",
+    label: "Library",
     href: "/lists",
     icon: BookOpen,
     matches: ["/lists"],

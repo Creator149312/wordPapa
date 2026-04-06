@@ -3,6 +3,11 @@ import DataFilterDisplay from "@utils/DataFilterDisplay";
 
 export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
 
+export async function generateStaticParams() {
+  const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  return letters.map((letter) => ({ letter }));
+}
+
 export async function generateMetadata({ params }) {
   const L = decodeURIComponent(params.letter);
   const phraseSearch = L.length > 1 ? "" : "Letter";

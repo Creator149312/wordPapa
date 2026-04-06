@@ -2,7 +2,7 @@
 
 import commonLinks from "@utils/commonLinks";
 import { useState, useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FiSearch } from "react-icons/fi";
 import FINALCLEANWORDS from "../app/browse/FINALCLEANWORDS";
 
@@ -21,7 +21,6 @@ const SearchBarNav = () => {
   const [suggestions, setSuggestions] = useState([]);
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [inputError, setInputError] = useState(false);
   const isListsSearch = pathname.startsWith("/lists");
 
@@ -29,6 +28,7 @@ const SearchBarNav = () => {
   useEffect(() => {
     if (isListsSearch) {
       setSelectedOption("/lists");
+      const searchParams = new URLSearchParams(window.location.search);
       setWord(searchParams.get("search") || "");
       setSuggestions([]);
       setInputError(false);
@@ -40,7 +40,7 @@ const SearchBarNav = () => {
     if (option) {
       setSelectedOption(option.value);
     }
-  }, [isListsSearch, pathname, searchParams]);
+  }, [isListsSearch, pathname]);
 
   useEffect(() => {
     if (!isListsSearch) {
@@ -91,7 +91,7 @@ const SearchBarNav = () => {
   const handleLoadUrl = () => {
     if (isListsSearch) {
       const query = word.trim();
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
 
       if (query) {
         params.set("search", query);
@@ -200,7 +200,7 @@ const SearchBarNav = () => {
                 setWord(s);
                 setSuggestions([]);
                 if (isListsSearch) {
-                  const params = new URLSearchParams(searchParams.toString());
+                  const params = new URLSearchParams(window.location.search);
                   params.set("search", s);
                   router.push(`/lists?${params.toString()}`);
                 } else {

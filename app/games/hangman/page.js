@@ -48,31 +48,6 @@ export const metadata = {
 };
 
 export default function Page() {
-  // Function to trigger native social sharing
-  const handleShare = async () => {
-    const shareData = {
-      title: "Hangman Online Challenge",
-      text: "I just reached a new milestone in Hangman! Can you beat my XP? Play here:",
-      url: window.location.href,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        // Fallback: Copy to clipboard
-        await navigator.clipboard.writeText(
-          `${shareData.text} ${shareData.url}`,
-        );
-        alert(
-          "Challenge link copied to clipboard! Share it with your friends.",
-        );
-      }
-    } catch (err) {
-      console.error("Error sharing:", err);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 selection:bg-[#75c32c]/30 flex flex-col font-sans overflow-x-hidden transition-colors duration-300">
       {/* Background Glow */}

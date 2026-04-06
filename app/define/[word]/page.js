@@ -1,14 +1,13 @@
-import OpenAI from "openai";
 import Word from "@models/word";
 import { Card, CardHeader, CardContent } from "@components/ui/card";
 import { WORDMAP } from "../WORDMAP";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import { connectMongoDB } from "@lib/mongodb";
 import AudioPronunciation from "../AudioPronunciation";
-import { Dumbbell, BookOpen, Quote, Sparkles } from "lucide-react";
+import { BookOpen, Quote, Sparkles } from "lucide-react";
 import Link from "next/link";
+import EnrichTrigger from "../EnrichTrigger";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
 
 let siteURL =
@@ -87,52 +86,14 @@ export default async function DefineWordPage({ params }) {
     );
   }
 
-  let wordData = await Word.findOne({ word: decodedWord });
+  let wordData = await Word.findOne({ word: decodedWord }).lean();
 
+  // Word not in DB yet — return a placeholder immediately.
+  // EnrichTrigger fires /api/words/enrich client-side after hydration,
+  // saves the result to DB, then calls router.refresh() to show it.
+  // All subsequent visits hit the DB + ISR cache; OpenAI is never called again.
   if (!wordData) {
-    const prompt = `
-    For the word "${decodedWord}", provide definitions grouped by part of speech (POS).
-    For each POS, include:
-    - POS (noun, verb, adjective, etc.)
-    - A simple definition
-    - 3 short example sentences
-
-    Output as JSON:
-    {
-      "entries": [
-        {
-          "pos": "noun|verb|adjective|...",
-          "definition": "...",
-          "examples": ["...", "...", "..."]
-        }
-      ]
-    }
-    `;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" },
-    });
-
-    let parsed;
-    try {
-      parsed = JSON.parse(completion.choices[0].message.content);
-    } catch {
-      parsed = null;
-    }
-
-    if (isValidWordData(parsed) && isSingleWord(decodedWord)) {
-      wordData = await Word.create({
-        word: decodedWord,
-        entries: parsed.entries,
-      });
-    } else {
-      wordData = {
-        word: decodedWord,
-        entries: parsed?.entries || [],
-      };
-    }
+    wordData = { word: decodedWord, entries: [] };
   }
 
   return (
@@ -181,7 +142,20 @@ export default async function DefineWordPage({ params }) {
 
       {/* Content Section: Definitions & Examples */}
       <div className="grid grid-cols-1 gap-6">
-        {wordData.entries.length > 0 ? (
+        {wordData.entries.length === 0 ? (
+          <>
+            <EnrichTrigger word={decodedWord} />
+            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-sm text-center space-y-3">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#75c32c]/10 text-[#75c32c] rounded-full text-xs font-black uppercase tracking-widest animate-pulse">
+                <Sparkles size={12} />
+                Fetching definition…
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Hang tight — generating the definition for <strong>{decodedWord}</strong> and saving it for next time.
+              </p>
+            </div>
+          </>
+        ) : (
           wordData.entries.map((entry, idx) => (
             <div key={idx} className="group bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 hover:border-[#75c32c]/50 dark:hover:border-[#75c32c]/50 transition-colors shadow-sm">
               <div className="flex items-start gap-4">
@@ -217,10 +191,6 @@ export default async function DefineWordPage({ params }) {
               </div>
             </div>
           ))
-        ) : (
-          <div className="text-center p-12 bg-red-50 dark:bg-red-900/10 rounded-[2rem]">
-            <p className="text-red-500 font-bold">No valid definitions found.</p>
-          </div>
         )}
       </div>
 

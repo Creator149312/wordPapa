@@ -58,4 +58,8 @@ const listSchema = new Schema(
 
 const List = models.List || mongoose.model("List", listSchema);
 
+// Index for the default browse sort (createdAt: -1) combined with the systemTags filter.
+// Without this, every /api/list request does a full collection scan before sorting.
+listSchema.index({ systemTags: 1, createdAt: -1 });
+
 export default List;

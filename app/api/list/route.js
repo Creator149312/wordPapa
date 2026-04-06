@@ -64,10 +64,24 @@ export async function GET(request) {
   query.systemTags = { $not: { $elemMatch: { $in: ["journey-node", "tough-nuts"] } } };
 
   const lists = search
-    ? await List.find(query).limit(10)
-    : await List.find(query).sort({ createdAt: -1 });
+    ? await List.find(query)
+        .select("title tags createdBy words.word systemTags")
+        .limit(10)
+        .lean()
+    : await List.find(query)
+        .select("title tags createdBy words.word systemTags createdAt")
+        .sort({ createdAt: -1 })
+        .lean();
 
-  return NextResponse.json({ lists }, { status: 200 });
+  // Cache unfiltered browse for 30s on Vercel CDN; skip for search/tag (user-specific intent).
+  const cacheHeader = search || tag
+    ? "no-store"
+    : "s-maxage=30, stale-while-revalidate=60";
+
+  return NextResponse.json(
+    { lists },
+    { status: 200, headers: { "Cache-Control": cacheHeader } }
+  );
 }
 
 // Delete a list by ID

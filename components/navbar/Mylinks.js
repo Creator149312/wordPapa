@@ -36,7 +36,7 @@ export const links = [
   {
     name: "Library",
     items: [
-      { name: "Lists", link: "/lists" },
+      { name: "Browse Library", link: "/lists" },
     ],
   },
   // {

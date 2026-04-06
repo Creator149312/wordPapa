@@ -115,6 +115,12 @@ const gameProfileSchema = new Schema(
   },
 );
 
+// Compound indexes for leaderboard sort + filter queries.
+// These make .sort({ xp: -1 }) and countDocuments({ xp: { $gt: X } }) use index scans.
+gameProfileSchema.index({ isGhost: 1, xp: -1 });
+gameProfileSchema.index({ isGhost: 1, highestEndlessXP: -1 });
+gameProfileSchema.index({ isGhost: 1, journeyXP: -1 });
+
 // Middleware/Helper to prevent model re-definition errors in Next.js
 const GameProfile =
   models.GameProfile || mongoose.model("GameProfile", gameProfileSchema);

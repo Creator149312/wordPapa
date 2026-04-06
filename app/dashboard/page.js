@@ -139,7 +139,7 @@ export default function Page() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-500 pb-20">
       {/* ── HEADER ─────────────────────────────────────────────────── */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center justify-between gap-4">
             {/* Left: greeting + rank badge */}
             <div className="min-w-0">
@@ -153,7 +153,7 @@ export default function Page() {
                   {session?.user?.name?.split(" ")[0] || "Learner"}!
                 </span>
               </h1>
-              <div className="flex items-center gap-2 mt-1">
+              {/* <div className="flex items-center gap-2 mt-1">
                 <span className="inline-flex items-center gap-1 bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black px-2.5 py-0.5 rounded-xl border border-[#75c32c]/20">
                   <Trophy size={10} />
                   {currentRank.name}
@@ -161,7 +161,7 @@ export default function Page() {
                 <span className="text-[10px] font-bold text-gray-400 hidden sm:inline">
                   {(profile.xp || 0).toLocaleString()} XP
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Right: 2 action buttons */}
