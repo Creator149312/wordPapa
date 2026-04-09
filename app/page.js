@@ -110,7 +110,7 @@ const Page = () => {
                   </p>
                 </div>
 
-                <div className="pt-4 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="pt-4 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-opacity">
                   <Zap size={14} />
                   Play Now <span className="text-lg">→</span>
                 </div>
@@ -138,7 +138,7 @@ const Page = () => {
                   </p>
                 </div>
 
-                <div className="pt-4 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="pt-4 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-opacity">
                   <Zap size={14} />
                   Get Started <span className="text-lg">→</span>
                 </div>
@@ -179,7 +179,7 @@ const Page = () => {
                     </p>
                   </div>
 
-                  <div className="pt-2 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center justify-center md:justify-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="pt-2 text-[#75c32c] font-black text-xs uppercase tracking-widest flex items-center justify-center md:justify-start gap-2 transition-opacity">
                     Explore Tool <span className="text-lg">→</span>
                   </div>
                 </div>

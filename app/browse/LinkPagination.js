@@ -45,14 +45,12 @@ function LinkPagination({ links, linksPerPage, pagenumber, letter }) {
           ))}
         </div>
 
-        {/* Horizontal Ad Section 1 */}
-        {currentLinks.length > 30 && (
-          <div className="flex justify-center">
-            <div className="w-full max-w-4xl">
-              <AdsUnit slot="7782807936" />
-            </div>
+        {/* Horizontal Ad Section 1 — always reserve height to prevent CLS */}
+        <div className="flex justify-center h-[280px]">
+          <div className="w-full max-w-4xl">
+            {currentLinks.length > 30 && <AdsUnit slot="7782807936" />}
           </div>
-        )}
+        </div>
 
         {/* Second Grid Section */}
         {currentLinks.length > Math.ceil(currentLinks.length / 3) && (
@@ -68,14 +66,12 @@ function LinkPagination({ links, linksPerPage, pagenumber, letter }) {
           </div>
         )}
 
-        {/* Horizontal Ad Section 2 */}
-        {currentLinks.length > 60 && (
-          <div className="flex justify-center">
-            <div className="w-full max-w-4xl">
-              <AdsUnit slot="7782807936" />
-            </div>
+        {/* Horizontal Ad Section 2 — always reserve height to prevent CLS */}
+        <div className="flex justify-center h-[280px]">
+          <div className="w-full max-w-4xl">
+            {currentLinks.length > 60 && <AdsUnit slot="7782807936" />}
           </div>
-        )}
+        </div>
 
         {/* Third Grid Section */}
         {currentLinks.length > Math.ceil((currentLinks.length * 2) / 3) && (

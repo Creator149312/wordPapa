@@ -1,7 +1,8 @@
-import ADJECTIVE from "@app/browse/ADJECTIVE_WORDS";
+﻿import ADJECTIVE from "@app/browse/ADJECTIVE_WORDS";
 import DataFilterDisplay from "@utils/DataFilterDisplay";
+import { Palette } from "lucide-react";
 
-export const revalidate = 2592000; // ✅ Cache full page HTML for 24 hours
+export const revalidate = 2592000;
 
 export async function generateStaticParams() {
   const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -11,14 +12,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const L = decodeURIComponent(params.letter);
   const phraseSearch = L.length > 1 ? "" : "Letter";
-
   const titleStr = `Adjective Words Ending with ${phraseSearch} ${L.toUpperCase()}`;
   const descriptionStr = `Browse all adjectives that end with ${phraseSearch} ${L} to perfectly describe nouns and objects`;
-
-  return {
-    title: titleStr,
-    description: descriptionStr,
-  };
+  return { title: titleStr, description: descriptionStr };
 }
 
 const Page = async ({ params }) => {
@@ -34,38 +30,39 @@ const Page = async ({ params }) => {
 
   if (words.length === 0) {
     return (
-      <div className="m-4 p-4 border border-red-400 rounded bg-red-50">
-        <h1 className="text-2xl font-bold text-red-600">No Adjectives Found</h1>
-        <p className="mt-2 text-lg">
-          Sorry, we couldn’t find any adjectives ending with{" "}
-          <strong>{L}</strong>. Try a different letter or check your input.
+      <div className="p-8 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] text-center">
+        <h1 className="text-2xl font-black text-gray-400 mb-2">No Adjectives Found</h1>
+        <p className="text-gray-500 dark:text-gray-400 font-medium">
+          No adjectives ending with <strong className="text-gray-700 dark:text-white">{L}</strong> were found. Try a different letter.
         </p>
       </div>
     );
   }
 
   return (
-    <>
-      <h1 className="mb-3 text-4xl font-bold">{titleString}</h1>
-      <p className="mb-6 text-lg font-normal">
-        Explore the list of {words.length} positive and negative adjective words
-        ending with {phraseSearch} <strong>{L}</strong> to describe a person,
-        place, or thing.
-      </p>
+    <div className="py-8 space-y-6">
+      <div className="px-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-3">
+          <Palette size={12} /> Adjectives
+        </div>
+        <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+          {titleString.replace(L.toUpperCase(), "").trim()}{" "}
+          <span className="text-[#75c32c]">{L.toUpperCase()}</span>
+        </h1>
+        <p className="mt-3 text-gray-500 dark:text-gray-400 font-medium">
+          Explore the list of{" "}
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#75c32c]/10 text-[#75c32c] text-sm font-black">{words.length}</span>{" "}
+          positive and negative adjective words ending with{" "}
+          {phraseSearch} <strong className="text-gray-800 dark:text-white">{L}</strong> to describe a person, place, or thing.
+        </p>
+      </div>
 
       <DataFilterDisplay words={words} />
 
-      <p className="mb-6 text-lg font-normal">
-        With this wide range of adjectives ending with <strong>{L}</strong>,
-        you'll be able to discover nuanced options related to your initial idea.
+      <p className="px-2 text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+        The list also contains describing words that indicate the grammatical role (e.g., common adjective, proper adjective) of each adjective to help you find even more specific and contrasting words for your writing.
       </p>
-      <p className="mb-6 text-lg font-normal">
-        The list also contains some describing words that indicate the
-        grammatical role (e.g., common adjective, proper adjective) of each
-        adjective to help you find even more specific and contrasting words for
-        your writing.
-      </p>
-    </>
+    </div>
   );
 };
 

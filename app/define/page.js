@@ -1,4 +1,6 @@
 import AdsUnit from "@components/AdsUnit";
+import { BookOpen, ScanText, MessageSquareText, Sparkles } from "lucide-react";
+
 const ptitle = "Word Dictionary: Find Definition & Meanings of English Words";
 
 export const metadata = {
@@ -9,61 +11,72 @@ export const metadata = {
 
 function WordsPage() {
   return (
-    <div className="m-2 p-2">
-      <h1 className="mb-3 text-4xl font-bold">{ptitle}</h1>
-      <p className="mb-6 text-lg font-normal">
-        Introducing the fantastic Word Dictionary tool designed just
-        for you! Imagine having a magical guide that unravels the
-        mysteries of words, helping you explore their meanings, roles
-        in sentences, and much more. The Word Dictionary is like a
-        friendly wizard for your vocabulary journey.
-      </p>
+    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+      {/* Header */}
+      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+          <BookOpen size={14} /> Word Tools
+        </div>
+        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+          Word <span className="text-[#75c32c]">Dictionary</span>: Meanings & More
+        </h1>
+      </div>
 
-      <p className="mb-6 text-lg font-normal">
-        When you enter a word into the Word Dictionary, it's as if
-        you're whispering a secret incantation, and the wizard opens a
-        treasure trove of linguistic wonders. First and foremost, it
-        reveals the <strong>Definition</strong> of the word, providing
-        a clear and simple explanation. For instance, if you're
-        curious about what "elephant" means, it will say something
-        like, "A mammal having a trunk, and two large ivory tusks jutting from the upper jaw."
-      </p>
-      <AdsUnit slot='7782807936'/> 
-      <p className="mb-6 text-lg font-normal">
-        But that's not all – our magical tool goes beyond just
-        definitions. It's your go-to guide for understanding a word's
-        role in sentences. The Word Dictionary unveils the <strong>Parts of Speech</strong>, helping you discover whether
-        a word is a noun (like "dinosaur"), a verb (like "run"), an adjective (like "brown") or
-        something else entirely. Understanding this magical code
-        unlocks the secrets of how words dance together in the
-        language ballet.
-      </p>
+      <div className="space-y-8">
+        {/* Intro */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
+          <p className="text-lg md:text-xl font-bold text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
+            Enter any English word and instantly unlock its <span className="text-[#75c32c]">definition</span>, part of speech, and real-world sentence examples — your complete vocabulary companion.
+          </p>
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+            <div className="bg-[#75c32c] p-2 rounded-lg text-white shrink-0">
+              <Sparkles size={20} />
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+              Search any word — from everyday nouns like <strong>"elephant"</strong> to complex verbs — and get clear, structured results suitable for students, writers, and language learners.
+            </p>
+          </div>
+        </section>
 
-      <p className="mb-6 text-lg font-normal">
-        And just when you thought the magic couldn't get any better,
-        the Word Dictionary presents <strong>Sentence Examples</strong>.
-        It conjures up real-life sentences where the word plays a
-        starring role. If you were investigating "rocket," you might
-        see sentences like "The rocket was shooted in the sky." letting
-        you visualize how the word 'rocket' is put into action.
-      </p>
+        <AdsUnit slot="7782807936" />
 
-      <p className="mb-6 text-lg font-normal">
-        In essence, the Word Dictionary is your linguistic companion, a
-        trusty wizard that transforms the ordinary act of looking up a
-        word into a magical journey of discovery. With its help, the
-        vast realm of words becomes an enchanting landscape where
-        understanding and imagination intertwine. So, let your
-        curiosity soar as you embark on a language adventure with the
-        Word Dictionary – your key to unlocking the secrets of the
-        written world!
-      </p>
-      <AdsUnit slot='7782807936'/> 
-      <p className="mb-6 text-lg font-normal">
-        The user interface is clean and easy to navigate, making it
-        suitable for students, writers, or anyone looking to enhance
-        their vocabulary and language comprehension.
-      </p>
+        {/* Feature Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="p-8 bg-gray-50 dark:bg-white/5 rounded-[2rem] border-2 border-transparent hover:border-[#75c32c]/20 transition-all group">
+            <BookOpen className="text-[#75c32c] mb-4 group-hover:scale-110 transition-transform" size={28} />
+            <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-2">Definitions</h3>
+            <p className="text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
+              Clear, concise meanings pulled from a comprehensive English lexicon — no jargon, just plain understanding.
+            </p>
+          </div>
+
+          <div className="p-8 bg-gray-50 dark:bg-white/5 rounded-[2rem] border-2 border-transparent hover:border-[#75c32c]/20 transition-all group">
+            <ScanText className="text-[#75c32c] mb-4 group-hover:scale-110 transition-transform" size={28} />
+            <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-2">Parts of Speech</h3>
+            <p className="text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
+              Discover whether a word is a noun, verb, adjective, adverb, and understand how it functions in a sentence.
+            </p>
+          </div>
+
+          <div className="p-8 bg-gray-50 dark:bg-white/5 rounded-[2rem] border-2 border-transparent hover:border-[#75c32c]/20 transition-all group">
+            <MessageSquareText className="text-[#75c32c] mb-4 group-hover:scale-110 transition-transform" size={28} />
+            <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-2">Sentence Examples</h3>
+            <p className="text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
+              See words in action with real-life example sentences that show exactly how to use them naturally.
+            </p>
+          </div>
+        </div>
+
+        <AdsUnit slot="7782807936" />
+
+        {/* Usage note */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem]">
+          <h2 className="text-xl font-black text-gray-800 dark:text-white mb-4">Who is it for?</h2>
+          <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
+            The Word Dictionary is designed for <strong className="text-gray-800 dark:text-white">students</strong> building vocabulary, <strong className="text-gray-800 dark:text-white">writers</strong> seeking precise word choices, and <strong className="text-gray-800 dark:text-white">language learners</strong> looking to deepen their understanding of English. The clean interface makes it easy to search and explore without distraction.
+          </p>
+        </section>
+      </div>
     </div>
   );
 }

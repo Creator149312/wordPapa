@@ -1,106 +1,79 @@
-import {
-  Card,
-} from "@/components/ui/card"
-
 import AdsUnit from "@components/AdsUnit";
+import { Tag, ArrowRight } from "lucide-react";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
-  const L = decodeURIComponent(params.letter);
-  // read route params
-  titleStr = `Noun Dictionary: List of All Nouns in English`;
-  const descriptionStr = `Browse all 80000+ nouns in alphabetically sorted order which are commonly used in English language for naming person, place, thing or idea.`;
+export async function generateMetadata() {
   return {
-    title: titleStr,
-    description: descriptionStr,
+    title: `Noun Dictionary: List of All Nouns in English`,
+    description: `Browse all 80000+ nouns in alphabetically sorted order which are commonly used in English language for naming person, place, thing or idea.`,
   };
 }
 
-const generateNounLinks = async () => {
-  let nounsJsx = [];
+const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
+const nounEndingSuffixes = ["o", "s", "f", "z", "fe", "ment", "ss", "ies", "sh", "ing", "us", "y", "es", "ves"];
 
-  for (let i = 0; i < 26; i += 2) {
-    let firstChar = String.fromCharCode(97 + i);
-    let secondChar = String.fromCharCode(97 + i + 1);
-    nounsJsx.push(
-      <div className="grid md:grid-cols-12 m-2" key={i}>
-        <Card className="md:col-span-6 text-center m-2 p-2">
-          <a href={`/browse/nouns/${firstChar}`}>
-            <div className="text-lg">Nouns beginning with {firstChar}</div>
-          </a>
-        </Card>
-        <Card className="md:col-span-6 text-center m-2 p-2">
-          <a href={`/browse/nouns/${secondChar}`}>
-            <div className="text-lg">Nouns beginning with {secondChar}</div>
-          </a>
-        </Card>
-      </div>
-    );
-  }
-
-  return nounsJsx;
-};
-
-const generateNounEndLinks = async () => {
-  let nounsJsx = [];
-  let endingPhrases = ["o", "s", "f", "z", "fe", "ment", "ss", "ies", "sh", "ing", "us", "y", "es", "ves"]
-
-  for (let i = 0; i < endingPhrases.length; i += 2) {
-    let firstChar = endingPhrases[i];
-    let secondChar = endingPhrases[i + 1];
-    nounsJsx.push(
-      <div className="grid md:grid-cols-12 m-2" key={i}>
-        <Card className="md:col-span-6 text-center m-2 p-2">
-          <a href={`/browse/nouns/end/${firstChar}`}>
-            <div className="text-lg">Nouns Ending with {firstChar}</div>
-          </a>
-        </Card>
-        <Card className="md:col-span-6 text-center m-2 p-2">
-          <a href={`/browse/nouns/end/${secondChar}`}>
-            <div className="text-lg">Nouns Ending with {secondChar}</div>
-          </a>
-        </Card>
-      </div>
-    );
-  }
-
-  return nounsJsx;
-};
+function LinkChip({ href, label }) {
+  return (
+    <a
+      href={href}
+      className="group flex items-center justify-between gap-2 px-4 py-3 bg-white dark:bg-[#111] border-2 border-gray-100 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:border-[#75c32c]/50 hover:text-[#75c32c] hover:shadow-md hover:shadow-[#75c32c]/5 transition-all duration-200"
+    >
+      <span>{label}</span>
+      <ArrowRight size={13} className="text-gray-300 dark:text-gray-600 group-hover:text-[#75c32c] group-hover:translate-x-0.5 transition-all shrink-0" />
+    </a>
+  );
+}
 
 const Page = async () => {
-  let nounsLinks = await generateNounLinks();
-  let nounsEndLinks = await generateNounEndLinks();
-
   return (
-    <div className="m-2 p-3">
-      <h1 className="mb-3 text-4xl font-bold">Noun Dictionary: List of All Nouns in English</h1>
-      <p className="mb-6 text-lg font-normal">
-        Welcome to the noun dictionary page where you can find all the noun words in
-        English from A to Z. Here, you'll explore the vast array of words that name people,
-        places, things, and ideas!
-      </p>
-      <p className="mb-6 text-lg font-normal">
-        From common objects like "table" and "chair" to abstract concepts like
-        "love" and "justice," you'll find nouns spanning every aspect of human experience.
-      </p>
-      <AdsUnit slot='7782807936'/> 
-      <p className="mb-6 text-lg font-normal">
-        There are around 80,000 plus frequently used nouns in the
-        English language, available for naming.
-      </p>
-      <h2 className="mb-3 mt-5 text-3xl font-semibold">Nouns that Begin With</h2>
-      <p className="mb-6 text-lg font-normal">We've organized
-        them into alphabetically sorted lists of nouns, each beginning with a specific letter or group of letters.</p>
-      {nounsLinks.map((linkdata) => linkdata)}
-      <AdsUnit slot='7782807936'/> 
-      <h2 className="mb-3 mt-5 text-3xl font-semibold">Nouns that End With</h2>
-      <p className="mb-6 text-lg font-normal">The following lists offer a glimpse into the diverse vocabulary of noun words that end with the letter or sequence of letters.</p>
-      {nounsEndLinks.map((linkdata) => linkdata)}
-      <p className="mb-6 text-lg font-normal">
-        Whether you're a student expanding your vocabulary, a writer seeking inspiration, this exhaustive noun compilation gives you endless possibilities of naming person, place or thing and discover the beauty of
-        linguistic expression.
-      </p>
-      <AdsUnit slot='7782807936'/> 
+    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+      {/* Header */}
+      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+          <Tag size={14} /> Naming Words
+        </div>
+        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+          Noun <span className="text-[#75c32c]">Dictionary</span>: All Nouns A–Z
+        </h1>
+      </div>
+
+      <div className="space-y-10">
+        {/* Intro */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
+          <p className="text-lg font-bold text-gray-700 dark:text-gray-200 leading-relaxed">
+            Browse <span className="text-[#75c32c]">80,000+ nouns</span> in English — words that name people, places, things, and ideas. From everyday objects like "table" to abstract concepts like "justice", organized A to Z.
+          </p>
+        </section>
+
+        <AdsUnit slot="7782807936" />
+
+        {/* A–Z by Letter */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem]">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">Nouns Starting With</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-6">
+            Alphabetically sorted noun lists — each starting with a specific letter.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {letters.map((l) => (
+              <LinkChip key={l} href={`/browse/nouns/${l}`} label={`Letter ${l.toUpperCase()} Nouns`} />
+            ))}
+          </div>
+        </section>
+
+        <AdsUnit slot="7782807936" />
+
+        {/* Ending patterns */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem]">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">Nouns Ending With</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-6">
+            Common noun endings — helpful for understanding plural patterns and word formation.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {nounEndingSuffixes.map((s) => (
+              <LinkChip key={s} href={`/browse/nouns/end/${s}`} label={`Nouns ending in "${s}"`} />
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

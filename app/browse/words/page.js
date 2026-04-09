@@ -1,130 +1,86 @@
 import AdsUnit from "@components/AdsUnit";
+import { BookOpen, ArrowRight } from "lucide-react";
 
-let titleStr = "";
-export async function generateMetadata({ params }, parent) {
-    const L = decodeURIComponent(params.letter);
-    // read route params
-    titleStr = `List of All English Words`;
-    const descriptionStr = `Browse the Ultimate list of 150000+ English words in alphabetically sorted order which are commonly used in English language.`;
-    return {
-        title: titleStr,
-        description: descriptionStr,
-    };
+export async function generateMetadata() {
+  return {
+    title: `List of All English Words`,
+    description: `Browse the Ultimate list of 150000+ English words in alphabetically sorted order which are commonly used in English language.`,
+  };
 }
 
-const generateWordsStartingLinks = async () => {
-    let nounsJsx = [];
-    let endingPhrases = ["ed", "ch", "sh", "e", "s", "y", "x", "o", "z", "ee", "d", "en", "es", "ie", "ss", "ch", "ing", "ir"];
-  
-    for (let i = 0; i < endingPhrases.length; i += 2) {
-      let firstChar = endingPhrases[i];
-      let secondChar = endingPhrases[i + 1];
-      nounsJsx.push(
-        <div className="grid md:grid-cols-12 m-2" key={i}>
-          <div className="md:col-span-6 text-center m-2 p-2">
-            <a href={`/browse/verbs/end/${firstChar}`}>
-              <div className="text-lg">Verbs Ending with {firstChar}</div>
-            </a>
-          </div>
-          <div className="md:col-span-6 text-center m-2 p-2">
-            <a href={`/browse/verbs/end/${secondChar}`}>
-              <div className="text-lg">Verbs Ending with {secondChar}</div>
-            </a>
-          </div>
-        </div>
-      );
-    }
-  
-    return nounsJsx;
-  };
+const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
 
-const generateWordsLinks = async () => {
-    let adjJsx = [];
-
-    for (let i = 0; i < 26; i += 2) {
-        let firstChar = String.fromCharCode(97 + i);
-        let secondChar = String.fromCharCode(97 + i + 1);
-        adjJsx.push(
-            <div className="grid md:grid-cols-12 m-2" key={i}>
-                <div className="md:col-span-6 text-center m-2 p-2">
-                    <a href={`/browse/words/${firstChar}`}>
-                        <div className="medium-text">Letter {firstChar} Words</div>
-                    </a>
-                </div>
-                <div className="md:col-span-6 text-center m-2 p-2">
-                    <a href={`/browse/words/${secondChar}`}>
-                        <div className="text-lg">Letter {secondChar} Words</div>
-                    </a>
-                </div>
-            </div>
-        );
-    }
-
-    return adjJsx;
-};
-
-const generateWordsEndingLinks = async () => {
-    let adjJsx = [];
-    let endingPhrases = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-
-    for (let i = 0; i < endingPhrases.length; i += 2) {
-        let firstChar = endingPhrases[i];
-        let secondChar = endingPhrases[i + 1];
-        adjJsx.push(
-            <div className="grid md:grid-cols-12 m-2" key={i}>
-                <div className="md:col-span-6 text-center m-2 p-2">
-                    <a href={`/browse/words/end/${firstChar}`}>
-                        <div className="text-lg">Words Ending with {firstChar}</div>
-                    </a>
-                </div>
-                <div className="md:col-span-6 text-center m-2 p-2">
-                    <a href={`/browse/words/end/${secondChar}`}>
-                        <div className="text-lg">Words Ending with {secondChar}</div>
-                    </a>
-                </div>
-            </div>
-        );
-    }
-
-    return adjJsx;
-};
+function LinkChip({ href, label }) {
+  return (
+    <a
+      href={href}
+      className="group flex items-center justify-between gap-2 px-4 py-3 bg-white dark:bg-[#111] border-2 border-gray-100 dark:border-gray-800 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 hover:border-[#75c32c]/50 hover:text-[#75c32c] hover:shadow-md hover:shadow-[#75c32c]/5 transition-all duration-200"
+    >
+      <span>{label}</span>
+      <ArrowRight size={13} className="text-gray-300 dark:text-gray-600 group-hover:text-[#75c32c] group-hover:translate-x-0.5 transition-all shrink-0" />
+    </a>
+  );
+}
 
 const Page = async () => {
-    let wordsLinks = await generateWordsLinks();
-    let wordsEndingLinks = await generateWordsEndingLinks();
+  return (
+    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+      {/* Header */}
+      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
+          <BookOpen size={14} /> Word Explorer
+        </div>
+        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+          All English <span className="text-[#75c32c]">Words</span>: Complete A–Z List
+        </h1>
+      </div>
 
-    return (
-        <div>
-            <div className="row">
-                {/* Left side: 9-column scrollable content */}
-                <div className="m-2 p-3">
-                    <h1 className="mb-3 text-4xl font-bold">List of All English Words</h1>
-                    <p  className="mb-6 text-lg font-normal">
-                        We are here to delve into the vast and ever-evolving world of English vocabulary. You'll explore a comprehensive list of words, encompassing the richness and diversity of the English language.
-                    </p>
-                    <p  className="mb-6 text-lg font-normal">This list is a treasure trove of terms which extends far beyond frequently used words, venturing into the realms of specialized terminology, rare gems, and obscure vocabulary, related to specific <a href="https://www.englishbix.com/english-vocabulary-list-for-kids/">English Vocabulary Topics</a>.</p>
-                    <p  className="mb-6 text-lg font-normal">
-                        There are approximately 150,000 uncommon and common words in English, used as different parts of speech.
-                    </p>
-                    <AdsUnit slot='7782807936'/> 
-                    <p  className="mb-6 text-lg font-normal">
-                        You can use this page to find new words and learn more about the ones you have never heard before. So, dive in, embark on your personal word-discovery adventure, and let your vocabulary flourish!</p>
-                    <h2 className="mb-3 mt-5 text-3xl font-semibold">Words that Start With </h2>
-                    <p className="mb-6 text-lg font-normal"> We've organized them into sorted lists of words from a to z, each starting with a specific letter or group of letters.</p>
-                    {wordsLinks.map((linkdata) => linkdata)}
-                    <AdsUnit slot='7782807936'/> 
-                    <h2 className="mb-3 mt-5 text-3xl font-semibold">Words that End With</h2>
-                    <p className="mb-6 text-lg font-normal"> The following lists offer a glimpse into the vocabulary of words each ending with the letter or sequence of letters.</p>
-                    {wordsEndingLinks.map((linkdata) => linkdata)}
-                    <p className="mb-6 text-lg font-normal">Whether you're a word enthusiast, a student seeking to expand your knowledge, or a writer looking for some fancy words.
-                    </p>
-                    <AdsUnit slot='7782807936'/> 
-                    <p className="mb-6 text-lg font-normal"> <strong>Please note:</strong> It's important to acknowledge that compiling an exhaustive list of all English words is a near-impossible feat due to the language's constant evolution and the inclusion of slang, technical terms, and regional variations. This list strives to be as comprehensive as possible while acknowledging its limitations.
-                    </p>
-                </div>
-            </div>
-        </div >
-    );
+      <div className="space-y-10">
+        {/* Intro */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
+          <p className="text-lg font-bold text-gray-700 dark:text-gray-200 leading-relaxed">
+            Explore <span className="text-[#75c32c]">150,000+ English words</span> — from everyday vocabulary to rare gems and specialized terminology. Find new words and discover ones you've never seen before.
+          </p>
+        </section>
+
+        <AdsUnit slot="7782807936" />
+
+        {/* A–Z by Letter */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem]">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">Words Starting With</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-6">
+            Sorted lists of English words from A to Z — each starting with a specific letter.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {letters.map((l) => (
+              <LinkChip key={l} href={`/browse/words/${l}`} label={`Letter ${l.toUpperCase()} Words`} />
+            ))}
+          </div>
+        </section>
+
+        <AdsUnit slot="7782807936" />
+
+        {/* Ending by letter */}
+        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem]">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">Words Ending With</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-6">
+            Browse all words ending in a specific letter — great for word games, crosswords, and rhyming.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {letters.map((l) => (
+              <LinkChip key={l} href={`/browse/words/end/${l}`} label={`Words ending in "${l}"`} />
+            ))}
+          </div>
+        </section>
+
+        <AdsUnit slot="7782807936" />
+
+        <p className="text-xs text-gray-400 dark:text-gray-600 font-medium px-2">
+          <strong>Note:</strong> An exhaustive list of all English words is near-impossible due to the language's constant evolution, slang, technical terms, and regional variations. This list strives to be as comprehensive as possible.
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default Page;
