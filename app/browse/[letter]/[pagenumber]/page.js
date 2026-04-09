@@ -1,7 +1,9 @@
 import React from "react";
 import LinkPagination from "@app/browse/LinkPagination";
-import { promises as fs } from "fs";
 import FINALCLEANWORDS from "@app/browse/FINALCLEANWORDS";
+import AdsUnit from "@components/AdsUnit";
+
+export const revalidate = 2592000; // Cache for 30 days
 
 export async function generateMetadata({ params }, parent) {
   const L = decodeURIComponent(params.letter);
@@ -67,22 +69,51 @@ async function getWords(l) {
 const Page = async ({ params }) => {
   let words = await getWords(params.letter);
   let pagenumber = params.pagenumber;
-  // read route params
   const L = decodeURIComponent(params.letter);
-  let titleStr = `Letter ${L} Dictionary: Page ${pagenumber}`;
+  const displayTitle = L === "0" ? "Symbols & Numbers" : `Letter ${L.toUpperCase()}`;
 
   return (
-    <div className="w-full">
-      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-6">
-        <h1 className="mb-3 text-5xl font-bold">{titleStr}</h1>
-        <LinkPagination
-          links={words}
-          linksPerPage={300}
-          pagenumber={pagenumber}
-          letter={params.letter}
-        />
+    <main className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] py-12">
+      <div className="max-w-6xl mx-auto px-6">
+
+        {/* Header Section */}
+        <div className="flex items-center gap-4 mb-10 ml-2">
+          <div className="h-12 w-2 bg-[#75c32c] rounded-full shadow-[0_0_15px_rgba(117,195,44,0.3)]" />
+          <div>
+            <h2 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500 mb-1">
+              Dictionary Browse — Page {pagenumber}
+            </h2>
+            <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white">
+              {displayTitle} <span className="text-[#75c32c]">Dictionary</span>
+            </h1>
+          </div>
+        </div>
+
+        {/* In-Content Ad — between header and word list */}
+        <div className="rounded-2xl overflow-hidden mb-8">
+          <AdsUnit slot="1177026196" variant="banner" />
+        </div>
+
+        {/* Content Card */}
+        <div className="bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] p-6 md:p-10 shadow-sm shadow-gray-200/50 dark:shadow-none">
+          <div className="mb-8">
+            <p className="text-gray-500 dark:text-gray-400 font-medium">
+              Showing results for words starting with{" "}
+              <strong className="text-gray-900 dark:text-white">
+                "{L === "0" ? "#" : L.toUpperCase()}"
+              </strong>
+            </p>
+          </div>
+
+          <LinkPagination
+            links={words}
+            linksPerPage={300}
+            pagenumber={parseInt(pagenumber)}
+            letter={params.letter}
+          />
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 

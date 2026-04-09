@@ -8,7 +8,7 @@ const SideBar = () => {
     "block py-2 px-3 text-gray-600 dark:text-gray-400 font-medium rounded-lg hover:bg-[#75c32c]/10 hover:text-[#75c32c] transition-all duration-200 border-l-2 border-transparent hover:border-[#75c32c]";
 
   return (
-    <aside className="space-y-6">
+    <aside className="space-y-6 sticky top-[108px] self-start">
       {/* <a
         href="/games/hangman"
         className="group relative flex flex-col items-center justify-center gap-1 bg-[#75c32c] text-white px-6 py-4 rounded-[2rem] border-2 border-b-8 border-black/20 hover:border-b-4 hover:translate-y-[4px] active:translate-y-[6px] active:border-b-2 transition-all duration-75 shadow-2xl shadow-[#75c32c]/30 min-w-[280px]"
@@ -27,7 +27,7 @@ const SideBar = () => {
           +XP
         </div>
       </a> */}
-      {/* Top Ad Unit */}
+      {/* Sidebar Ad Unit — single slot, sticky with the aside */}
       <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
         <AdsUnit slot="3722270586" />
       </div>
@@ -63,11 +63,6 @@ const SideBar = () => {
           </CardContent>
         </div>
 
-        {/* Mid Ad Unit */}
-        <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
-          <AdsUnit slot="3722270586" />
-        </div>
-
         {/* Spin the Wheel Section */}
         <div className="bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
           <CardHeader className="flex flex-row items-center gap-3 pb-2 border-b border-gray-50 dark:border-gray-800">
@@ -93,11 +88,6 @@ const SideBar = () => {
               </li>
             </ul>
           </CardContent>
-        </div>
-
-        {/* Last Ad Unit */}
-        <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
-          <AdsUnit slot="3722270586" />
         </div>
       </div>
     </aside>

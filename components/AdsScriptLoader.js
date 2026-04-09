@@ -1,8 +1,23 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 const AdsScriptLoader = () => {
-  let scriptLoaded = false;
+  const scriptLoaded = useRef(false);
+  const pathname = usePathname();
+
+  // Re-push ad slots on every route change (soft navigation in Next.js)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.adsbygoogle) {
+      const ads = document.querySelectorAll(".adsbygoogle:not([data-adsbygoogle-status])");
+      ads.forEach(() => {
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {}
+      });
+    }
+  }, [pathname]);
+
   useEffect(() => {
     if (typeof document !== "undefined") {
       const adElements = document.querySelectorAll(".adsbygoogle"); // Select all ad slots
@@ -29,7 +44,7 @@ const AdsScriptLoader = () => {
             } catch (e) {}
           }
 
-          scriptLoaded = true;
+          scriptLoaded.current = true;
         };
         document.body.appendChild(script);
       };
@@ -56,7 +71,7 @@ const AdsScriptLoader = () => {
 
       const handleInteraction = () => {
         // clearTimeout(timeoutId);
-        if (!scriptLoaded) {
+        if (!scriptLoaded.current) {
           loadAdsScript();
         }
       };

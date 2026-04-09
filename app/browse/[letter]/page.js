@@ -1,4 +1,5 @@
 import React from "react";
+import AdsUnit from "@components/AdsUnit";
 import LinkPagination from "../LinkPagination";
 import { redirect } from "next/navigation";
 import FINALCLEANWORDS from "../FINALCLEANWORDS";
@@ -82,6 +83,11 @@ const Page = async ({ params }) => {
               {displayTitle} <span className="text-[#75c32c]">Dictionary</span>
             </h1>
           </div>
+        </div>
+
+        {/* In-Content Ad — between header and word list */}
+        <div className="rounded-2xl overflow-hidden mb-8">
+          <AdsUnit slot="1177026196" variant="banner" />
         </div>
 
         {/* Content Card */}

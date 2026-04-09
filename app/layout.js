@@ -10,6 +10,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Navbar from "../components/navbar/Navbar";
 import AdsScriptLoader from "@components/AdsScriptLoader";
+import AdsUnit from "@components/AdsUnit";
 import MobileAppChrome from "@components/mobile/MobileAppChrome";
 import SiteMascot from "@components/SiteMascot";
 import CollectionsBar from "@components/CollectionsBar";
@@ -77,6 +78,13 @@ const layout = ({ children }) => {
                 <SideBar />
               </Card>
             </main>
+
+            {/* Bottom-of-page Ad — visible on every page */}
+            <div className="max-w-[1600px] mx-auto px-3 md:px-4 pb-4">
+              <div className="rounded-2xl overflow-hidden">
+                <AdsUnit slot="1177026196" variant="banner" />
+              </div>
+            </div>
 
             <div className="mt-8 space-y-8">
               <AlphabetLinks />

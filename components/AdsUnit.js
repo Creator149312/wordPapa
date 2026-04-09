@@ -1,13 +1,16 @@
-const AdsUnit = ({ slot }) => {
+const AdsUnit = ({ slot, variant = "default" }) => {
+  const minHeight = variant === "banner" ? "min-h-[90px]" : "min-h-64";
   return (
-    <div className="w-full bg-slate-50 dark:bg-slate-800 text-center px-0 md:mx-0 mt-3 mb-3 min-h-64">
-      <div className="text-xs text-center">Advertisement</div>
-      <div className="mt-1 justify-center">
+    <div className={`w-full relative rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 text-center overflow-hidden ${minHeight}`}>
+      <span className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-300 dark:text-gray-600 select-none">
+        Advertisement
+      </span>
+      <div className="pt-5">
       <ins
-        className="adsbygoogle max-w-[320px] sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px]"
-        style={{ display: 'block'}}
+        className="adsbygoogle"
+        style={{ display: "block", width: "100%" }}
         data-ad-client="ca-pub-6746947892342481"
-        data-ad-slot={ slot }
+        data-ad-slot={slot}
         data-ad-format="auto"
         data-full-width-responsive="true"
       />

@@ -7,6 +7,7 @@ import AudioPronunciation from "../AudioPronunciation";
 import { BookOpen, Quote, Sparkles } from "lucide-react";
 import Link from "next/link";
 import EnrichTrigger from "../EnrichTrigger";
+import AdsUnit from "@components/AdsUnit";
 
 export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
 
@@ -140,6 +141,11 @@ export default async function DefineWordPage({ params }) {
           <BookOpen size={300} strokeWidth={1} color="#75c32c" />
         </div>
       </section>
+
+      {/* In-Content Ad — below the fold, above definitions */}
+      <div className="rounded-2xl overflow-hidden">
+        <AdsUnit slot="1177026196" variant="banner" />
+      </div>
 
       {/* Content Section: Definitions & Examples */}
       <div className="grid grid-cols-1 gap-6">
