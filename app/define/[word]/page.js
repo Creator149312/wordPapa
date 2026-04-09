@@ -28,7 +28,8 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const wordData = await Word.findOne({ word });
+  await connectMongoDB();
+  const wordData = await Word.findOne({ word }).lean();
 
   const titleStr = `${word.toUpperCase()} Definition with Sentence Examples`;
   const descriptionStr = wordData

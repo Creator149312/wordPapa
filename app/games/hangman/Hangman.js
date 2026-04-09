@@ -64,6 +64,18 @@ export default function Hangman({
   // Auto-launch list practice when ?listId= param is present
   const searchParams = useSearchParams();
   const listIdParam = searchParams.get("listId");
+  const modeParam = searchParams.get("mode");
+
+  // Auto-launch a specific mode when ?mode= param is present (e.g. from Daily results)
+  useEffect(() => {
+    if (!modeParam || !isLoaded) return;
+    if (modeParam === "endless") {
+      setGameMode("endless");
+      setGameState("playing");
+    } else if (modeParam === "journey") {
+      setShowNodeSelector(true);
+    }
+  }, [modeParam, isLoaded]);
 
   useEffect(() => {
     if (!listIdParam || !isLoaded) return;
@@ -264,7 +276,7 @@ export default function Hangman({
         <div className="flex flex-col w-full transition-colors duration-1000">
           {/* <GameClientHeader /> */}
           <div className="max-w-5xl w-full mx-auto px-1 md:px-4">
-            <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="mb-3 animate-in fade-in slide-in-from-top-2 duration-500">
               <LevelBar />
             </div>
             <GameLobbyView

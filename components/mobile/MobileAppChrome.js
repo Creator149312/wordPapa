@@ -17,6 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import SearchBarNav from "@components/SearchNavBar";
+import CollectionsBar from "@components/CollectionsBar";
 
 const NAV_ITEMS = [
   {
@@ -283,6 +284,8 @@ const MobileAppChrome = () => {
             </div>
           )}
         </div>
+        {/* Collections filter bar — slides with the chrome */}
+        <CollectionsBar hideOnScroll={false} />
       </div>
 
       <div

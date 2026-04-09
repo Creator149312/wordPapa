@@ -46,6 +46,7 @@ export default function Page() {
   // Fetched reactively after journeySnap resolves so we know rank + node.
   const [nodeLists, setNodeLists] = useState([]);
   const [nodeListsLoading, setNodeListsLoading] = useState(false);
+  const [showAllLists, setShowAllLists] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.email) return;
@@ -115,6 +116,14 @@ export default function Page() {
   const nextRank = getNextRank(profile.xp);
   const progressPercent = calculateProgress(profile.xp);
   const xpNeeded = nextRank ? nextRank.minXP - profile.xp : 0;
+
+  // Journey progress — use currentNodeId ("rank-node") for accurate %
+  const journeyNode = (() => {
+    if (!journeySnap?.currentNodeId) return { flat: 0, inRank: 0, rankNum: 1 };
+    const [r, n] = journeySnap.currentNodeId.split("-").map(Number);
+    return { flat: (r - 1) * 5 + n, inRank: n, rankNum: r };
+  })();
+  const journeyPercent = Math.round((journeyNode.flat / 40) * 100);
 
   // Derive streak state from the practice-stats API response.
   // streak = consecutive practice days; lastPracticeDay = "YYYY-MM-DD" string.
@@ -234,7 +243,7 @@ export default function Page() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                  Papa Coins
+                  Coins
                 </p>
                 <p className="text-2xl font-black text-gray-900 dark:text-white">
                   {profile.papaPoints?.toLocaleString() ?? 0}
@@ -296,7 +305,7 @@ export default function Page() {
                   <Map size={14} className="text-purple-500" />
                   <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     {journeySnap
-                      ? `${journeySnap.rankName} · Node ${journeySnap.currentNode} of 40`
+                      ? `${journeySnap.rankName} · Node ${journeyNode.inRank} of 5`
                       : "Journey Progress"}
                   </p>
                 </div>
@@ -307,16 +316,12 @@ export default function Page() {
               <div className="w-full h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-purple-500 to-purple-400 transition-all duration-1000"
-                  style={{
-                    width: journeySnap?.currentNode
-                      ? `${Math.round(((journeySnap.currentNode - 1) / 40) * 100)}%`
-                      : "0%",
-                  }}
+                  style={{ width: `${journeyPercent}%` }}
                 />
               </div>
               <p className="text-[10px] font-bold text-gray-400 mt-1">
-                {journeySnap?.currentNode
-                  ? `${Math.round(((journeySnap.currentNode - 1) / 40) * 100)}% overall complete`
+                {journeySnap
+                  ? `${journeyPercent}% overall complete (${journeyNode.flat}/40 nodes)`
                   : "Start your Journey"}
               </p>
             </div>
@@ -473,12 +478,15 @@ export default function Page() {
                 My Collections
               </h2>
             </div>
-            <Link href="/lists" className="text-sm font-bold text-[#75c32c] hover:underline whitespace-nowrap">
-              View All →
-            </Link>
+            <button
+              onClick={() => setShowAllLists((v) => !v)}
+              className="text-sm font-bold text-[#75c32c] hover:underline whitespace-nowrap"
+            >
+              {showAllLists ? "Show Less ↑" : "View All →"}
+            </button>
           </div>
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-4 md:p-8 border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none">
-            <WordLists createdBy={session?.user?.email} limit={9} />
+            <WordLists createdBy={session?.user?.email} limit={showAllLists ? undefined : 9} />
           </div>
         </div>
 

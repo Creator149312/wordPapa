@@ -49,11 +49,11 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 selection:bg-[#75c32c]/30 flex flex-col font-sans overflow-x-hidden transition-colors duration-300">
+    <div className="bg-white dark:bg-zinc-950 selection:bg-[#75c32c]/30 flex flex-col font-sans overflow-x-hidden transition-colors duration-300 md:-mt-6 md:-mx-6">
       {/* Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-64 bg-gradient-to-b from-[#75c32c]/10 to-transparent blur-3xl -z-0 pointer-events-none" />
 
-      <main className="flex-grow w-full mx-auto px-2 sm:px-4 lg:px-6 pt-2 pb-16 relative z-20">
+      <main className="flex-grow w-full mx-auto px-2 sm:px-4 lg:px-6 pt-3 pb-16 relative z-20">
         {/* SEO Hidden H1 */}
         {/* <h1 className="sr-only">
           Hangman Arcade - Play Online & Challenge Friends to Beat XP High Scores

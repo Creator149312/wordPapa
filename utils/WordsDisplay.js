@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 const WordsDisplay = ({ length, words }) => {
   const [showAll, setShowAll] = useState(false);
+  const router = useRouter();
   const maxWordsToShow = 40;
 
   const handleToggle = () => setShowAll(!showAll);
@@ -30,7 +32,11 @@ const WordsDisplay = ({ length, words }) => {
           {displayedWords.map((word, index) => (
             <span
               key={`${length}-${index}`}
-              className="px-4 py-2 text-sm md:text-base font-bold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl hover:border-[#75c32c] hover:text-[#75c32c] transition-all duration-200 cursor-default"
+              role="button"
+              tabIndex={0}
+              onClick={() => router.push(`/define/${word.toLowerCase()}`)}
+              onKeyDown={(e) => e.key === "Enter" && router.push(`/define/${word.toLowerCase()}`)}
+              className="px-4 py-2 text-sm md:text-base font-bold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl hover:border-[#75c32c] hover:text-[#75c32c] transition-all duration-200 cursor-pointer"
             >
               {word}
             </span>

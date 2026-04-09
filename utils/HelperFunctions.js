@@ -86,7 +86,7 @@ export const displayWords = (
   startsWith,
   endsWith,
   contains,
-  length
+  length,
 ) => {
   const groupedWords = groupWordsByLength(
     wordsArr,

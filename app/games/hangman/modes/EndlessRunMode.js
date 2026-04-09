@@ -539,6 +539,9 @@ export default function EndlessRunMode({
         isRefilling={isRefilling}
         highestXP={profile.highestEndlessXP}
         accent={sessionRank.color}
+        totalWordsSolved={totalWordsSolved}
+        nextMilestone={nextMilestone}
+        milestoneStep={milestoneStep}
       />
 
       <GameHeader

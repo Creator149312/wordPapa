@@ -44,6 +44,17 @@ export async function POST(request) {
       enrichmentResult.forEach((item) => {
         enrichedWords[item.word.toLowerCase()] = item.entries;
       });
+
+      // Persist enriched words to DB so subsequent visits hit the cache
+      const docsToInsert = enrichmentResult
+        .filter((item) => item.entries && item.entries.length > 0 && item.source !== "fallback")
+        .map((item) => ({ word: item.word.toLowerCase(), entries: item.entries }));
+
+      if (docsToInsert.length > 0) {
+        await Word.insertMany(docsToInsert, { ordered: false }).catch(() => {
+          // Ignore duplicate key errors in case of a race condition
+        });
+      }
     }
 
     // Build response with word data

@@ -12,7 +12,31 @@ export default function SessionProgress({
   customLabel = null,
   customPercentLabel = null,
   footerLabel = null,
+  // Endless refill tracking
+  totalWordsSolved = null,
+  nextMilestone = null,
+  milestoneStep = null,
 }) {
+  // --- Refill bar computation ---
+  // When endless props are provided, the bar shows progress to the next balloon refill
+  // rather than % of personal best. Formula:
+  //   prevMilestone = nextMilestone - (milestoneStep - 1)  e.g. before 1st refill: 5-(6-1)=0
+  //   segmentSize   = milestoneStep - 1                    e.g. 5, 6, 7...
+  const useRefillBar =
+    totalWordsSolved !== null &&
+    nextMilestone !== null &&
+    milestoneStep !== null;
+
+  const refillBarData = useRefillBar
+    ? (() => {
+        const prevMilestone = nextMilestone - (milestoneStep - 1);
+        const segmentSize = milestoneStep - 1;
+        const wordsInSegment = Math.max(0, totalWordsSolved - prevMilestone);
+        const percent = Math.min((wordsInSegment / segmentSize) * 100, 100);
+        const remaining = Math.max(0, nextMilestone - totalWordsSolved);
+        return { percent, remaining, segmentSize, wordsInSegment };
+      })()
+    : null;
   const [displayXP, setDisplayXP] = useState(0);
   const [showParticles, setShowParticles] = useState(false);
   const prevXP = useRef(0);
@@ -48,7 +72,9 @@ export default function SessionProgress({
     window.requestAnimationFrame(step);
   }, [totalXPEarned]);
 
-  const progressWidth = Math.min(xpPercent, 100);
+  const progressWidth = useRefillBar
+    ? refillBarData.percent
+    : Math.min(xpPercent, 100);
 
   return (
     <div className="w-full animate-in fade-in slide-in-from-top-2 duration-500 mb-1 md:mb-2">
@@ -139,6 +165,16 @@ export default function SessionProgress({
                     New Best!
                   </p>
                 </div>
+              ) : useRefillBar ? (
+                // Endless refill mode: show balloon countdown instead of %
+                <div className="flex items-center gap-1">
+                  <span className="text-sm leading-none" aria-hidden="true">🎈</span>
+                  <p className="text-sm font-black text-zinc-900 dark:text-zinc-100 italic tabular-nums">
+                    {refillBarData.remaining === 0
+                      ? "Refilling!"
+                      : `${refillBarData.remaining} to refill`}
+                  </p>
+                </div>
               ) : (
                 <>
                   <Flag
@@ -153,7 +189,10 @@ export default function SessionProgress({
               )}
             </div>
             <p className="text-[8px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mt-1">
-              {footerLabel || `Personal Best: ${highestXP.toLocaleString()}`}
+              {footerLabel ||
+                (useRefillBar
+                  ? `${refillBarData.wordsInSegment} / ${refillBarData.segmentSize} words this set`
+                  : `Personal Best: ${highestXP.toLocaleString()}`)}
             </p>
           </div>
         </div>

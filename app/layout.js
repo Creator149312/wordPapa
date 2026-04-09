@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import Navbar from "../components/navbar/Navbar";
 import AdsScriptLoader from "@components/AdsScriptLoader";
 import MobileAppChrome from "@components/mobile/MobileAppChrome";
+import SiteMascot from "@components/SiteMascot";
+import CollectionsBar from "@components/CollectionsBar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -54,11 +56,13 @@ const layout = ({ children }) => {
           disableTransitionOnChange
         ><ProfileProvider>
             <MobileAppChrome />
-            {/* Navbar Wrapper - Removed the harsh border-b-2 */}
+
+            {/* Navbar Wrapper + Collections bar for desktop */}
             <div className="sticky top-0 z-[100] hidden md:block">
               <Card className="rounded-none border-none shadow-none m-0 p-0 overflow-visible">
                 <Navbar />
               </Card>
+              <CollectionsBar />
             </div>
 
             {/* Main Content Grid */}
@@ -78,6 +82,7 @@ const layout = ({ children }) => {
               <AlphabetLinks />
               <Footer />
             </div>
+            <SiteMascot />
           </ProfileProvider>
         </NextAuthProvider>
         <AdsScriptLoader />

@@ -3,6 +3,8 @@ import LinkPagination from "../LinkPagination";
 import { redirect } from "next/navigation";
 import FINALCLEANWORDS from "../FINALCLEANWORDS";
 
+export const revalidate = 2592000; // ✅ Cache full page HTML for 30 days
+
 // Helper functions logic remains the same
 function countSpacesAndHyphens(word) {
   const regex = /[\s-]/g;

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useProfile } from "../../../ProfileContext";
-import { getDailyMetadata, getTimeUntilNextDay } from "../lib/daily";
+import { getDailyTheme, getTimeUntilNextDay } from "../lib/daily";
 import { Card } from "@/components/ui/card";
-import { Timer, ChevronLeft, Trophy, Share2, Check, Users } from "lucide-react";
+import { Timer, ChevronLeft, Trophy, Share2, Check, Users, Zap, Map } from "lucide-react";
 import DailyMode from "../modes/DailyMode";
 import LevelBar from "../components/LevelBar";
 
@@ -18,7 +18,7 @@ export default function DailyChallengePage() {
 
   // Initialize Game Data
   useEffect(() => {
-    const dailyData = getDailyMetadata();
+    const dailyData = getDailyTheme();
     setMeta(dailyData);
 
     // Check if player already finished today and load their result grid
@@ -59,12 +59,13 @@ export default function DailyChallengePage() {
   const handleShare = async () => {
     if (!gameStats || !meta) return;
 
+    const wonCount = gameStats.wonCount ?? (gameStats.won ? 1 : 0);
     const shareBody =
-      `Hangman Arcade #${meta.dayNumber}\n` +
-      `Result: ${gameStats.won ? "🏆 SOLVED" : "❌ FAILED"}\n` +
-      `Mistakes: ${gameStats.attempts}/${gameStats.maxAttempts}\n` +
-      `${gameStats.grid}\n\n` +
-      `Play now: ${window.location.origin}`;
+      `Wordpapa Daily #${meta.dayNumber}\n` +
+      `${gameStats.grid}\n` +
+      `${wonCount}/${5} words · Streak: ${gameStats.newStreak ?? 0} 🔥\n\n` +
+      `Can you find today's theme?\n` +
+      `${window.location.origin}/games/hangman/daily`;
 
     if (navigator.share) {
       try {
@@ -113,12 +114,14 @@ export default function DailyChallengePage() {
           </div>
 
           <h1 className="text-3xl font-black uppercase italic tracking-tighter text-zinc-800 dark:text-zinc-100">
-            {gameStats?.won ? "Challenge Met!" : "Try Tomorrow!"}
+            {(gameStats?.wonCount ?? 0) === 5 ? "Full Clear!" : (gameStats?.wonCount ?? 0) > 0 ? "Well Played!" : "Try Tomorrow!"}
           </h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-2 font-medium">
-            {gameStats?.won
-              ? "You've conquered today's word."
-              : "That was a tough one. New word soon!"}
+            {(gameStats?.wonCount ?? 0) === 5
+              ? `You solved all 5! Theme: ${meta?.theme?.theme} ${meta?.theme?.emoji}`
+              : (gameStats?.wonCount ?? 0) > 0
+              ? `You solved ${gameStats.wonCount}/5. Theme: ${meta?.theme?.theme} ${meta?.theme?.emoji}`
+              : "A tough set. New theme tomorrow!"}
           </p>
 
           {/* STATS & LEADERBOARD BLOCK */}
@@ -150,9 +153,34 @@ export default function DailyChallengePage() {
             {copied ? "Copied to Clipboard!" : "Share Results"}
           </button>
 
+          {/* Play more CTA */}
+          <div className="mt-6">
+            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 text-center mb-3">
+              Keep Playing
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => (window.location.href = "/games/hangman?mode=endless")}
+                className="flex flex-col items-center gap-1 py-4 px-3 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-2xl border border-zinc-200 dark:border-zinc-700 transition-all"
+              >
+                <Zap size={20} className="text-amber-500" />
+                <span className="text-xs font-black uppercase text-zinc-700 dark:text-zinc-200">Endless Run</span>
+                <span className="text-[10px] text-zinc-400">How long can you last?</span>
+              </button>
+              <button
+                onClick={() => (window.location.href = "/games/hangman?mode=journey")}
+                className="flex flex-col items-center gap-1 py-4 px-3 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-2xl border border-zinc-200 dark:border-zinc-700 transition-all"
+              >
+                <Map size={20} className="text-blue-500" />
+                <span className="text-xs font-black uppercase text-zinc-700 dark:text-zinc-200">Journey</span>
+                <span className="text-[10px] text-zinc-400">Level-by-level story</span>
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={() => (window.location.href = "/games/hangman")}
-            className="mt-8 flex items-center justify-center gap-2 w-full text-xs font-bold text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
+            className="mt-4 flex items-center justify-center gap-2 w-full text-xs font-bold text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
           >
             <ChevronLeft size={16} /> Back to Main Menu
           </button>
@@ -170,7 +198,9 @@ export default function DailyChallengePage() {
 
       <main className="max-w-5xl w-full mx-auto">
         <DailyMode
-          dailyWord={meta.wordObj}
+          dailyWords={meta.theme.words}
+          themeName={meta.theme.theme}
+          themeEmoji={meta.theme.emoji}
           dayNumber={meta.dayNumber}
           profile={profile}
           onDailyComplete={handleDailyComplete}

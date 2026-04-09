@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Suspense } from "react";
 import apiConfig from "@utils/apiUrlConfig";
 import { slugify } from "@utils/slugify";
-import ListsFilterBar from "@components/ListsFilterBar";
 
 const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
   .split(",")
@@ -50,11 +49,6 @@ export default async function ExploreListsPage({ searchParams }) {
             Vocabulary lists organized by topic.
           </p>
         </header>
-
-        {/* Topic Filter Bar */}
-        <Suspense fallback={null}>
-          <ListsFilterBar activeTag={activeTag} />
-        </Suspense>
 
         {/* Active filter label */}
         {activeTag && (

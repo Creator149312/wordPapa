@@ -11,20 +11,21 @@ const DataFilterDisplay = ({words}) => {
 
   return (
     <div className="mb-6">
-        <AdvancedFilter 
-          startsWith={startsWith}
-          handleStartsWith={setStartsWith}
-          endsWith={endsWith}
-          handleEndsWith={setEndsWith}
-          contains={contains}
-          handleContains={setContains}
-          length={length}
-          handleLength={setLength}
-        />
- 
+      <AdvancedFilter
+        startsWith={startsWith}
+        handleStartsWith={setStartsWith}
+        endsWith={endsWith}
+        handleEndsWith={setEndsWith}
+        contains={contains}
+        handleContains={setContains}
+        length={length}
+        handleLength={setLength}
+      />
+
       {displayWords(words, startsWith, endsWith, contains, length)}
     </div>
   );
 };
 
 export default DataFilterDisplay;
+
