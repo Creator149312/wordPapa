@@ -172,7 +172,7 @@ export default function JourneyNodeSelector({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/55 dark:bg-black/75 flex items-center justify-center z-50 p-3 md:p-4">
+    <div className="fixed inset-0 bg-black/55 dark:bg-black/75 flex items-center justify-center z-[110] p-3 md:p-4">
       <div className="bg-white dark:bg-zinc-900 rounded-[2rem] max-w-3xl w-full h-[88vh] shadow-2xl border border-white/20 overflow-hidden flex flex-col">
         <div className="shrink-0 px-4 md:px-6 pt-4 md:pt-5 pb-3 border-b border-zinc-200 dark:border-zinc-800 bg-gradient-to-r from-[#75c32c]/15 via-cyan-50 to-white dark:from-[#75c32c]/10 dark:via-zinc-800 dark:to-zinc-900">
           <div className="flex items-start justify-between gap-3">
