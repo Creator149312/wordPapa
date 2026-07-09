@@ -1,8 +1,12 @@
 {
+  "version": 2,
   "functions": {
-    "api/**/*": {
+    "app/api/**/route.js": {
       "memory": 512,
       "maxDuration": 20
+    },
+    "app/**/page.js": {
+      "memory": 512
     }
   }
 }
