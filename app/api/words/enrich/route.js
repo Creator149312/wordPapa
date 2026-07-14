@@ -3,6 +3,8 @@ import Word from "@models/word";
 import { enrichWordsWithAI } from "@utils/wordEnricher";
 import { NextResponse } from "next/server";
 import { WORDMAP } from "../../../define/WORDMAP";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 /**
  * GET or enrich words with definitions
@@ -11,6 +13,7 @@ import { WORDMAP } from "../../../define/WORDMAP";
 export async function POST(request) {
   try {
     const { words } = await request.json();
+    const session = await getServerSession(authOptions);
 
     if (!Array.isArray(words) || words.length === 0) {
       return NextResponse.json(
@@ -21,14 +24,35 @@ export async function POST(request) {
 
     await connectMongoDB();
 
-    // 1. Filter input: Only allow words that exist in our WORDMAP to prevent DB bloat
-    const validWords = words.filter(w => {
+    // 1. Filter input: 
+    // - Always allow words in WORDMAP
+    // - For non-WORDMAP words, apply strict regex to prevent junk/bot abuse
+    const validWords = [];
+    const needsAuth = [];
+
+    words.forEach(w => {
       const cleanKey = w.toLowerCase().replace(/[ -]/g, "");
-      return !!WORDMAP[cleanKey];
+      if (WORDMAP[cleanKey]) {
+        validWords.push(w);
+      } else {
+        // Basic English word validation
+        if (/^[a-z-]{2,25}$/.test(w.toLowerCase())) {
+          // Non-WORDMAP words require an active session to trigger AI enrichment
+          // This prevents crawlers/bots from burning through your OpenAI credits
+          if (session) {
+            validWords.push(w);
+          } else {
+            needsAuth.push(w);
+          }
+        }
+      }
     });
 
     if (validWords.length === 0) {
-      return NextResponse.json({ words: [] }, { status: 200 });
+      return NextResponse.json({ 
+        words: [], 
+        message: needsAuth.length > 0 ? "Login required to define new words" : "No valid words found" 
+      }, { status: 200 });
     }
 
     // Fetch existing words from database

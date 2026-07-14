@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import UserProfileDropdown from "./dropdowns/UserProfileDropDown";
 
 export default function UserInfo({name, status}) {
@@ -11,6 +12,6 @@ export default function UserInfo({name, status}) {
       </div>
     );
   } else {
-    return <a className="cursor-pointer custom-button" href="/login">Login</a>;
+    return <Link className="cursor-pointer custom-button" href="/login">Login</Link>;
   }
 }

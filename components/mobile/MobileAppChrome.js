@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import {
-  Bell,
   BookOpen,
   FlaskConical,
   Home,
@@ -16,6 +15,7 @@ import {
   UserRound,
   Zap,
 } from "lucide-react";
+
 import SearchBarNav from "@components/SearchNavBar";
 import CollectionsBar from "@components/CollectionsBar";
 
@@ -76,9 +76,9 @@ const MobileAppChrome = () => {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [noticeOpen, setNoticeOpen] = useState(false);
   const [isChromeVisible, setIsChromeVisible] = useState(true);
   const [themeMounted, setThemeMounted] = useState(false);
+
   const [hud, setHud] = useState(null);
   const [xpFlash, setXpFlash] = useState(false);
   const prevXpRef = useRef(null);
@@ -113,7 +113,6 @@ const MobileAppChrome = () => {
 
   useEffect(() => {
     setSearchOpen(false);
-    setNoticeOpen(false);
     setIsChromeVisible(true);
   }, [pathname]);
 
@@ -150,10 +149,10 @@ const MobileAppChrome = () => {
   }, []);
 
   useEffect(() => {
-    if (searchOpen || noticeOpen) {
+    if (searchOpen) {
       setIsChromeVisible(true);
     }
-  }, [noticeOpen, searchOpen]);
+  }, [searchOpen]);
 
   useEffect(() => {
     const handleVisibilityEvent = (event) => {
@@ -235,23 +234,11 @@ const MobileAppChrome = () => {
                   </>
                 )}
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setNoticeOpen((current) => !current);
-                  setSearchOpen(false);
-                }}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-black/5 bg-zinc-100 text-zinc-700 transition active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200"
-                aria-label="Open notifications"
-              >
-                <Bell className="h-5 w-5" strokeWidth={2.3} />
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-white bg-[#75c32c] dark:border-[#090909]" />
-              </button>
+              
               <button
                 type="button"
                 onClick={() => {
                   setSearchOpen((current) => !current);
-                  setNoticeOpen(false);
                 }}
                 className={`flex h-9 w-9 items-center justify-center rounded-xl border transition active:scale-95 ${
                   searchOpen
@@ -265,25 +252,13 @@ const MobileAppChrome = () => {
             </div>
           </div>
 
-          {(searchOpen || noticeOpen) && (
+          {searchOpen && (
             <div className="mt-2 overflow-hidden rounded-[1.75rem] border border-black/5 bg-white/95 p-2 shadow-[0_18px_40px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-[#111111]/95">
-              {searchOpen ? (
-                <div>
-                  <SearchBarNav />
-                </div>
-              ) : (
-                <div className="rounded-[1.35rem] bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-800 p-4 text-white">
-                  <p className="text-[11px] font-black uppercase tracking-[0.24em] text-white/55">
-                    Notifications
-                  </p>
-                  <p className="mt-2 text-sm font-bold leading-6 text-white/90">
-                    No new alerts yet. Journey unlocks, streak nudges, and list activity can live here next.
-                  </p>
-                </div>
-              )}
+              <SearchBarNav />
             </div>
           )}
         </div>
+
         {/* Collections filter bar — slides with the chrome */}
         <CollectionsBar hideOnScroll={false} />
       </div>

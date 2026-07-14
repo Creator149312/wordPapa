@@ -3,6 +3,7 @@ import { useState } from "react";
 import styles from "@public/styles/NavBar.module.css";
 import logo from "@public/logo192.png";
 import Image from "next/image";
+import Link from "next/link";
 import UserInfo from "./UserInfo";
 import WordFindersListDropDown from "./dropdowns/WordFindersListDropDown";
 import WordToolsListDropDown from "./dropdowns/WordToolsListDropDown";
@@ -26,19 +27,19 @@ function Navbar() {
   return (
     <nav className={`${styles.navbar}`}>
       {/* logo */}
-      <a href="/" className={`${styles.logo}`}>
+      <Link href="/" className={`${styles.logo}`}>
         <Image src={logo} alt="WordPapa Logo" width="35" height="35" />
         WordPapa
-      </a>
+      </Link>
       <div>
         <ul className={`${styles.navMenu} ${isActive ? styles.active : ""}`}>
           <li onClick={removeActive}>
-            <a href="/thesaurus" className={`${styles.navLink}`}>Thesaurus
-            </a>
+            <Link href="/thesaurus" className={`${styles.navLink}`}>Thesaurus
+            </Link>
           </li>
           <li onClick={removeActive}>
-            <a href="/define" className={`${styles.navLink}`}>Dictionary
-            </a>
+            <Link href="/define" className={`${styles.navLink}`}>Dictionary
+            </Link>
           </li>
           <li onClick={removeActive}>
             <WordToolsListDropDown name={"Word Tools"} />

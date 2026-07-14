@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const AlphabetLinks = () => {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -12,22 +14,22 @@ const AlphabetLinks = () => {
       
       <div className='flex flex-wrap justify-center gap-2'>
         {/* Number/Symbol Link */}
-        <a 
+        <Link 
           href={`/browse/0`} 
           className='min-w-[45px] h-[45px] flex items-center justify-center bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-300 font-bold rounded-xl shadow-sm hover:border-[#75c32c] hover:text-[#75c32c] hover:shadow-lg hover:shadow-[#75c32c]/20 hover:-translate-y-1 transition-all duration-200'
         >
           #
-        </a>
+        </Link>
 
         {/* Alphabet Links */}
         {alphabet.split('').map((letter, index) => (
-          <a 
+          <Link 
             key={index} 
             href={`/browse/${letter.toLowerCase()}`} 
             className='min-w-[55px] h-[45px] flex items-center justify-center bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 font-black rounded-xl shadow-sm hover:border-[#75c32c] hover:text-[#75c32c] hover:shadow-lg hover:shadow-[#75c32c]/20 hover:-translate-y-1 transition-all duration-200'
           >
             {letter}<span className="text-[10px] opacity-50 ml-0.5">{letter.toLowerCase()}</span>
-          </a>
+          </Link>
         ))}
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 const MostSearchedWordsList = ({ wordList, preText, postText, slug }) => {
   const columns = 3;
@@ -13,11 +14,11 @@ const MostSearchedWordsList = ({ wordList, preText, postText, slug }) => {
       if (index < wordList.length) {
         const word = wordList[index];
         rowLinks.push(
-          <a href={`${slug}${word}`} className="md:col-span-4 text-center">
+          <Link href={`${slug}${word}`} className="md:col-span-4 text-center">
             <Card key={index} className="m-2 p-2">
               {preText} {word} {postText}
             </Card>
-          </a>
+          </Link>
         );
       }
     }

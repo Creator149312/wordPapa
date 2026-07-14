@@ -8,9 +8,10 @@ const openai = new OpenAI({
  * Enriches words with definitions using OpenAI API
  * Returns an array of word objects with full entries for DB storage
  * @param {string[]} words - Array of words to enrich
+ * @param {string} model - The model to use (default: gpt-4o-mini)
  * @returns {Promise<Array<{word: string, entries: Array, source: string}>>}
  */
-export async function enrichWordsWithAI(words) {
+export async function enrichWordsWithAI(words, model = "gpt-5.4-mini") {
   if (!words || words.length === 0) return [];
 
   const enrichedWords = [];
@@ -37,10 +38,11 @@ export async function enrichWordsWithAI(words) {
     `;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: model,
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
       });
+
 
       const responseText = response.choices[0].message.content;
       const parsed = JSON.parse(responseText);

@@ -34,6 +34,7 @@ const AD_CONFIG = {
 
 const AdsUnitInner = ({ slot, variant }) => {
   const insRef = useRef(null);
+  const pathname = usePathname();
   
   // Map variant to config, fallback to default
   const config = useMemo(() => AD_CONFIG[variant] || AD_CONFIG.default, [variant]);
@@ -42,12 +43,17 @@ const AdsUnitInner = ({ slot, variant }) => {
     const el = insRef.current;
     if (!el) return;
 
+    // Reset markers and inner content on mount/update to ensure fresh ad load
+    // The 'key' on the parent AdsUnit component will handle the full unmount/mount 
+    // for route changes, but this provides an extra layer of safety.
+    delete el.dataset.adsActualPushed;
+    delete el.dataset.adsScheduled;
+    el.removeAttribute("data-adsbygoogle-status");
+    el.innerHTML = ""; 
+
     const schedulePush = () => {
-      if (typeof requestIdleCallback !== "undefined") {
-        requestIdleCallback(doPush, { timeout: 3000 });
-      } else {
-        setTimeout(doPush, 500);
-      }
+      // Use a consistent delay to allow the fresh DOM node to be recognized by Google
+      setTimeout(doPush, 400);
     };
 
     function doPush() {
@@ -82,7 +88,8 @@ const AdsUnitInner = ({ slot, variant }) => {
 
     ro.observe(el);
     return () => ro.disconnect();
-  }, [slot]);
+  }, [slot, pathname]);
+
 
   return (
     <div 
@@ -110,14 +117,13 @@ const AdsUnitInner = ({ slot, variant }) => {
 
 
 
-const AdsUnit = ({ slot, variant = "default", index = 0, sticky = false }) => {
+const AdsUnit = ({ slot, variant = "default", index = 0 }) => {
   const pathname = usePathname();
-  // Global/Sticky ads (like header/footer) shouldn't remount on every navigation
-  // this prevents "Heavy Ad Intervention" from Chrome by not churning iframes.
-  const refreshKey = sticky ? "sticky" : pathname;
-  
-  return <AdsUnitInner key={`${refreshKey}-${slot}-${index}`} slot={slot} variant={variant} />;
+  // Force a full component remount on every URL change to guarantee ad refresh.
+  // This kills the old ad iframe and triggers a fresh 'push' for the new route.
+  return <AdsUnitInner key={`${pathname}-${slot}-${index}`} slot={slot} variant={variant} />;
 };
+
 
 export default AdsUnit;
 

@@ -9,6 +9,7 @@ import {
   Trophy,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@components/ThemeToggle";
 import SearchBarNav from "@components/SearchNavBar";
@@ -63,7 +64,7 @@ const Navbar = () => {
 
         {/* ── Logo + Mobile Toggle ───────────────────────────────── */}
         <div className="z-50 py-2 sm:py-3 w-full md:w-auto flex justify-between items-center">
-          <a
+          <Link
             href="/"
             className="flex items-center gap-2"
           >
@@ -73,7 +74,7 @@ const Navbar = () => {
             <span className="text-[1rem] font-black tracking-[-0.03em] text-zinc-950 dark:text-white">
               Word<span className="text-[#75c32c]">Papa</span>
             </span>
-          </a>
+          </Link>
 
           <div className="flex gap-2 md:hidden items-center">
             <ThemeToggle />
@@ -101,7 +102,7 @@ const Navbar = () => {
             if (item.hasDropdown) {
               return (
                 <div key={item.href} className="relative group">
-                  <a
+                  <Link
                     href={item.href}
                     className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
                       active
@@ -115,7 +116,7 @@ const Navbar = () => {
                       className="shrink-0"
                     />
                     {item.label}
-                  </a>
+                  </Link>
                   {/* Reuse existing dropdown menu — positioned below trigger */}
                   <div className="absolute right-0 top-full hidden group-hover:block pt-2 z-50">
                     <div className="bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 shadow-xl rounded-2xl min-w-[190px] overflow-visible py-1">
@@ -129,13 +130,13 @@ const Navbar = () => {
                         { name: "Phrasal Verbs", link: "/phrasal-verbs" },
                         { name: "All Dictionaries", link: "/browse" },
                       ].map((sub) => (
-                        <a
+                        <Link
                           key={sub.link}
                           href={sub.link}
                           className="block px-4 py-2.5 text-[11px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-[#75c32c] transition-colors border-b border-gray-50 dark:border-gray-800/50 last:border-0"
                         >
                           {sub.name}
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -144,7 +145,7 @@ const Navbar = () => {
             }
 
             return (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
@@ -163,19 +164,19 @@ const Navbar = () => {
                 {item.spotlight && !active && (
                   <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#75c32c]" />
                 )}
-              </a>
+              </Link>
             );
           })}
 
           <div className="h-6 w-px bg-gray-100 dark:bg-gray-800 mx-2" />
           {/* ── Play CTA ── primary conversion button */}
-          <a
+          <Link
             href="/games/hangman"
             className="group flex items-center gap-2 bg-[#75c32c] text-white px-4 py-2 rounded-full border-2 border-b-4 border-black/20 hover:border-b-2 hover:translate-y-px active:translate-y-[3px] active:border-b-1 transition-all duration-75 shadow-md shadow-[#75c32c]/30 whitespace-nowrap"
           >
             <Gamepad2 size={15} strokeWidth={3} className="group-hover:rotate-12 transition-transform" />
             <span className="text-[11px] font-black uppercase tracking-widest">Play</span>
-          </a>
+          </Link>
           <div className="h-6 w-px bg-gray-100 dark:bg-gray-800 mx-2" />
           <ThemeToggle />
           <UserProfileDropDown />
@@ -192,7 +193,7 @@ const Navbar = () => {
               const Icon = item.icon;
               const active = isActive(pathname, item);
               return (
-                <a
+                <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
@@ -207,7 +208,7 @@ const Navbar = () => {
                   {item.spotlight && !active && (
                     <span className="ml-auto w-2 h-2 rounded-full bg-[#75c32c]" />
                   )}
-                </a>
+                </Link>
               );
             })}
             <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col items-center gap-4">

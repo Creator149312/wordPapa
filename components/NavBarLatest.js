@@ -3,6 +3,7 @@ import { useState } from "react";
 import styles from "@public/styles/NavBar.module.css";
 import logo from "@public/logo192.png";
 import Image from "next/image";
+import Link from "next/link";
 import UserInfo from "./UserInfo";
 import CustomNavigationMenu from '@components/dropdowns/CustomNavigationMenu'
 import { useSession } from "next-auth/react";
@@ -55,10 +56,10 @@ const wordFindersComponents = [
 
   return (
     <nav className={`${styles.navbar}`}>
-      <a href="/" className={`${styles.logo}`}>
+      <Link href="/" className={`${styles.logo}`}>
         <Image src={logo} alt="WordPapa Logo" width="35" height="35" />
         WordPapa
-      </a>
+      </Link>
       <div>
         <ul className={`${styles.navMenu} ${isActive ? styles.active : ""}`}>
           <li>
@@ -71,12 +72,12 @@ const wordFindersComponents = [
             <CustomNavigationMenu title={"Word Finders"} itemList={wordFindersComponents}/>
           </li>
           <li onClick={removeActive}>
-            <a href="/thesaurus" className={`${styles.navLink}`}>Thesaurus
-            </a>
+            <Link href="/thesaurus" className={`${styles.navLink}`}>Thesaurus
+            </Link>
           </li>
           <li onClick={removeActive}>
-            <a href="/browse" className={`${styles.navLink}`}>Dictionaries
-            </a>
+            <Link href="/browse" className={`${styles.navLink}`}>Dictionaries
+            </Link>
           </li>
           {/* <li >
             <UserInfo name={session?.user?.name} status={status}/>

@@ -4,11 +4,13 @@ import { WORDMAP } from "../WORDMAP";
 import AddToMyListsButton from "@components/AddToMyListsButton";
 import { connectMongoDB } from "@lib/mongodb";
 import AudioPronunciation from "../AudioPronunciation";
-import { BookOpen, Quote, Sparkles } from "lucide-react";
+import { BookOpen, Quote, Sparkles, UserRound } from "lucide-react";
 import Link from "next/link";
 import EnrichTrigger from "../EnrichTrigger";
 import AdsUnit from "@components/AdsUnit";
 import { cache } from "react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../api/auth/[...nextauth]/route";
 
 export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
 
@@ -71,15 +73,7 @@ export async function generateMetadata({ params }) {
   const word = getNormalizedWord(rawSlug);
   const ifInWordMap = WORDMAP[word.replace(/[ -]/g, "")] || WORDMAP[word];
 
-  if (!ifInWordMap) {
-    return {
-      title: "Try a new word",
-      description: "This word is not available in our word map. Please try another.",
-      robots: { index: false },
-    };
-  }
-
-  const displayWord = ifInWordMap; 
+  const displayWord = ifInWordMap || word; 
   const wordData = await getWordData(displayWord);
 
   const titleStr = `${displayWord.toUpperCase()} Definition with Sentence Examples`;
@@ -93,8 +87,11 @@ export async function generateMetadata({ params }) {
   let canonicalSlug = displayWord.toLowerCase().replace(/ /g, "-");
   let canonical = `${siteURL}/define/${canonicalSlug}`;
 
-  // Simplify indexing: Only index if it's a clean single word AND we have data
-  const shouldIndex = isSingleWord(displayWord) && !!wordData;
+  // Indexing Policy:
+  // 1. MUST be in the curated WORDMAP to be indexed (prevent low-quality/garbage pages)
+  // 2. MUST be a single word (standard SEO policy)
+  // 3. MUST have data
+  const shouldIndex = !!ifInWordMap && isSingleWord(displayWord) && !!wordData;
 
   return {
     title: titleStr,
@@ -129,11 +126,16 @@ function isValidWordData(parsed) {
 export default async function DefineWordPage({ params }) {
   const rawSlug = params.word;
   const normalizedKey = getNormalizedWord(rawSlug);
+  const session = await getServerSession(authOptions);
   
-  // Try to find the exact display word from mapping
-  const displayWord = WORDMAP[normalizedKey.replace(/[ -]/g, "")] || WORDMAP[normalizedKey];
+  // Try to find the exact display word from mapping, else fallback to normalized raw slug
+  const ifInWordMap = WORDMAP[normalizedKey.replace(/[ -]/g, "")] || WORDMAP[normalizedKey];
+  const displayWord = ifInWordMap || normalizedKey;
 
-  if (!displayWord) {
+  // Basic sanity check: Don't try to define very long/short strings or numbers
+  const isLikelyWord = /^[a-zA-Z-]{2,30}$/.test(displayWord);
+
+  if (!displayWord || !isLikelyWord) {
     const decodedWord = decodeURIComponent(rawSlug);
     return (
       <div className="max-w-2xl mx-auto mt-10 p-4">
@@ -141,7 +143,7 @@ export default async function DefineWordPage({ params }) {
           <CardContent className="pt-10 pb-10 text-center">
             <h1 className="text-4xl font-black text-red-600 mb-4">{decodedWord}</h1>
             <p className="text-gray-600 dark:text-red-200/60 font-medium">
-              This word hasn't joined our dictionary yet. Please try another!
+              This doesn't look like a standard word. Please try another!
             </p>
           </CardContent>
         </Card>
@@ -157,6 +159,8 @@ export default async function DefineWordPage({ params }) {
   }
 
   const decodedWord = displayWord; // Use the correctly formatted version for the UI
+  const isAuth = !!session;
+  const canTriggerAI = !!ifInWordMap || isAuth;
 
   return (
     <div className="max-w-4xl mx-auto p-0 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-700">
@@ -204,18 +208,43 @@ export default async function DefineWordPage({ params }) {
       <div className="grid grid-cols-1 gap-6">
         {wordData.entries.length === 0 ? (
           <>
-            <EnrichTrigger word={decodedWord} />
-            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-sm text-center space-y-3">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#75c32c]/10 text-[#75c32c] rounded-full text-xs font-black uppercase tracking-widest animate-pulse">
-                <Sparkles size={12} />
-                Fetching definition…
+            {canTriggerAI ? (
+              <>
+                <EnrichTrigger word={decodedWord} />
+                <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-sm text-center space-y-3">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#75c32c]/10 text-[#75c32c] rounded-full text-xs font-black uppercase tracking-widest animate-pulse">
+                    <Sparkles size={12} />
+                    Fetching definition…
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Hang tight — generating the definition for <strong>{decodedWord}</strong> and saving it for next time.
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-800 shadow-sm text-center space-y-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 rounded-full">
+                  <UserRound size={24} />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Community definition needed</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto">
+                    This word isn't in our core library yet. <strong>Sign in</strong> to trigger an AI definition for the community!
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <Link 
+                    href="/login" 
+                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#75c32c] text-white rounded-full font-black text-xs uppercase tracking-widest hover:shadow-lg hover:shadow-[#75c32c]/20 transition-all"
+                  >
+                    Sign In to Define
+                  </Link>
+                </div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Hang tight — generating the definition for <strong>{decodedWord}</strong> and saving it for next time.
-              </p>
-            </div>
+            )}
           </>
         ) : (
+
           wordData.entries.map((entry, idx) => (
             <div key={idx} className="group bg-white dark:bg-gray-900 rounded-[2rem] p-6 md:p-8 border border-gray-100 dark:border-gray-800 hover:border-[#75c32c]/50 dark:hover:border-[#75c32c]/50 transition-colors shadow-sm">
               <div className="flex items-start gap-4">

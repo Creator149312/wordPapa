@@ -1,9 +1,10 @@
 'use client'
 import commonLinks from "@utils/commonLinks"; 
+import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
 function displayLinK(link, AnchorText) {
-    return <a className="m-2 text-lg p-2 bg-[#75c32c] inline-block text-center shadow-md cursor-pointer" href={link}>{AnchorText}</a>;
+    return <Link className="m-2 text-lg p-2 bg-[#75c32c] inline-block text-center shadow-md cursor-pointer" href={link}>{AnchorText}</Link>;
   }  
 
 const RelLinksonPageBottom = ({ word, pos, isCompound}) => {
