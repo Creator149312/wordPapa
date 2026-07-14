@@ -70,12 +70,13 @@ const layout = ({ children }) => {
             <main className="max-w-[1600px] mx-auto grid md:grid-cols-12 gap-4 p-3 pb-16 md:p-4 md:pb-4 pt-4 md:pt-6">
               {/* Left Column: Top Ad + Primary Content */}
               <div className="md:col-span-9 space-y-4">
-                {/* Top Banner Ad - limited to main content width */}
-                <div className="rounded-2xl overflow-hidden">
+                {/* Top Header Ad - limited to main content width */}
+                <div className="rounded-2xl overflow-hidden shrink-0">
                   <AdsUnit slot="1177026196" variant="header" index={0} sticky={true} />
                 </div>
 
-                <Card className="border-none bg-white dark:bg-gray-900 shadow-sm rounded-[2rem] md:rounded-[2.5rem] md:p-6 overflow-hidden min-h-[80vh]">
+
+                <Card className="border-none bg-transparent md:bg-white dark:md:bg-gray-900 shadow-none md:shadow-sm rounded-[2rem] md:rounded-[2.5rem] p-0 md:p-6 overflow-hidden min-h-[80vh]">
                   {children}
                 </Card>
               </div>

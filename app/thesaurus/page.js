@@ -11,20 +11,20 @@ export const metadata = {
 
 function SimilarWordsPage() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 min-h-screen">
       {/* Header Section */}
-      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="mb-8 md:mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
           <BookOpen size={14} /> Writing Assistant
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
           Thesaurus: Find <span className="text-[#75c32c]">Synonyms</span> & Antonyms
         </h1>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Main Concept Card */}
-        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
+        <section className="p-6 md:p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
           <p className="text-lg md:text-xl font-bold text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
             A thesaurus is like a magical treasure chest for finding synonyms and antonyms of a word! 
             Imagine you're telling a story, and you've used the word <span className="text-[#75c32c]">"happy"</span> a lot. 
@@ -102,73 +102,3 @@ function SimilarWordsPage() {
 
 export default SimilarWordsPage;
 
-// import AdsUnit from "@components/AdsUnit";
-// const ptitle = "Thesaurus: Find Synonyms & Antonyms of English Words";
-
-// export const metadata = {
-//   title: ptitle,
-//   description:
-//     "WordPapa's Thesaurus is a reference tool that generates synonyms and antonyms for english words and phrases. It assists writers, speakers, and students by finding another words with similar or opposite meanings.",
-// };
-
-// function SimilarWordsPage() {
-//   return (
-//     <div className="m-3 p-3">
-//       <h1 className="mb-3 text-4xl font-bold">{ptitle}</h1>
-//       <p className="mb-6 text-lg font-normal">
-//         A thesaurus is like a magical treasure chest for finding
-//         synonyms and antonyms of a word! Imagine you're telling a
-//         story, and you've used the word "happy" a lot. It is your
-//         friendly tool that will help you suggest other words with
-//         similar meanings, like "joyful," "content," or "cheerful."
-//       </p>
-//       <p className="mb-6 text-lg font-normal">
-//         It's not a dictionary that tells you what words mean; instead,
-//         it's a guide to finding another word for words or phrases.
-//         Just type in a word, and the thesaurus opens up a world of
-//         possibilities, making your writing more interesting and
-//         colorful.
-//       </p> <AdsUnit slot='7782807936'/> 
-//       <p className="mb-6 text-lg font-normal">
-//         It's like having a map to explore a land of words where you
-//         can choose the perfect one that fits your story or essay. So,
-//         if you want your writing to sparkle and shine, a thesaurus is
-//         the magical tool you need!
-//       </p>
-//       <p className="mb-6 text-lg font-normal">
-//         You can think of a thesaurus as a versatile synonym generator
-//         tool designed to help users explore and discover words that
-//         share semantic similarities with a given input word. Whether
-//         you're a writer looking for similar words, a crossword
-//         enthusiast seeking clues, or a student expanding your
-//         vocabulary, this tool is your perfect linguistic companion.
-//       </p>
-//       <p className="mb-6 text-lg font-normal">
-//         Therefore, Thesaurus is sometimes called a synonym dictionary
-//         or dictionary of synonyms. By suggesting list of words with
-//         similar meaning it allows users to choose the most suitable
-//         word to convey their intended message effectively.
-//       </p>
-//       <p className="mb-6 text-lg font-normal">
-//         <strong>Note:</strong> Output result consits of related words,
-//         synonyms and antonyms. You can click "Only synonyms" to see
-//         synonym words, click "Only antonyms" to see opposite words,
-//         click "Related Words" to see all the related words.
-//       </p>
-//       <p className="mb-6 text-lg font-normal">
-//         Using our "filter results" option you can filter output based
-//         on length, starting and ending charcters which futher helps
-//         writers, content creators, and language enthusiasts to find
-//         extact words they need.
-//       </p>
-//       <AdsUnit slot='7782807936'/> 
-//       <p className="mb-6 text-lg font-normal">
-//         Finally, we can say that thesaurus helps us explore the
-//         richness of language and uncover words that resonate with your
-//         intended expression.
-//       </p>
-//     </div>
-//   );
-// }
-
-// export default SimilarWordsPage;

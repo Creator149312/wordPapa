@@ -16,18 +16,18 @@ const mostSearchedWordsList = [
 
 function SyllableCounterPage() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 min-h-screen">
       {/* Header */}
-      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="mb-8 md:mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
           <Hash size={14} /> Phonetics
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
           Syllable <span className="text-[#75c32c]">Counter</span>: Count Word Syllables
         </h1>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Tool — most important, shown first */}
         <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 mb-6">

@@ -55,27 +55,27 @@ const dictionaries = [
 
 const Page = async () => {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 min-h-screen">
       {/* Header */}
-      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="mb-8 md:mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
           <Library size={14} /> Dictionary Hub
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
           WordPapa <span className="text-[#75c32c]">Dictionaries</span>
         </h1>
-        <p className="mt-4 text-lg font-medium text-gray-500 dark:text-gray-400 max-w-2xl">
+        <p className="mt-4 text-base md:text-lg font-medium text-gray-500 dark:text-gray-400 max-w-2xl">
           Your one-stop hub for exploring the building blocks of English — from nouns and verbs to phrasal expressions and synonyms.
         </p>
       </div>
 
       {/* Dictionary Cards Grid */}
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
         {dictionaries.map((dict) => (
           <a
             key={dict.href}
             href={dict.href}
-            className="group p-7 bg-white dark:bg-[#111] border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] shadow-sm hover:border-[#75c32c]/40 hover:shadow-lg hover:shadow-[#75c32c]/5 transition-all duration-200"
+            className="group p-6 md:p-7 bg-white dark:bg-[#111] border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] shadow-sm hover:border-[#75c32c]/40 hover:shadow-lg hover:shadow-[#75c32c]/5 transition-all duration-200"
           >
             <div className="flex items-start justify-between gap-4 mb-3">
               <h2 className="text-lg font-black text-gray-900 dark:text-white group-hover:text-[#75c32c] transition-colors">

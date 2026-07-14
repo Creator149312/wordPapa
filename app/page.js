@@ -76,11 +76,11 @@ const Page = () => {
             Language Mastery
           </div>
 
-          <h1 className="text-7xl md:text-9xl font-black tracking-tighter text-gray-900 dark:text-white">
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-black tracking-tighter text-gray-900 dark:text-white">
             Word<span className="text-[#75c32c]">Papa</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
+          <p className="text-lg md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium px-4 md:px-0">
             The fun and effective way to master words.
             <span className="block text-sm font-bold text-[#75c32c] mt-2 uppercase tracking-widest">by EnglishBix</span>
           </p>

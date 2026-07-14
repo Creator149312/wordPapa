@@ -89,13 +89,9 @@ const Page = async ({ params }) => {
           </div>
         </div>
 
-        {/* In-Content Ad — between header and word list */}
-        <div className="rounded-2xl overflow-hidden mb-8">
-          <AdsUnit slot="1177026196" variant="banner" />
-        </div>
-
         {/* Content Card */}
         <div className="bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-[2rem] p-6 md:p-10 shadow-sm shadow-gray-200/50 dark:shadow-none">
+
           <div className="mb-8">
             <p className="text-gray-500 dark:text-gray-400 font-medium">
               Showing results for words starting with{" "}

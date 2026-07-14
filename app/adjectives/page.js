@@ -29,20 +29,20 @@ export const metadata = {
 
 function AdjectivesExtractorPage() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 min-h-screen">
       {/* Header Section */}
-      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="mb-8 md:mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
           <Palette size={14} /> Creative Writing
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
           Adjectives <span className="text-[#75c32c]">Finder</span>: Describe Your World
         </h1>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Intro Section */}
-        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
+        <section className="p-6 md:p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
           <p className="text-lg md:text-xl font-bold text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
             Our Adjectives Finder is a handy resource for word enthusiasts and writers. 
             Also known as a <span className="text-[#75c32c]">describing words generator</span>, 
@@ -110,94 +110,6 @@ function AdjectivesExtractorPage() {
 
 export default AdjectivesExtractorPage;
 
-// import MostSearchedWordsList from "@components/MostSearchedWordsList";
-// import commonLinks from "@utils/commonLinks";
-// import AdsUnit from "@components/AdsUnit";
-
-// const ptitle = "Adjectives Finder: Get Describing Words for Nouns";
-
-// const mostSearchedWordsList = [
-//   "socks",
-//   "turtle",
-//   "grace",
-//   "watch",
-//   "months",
-//   "wish",
-//   "negotiation",
-//   "display",
-//   "lunch",
-//   "dinner",
-//   "supervisors",
-//   "christian",
-//   "bond",
-//   "fan",
-//   "blue",
-//   "play",
-//   "reader",
-//   "apps",
-//   "fountain",
-//   "office",
-//   "plan",
-//   "nails",
-//   "table",
-//   "rest",
-//   "recitation",
-//   "model",
-//   "packaging",
-//   "condolences",
-//   "collection",
-//   "monday",
-//   "construction",
-//   "tattoo",
-//   "portfolio",
-//   "gamer",
-//   "standard",
-//   "insect",
-//   "lipstick",
-//   "task",
-//   "workout",
-//   "chef",
-//   "internet",
-//   "curtains",
-//   "speech",
-//   "poverty",
-//   "brownies",
-//   "sunglasses",
-//   "decoration",
-//   "principal",
-//   "sloth",
-//   "machine",
-//   "seminar",
-//   "wisdom",
-//   "sustainability",
-//   "startups",
-//   "bathroom",
-//   "gym",
-//   "material",
-//   "tea",
-//   "report",
-//   "salad",
-//   "box",
-//   "program",
-//   "classmates",
-//   "accessories",
-//   "december",
-//   "soap",
-//   "spices",
-//   "modern",
-//   "topic",
-//   "wall",
-//   "relaxing",
-//   "pasta",
-//   "spaghetti",
-//   "mentor",
-//   "math",
-//   "connection",
-//   "message",
-//   "year",
-//   "group",
-//   "weekend",
-//   "laptop",
 //   "soup",
 //   "playground",
 //   "vibes",

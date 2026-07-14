@@ -22,20 +22,20 @@ export const metadata = {
 
 function RhymingWordsPage() {
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 min-h-screen">
       {/* Header */}
-      <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="mb-8 md:mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-4">
           <Music2 size={14} /> Poetry &amp; Lyrics
         </div>
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
-          Rhyming <span className="text-[#75c32c]">Dictionary</span>: Find Perfect Rhymes
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+          Rhyming <span className="text-[#75c32c]">Dictionary</span>: Perfect Word Rhymes
         </h1>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Intro */}
-        <section className="p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
+        <section className="p-6 md:p-8 bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-[#75c32c]/5">
           <p className="text-lg md:text-xl font-bold text-gray-700 dark:text-gray-200 leading-relaxed mb-6">
             A rhyming dictionary is a vital tool for <span className="text-[#75c32c]">poets, lyricists, and rappers</span> — helping you find words that share similar end sounds to craft rhythm and musicality in your writing.
           </p>
@@ -44,12 +44,12 @@ function RhymingWordsPage() {
               <Sparkles size={20} />
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
-              Select <strong>"Find Rhyming Words"</strong> from the dropdown, input your word, and instantly get a curated list organized by letter and syllable count — including near rhymes for creative flexibility.
+              Select <strong>"Find Rhyming Words"</strong> from the dropdown, input your word, and instantly get a curated list organized by letter and syllable count.
             </p>
           </div>
         </section>
 
-        <AdsUnit slot="7782807936" />
+        <AdsUnit slot="7782807936" index={0} />
 
         {/* Feature Grid */}
         <div className="grid md:grid-cols-3 gap-6">
@@ -65,7 +65,7 @@ function RhymingWordsPage() {
             <SlidersHorizontal className="text-[#75c32c] mb-4 group-hover:scale-110 transition-transform" size={28} />
             <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-2">Powerful Filters</h3>
             <p className="text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
-              Refine results by prefix, suffix, or substring — quickly narrow down to rhymes that match your exact structural needs.
+              Refine results by prefix, suffix, or substring — quickly narrow down to rhymes that match your structural needs.
             </p>
           </div>
 
@@ -78,7 +78,7 @@ function RhymingWordsPage() {
           </div>
         </div>
 
-        <AdsUnit slot="7782807936" />
+        <AdsUnit slot="7782807936" index={1} />
 
         {/* Browse section */}
         <div className="mt-4">

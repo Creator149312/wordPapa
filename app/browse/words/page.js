@@ -5,8 +5,12 @@ export async function generateMetadata() {
   return {
     title: `List of All English Words`,
     description: `Browse the Ultimate list of 150000+ English words in alphabetically sorted order which are commonly used in English language.`,
+    alternates: {
+      canonical: "https://www.wordpapa.com/browse/words",
+    },
   };
 }
+
 
 const letters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
 

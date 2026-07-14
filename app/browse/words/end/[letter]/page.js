@@ -10,15 +10,28 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const L = decodeURIComponent(params.letter);
+  const L = decodeURIComponent(params.letter).toLowerCase();
   const phraseSearch = L.length > 1 ? "" : "Letter";
   const titleStr = `Words Ending with ${phraseSearch} ${L.toUpperCase()} in English`;
   const descriptionStr = `Browse all English words that end with ${phraseSearch} ${L} as a suffix`;
-  return { title: titleStr, description: descriptionStr };
+
+  const toIndex = L.length === 1 && /^[a-z]$/.test(L);
+
+  return { 
+    title: titleStr, 
+    description: descriptionStr,
+    alternates: {
+      canonical: `https://www.wordpapa.com/browse/words/end/${L}`,
+    },
+    robots: {
+      index: toIndex,
+      follow: true,
+    },
+  };
 }
 
 const Page = async ({ params }) => {
-  const L = decodeURIComponent(params.letter);
+  const L = decodeURIComponent(params.letter).toLowerCase();
   const phraseSearch = L.length > 1 ? "" : "Letter";
   const regex = /^[a-zA-Z0-9]+$/;
 
@@ -30,31 +43,33 @@ const Page = async ({ params }) => {
 
   if (words.length === 0) {
     return (
-      <div className="p-8 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] text-center">
-        <h1 className="text-2xl font-black text-gray-400 mb-2">No Words Found</h1>
-        <p className="text-gray-500 dark:text-gray-400 font-medium">
-          No words ending with <strong className="text-gray-700 dark:text-white">{L}</strong> were found. Try a different letter.
-        </p>
+      <div className="px-4 md:px-8 py-8">
+        <div className="p-8 bg-gray-50 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem] text-center">
+          <h1 className="text-2xl font-black text-gray-400 mb-2">No Words Found</h1>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">
+            No words ending with <strong className="text-gray-700 dark:text-white">{L}</strong> were found. Try a different letter.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="py-8 space-y-6">
-      <div className="px-2">
+    <div className="px-4 md:px-6 py-8 md:py-12 space-y-8">
+      <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#75c32c]/10 text-[#75c32c] text-[10px] font-black uppercase tracking-[0.2em] mb-3">
           <BookOpen size={12} /> English Words
         </div>
-        <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+        <h1 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
           {titleString.replace(L.toUpperCase(), "").replace("in English", "").trim()}{" "}
           <span className="text-[#75c32c]">{L.toUpperCase()}</span>
           <span className="text-gray-400 dark:text-gray-600"> in English</span>
         </h1>
-        <p className="mt-3 text-gray-500 dark:text-gray-400 font-medium">
+        <p className="mt-4 text-lg text-gray-500 dark:text-gray-400 font-medium max-w-2xl">
           Explore the complete list of{" "}
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#75c32c]/10 text-[#75c32c] text-sm font-black">{words.length}</span>{" "}
+          <span className="text-[#75c32c] font-black">{words.length.toLocaleString()}</span>{" "}
           English words ending with {phraseSearch}{" "}
-          <strong className="text-gray-800 dark:text-white">{L}</strong> as a suffix.
+          <strong className="text-gray-800 dark:text-white">{L.toUpperCase()}</strong> as a suffix.
         </p>
       </div>
 
@@ -62,5 +77,6 @@ const Page = async ({ params }) => {
     </div>
   );
 };
+
 
 export default Page;

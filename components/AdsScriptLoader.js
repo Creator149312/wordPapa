@@ -16,6 +16,8 @@ const AdsScriptLoader = () => {
       script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS_ID}`;
       script.crossOrigin = "anonymous";
       script.async = true;
+      // Use fetchpriority="low" to ensure the script doesn't compete with LCP images
+      script.setAttribute("fetchpriority", "low");
       document.head.appendChild(script);
     };
 
