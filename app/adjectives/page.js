@@ -59,7 +59,7 @@ function AdjectivesExtractorPage() {
           </div>
         </section>
 
-        <AdsUnit slot="7782807936" />
+        <AdsUnit slot="7782807936" index={0} />
 
         {/* Feature Grid */}
         <div className="grid md:grid-cols-2 gap-6">
@@ -82,7 +82,7 @@ function AdjectivesExtractorPage() {
           </div>
         </div>
 
-        <AdsUnit slot="7782807936" />
+        <AdsUnit slot="7782807936" index={1} />
 
         {/* Popular Searches Section */}
         <div className="mt-12">

@@ -1,133 +1,54 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 const AdsScriptLoader = () => {
-  const scriptLoaded = useRef(false);
-  const pathname = usePathname();
-
-  // Re-push ad slots on every route change (soft navigation in Next.js)
   useEffect(() => {
-    if (typeof window !== "undefined" && window.adsbygoogle) {
-      const ads = document.querySelectorAll(".adsbygoogle:not([data-adsbygoogle-status])");
-      ads.forEach(() => {
-        try {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {}
-      });
-    }
-  }, [pathname]);
+    if (typeof window === "undefined") return;
 
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      const adElements = document.querySelectorAll(".adsbygoogle"); // Select all ad slots
-      // const timeoutId = setTimeout(() => {
-      //   if (!scriptLoaded) {
-      //     loadAdsScript();
-      //   }
-      // }, 5000);
+    let loaded = false;
+    const ADS_ID = "ca-pub-6746947892342481"; 
 
-      const isMobile = () => /Mobi|Android/i.test(navigator.userAgent);
+    const loadAdsScript = () => {
+      if (loaded) return;
+      loaded = true;
 
-      const loadAdsScript = () => {
-        const script = document.createElement("script");
-        script.src =
-          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6746947892342481";
-        script.crossorigin = "anonymous";
-        script.async = true;
-        script.onload = () => {
-          //if it is desktop device we load ads after script is loaded
-          var ads = document.getElementsByClassName("adsbygoogle").length;
-          for (var i = 0; i < ads; i++) {
-            try {
-              (window.adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {}
-          }
+      const script = document.createElement("script");
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS_ID}`;
+      script.crossOrigin = "anonymous";
+      script.async = true;
+      document.head.appendChild(script);
+    };
 
-          scriptLoaded.current = true;
-        };
-        document.body.appendChild(script);
-      };
+    // Setup Interaction Listeners immediately on mount
+    const activityEvents = ["mousedown", "mousemove", "keydown", "scroll", "touchstart"];
+    const listenerOptions = { once: true, passive: true };
 
-      // const loadAd = () => {
-      //   // Push an ad into the adsbygoogle array
-      //   try {
-      //     window.adsbygoogle = window.adsbygoogle || [];
-      //     window.adsbygoogle.push({});
-      //   } catch (e) {}
-      // };
-
-      // const observer = new IntersectionObserver(
-      //   (entries) => {
-      //     entries.forEach((entry) => {
-      //       if (entry.isIntersecting && scriptLoaded) {
-      //         loadAd();
-      //         observer.unobserve(entry.target); // Stop observing after loading
-      //       }
-      //     });
-      //   },
-      //   { threshold: 0.02 }
-      // );
-
-      const handleInteraction = () => {
-        // clearTimeout(timeoutId);
-        if (!scriptLoaded.current) {
-          loadAdsScript();
-        }
-      };
-
-      if (isMobile()) {
-        // adElements.forEach((adElement) => {
-        //   observer.observe(adElement); // Observe each ad element
-        // });
-
-        document.addEventListener("scroll", handleInteraction);
+    const handleActivity = () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(() => loadAdsScript());
       } else {
-        const events = [
-          "mousemove",
-          "click",
-          "scroll",
-          "keypress",
-          "touchstart",
-        ];
-        events.forEach((event) => {
-          document.addEventListener(event, handleInteraction);
-        });
+        loadAdsScript();
       }
+      cleanUpListeners();
+    };
 
-      return () => {
-        if (isMobile()) {
-          document.removeEventListener("scroll", handleInteraction);
+    const cleanUpListeners = () => {
+      activityEvents.forEach((event) => {
+        document.removeEventListener(event, handleActivity, listenerOptions);
+      });
+    };
 
-          // adElements.forEach((adElement) => {
-          //   observer.unobserve(adElement);
-          // });
-        } else {
-          const events = [
-            "mousemove",
-            "click",
-            "scroll",
-            "keypress",
-            "touchstart",
-          ];
-          events.forEach((event) => {
-            document.removeEventListener(event, handleInteraction);
-          });
-        }
-      };
-    }
+    activityEvents.forEach((event) => {
+      document.addEventListener(event, handleActivity, listenerOptions);
+    });
+
+    return () => {
+      cleanUpListeners();
+    };
   }, []);
 
-  return (
-    <div>
-      {/* Your page content */}
-      {/* Conditionally render ad code here (similar to hook approach) */}
-    </div>
-  );
+  return null;
 };
 
 export default AdsScriptLoader;
 
-// function newFunction(scriptLoaded) {
-//   return scriptLoaded;
-// }

@@ -1,7 +1,7 @@
 import unScrambledWordsArray from "./unscrambled-words"
 const BASE_URL = "https://words.englishbix.com";
 
-export const revalidate = 0;
+export const revalidate = 2592000; // Cache sitemap for 1 month
 
 export default async function sitemap({ id }) {
   const AllWords = new Set();
@@ -21,5 +21,7 @@ export default async function sitemap({ id }) {
   return AllWordsArray.map((word) => ({
     url: `${BASE_URL}/word-finder/${word}`.trim(),
     lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.5,
   }));
 }

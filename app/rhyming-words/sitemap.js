@@ -22,5 +22,7 @@ export default async function sitemap({ id }) {
   return AllWordsArray.map((word) => ({
     url: `${BASE_URL}/rhyming-words/${word}`.trim(),
     lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.5,
   }));
 }

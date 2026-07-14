@@ -5,8 +5,8 @@ const BASE_URL = "https://words.englishbix.com";
  */
 
 //Opting out of Full Route Cache, or in other words, dynamically render components for every incoming request, by:
-//Using the dynamic = 'force-dynamic' or revalidate = 0 route segment
-export const revalidate = 0;
+// Using the dynamic = 'force-dynamic' or revalidate = 0 route segment
+export const revalidate = 2592000; // Cache sitemap for 1 month
 
 const startPhrases = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "al", "th", "un", "in", "ch", "ab", "de", "gr"];
 const endPhrases = [ "a", "e", "y", "ly", "ful", "less", "al", "er"];

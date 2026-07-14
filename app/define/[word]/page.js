@@ -8,6 +8,7 @@ import { BookOpen, Quote, Sparkles } from "lucide-react";
 import Link from "next/link";
 import EnrichTrigger from "../EnrichTrigger";
 import AdsUnit from "@components/AdsUnit";
+import { cache } from "react";
 
 export const revalidate = 3600 * 24 * 60; // revalidate every 2 months
 
@@ -16,11 +17,60 @@ let siteURL =
     ? "https://words.englishbix.com"
     : "http://localhost:3000";
 
-export async function generateMetadata({ params }) {
-  let slug = decodeURIComponent(params.word);
-  let word = slug;
+// ✅ Deduplicate DB calls: Shared between metadata and page component
+const getWordData = cache(async (word) => {
+  await connectMongoDB();
+  return await Word.findOne({ word: word.toLowerCase() }).lean();
+});
 
-  const ifInWordMap = WORDMAP[word.replace(/[ -]/g, "")];
+// ✅ Pre-generate 5,000 pages to save Vercel execution budget
+// The rest will be generated on-demand and cached via ISR
+export async function generateStaticParams() {
+  // Use a Set to ensure unique display words
+  const uniqueWords = Array.from(new Set(Object.values(WORDMAP)));
+  
+  // Pick 5,000 clean single words for static generation
+  return uniqueWords
+    .filter(word => /^[A-Za-z]+$/.test(word))
+    .slice(0, 5000)
+    .map((word) => ({
+      word: word.toLowerCase(),
+    }));
+}
+
+// Utility function to normalize slugs for lookup
+// This handles: spaces -> hyphens, trailing punctuation, and casing
+function getNormalizedWord(slug) {
+  if (!slug) return "";
+  
+  // 1. Basic cleaning: decode, lowercase, and trim trailing punctuation like ! or ?
+  let word = decodeURIComponent(slug)
+    .toLowerCase()
+    .replace(/[!?.]+$/, "") // Remove trailing punctuation for the lookup
+    .trim();
+
+  // 2. Check WORDMAP with variations
+  // Variation A: Exact match
+  if (WORDMAP[word]) return word;
+  
+  // Variation B: Remove all spaces and hyphens (standard for your WORDMAP)
+  let cleanKey = word.replace(/[ -]/g, "");
+  if (WORDMAP[cleanKey]) return cleanKey;
+
+  // Variation C: Handle apostrophes (e.g., o-clock -> o'clock)
+  // If the word contains a hyphen where an apostrophe might be
+  let withApostrophe = word.replace(/-/g, "'");
+  if (WORDMAP[withApostrophe]) return withApostrophe;
+  
+  // Return the best guess if no match
+  return word;
+}
+
+export async function generateMetadata({ params }) {
+  const rawSlug = params.word;
+  const word = getNormalizedWord(rawSlug);
+  const ifInWordMap = WORDMAP[word.replace(/[ -]/g, "")] || WORDMAP[word];
+
   if (!ifInWordMap) {
     return {
       title: "Try a new word",
@@ -29,23 +79,31 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  await connectMongoDB();
-  const wordData = await Word.findOne({ word }).lean();
+  const displayWord = ifInWordMap; 
+  const wordData = await getWordData(displayWord);
 
-  const titleStr = `${word.toUpperCase()} Definition with Sentence Examples`;
+  const titleStr = `${displayWord.toUpperCase()} Definition with Sentence Examples`;
   const descriptionStr = wordData
-    ? `Learn the meaning of "${word}" as a ${wordData.entries
+    ? `Learn the meaning of "${displayWord}" as a ${wordData.entries
         .map((e) => e.pos)
         .join(", ")}. Includes definitions and example sentences.`
-    : `Find what does "${word}" mean and see sentence examples using "${word}".`;
+    : `Find what does "${displayWord}" mean and see sentence examples using "${displayWord}".`;
 
-  let canonical = `${siteURL}/define/${slug}`;
+  // Always point canonical to a clean, hyphenated version
+  let canonicalSlug = displayWord.toLowerCase().replace(/ /g, "-");
+  let canonical = `${siteURL}/define/${canonicalSlug}`;
+
+  // Simplify indexing: Only index if it's a clean single word AND we have data
+  const shouldIndex = isSingleWord(displayWord) && !!wordData;
 
   return {
     title: titleStr,
     description: descriptionStr,
     alternates: { canonical },
-    robots: { index: false },
+    robots: { 
+      index: shouldIndex,
+      follow: true 
+    },
   };
 }
 
@@ -69,11 +127,14 @@ function isValidWordData(parsed) {
 }
 
 export default async function DefineWordPage({ params }) {
-  await connectMongoDB();
-  const decodedWord = decodeURIComponent(params.word);
-  const ifInWordMap = WORDMAP[decodedWord.replace(/[ -]/g, "")];
+  const rawSlug = params.word;
+  const normalizedKey = getNormalizedWord(rawSlug);
+  
+  // Try to find the exact display word from mapping
+  const displayWord = WORDMAP[normalizedKey.replace(/[ -]/g, "")] || WORDMAP[normalizedKey];
 
-  if (!ifInWordMap) {
+  if (!displayWord) {
+    const decodedWord = decodeURIComponent(rawSlug);
     return (
       <div className="max-w-2xl mx-auto mt-10 p-4">
         <Card className="border-2 border-red-100 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10 rounded-3xl overflow-hidden">
@@ -88,15 +149,14 @@ export default async function DefineWordPage({ params }) {
     );
   }
 
-  let wordData = await Word.findOne({ word: decodedWord }).lean();
+  const finalWord = displayWord.toLowerCase();
+  let wordData = await getWordData(finalWord);
 
-  // Word not in DB yet — return a placeholder immediately.
-  // EnrichTrigger fires /api/words/enrich client-side after hydration,
-  // saves the result to DB, then calls router.refresh() to show it.
-  // All subsequent visits hit the DB + ISR cache; OpenAI is never called again.
   if (!wordData) {
-    wordData = { word: decodedWord, entries: [] };
+    wordData = { word: finalWord, entries: [] };
   }
+
+  const decodedWord = displayWord; // Use the correctly formatted version for the UI
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-700">
@@ -144,7 +204,7 @@ export default async function DefineWordPage({ params }) {
 
       {/* In-Content Ad — below the fold, above definitions */}
       <div className="rounded-2xl overflow-hidden">
-        <AdsUnit slot="1177026196" variant="banner" />
+        <AdsUnit slot="1177026196" variant="default" index={2} />
       </div>
 
       {/* Content Section: Definitions & Examples */}

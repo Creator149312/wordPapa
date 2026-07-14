@@ -1,7 +1,7 @@
 import synonymWordsArray from "./synonym-words";
 import synonymsToAvoid from "./synonym-to-avoid";
 const BASE_URL = "https://words.englishbix.com";
-export const revalidate = 0;
+export const revalidate = 2592000; // Cache sitemap for 1 month
 
 export default async function sitemap({ id }) {
   const AllWords = new Set();
@@ -26,6 +26,8 @@ export default async function sitemap({ id }) {
     return {
       url: `${BASE_URL}/thesaurus/${word}`.trim(),
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
     };
   });
 }

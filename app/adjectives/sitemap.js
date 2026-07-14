@@ -7,5 +7,7 @@ export default async function sitemap({ id }) {
   return ADJECTIVEWORDSLIST.map((word) => ({
     url: `${BASE_URL}/adjectives/${word}`.trim(),
     lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.5,
   }));
 }

@@ -2,6 +2,7 @@ import { connectMongoDB } from "@lib/mongodb";
 import Word from "@models/word";
 import { enrichWordsWithAI } from "@utils/wordEnricher";
 import { NextResponse } from "next/server";
+import { WORDMAP } from "../../../define/WORDMAP";
 
 /**
  * GET or enrich words with definitions
@@ -20,9 +21,19 @@ export async function POST(request) {
 
     await connectMongoDB();
 
+    // 1. Filter input: Only allow words that exist in our WORDMAP to prevent DB bloat
+    const validWords = words.filter(w => {
+      const cleanKey = w.toLowerCase().replace(/[ -]/g, "");
+      return !!WORDMAP[cleanKey];
+    });
+
+    if (validWords.length === 0) {
+      return NextResponse.json({ words: [] }, { status: 200 });
+    }
+
     // Fetch existing words from database
     const existingWords = await Word.find({
-      word: { $in: words.map(w => w.toLowerCase()) }
+      word: { $in: validWords.map(w => w.toLowerCase()) }
     });
 
     // Create map of existing words
@@ -32,7 +43,7 @@ export async function POST(request) {
     });
 
     // Find words that need enrichment
-    const wordsToEnrich = words.filter(
+    const wordsToEnrich = validWords.filter(
       w => !existingWordMap[w.toLowerCase()]
     );
 

@@ -7,8 +7,8 @@ const BASE_URL = "https://words.englishbix.com";
  */
 
 //Opting out of Full Route Cache, or in other words, dynamically render components for every incoming request, by:
-//Using the dynamic = 'force-dynamic' or revalidate = 0 route segment
-export const revalidate = 0;
+// Using the dynamic = 'force-dynamic' or revalidate = 0 route segment
+export const revalidate = 2592000; // Cache sitemap for 1 month
 
 function countSpacesAndHyphens(word) {
   const regex = /[\s-]/g;
@@ -109,6 +109,8 @@ export default async function sitemap({ id }) {
     return {
       url: word === "" ? `${BASE_URL}/define`.trim() : `${BASE_URL}/define/${word}`.trim(),
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
     };
   });
 }

@@ -41,7 +41,7 @@ function WordFinderPage() {
           </p>
         </section>
 
-        <AdsUnit slot="7782807936" />
+        <AdsUnit slot="7782807936" index={0} />
 
         {/* Features Grid-style layout */}
         <div className="grid md:grid-cols-2 gap-8">
@@ -79,7 +79,7 @@ function WordFinderPage() {
           </p>
         </section>
 
-        <AdsUnit slot="7782807936" />
+        <AdsUnit slot="7782807936" index={1} />
 
         <div className="text-center py-12">
           <p className="text-xl font-black text-gray-800 dark:text-white uppercase tracking-tighter mb-4">

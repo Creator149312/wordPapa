@@ -1,9 +1,19 @@
 import RelLinksonPageBottom from "@components/RelLinksonPageBottom";
 import ToggleView from "../ToggleView";
 import synonymWordsSET from "../synonym-wordsSET";
+import synonymWordsArray from "../synonym-words";
 import { CardContent, CardHeader } from "@components/ui/card";
 
 export const revalidate = 2592000; // ✅ Cache full page HTML
+
+// ✅ Pre-generate pages to save Vercel execution budget
+export async function generateStaticParams() {
+  // Return the first 2000 words to pre-render (to keep build times reasonable)
+  // The rest will be generated on-demand and cached via ISR
+  return synonymWordsArray.slice(0, 2000).map((word) => ({
+    word: word.replace(/ /g, "-"),
+  }));
+}
 
 // Metadata stays the same — no change needed for caching
 export async function generateMetadata({ params }) {

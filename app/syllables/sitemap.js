@@ -1,7 +1,7 @@
 import syllableWordsArray from "./syllable-words";
 const BASE_URL = "https://words.englishbix.com";
 
-export const revalidate = 0;
+export const revalidate = 2592000; // Cache sitemap for 1 month
 
 export default async function sitemap({ id }) {
   const simpleRegex = /^[a-zA-Z0-9]+$/; // to find words which only contain letters
@@ -19,5 +19,7 @@ export default async function sitemap({ id }) {
   return AllWordsArray.map((word) => ({
     url: `${BASE_URL}/syllables/${word}`.trim(),
     lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.5,
   }));
 }
