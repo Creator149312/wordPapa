@@ -24,7 +24,13 @@ const AdsUnitInner = ({ slot, variant }) => {
       
       el.dataset.adsActualPushed = "1";
       try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        // Ensure the task is truly deferred to a non-blocking frame
+        const push = () => (window.adsbygoogle = window.adsbygoogle || []).push({});
+        if (window.requestAnimationFrame) {
+          window.requestAnimationFrame(() => setTimeout(push, 50));
+        } else {
+          setTimeout(push, 200);
+        }
       } catch (e) {
         // Safe to ignore race conditions
       }
@@ -76,18 +82,21 @@ const AdsUnitInner = ({ slot, variant }) => {
           data-ad-client="ca-pub-6746947892342481"
           data-ad-slot={slot}
           data-ad-format={adFormat}
-          data-full-width-responsive={variant === "tall" ? "false" : "true"}
+          data-full-width-responsive={variant === "header" || variant === "banner" ? "true" : "false"}
+          aria-hidden="true"
         />
       </div>
     </div>
   );
 };
 
-const AdsUnit = ({ slot, variant = "default", index = 0 }) => {
+const AdsUnit = ({ slot, variant = "default", index = 0, sticky = false }) => {
   const pathname = usePathname();
-  // Using pathname and index in key forces component to remount on route change,
-  // triggering a fresh ad load for the new page. Also handles multiple ads of same slot.
-  return <AdsUnitInner key={`${pathname}-${slot}-${index}`} slot={slot} variant={variant} />;
+  // Global/Sticky ads (like header/footer) shouldn't remount on every navigation
+  // this prevents "Heavy Ad Intervention" from Chrome by not churning iframes.
+  const refreshKey = sticky ? "sticky" : pathname;
+  
+  return <AdsUnitInner key={`${refreshKey}-${slot}-${index}`} slot={slot} variant={variant} />;
 };
 
 export default AdsUnit;

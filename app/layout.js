@@ -72,7 +72,7 @@ const layout = ({ children }) => {
               <div className="md:col-span-9 space-y-4">
                 {/* Top Banner Ad - limited to main content width */}
                 <div className="rounded-2xl overflow-hidden">
-                  <AdsUnit slot="1177026196" variant="header" index={0} />
+                  <AdsUnit slot="1177026196" variant="header" index={0} sticky={true} />
                 </div>
 
                 <Card className="border-none bg-white dark:bg-gray-900 shadow-sm rounded-[2rem] md:rounded-[2.5rem] md:p-6 overflow-hidden min-h-[80vh]">
@@ -89,7 +89,7 @@ const layout = ({ children }) => {
             {/* Bottom-of-page Ad — visible on every page */}
             <div className="max-w-[1600px] mx-auto px-3 md:px-4 pb-4">
               <div className="rounded-2xl overflow-hidden">
-                <AdsUnit slot="1177026196" variant="bottom-fixed" index={1} />
+                <AdsUnit slot="1177026196" variant="bottom-fixed" index={1} sticky={true} />
               </div>
             </div>
 

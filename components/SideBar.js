@@ -29,7 +29,7 @@ const SideBar = () => {
       </a> */}
       {/* Sidebar Ad Unit — single slot, sticky with the aside */}
       <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
-        <AdsUnit slot="3722270586" variant="tall" index={0} />
+        <AdsUnit slot="3722270586" variant="tall" index={0} sticky={true} />
       </div>
 
       <div className="hidden md:block space-y-6">
