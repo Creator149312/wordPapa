@@ -48,6 +48,8 @@ export default function DailyMode({
   const { playSynth } = useAudio();
   const syncLock = useRef(false);
   const prevWrongCount = useRef(0);
+  const wordStartTime = useRef(Date.now());
+  const [speedsterResult, setSpeedsterResult] = useState(null);
 
   const userXP = profile?.xp || 0;
 
@@ -86,9 +88,10 @@ export default function DailyMode({
     }
   }, [wrongGuesses, playSynth]);
 
-  // Reset shake counter when moving to next word
+  // Reset shake counter and word timer when moving to next word
   useEffect(() => {
     prevWrongCount.current = 0;
+    wordStartTime.current = Date.now();
   }, [wordIndex]);
 
   // Word completion handler
@@ -96,6 +99,7 @@ export default function DailyMode({
     if ((isWon || isLost) && !claimedIndexes.has(wordIndex) && !syncLock.current) {
       syncLock.current = true;
 
+      const solveTimeMs = Date.now() - wordStartTime.current;
       const result = {
         won: isWon,
         wrongCount: wrongGuesses.length,
@@ -127,6 +131,30 @@ export default function DailyMode({
         setSessionSnapshot({ streak: newStreak, totalXP: earnedXP, totalCoins: earnedCoins });
         setAllDone(true);
 
+        // Speedster Check: Solved final word in under 10 seconds and is logged in
+        if (isWon && solveTimeMs < 10000 && !profile?.isGhost) {
+          fetch("/api/daily/speedster", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              solveTimeMs,
+              dateKey: new Date().toISOString().slice(0, 10),
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success && data.isSpeedster) {
+                setSpeedsterResult({
+                  rank: data.rank,
+                  alreadyClaimed: data.alreadyClaimed,
+                });
+                stats.speedsterRank = data.rank;
+                if (onDailyComplete) onDailyComplete(stats);
+              }
+            })
+            .catch((e) => console.error("Speedster check failed:", e));
+        }
+
         const updatedProfile = {
           ...profile,
           xp: (profile?.xp || 0) + earnedXP,
@@ -136,7 +164,7 @@ export default function DailyMode({
 
         if (addDailyRewards) addDailyRewards(earnedXP, earnedCoins);
         if (!profile?.isGhost && syncToDatabase) syncToDatabase(updatedProfile);
-        if (onDailyComplete) onDailyComplete(stats);
+        if (onDailyComplete && !stats.speedsterRank) onDailyComplete(stats);
         if (profile?.isGhost && wonCount > 0 && triggerSavePrompt) {
           setTimeout(() => triggerSavePrompt(), 1500);
         }
@@ -309,6 +337,25 @@ export default function DailyMode({
           </div>
         </div>
 
+        {/* Speedster Badge */}
+        {speedsterResult && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-sm bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl p-4 text-white text-center shadow-lg shadow-amber-500/20"
+          >
+            <div className="flex items-center justify-center gap-2 text-xl font-black uppercase italic tracking-tight">
+              <span>⚡</span>
+              <span>Speedster!</span>
+            </div>
+            <p className="text-xs font-bold mt-1 text-amber-100">
+              {speedsterResult.alreadyClaimed
+                ? "You already claimed today's Speedster badge!"
+                : `Rank #${speedsterResult.rank} globally! Solved in under 10 seconds.`}
+            </p>
+          </motion.div>
+        )}
+
         {/* Play more CTA */}
         <div className="w-full max-w-sm space-y-2">
           <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 text-center mb-3">
@@ -400,6 +447,8 @@ export default function DailyMode({
                 wrongCount={wrongGuesses.length}
                 xpGained={0}
                 accent={currentRank.color}
+                hint={dailyWord?.hint || ""}
+                category={dailyWord?.category || "Daily Challenge"}
               />
             ) : (
               <div className="text-zinc-400 font-black animate-pulse flex items-center uppercase tracking-widest">

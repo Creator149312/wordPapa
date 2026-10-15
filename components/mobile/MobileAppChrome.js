@@ -7,9 +7,10 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import {
-  BookOpen,
+  Compass,
   FlaskConical,
   Home,
+  Library,
   Search,
   Swords,
   UserRound,
@@ -28,17 +29,17 @@ const NAV_ITEMS = [
     exact: true,
   },
   {
-    label: "Library",
-    href: "/lists",
-    icon: BookOpen,
-    matches: ["/lists"],
-  },
-  {
-    label: "Arena",
+    label: "Path",
     href: "/games/hangman",
-    icon: Swords,
+    icon: Compass,
     matches: ["/games/hangman", "/journey"],
     spotlight: true,
+  },
+  {
+    label: "Vault",
+    href: "/lists",
+    icon: Library,
+    matches: ["/lists", "/builder"],
   },
   {
     label: "Lab",

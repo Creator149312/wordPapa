@@ -5,6 +5,7 @@ import {
   calculateLevel,
   getClassicRewards,
   getOnlineMatchRewards,
+  applyTrophyFloor,
 } from "../lib/progression";
 
 const STORAGE_KEY = "wordpapa_profile";
@@ -16,6 +17,7 @@ const INITIAL_STATE = {
   userEmail: null,
   isGhost: true,
   xp: 0,
+  highestXP: 0,
   papaPoints: 100,
   lives: MAX_LIVES,
   lastLifeLost: Date.now(),
@@ -30,6 +32,9 @@ const INITIAL_STATE = {
   highestWinStreak: 0,
   dailyStreak: 0,
   lastDailyDate: null,
+  activeDeck: ["freeze", "shield", "scramble", "reveal"],
+  duelMatchesPlayed: 0,
+  duelSpellsCast: 0,
   unlockedThemes: ["classic"],
   currentTheme: "classic",
 };
@@ -199,12 +204,25 @@ export function useWordPapaProfile() {
     setIsLoaded(true);
   }, []);
 
-  // --- 5. Internal Update Logic (Handles Level Ups) ---
+  // --- 5. Internal Update Logic (Handles Level Ups & Trophy Gate Floors) ---
   const updateProfile = useCallback((updateFn) => {
     setProfile((prev) => {
-      const newProfile = updateFn(prev);
+      const updated = updateFn(prev);
+
+      // 1. Track the highest XP ever reached
+      const currentHighestXP = Math.max(prev.highestXP || 0, updated.xp || 0);
+
+      // 2. Enforce Clash Royale-style Trophy Gate: XP can never drop below the highest rank's minXP
+      const adjustedXP = applyTrophyFloor(updated.xp, currentHighestXP);
+
+      const finalProfile = {
+        ...updated,
+        highestXP: currentHighestXP,
+        xp: adjustedXP,
+      };
+
       const oldRank = calculateLevel(prev.xp);
-      const newRank = calculateLevel(newProfile.xp);
+      const newRank = calculateLevel(finalProfile.xp);
 
       // Check for Level Up
       if (newRank.level > oldRank.level) {
@@ -212,9 +230,9 @@ export function useWordPapaProfile() {
       }
 
       if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newProfile));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(finalProfile));
       }
-      return newProfile;
+      return finalProfile;
     });
   }, []);
 

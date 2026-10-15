@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useProfile } from "@app/ProfileContext";
 import { calculateLevel } from "@app/games/hangman/lib/progression";
+import PapaMascot from "./PapaMascot";
 
 // ─── Per-route message packs ───────────────────────────────────────────────
 // Each entry is keyed by a pathname prefix.
@@ -107,6 +108,13 @@ const ROUTE_CONTEXTS = [
       "ONE GAME. FIVE MINUTES. A VOCABULARY THAT GROWS EVERY DAY.",
     ],
   },
+  // ─── Dynamic contexts (checked in order) ──────────────────────────────
+  {
+    match: (p) => p === "/games/hangman" || p.startsWith("/games/hangman/daily"),
+    trigger: "mount",
+    messages: [], // Overridden by dynamic logic
+    dynamic: true,
+  },
 ];
 
 // ─── Rank-flavoured generic fallback messages ──────────────────────────────
@@ -123,8 +131,75 @@ const RANK_MESSAGES = {
   10: ["YOU HAVE REACHED THE TOP. NOW HELP OTHERS CLIMB.", "WORD PAPA DOES NOT REST. THE LEXICON IS INFINITE."],
 };
 
-// Pages where the mascot should stay silent (game sessions, API routes)
-const BLACKLIST = ["/games/hangman", "/admin", "/api", "/logout"];
+// Pages where the mascot should stay silent (API routes, admin, logout)
+const BLACKLIST = ["/admin", "/api", "/logout"];
+
+// ─── Dynamic message builders (context-aware) ─────────────────────────────
+function getDynamicMessage(pathname, profile) {
+  const rank = calculateLevel(profile?.xp || 0);
+  const streak = profile?.dailyStreak || 0;
+  const wordsMastered = profile?.wordsMastered || 0;
+  const isGhost = profile?.isGhost !== false;
+
+  // Landing page / auth pages
+  if (pathname === "/" || pathname.startsWith("/register") || pathname.startsWith("/login")) {
+    if (isGhost) {
+      return "WELCOME! START PLAYING INSTANTLY — NO SIGN-UP NEEDED.";
+    }
+    if (streak > 0) {
+      return `WELCOME BACK! YOUR ${streak}-DAY STREAK IS ALIVE.`;
+    }
+    return "READY TO BUILD YOUR VOCABULARY? PICK A MODE AND GO.";
+  }
+
+  // Dashboard — streak warnings and progress nudges
+  if (pathname.startsWith("/dashboard")) {
+    if (streak >= 7) {
+      return `IMPRESSIVE! ${streak} DAYS STRONG. DON'T STOP NOW.`;
+    }
+    if (streak > 0 && streak < 7) {
+      return `YOUR ${streak}-DAY STREAK NEEDS YOU TODAY. ONE GAME KEEPS IT ALIVE.`;
+    }
+    if (wordsMastered > 0) {
+      return `YOU'VE MASTERED ${wordsMastered} WORDS. THE ARENA AWAITS.`;
+    }
+    return "PROGRESS THAT IS NOT MEASURED IS JUST HOPE. CHECK YOUR STATS.";
+  }
+
+  // Hangman game pages — contextual game state
+  if (pathname === "/games/hangman" || pathname.startsWith("/games/hangman/daily")) {
+    if (isGhost) {
+      return "PLAYING AS A GHOST? SIGN IN TO SAVE YOUR PROGRESS.";
+    }
+    if (streak > 0) {
+      return `STREAK: ${streak} DAYS. ONE MORE GAME TO KEEP IT BURNING.`;
+    }
+    return "THE ARENA IS READY. YOUR NEXT RANK IS WAITING.";
+  }
+
+  // Leaderboard — competitive fire
+  if (pathname.startsWith("/leaderboard")) {
+    if (rank.level >= 5) {
+      return `RANK ${rank.name.toUpperCase()}: YOU'RE AMONG THE ELITE. DEFEND IT.`;
+    }
+    return "STUDY THE BOARD. YOUR NEXT TARGET IS RIGHT THERE.";
+  }
+
+  // Profile page — pride and identity
+  if (pathname.startsWith("/u/")) {
+    if (wordsMastered >= 100) {
+      return `${wordsMastered} WORDS MASTERED. YOU ARE A TRUE SCHOLAR.`;
+    }
+    if (profile?.country) {
+      return `REPRESENTING ${profile.country}. MAKE YOUR REGION PROUD.`;
+    }
+    return "THIS IS YOUR SHOWCASE. MAKE IT LEGENDARY.";
+  }
+
+  // Fallback to rank-based messages
+  const rankMsgs = RANK_MESSAGES[rank.level] || RANK_MESSAGES[1];
+  return pickMessage(rankMsgs);
+}
 
 function pickMessage(messages) {
   return messages[Math.floor(Math.random() * messages.length)];
@@ -138,6 +213,8 @@ export default function SiteMascot() {
   const [dismissed, setDismissed] = useState(false);
   const [message, setMessage] = useState("");
   const [isWaving, setIsWaving] = useState(false);
+  // True while a Hangman session is actively being played
+  const [gameActive, setGameActive] = useState(false);
 
   const rank = useMemo(() => {
     const r = calculateLevel(profile?.xp || 0);
@@ -159,19 +236,36 @@ export default function SiteMascot() {
     setIsWaving(false);
   }, [pathname]);
 
+  // The in-game Papa stage owns the screen during active play — hide the
+  // global companion so the user never sees two mascots at once.
+  useEffect(() => {
+    const onGameState = (e) => setGameActive(!!e.detail?.active);
+    window.addEventListener("wordpapa:hangman-game-state", onGameState);
+    return () => window.removeEventListener("wordpapa:hangman-game-state", onGameState);
+  }, []);
+
   // Don't show on blacklisted paths
   const isBlacklisted = BLACKLIST.some((b) => pathname.startsWith(b));
 
   const fireMessage = useCallback(() => {
     if (dismissed || isBlacklisted) return;
-    const msgs = context?.messages || RANK_MESSAGES[rank.level] || RANK_MESSAGES[1];
-    setMessage(pickMessage(msgs));
+
+    // Use dynamic context-aware message if available, else route-based, else rank fallback
+    let msg;
+    if (context?.dynamic) {
+      msg = getDynamicMessage(pathname, profile);
+    } else {
+      const msgs = context?.messages || RANK_MESSAGES[rank.level] || RANK_MESSAGES[1];
+      msg = pickMessage(msgs);
+    }
+
+    setMessage(msg);
     setVisible(true);
     setIsWaving(true);
     setTimeout(() => setIsWaving(false), 1200);
     // Auto-dismiss after 12s
     setTimeout(() => setVisible(false), 12000);
-  }, [dismissed, isBlacklisted, context, rank.level]);
+  }, [dismissed, isBlacklisted, context, rank.level, pathname, profile]);
 
   // Trigger logic
   useEffect(() => {
@@ -212,7 +306,7 @@ export default function SiteMascot() {
     }
   }, [pathname, isBlacklisted, dismissed, context, fireMessage]);
 
-  if (isBlacklisted) return null;
+  if (isBlacklisted || gameActive) return null;
 
   return (
     <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-[150] flex flex-col items-end gap-2 select-none">
@@ -261,7 +355,7 @@ export default function SiteMascot() {
         )}
       </AnimatePresence>
 
-      {/* Papa avatar button — matches DynamicPapa shape: balloons → strings → face box */}
+      {/* Papa mascot button — vector SVG with mood states */}
       <motion.button
         onClick={() => {
           if (visible) {
@@ -270,27 +364,26 @@ export default function SiteMascot() {
             fireMessage();
           }
         }}
-        animate={isWaving ? { y: [0, -6, 0, -4, 0] } : {}}
-        transition={{ duration: 0.7 }}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.93 }}
         aria-label="Papa mascot"
         className="relative flex flex-col items-center"
       >
-        {/* Face box */}
-        <div
-          className="relative flex items-center justify-center rounded-xl border-[2.5px] border-zinc-900 bg-white dark:bg-zinc-800 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-          style={{ width: 44, height: 44 }}
-        >
-          {/* Accent top stripe */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[9px] border-b-2 border-zinc-900 rounded-t-[0.6rem]"
-            style={{ backgroundColor: accent }}
-          />
-          <span className="text-[11px] font-black text-zinc-900 dark:text-zinc-100 select-none">
-            {"(•‿•)"}
-          </span>
-        </div>
+        <PapaMascot
+          mood={
+            visible && isWaving
+              ? "happy"
+              : profile?.dailyStreak >= 7
+                ? "happy"
+                : profile?.dailyStreak > 0
+                  ? "idle"
+                  : "worried"
+          }
+          isWaving={isWaving}
+          accentColor={accent}
+          rankLevel={rank.level}
+          size={48}
+        />
       </motion.button>
     </div>
   );

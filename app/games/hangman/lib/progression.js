@@ -1,4 +1,4 @@
-import { RANKS, ARENAS, GAME_STAKES } from "../constants";
+import { RANKS, ARENAS, GAME_STAKES } from "../constants.js";
 
 /**
  * Returns the current rank object based on total XP.
@@ -27,6 +27,29 @@ export const getNextRank = (xp) => {
   const safeXP = Math.max(0, xp || 0);
   // Find the first rank that has a minXP strictly greater than current XP
   return RANKS.find((r) => r.minXP > safeXP) || null;
+};
+
+/**
+ * Enforces the "Trophy Gate" floor rule from Clash Royale:
+ * Ensures the current XP never drops below the minimum XP required for the
+ * highest rank ever reached (highestXP).
+ *
+ * @param {number} currentXP - The player's current XP (post-match calculation)
+ * @param {number} highestXP - The maximum XP the player has ever achieved
+ * @returns {number} The adjusted current XP, floored at the highest rank's minXP
+ */
+export const applyTrophyFloor = (currentXP, highestXP) => {
+  const safeHighest = Math.max(0, highestXP || 0);
+  const safeCurrent = Math.max(0, currentXP || 0);
+
+  // Find the rank that corresponds to the highest XP ever reached
+  const highestRank = calculateLevel(safeHighest);
+
+  // The floor is the minXP of their highest rank
+  const floorXP = highestRank.minXP;
+
+  // Return the current XP, but not lower than the floor
+  return Math.max(safeCurrent, floorXP);
 };
 
 /**

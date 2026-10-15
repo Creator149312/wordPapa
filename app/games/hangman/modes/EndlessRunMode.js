@@ -17,6 +17,7 @@ import LevelUpModal from "../components/LevelUpModal";
 import { useGameLogic } from "../hooks/useGameLogic";
 import { useAudio } from "../hooks/useAudio";
 import { RANKS, WORDS_POOL } from "../constants";
+import { createEndlessStream } from "../lib/wordStreams";
 import {
   calculateLevel,
   getArenaUnlockBonus,
@@ -68,35 +69,10 @@ export default function EndlessRunMode({
   // --- 3. WORD SELECTION LOGIC ---
   const getNextWeightedWord = useCallback(
     (userLevel, usedWords = []) => {
-      const effectiveXP = Math.max(
-        profile.highestEndlessXP || 0,
-        totalXPEarned,
-      );
-      const maxUnlockedRank =
-        [...RANKS].reverse().find((r) => effectiveXP >= r.minXP) || RANKS[0];
-      const safeLevel = Math.max(1, Math.min(userLevel, maxUnlockedRank.level));
-
-      let levelPickerPool = [];
-      for (let lvl = 1; lvl <= safeLevel; lvl++) {
-        for (let i = 0; i < lvl; i++) {
-          levelPickerPool.push(lvl);
-        }
-      }
-
-      const selectedLevel =
-        levelPickerPool[Math.floor(Math.random() * levelPickerPool.length)];
-      let levelWords = WORDS_POOL[selectedLevel] || WORDS_POOL[1];
-
-      let availableWords = levelWords.filter(
-        (item) => !usedWords.includes(item.word),
-      );
-      if (availableWords.length === 0) availableWords = levelWords;
-
-      const chosenEntry =
-        availableWords[Math.floor(Math.random() * availableWords.length)];
-      return { ...chosenEntry, wordLevel: selectedLevel };
+      const stream = createEndlessStream(profile.xp, profile.highestEndlessXP);
+      return stream.getNextWord(usedWords);
     },
-    [profile.highestEndlessXP, totalXPEarned],
+    [profile.highestEndlessXP, profile.xp],
   );
 
   const initialRank = useMemo(() => {
@@ -611,6 +587,8 @@ export default function EndlessRunMode({
               xpGained={currentWordXP}
               coinsGained={currentWordCoins} // PASSED PROP FOR ANIMATION
               accent={sessionRank.color}
+              hint={currentGame?.hint || ""}
+              category={currentGame?.category || ""}
             />
 
             {(wrongGuesses.length >= 2 || secondsElapsed >= 10) &&

@@ -18,12 +18,14 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
     const tab = searchParams.get("tab") || "global";
+    const country = searchParams.get("country");
+    const institution = searchParams.get("institution");
 
     const session = await getServerSession(authOptions);
     const currentUserEmail = session?.user?.email || null;
 
     let leaderboard = [];
-    const selectFields = "name xp endlessXP highestEndlessXP journeyXP totalWordsSolved userEmail";
+    const selectFields = "name username country region institution wordsMastered xp endlessXP highestEndlessXP journeyXP totalWordsSolved userEmail";
     const getCurrentRank = (xp = 0) => {
       const rank = calculateLevel(xp || 0);
       return {
@@ -33,9 +35,18 @@ export async function GET(request) {
       };
     };
 
+    // Base filter
+    const baseQuery = { isGhost: false };
+    if (country) {
+      baseQuery.country = country.toUpperCase();
+    }
+    if (institution) {
+      baseQuery.institution = new RegExp(institution.trim(), "i");
+    }
+
     if (tab === "global") {
       leaderboard = await GameProfile.find({
-        isGhost: false,
+        ...baseQuery,
         xp: { $gt: 0 },
       })
         .sort({ xp: -1, totalWordsSolved: -1 })
@@ -44,7 +55,7 @@ export async function GET(request) {
         .lean();
     } else if (tab === "endless") {
       leaderboard = await GameProfile.find({
-        isGhost: false,
+        ...baseQuery,
         highestEndlessXP: { $gt: 0 },
       })
         .sort({ highestEndlessXP: -1, totalWordsSolved: -1 })
@@ -53,7 +64,7 @@ export async function GET(request) {
         .lean();
     } else if (tab === "journey") {
       leaderboard = await GameProfile.find({
-        isGhost: false,
+        ...baseQuery,
         journeyXP: { $gt: 0 },
       })
         .sort({ journeyXP: -1, totalWordsSolved: -1 })
@@ -114,6 +125,11 @@ export async function GET(request) {
       const isCurrentUser = entry.userEmail === currentUserEmail;
       return {
         name: entry.name || "Anonymous Player",
+        username: entry.username || null,
+        country: entry.country || null,
+        region: entry.region || null,
+        institution: entry.institution || null,
+        wordsMastered: entry.wordsMastered || 0,
         rank: index + 1,
         xp: entry.xp || 0,
         endlessXP: entry.endlessXP || 0,

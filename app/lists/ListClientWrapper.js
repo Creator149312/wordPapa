@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ListDisplay from "@components/ListDisplay";
-import MacroPractice from "../../components/training/MacroPractice";
 import { ChevronLeft, AlertCircle, BookOpen } from "lucide-react";
 
 export default function ListClientWrapper({ wordsList, listerror }) {
-  const [view, setView] = useState("list");
+  const router = useRouter();
+
+  // Unified Practice: Redirect to the core Hangman Arena for all practice sessions
+  const startUnifiedPractice = () => {
+    if (wordsList?._id) {
+      router.push(`/games/hangman?listId=${wordsList._id}`);
+    }
+  };
 
   // --- Error State ---
   if (listerror || !wordsList) {
@@ -45,33 +52,25 @@ export default function ListClientWrapper({ wordsList, listerror }) {
 
       {/* ── Page content ── */}
       <main className="max-w-2xl mx-auto">
-        {view === "list" ? (
-          hasWords ? (
-            <ListDisplay
-              title={wordsList.title}
-              description={wordsList.description}
-              words={wordsList.words}
-              listId={wordsList._id}
-              createdBy={wordsList.createdBy}
-              practiceCount={wordsList.practiceCount || 0}
-              onStartPractice={() => setView("practice")}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-8">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 text-gray-300 dark:text-gray-600">
-                <BookOpen size={28} />
-              </div>
-              <p className="text-gray-400 dark:text-gray-600 font-bold leading-relaxed">
-                This collection is empty.<br />Add some words to get started!
-              </p>
-            </div>
-          )
-        ) : (
-          <MacroPractice
-            wordList={wordsList.words}
-            listTitle={wordsList.title}
+        {hasWords ? (
+          <ListDisplay
+            title={wordsList.title}
+            description={wordsList.description}
+            words={wordsList.words}
             listId={wordsList._id}
+            createdBy={wordsList.createdBy}
+            practiceCount={wordsList.practiceCount || 0}
+            onStartPractice={startUnifiedPractice}
           />
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-8">
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 text-gray-300 dark:text-gray-600">
+              <BookOpen size={28} />
+            </div>
+            <p className="text-gray-400 dark:text-gray-600 font-bold leading-relaxed">
+              This collection is empty.<br />Add some words to get started!
+            </p>
+          </div>
         )}
       </main>
     </div>

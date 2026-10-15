@@ -123,8 +123,46 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Clash Duel: Instant AI Challenger Match
+  socket.on('request-bot-match', () => {
+    queue = queue.filter(p => p.id !== socket.id);
+    const bots = ["Scholar Aether", "Student Zephyr", "Sage Orion", "Rival Kael"];
+    const randomBot = bots[Math.floor(Math.random() * bots.length)];
+    const roomId = `duel_bot_${Date.now()}`;
+    const selectedMatch = ONLINE_WORDS[Math.floor(Math.random() * ONLINE_WORDS.length)];
+    
+    playerToRoomMap.set(socket.id, { roomId, username: socket.id, isBotMatch: true });
+    socket.join(roomId);
+    activeRooms.add(roomId);
+
+    socket.emit('match-started', { entryFee: ENTRY_FEE });
+    socket.emit('match-found', { ...selectedMatch, roomId, opponentName: randomBot, isBot: true });
+    console.log(`🤖 Bot Duel Started: ${randomBot}`);
+  });
+
   socket.on('send-guess', ({ roomId, letter, score }) => {
     socket.to(roomId).emit('opponent-guess', { letter, score });
+  });
+
+  // Clash Duel: Tactical Spells
+  socket.on('cast-spell', ({ roomId, spellId, casterName }) => {
+    console.log(`✨ [${roomId}] Spell Cast: ${spellId} by ${casterName}`);
+    socket.to(roomId).emit('opponent-spell-cast', { spellId, casterName, timestamp: Date.now() });
+  });
+
+  // Clash Duel: Shield Barrier status sync
+  socket.on('shield-state', ({ roomId, active }) => {
+    socket.to(roomId).emit('opponent-shield-state', { active });
+  });
+
+  // Clash Duel: Real-time wrong guess / lives sync
+  socket.on('wrong-guess-count', ({ roomId, wrongCount }) => {
+    socket.to(roomId).emit('opponent-wrong-count', { wrongCount });
+  });
+
+  // Clash Duel: Reactive Emote / Taunt
+  socket.on('send-taunt', ({ roomId, emoji, senderName }) => {
+    socket.to(roomId).emit('opponent-taunt', { emoji, senderName });
   });
 
   // Rule 2: First to Finish

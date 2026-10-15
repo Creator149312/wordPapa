@@ -60,11 +60,21 @@ export default function DailyChallengePage() {
     if (!gameStats || !meta) return;
 
     const wonCount = gameStats.wonCount ?? (gameStats.won ? 1 : 0);
+    const speedsterLine = gameStats.speedsterRank
+      ? `⚡ Speedster #${gameStats.speedsterRank} (Under 10s)\n`
+      : "";
+    const countryFlag = profile?.country
+      ? String.fromCodePoint(
+          ...profile.country.toUpperCase().split("").map((c) => 127397 + c.charCodeAt(0))
+        ) + " "
+      : "";
+
     const shareBody =
       `Wordpapa Daily #${meta.dayNumber}\n` +
       `${gameStats.grid}\n` +
-      `${wonCount}/${5} words · Streak: ${gameStats.newStreak ?? 0} 🔥\n\n` +
-      `Can you find today's theme?\n` +
+      `${countryFlag}${wonCount}/${5} words · Streak: ${gameStats.newStreak ?? 0} 🔥\n` +
+      speedsterLine +
+      `\nCan you find today's theme?\n` +
       `${window.location.origin}/games/hangman/daily`;
 
     if (navigator.share) {
@@ -124,8 +134,21 @@ export default function DailyChallengePage() {
               : "A tough set. New theme tomorrow!"}
           </p>
 
+          {/* Speedster Badge */}
+          {gameStats?.speedsterRank && (
+            <div className="mt-6 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl p-4 text-white text-center shadow-lg shadow-amber-500/20">
+              <div className="flex items-center justify-center gap-2 text-xl font-black uppercase italic tracking-tight">
+                <span>⚡</span>
+                <span>Speedster!</span>
+              </div>
+              <p className="text-xs font-bold mt-1 text-amber-100">
+                Rank #{gameStats.speedsterRank} globally! Solved in under 10 seconds.
+              </p>
+            </div>
+          )}
+
           {/* STATS & LEADERBOARD BLOCK */}
-          <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="bg-zinc-100 dark:bg-zinc-800/50 p-4 rounded-3xl border border-zinc-200 dark:border-zinc-700">
               <Users size={18} className="mx-auto mb-2 text-blue-500" />
               <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">

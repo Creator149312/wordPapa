@@ -24,6 +24,7 @@ import {
   applyWrongGuessPenalty,
 } from "../lib/progression";
 import { RANKS, ARENAS } from "../constants";
+import { createJourneyStream, createListStream } from "../lib/wordStreams";
 
 export default function JourneyMode({
   profile,
@@ -45,28 +46,27 @@ export default function JourneyMode({
   useEffect(() => {
     // Priority 1: direct list words passed as prop (no fetch needed)
     if (listWords?.length) {
-      setNodeWordPool(
-        listWords.map((w) => ({
-          word: w.word,
-          hint: w.wordData || "",
-          category: listTitle || "List Practice",
-        }))
-      );
-      setNodeTitle(listTitle || "List Practice");
+      const stream = createListStream({ listId, listWords, listTitle });
+      setNodeWordPool(stream.getWords());
+      setNodeTitle(stream.title);
       setNodeWordsLoaded(true);
       return;
     }
 
-    // Priority 2: fetch from journey node
+    // Priority 2: fetch from journey node stream
     if (!activeJourneyNode?.nodeId) return;
+    const stream = createJourneyStream({
+      nodeId: activeJourneyNode.nodeId,
+      rankId: activeJourneyNode.rankId,
+    });
+
     const fetchWords = async () => {
       try {
         setNodeWordsLoaded(false);
-        const res = await fetch(`/api/journey/node-words?nodeId=${activeJourneyNode.nodeId}`);
-        const data = await res.json();
-        if (data.success && data.words?.length) {
+        const data = await stream.fetchWords();
+        if (data.words?.length) {
           setNodeWordPool(data.words);
-          setNodeTitle(data.title || activeJourneyNode.nodeId);
+          setNodeTitle(data.title);
         }
       } catch (e) {
         console.error("Failed to fetch node words:", e);
@@ -1194,6 +1194,8 @@ export default function JourneyMode({
               xpGained={currentWordXP}
               coinsGained={currentWordCoins}
               accent={sessionRank.color}
+              hint={currentGame?.hint || ""}
+              category={currentGame?.category || ""}
             />
 
             {currentGame?.hint && (

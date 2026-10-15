@@ -1,6 +1,7 @@
 import DeleteAccountForm from "@components/DeleteAccountForm";
 import ResetPasswordForm from "@components/ResetPasswordForm";
-import { Settings, Shield, UserX } from "lucide-react";
+import EditProfileForm from "@components/EditProfileForm";
+import { Settings, Shield, UserX, UserCheck } from "lucide-react";
 
 export default async function SettingsPage() {
   return (
@@ -21,19 +22,20 @@ export default async function SettingsPage() {
       </div>
 
       <div className="space-y-6">
-        {/* Reset Password Section */}
-        {/* <section className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
+        {/* Profile & Regional Identity Section */}
+        <section className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 sm:p-8 border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-xl">
-              <Shield size={20} />
+            <div className="p-2 bg-[#75c32c]/10 text-[#75c32c] rounded-xl">
+              <UserCheck size={20} />
             </div>
-            <h2 className="text-xl font-black text-gray-800 dark:text-white">Security</h2>
+            <div>
+              <h2 className="text-xl font-black text-gray-800 dark:text-white">Profile & Identity</h2>
+              <p className="text-xs text-gray-400 font-medium">Showcase your rank, country, and institution on public leaderboards</p>
+            </div>
           </div>
           
-          <div className="pl-1">
-             <ResetPasswordForm />
-          </div>
-        </section> */}
+          <EditProfileForm />
+        </section>
 
         {/* Danger Zone / Delete Account */}
         <section className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-6 sm:p-8 border border-red-50 dark:border-red-900/10 shadow-sm">

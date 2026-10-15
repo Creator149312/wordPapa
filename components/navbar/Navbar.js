@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import {
-  BookOpen,
+  Compass,
+  Library,
   FlaskConical,
   Gamepad2,
   Menu,
@@ -15,19 +16,20 @@ import ThemeToggle from "@components/ThemeToggle";
 import SearchBarNav from "@components/SearchNavBar";
 import UserProfileDropDown from "@components/dropdowns/UserProfileDropDown";
 
-// Desktop nav items — Home (logo) and Profile (avatar) are handled outside this list.
+// Two-Pillar Desktop Nav: The Path (Journey/Daily/Arena) & The Vault (Lists/Library/Lab)
 const DESKTOP_NAV = [
-  // {
-  //   label: "Leaderboard",
-  //   href: "/leaderboard",
-  //   icon: Trophy,
-  //   matches: ["/leaderboard"],
-  // },
   {
-    label: "Library",
+    label: "Path",
+    href: "/games/hangman",
+    icon: Compass,
+    matches: ["/games/hangman", "/journey"],
+    spotlight: true,
+  },
+  {
+    label: "Vault",
     href: "/lists",
-    icon: BookOpen,
-    matches: ["/lists"],
+    icon: Library,
+    matches: ["/lists", "/builder"],
   },
   {
     label: "Lab",

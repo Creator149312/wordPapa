@@ -15,7 +15,7 @@ import {
   LogIn,
 } from "lucide-react";
 
-export default function AddToMyListsButton({ word, definition }) {
+export default function AddToMyListsButton({ word, definition, compact = false }) {
   const [lists, setLists] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,10 +117,14 @@ export default function AddToMyListsButton({ word, definition }) {
       {/* Button is now always visible */}
       <button
         onClick={handleOpenModal}
-        className="flex items-center gap-2 px-6 py-3 bg-[#75c32c] hover:bg-[#66aa26] text-white rounded-2xl font-bold shadow-lg transition-all active:scale-95 group"
+        className={
+          compact
+            ? "flex items-center gap-1.5 px-3 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-2xl font-bold text-xs uppercase tracking-wider transition-all active:scale-95 group"
+            : "flex items-center gap-2 px-6 py-3 bg-[#75c32c] hover:bg-[#66aa26] text-white rounded-2xl font-bold shadow-lg transition-all active:scale-95 group"
+        }
       >
-        <BookmarkPlus className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-        <span>Save Word</span>
+        <BookmarkPlus className={compact ? "w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:rotate-12 transition-transform" : "w-5 h-5 group-hover:rotate-12 transition-transform"} />
+        <span>{compact ? "Add to List" : "Save Word"}</span>
       </button>
 
       {showModal && (

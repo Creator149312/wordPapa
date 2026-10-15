@@ -96,13 +96,23 @@ export async function POST(req) {
         journey.streak = (journey.streak || 0) + 1;
       } else {
         // Missed at least one day.
-        // Check if user has a streak shield to absorb the break.
-        // Shields are earned every 7-day milestone (see below) and capped at 2.
-        if ((journey.streakShields || 0) > 0) {
+        const todayDate = new Date();
+        const yesterdayDate = new Date();
+        yesterdayDate.setUTCDate(yesterdayDate.getUTCDate() - 1);
+        const yesterdayDay = yesterdayDate.toISOString().slice(0, 10);
+        
+        // Check if the missed day was a weekend (Saturday or Sunday)
+        const missedDate = new Date(lastDay);
+        const missedDayOfWeek = missedDate.getUTCDay(); // 0 = Sunday, 6 = Saturday
+        const isWeekendMiss = (missedDayOfWeek === 0 || missedDayOfWeek === 6);
+        
+        if (isWeekendMiss && gameProfile.weekendFreeze) {
+          // Weekend Freeze active: streak preserved without consuming a shield
+          // Do NOT increment streak; just preserve it
+        } else if ((journey.streakShields || 0) > 0) {
           journey.streakShields -= 1; // Consume one shield — streak is preserved
-          // Do NOT increment streak; the shield only forgives the missed day
         } else {
-          journey.streak = 1; // No shield — streak resets to 1 (today's practice)
+          journey.streak = 1; // No shield or freeze — streak resets to 1 (today's practice)
         }
       }
     } else {

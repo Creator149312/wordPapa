@@ -36,8 +36,8 @@ export async function generateMetadata({ params }) {
   if (!list) return { title: { absolute: "List Not Found | Wordpapa" } };
 
   return {
-    title: { absolute: `${list.title} Flashcards - Wordpapa` },
-    description: `Master the ${list.title} using interactive flashcards, audio, and speaking practice.`,
+    title: { absolute: `${list.title} | Wordpapa Vocabulary Vault` },
+    description: `Master the ${list.title} collection in the Hangman Arena with audio, cloze clues, and active recall.`,
   };
 }
 

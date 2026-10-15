@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { getMentorMessage } from "../constants/mentorMessages";
+import PapaMascot from "@components/PapaMascot";
 
 const RANK_NAME_TO_LEVEL = {
   Infant: 1,
@@ -378,6 +379,15 @@ export default function DynamicPapa({
   const challengedByWord = resolvedRankLevel <= 4 && wordLength >= 10;
   const isDead = errors >= maxErrors || isLost;
 
+  // Map game state → shared PapaMascot mood
+  const getMascotMood = () => {
+    if (isDead) return "sleeping";
+    if (isWinner || isRefilling) return "celebrating";
+    if (errors > 0) return "worried";
+    if (errors === 0 && secondsElapsed > 15) return "idle";
+    return "idle";
+  };
+
   const getExpression = () => {
     if (isRefilling) return "o(>_<)o";
     if (isDead) return "(x_x)";
@@ -563,30 +573,16 @@ export default function DynamicPapa({
             </div>
           )}
 
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            {rankAppearance.aura && (
-              <div className="absolute -z-10 w-20 h-20 lg:w-24 lg:h-24 rounded-full blur-2xl opacity-45 animate-pulse" style={{ backgroundColor: accent }} />
-            )}
-            {rankAppearance.topIcon && <div className="absolute -top-4 lg:-top-5 text-sm lg:text-lg">{rankAppearance.topIcon}</div>}
-            {rankAppearance.leftIcon && <div className="absolute -left-6 top-5 text-xs lg:text-base rotate-[-18deg]">{rankAppearance.leftIcon}</div>}
-            {rankAppearance.rightIcon && <div className="absolute -right-6 top-5 text-xs lg:text-base rotate-[18deg]">{rankAppearance.rightIcon}</div>}
-            {rankAppearance.bottomIcon && <div className="absolute -bottom-5 text-sm lg:text-lg">{rankAppearance.bottomIcon}</div>}
-            {rankAppearance.backPlateClass && (
-              <div className={`absolute -z-10 top-4 w-14 h-12 lg:w-16 lg:h-14 rounded-[18px] ${rankAppearance.backPlateClass} border-[3px] border-zinc-900`} />
-            )}
-          </div>
-
-          <div className={`${boxSize} flex items-center justify-center rounded-2xl border-[3px] border-zinc-900 ${rankAppearance.cardTone} dark:bg-zinc-800 ${boxShadowClass} ${isRefilling ? "animate-inflate" : ""} ${errors >= maxErrors * 0.8 && !isDead ? "animate-shake" : ""}`}>
-            <div
-              className="absolute top-0 left-0 right-0 h-2.5 border-b-2 border-zinc-900 rounded-t-[0.8rem] lg:rounded-t-[1.1rem]"
-              style={{ backgroundColor: accent }}
+          {/* The mascot is self-contained: it carries its own rank accessory,
+              aura, and colors. The stage only adds balloons, strings, sink
+              physics, speech bubble, and the arena background. */}
+          <div className={`flex items-center justify-center ${isRefilling ? "animate-inflate" : ""} ${errors >= maxErrors * 0.8 && !isDead ? "animate-shake" : ""}`}>
+            <PapaMascot
+              mood={getMascotMood()}
+              rankLevel={resolvedRankLevel}
+              accentColor={accent}
+              size={compact ? 64 : 96}
             />
-            <span
-              className={`${rankAppearance.faceClass} font-black text-zinc-900 dark:text-zinc-100 select-none`}
-              style={{ textShadow: rankAppearance.cosmicStars ? `0 0 8px ${accent}` : "none" }}
-            >
-              {getExpression()}
-            </span>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import Word from "@models/word";
 import { Card, CardHeader, CardContent } from "@components/ui/card";
 import { WORDMAP } from "../WORDMAP";
-import AddToMyListsButton from "@components/AddToMyListsButton";
+import WordActionButtons from "../WordActionButtons";
 import { connectMongoDB } from "@lib/mongodb";
 import AudioPronunciation from "../AudioPronunciation";
 import { BookOpen, Quote, Sparkles, UserRound } from "lucide-react";
@@ -186,7 +186,7 @@ export default async function DefineWordPage({ params }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <AddToMyListsButton
+            <WordActionButtons
               word={decodedWord}
               definition={wordData.entries[0]?.definition}
             />

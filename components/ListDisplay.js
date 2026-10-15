@@ -1,15 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import Flashcards from "./Flashcards";
-import AudioTypingPractice from "./AudioTypingPractice";
-import SpeakingPractice from "./SpeakingPractice";
 import PracticeProgress from "./PracticeProgress";
 import {
-  Headphones,
-  Mic2,
-  ListOrdered,
   ChevronRight,
   BookOpen,
   Trophy,
@@ -23,28 +16,12 @@ import {
 } from "lucide-react";
 
 const ListDisplay = ({ title, description, words = [], onStartPractice, listId, createdBy, practiceCount = 0 }) => {
-  const [practiceMode, setPracticeMode] = useState(null);
 
   // Official list check using env var (comma-separated admin emails)
   const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
     .split(",")
     .map((e) => e.trim().toLowerCase());
   const isOfficial = createdBy && adminEmails.includes(createdBy.toLowerCase());
-
-  const modes = [
-    {
-      id: "audio",
-      label: "Listen",
-      icon: <Headphones size={16} />,
-      color: "bg-[#75c32c]",
-    },
-    {
-      id: "speaking",
-      label: "Speak",
-      icon: <Mic2 size={16} />,
-      color: "bg-purple-500",
-    },
-  ];
 
   const actionButtonBase =
     "inline-flex items-center justify-center gap-2 min-h-10 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-[0.14em] transition-all active:scale-95";
@@ -83,78 +60,49 @@ const ListDisplay = ({ title, description, words = [], onStartPractice, listId, 
 
         {/* Row 2: all action buttons */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Listen / Speak mode toggles */}
-          <div className="flex items-center gap-1 p-1 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700/50">
-            {modes.map((mode) => (
-              <button
-                key={mode.id}
-                onClick={() => setPracticeMode(mode.id)}
-                className={`inline-flex items-center justify-center gap-2 min-h-10 px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-[0.14em] transition-all ${
-                  practiceMode === mode.id
-                    ? `${mode.color} text-white shadow-md scale-105`
-                    : "text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700"
-                }`}
-              >
-                {mode.icon}
-                {mode.label}
-              </button>
-            ))}
-            {practiceMode && (
-              <button
-                onClick={() => setPracticeMode(null)}
-                className="inline-flex items-center justify-center gap-2 min-h-10 px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-[0.14em] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
-              >
-                <ListOrdered size={16} />
-                Exit
-              </button>
-            )}
-          </div>
-
-          {/* Quiz/Practice Button */}
-          {onStartPractice && !practiceMode && (
-            <button
-              onClick={onStartPractice}
-              className={`${actionButtonBase} bg-[#75c32c] text-white shadow-lg shadow-[#75c32c]/20 hover:opacity-90`}
-            >
-              <Zap size={16} strokeWidth={2.5} />
-              Quiz
-            </button>
-          )}
-
-          {/* Hangman Button */}
-          {listId && !practiceMode && (
+          {/* Hangman Button — Primary CTA */}
+          {listId && (
             <Link
               href={`/games/hangman?listId=${listId}`}
               className={`${actionButtonBase} bg-orange-500 text-white shadow-lg shadow-orange-500/20 hover:opacity-90`}
             >
               <Gamepad2 size={16} strokeWidth={2.5} />
-              Hangman
+              Hangman Arena
             </Link>
           )}
 
-          {/* Share Button */}
-          {!practiceMode && (
+          {/* Quiz/Practice Button — Secondary CTA */}
+          {onStartPractice && (
             <button
-              onClick={() => {
-                const url = window.location.href;
-                const shareTitle = `Check out this vocabulary list: ${title}`;
-                if (navigator.share) {
-                  navigator.share({ title: shareTitle, url });
-                } else {
-                  navigator.clipboard.writeText(`${shareTitle}\n${url}`);
-                }
-              }}
-              className={actionButtonMuted}
+              onClick={onStartPractice}
+              className={`${actionButtonBase} bg-[#75c32c] text-white shadow-lg shadow-[#75c32c]/20 hover:opacity-90`}
             >
-              <Share2 size={16} strokeWidth={2.5} />
-              Share
+              <Zap size={16} strokeWidth={2.5} />
+              Quick Quiz
             </button>
           )}
+
+          {/* Share Button */}
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              const shareTitle = `Check out this vocabulary list: ${title}`;
+              if (navigator.share) {
+                navigator.share({ title: shareTitle, url });
+              } else {
+                navigator.clipboard.writeText(`${shareTitle}\n${url}`);
+              }
+            }}
+            className={actionButtonMuted}
+          >
+            <Share2 size={16} strokeWidth={2.5} />
+            Share
+          </button>
         </div>
       </header>
 
       {/* Progress Section */}
-      {!practiceMode && listId && (
+      {listId && (
         <div className="mb-6">
           <PracticeProgress listId={listId} />
         </div>
@@ -162,37 +110,46 @@ const ListDisplay = ({ title, description, words = [], onStartPractice, listId, 
 
       {/* 2. Main Content Area */}
       <main className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {practiceMode === "audio" ? (
-          <AudioTypingPractice words={words} />
-        ) : practiceMode === "speaking" ? (
-          <SpeakingPractice words={words} />
-        ) : (
-          <div className="space-y-8">
-            {/* PRACTICE ZONE: Flashcards (Distinct visual section) */}
-            <Flashcards words={words} />
+        <div className="space-y-8">
+          {/* UNIFIED PRACTICE CTA */}
+          <div className="bg-gradient-to-r from-[#75c32c] to-[#66aa26] rounded-[2rem] p-8 text-white text-center shadow-xl shadow-[#75c32c]/20">
+            <h3 className="text-xl font-black uppercase italic tracking-tight mb-2">
+              Ready to Master These Words?
+            </h3>
+            <p className="text-sm text-green-100 font-medium mb-6 max-w-md mx-auto">
+              Play Hangman with this list — earn XP, build your streak, and lock words into long-term memory.
+            </p>
+            <button
+              onClick={onStartPractice}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#75c32c] rounded-2xl font-black text-sm uppercase tracking-wider hover:bg-green-50 transition-all active:scale-95 shadow-lg"
+            >
+              <Gamepad2 size={20} />
+              Start Hangman Arena
+            </button>
+          </div>
 
-            {/* REFERENCE ZONE: Word List */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between px-4">
-                <div className="flex items-center gap-2">
-                  <Layout size={14} className="text-[#75c32c]" />
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-                    Glossary Reference
-                  </h2>
-                </div>
+          {/* REFERENCE ZONE: Word List */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-4">
+              <div className="flex items-center gap-2">
+                <Layout size={14} className="text-[#75c32c]" />
+                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+                  Glossary Reference
+                </h2>
               </div>
+            </div>
 
-              {description && (
-                <div className="mx-4 p-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-start gap-3 shadow-sm">
-                  <BookOpen
-                    size={18}
-                    className="text-[#75c32c] mt-0.5 shrink-0"
-                  />
-                  <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm leading-relaxed font-medium">
-                    {description}
-                  </p>
-                </div>
-              )}
+            {description && (
+              <div className="mx-4 p-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl flex items-start gap-3 shadow-sm">
+                <BookOpen
+                  size={18}
+                  className="text-[#75c32c] mt-0.5 shrink-0"
+                />
+                <p className="text-gray-600 dark:text-gray-300 text-xs md:text-sm leading-relaxed font-medium">
+                  {description}
+                </p>
+              </div>
+            )}
 
               {/* Compact Word List Grid */}
               <div className="grid grid-cols-1 gap-2 px-2 md:px-0">
@@ -229,12 +186,11 @@ const ListDisplay = ({ title, description, words = [], onStartPractice, listId, 
                   List Mastery
                 </h4>
                 <p className="text-gray-400 dark:text-gray-500 text-[10px] font-bold max-w-[200px] mx-auto mt-1 uppercase">
-                  Complete all practice modes to achieve fluency.
+                  Master all words in the Hangman Arena to achieve fluency.
                 </p>
               </div>
-            </div>
           </div>
-        )}
+        </div>
       </main>
     </div>
   );

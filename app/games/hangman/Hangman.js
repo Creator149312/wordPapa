@@ -61,10 +61,26 @@ export default function Hangman({
   const [selectedJourneyNode, setSelectedJourneyNode] = useState(null);
   const [selectedListData, setSelectedListData] = useState(null); // { id, words, title }
 
-  // Auto-launch list practice when ?listId= param is present
+  // Auto-launch list practice or single-word test drive when URL params are present
   const searchParams = useSearchParams();
   const listIdParam = searchParams.get("listId");
   const modeParam = searchParams.get("mode");
+  const wordParam = searchParams.get("word");
+
+  // Auto-launch a single word test drive when ?word= param is present
+  useEffect(() => {
+    if (!wordParam || !isLoaded) return;
+    const cleanWord = decodeURIComponent(wordParam).trim();
+    if (cleanWord) {
+      setSelectedListData({
+        id: `single-${cleanWord}`,
+        words: [{ word: cleanWord, wordData: `Vocabulary Practice: ${cleanWord}` }],
+        title: `Test Drive: ${cleanWord}`,
+      });
+      setGameMode("list-practice");
+      setGameState("playing");
+    }
+  }, [wordParam, isLoaded]);
 
   // Auto-launch a specific mode when ?mode= param is present (e.g. from Daily results)
   useEffect(() => {
@@ -232,6 +248,27 @@ export default function Hangman({
   useEffect(() => {
     if (gameState === "menu") fetchLeaderboard();
   }, [gameState]);
+
+  // Broadcast active-game state so the global SiteMascot hides during gameplay
+  // (the in-game Papa stage takes over — one mascot on screen at a time)
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("wordpapa:hangman-game-state", {
+        detail: { active: gameState === "playing" },
+      }),
+    );
+  }, [gameState]);
+
+  // Restore the global mascot when leaving the game entirely
+  useEffect(() => {
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("wordpapa:hangman-game-state", {
+          detail: { active: false },
+        }),
+      );
+    };
+  }, []);
 
   useEffect(() => {
     if (gameState !== "playing") {

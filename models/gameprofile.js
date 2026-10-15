@@ -13,6 +13,38 @@ const gameProfileSchema = new Schema(
       type: String,
       default: "Player",
     },
+    username: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+      lowercase: true,
+    },
+    bio: {
+      type: String,
+      default: "",
+      maxlength: 160,
+    },
+    country: {
+      type: String, // 2-letter ISO country code, e.g., "US", "IN", "GB"
+      default: "",
+      uppercase: true,
+      trim: true,
+    },
+    region: {
+      type: String, // State/Province, e.g., "California", "Ontario"
+      default: "",
+      trim: true,
+    },
+    institution: {
+      type: String, // School, College, or Club name
+      default: "",
+      trim: true,
+    },
+    wordsMastered: {
+      type: Number,
+      default: 0,
+    },
     isGhost: {
       type: Boolean,
       default: true,
@@ -22,6 +54,12 @@ const gameProfileSchema = new Schema(
     // Derived value: xp = journeyXP + endlessXP (computed server-side on every sync).
     // Stored for efficient leaderboard sorting.
     xp: {
+      type: Number,
+      default: 0,
+    },
+    // Trophy Floor: the minimum rank XP the player has ever reached.
+    // Losing matches can never drop the player below this rank's minXP.
+    highestXP: {
       type: Number,
       default: 0,
     },
@@ -79,6 +117,18 @@ const gameProfileSchema = new Schema(
       type: String, // Stored as "YYYY-MM-DD" for easy daily locking
       default: null,
     },
+    weekendFreeze: {
+      type: Boolean,
+      default: false, // If true, Saturday/Sunday misses do not break the streak
+    },
+    hasSpeedsterBadge: {
+      type: Boolean,
+      default: false,
+    },
+    speedsterBadgesCount: {
+      type: Number,
+      default: 0,
+    },
 
     // --- CLASSIC MODE ---
     currentStreak: {
@@ -100,6 +150,20 @@ const gameProfileSchema = new Schema(
       default: 0,
     },
 
+    // --- CLASH DUEL 1v1 (Safe optional fields with defaults) ---
+    activeDeck: {
+      type: [String],
+      default: ["freeze", "shield", "scramble", "reveal"],
+    },
+    duelMatchesPlayed: {
+      type: Number,
+      default: 0,
+    },
+    duelSpellsCast: {
+      type: Number,
+      default: 0,
+    },
+
     // --- CUSTOMIZATION ---
     unlockedThemes: {
       type: [String],
@@ -108,6 +172,45 @@ const gameProfileSchema = new Schema(
     currentTheme: {
       type: String,
       default: "classic",
+    },
+
+    // --- CONSOLIDATED JOURNEY PROGRESSION (Zero-Loss Migration) ---
+    journey: {
+      currentNodeId: {
+        type: String,
+        default: "1-1",
+      },
+      unlockedNodes: {
+        type: [String],
+        default: ["1-1"],
+      },
+      characterStage: {
+        type: String,
+        default: "infant",
+      },
+      nodeWordProgress: {
+        type: Map,
+        of: {
+          wordsCompleted: { type: Number, default: 0 },
+          totalWords: { type: Number, default: 0 },
+          percent: { type: Number, default: 0 },
+          completed: { type: Boolean, default: false },
+          lastPracticed: { type: Date, default: Date.now },
+        },
+        default: () => new Map(),
+      },
+      streak: {
+        type: Number,
+        default: 0,
+      },
+      lastPracticeDay: {
+        type: String,
+        default: null,
+      },
+      streakShields: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {
@@ -120,6 +223,8 @@ const gameProfileSchema = new Schema(
 gameProfileSchema.index({ isGhost: 1, xp: -1 });
 gameProfileSchema.index({ isGhost: 1, highestEndlessXP: -1 });
 gameProfileSchema.index({ isGhost: 1, journeyXP: -1 });
+gameProfileSchema.index({ isGhost: 1, country: 1, xp: -1 });
+gameProfileSchema.index({ isGhost: 1, institution: 1, xp: -1 });
 
 // Middleware/Helper to prevent model re-definition errors in Next.js
 const GameProfile =

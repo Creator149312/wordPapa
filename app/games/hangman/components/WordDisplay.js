@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Coins } from "lucide-react";
+import { Coins, Sparkles, BookOpen } from "lucide-react";
 import { useAudio } from "../hooks/useAudio";
+import { getContextScenario } from "../lib/wordClues";
 
 export default function WordDisplay({
   wordLetters,
@@ -13,6 +14,8 @@ export default function WordDisplay({
   xpGained = 0,
   coinsGained = 0,
   accent = "#75c32c",
+  hint = "",
+  category = "",
 }) {
   const { playSynth } = useAudio();
   const [showWinJuice, setShowWinJuice] = useState(false);
@@ -24,6 +27,10 @@ export default function WordDisplay({
   const prevWrongCount = useRef(wrongCount);
   const currentWordStr = wordLetters.join("");
   const len = wordLetters.length;
+
+  const scenarioClue = React.useMemo(() => {
+    return getContextScenario(currentWordStr, hint, category);
+  }, [currentWordStr, hint, category]);
 
   // --- 1. RESET & WIN LOGIC ---
   useEffect(() => {
@@ -76,7 +83,17 @@ export default function WordDisplay({
   };
 
   return (
-    <div className="relative flex flex-wrap gap-2 md:gap-3 justify-center items-center py-3 md:py-8 w-full max-w-full mx-auto select-none overflow-visible">
+    <div className="w-full max-w-2xl mx-auto flex flex-col items-center select-none overflow-visible">
+      {/* ── CONTEXTUAL MICRO-NARRATIVE CLUE (Real-World Usage) ── */}
+      {scenarioClue && (
+        <div className="w-full mb-3 px-4 py-2.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-700/60 text-center shadow-sm">
+          <p className="text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-200 italic leading-relaxed">
+            "{scenarioClue}"
+          </p>
+        </div>
+      )}
+
+      <div className="relative flex flex-wrap gap-2 md:gap-3 justify-center items-center py-3 md:py-8 w-full max-w-full select-none overflow-visible">
       {/* BACKGROUND GLOW */}
       <AnimatePresence>
         {showWinJuice && (
@@ -230,6 +247,7 @@ export default function WordDisplay({
           </div>
         );
       })}
+      </div>
 
       <style jsx>{`
         @keyframes spin-slow {

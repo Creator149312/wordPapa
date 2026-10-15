@@ -1,7 +1,18 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { Trophy, Star, Medal, Award, Flame, Zap, Map } from "lucide-react";
+import Link from "next/link";
+import { Trophy, Star, Medal, Award, Flame, Zap, Map, Globe, Building2, MapPin } from "lucide-react";
+
+// Mapping ISO 2-letter codes to Flag emojis
+function getCountryFlag(countryCode) {
+  if (!countryCode || countryCode.length !== 2) return "";
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
 
 // Tab configuration — 3 simple tabs: Global XP, Endless best run, Journey cumulative.
 const TABS = [
@@ -143,11 +154,34 @@ export default function LeaderboardPage() {
           </div>
 
           <div className="flex flex-col">
-            <span className="font-black uppercase italic tracking-tight leading-none text-lg">
-              {player.name}
-            </span>
+            <div className="flex items-center gap-2">
+              {player.username ? (
+                <Link
+                  href={`/u/${player.username}`}
+                  className="font-black uppercase italic tracking-tight leading-none text-lg hover:underline decoration-2"
+                >
+                  {player.name}
+                </Link>
+              ) : (
+                <span className="font-black uppercase italic tracking-tight leading-none text-lg">
+                  {player.name}
+                </span>
+              )}
+              {player.country && (
+                <span className="text-base" title={player.country}>
+                  {getCountryFlag(player.country)}
+                </span>
+              )}
+            </div>
 
             <div className="flex items-center gap-1 mt-1 flex-wrap">
+              {/* Institution/Region tag */}
+              {player.institution && (
+                <span className="flex items-center gap-0.5 text-[8px] font-black px-1.5 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                  <Building2 size={8} /> {player.institution}
+                </span>
+              )}
+
               {/* Current rank badge */}
               <span
                 className={`text-[8px] font-black px-2 py-0.5 rounded-md border-2 border-zinc-900/10 uppercase italic ${

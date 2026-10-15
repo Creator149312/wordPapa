@@ -78,14 +78,25 @@ export async function POST(request) {
 
     await journey.save();
 
-    // Update global XP in GameProfile (centralized) with the journey XP
+    // Update and consolidate into GameProfile (centralized) with journey state and XP
     const gameProfile = await GameProfile.findOne({ userEmail: session.user.email });
     if (gameProfile) {
-      // Sync journey XP to GameProfile if higher
       if ((journey.xp || 0) > (gameProfile.xp || 0)) {
         gameProfile.xp = journey.xp || 0;
-        await gameProfile.save();
       }
+      if (!gameProfile.journey) gameProfile.journey = {};
+      if (journey.unlockedNodes?.length) {
+        gameProfile.journey.unlockedNodes = Array.from(
+          new Set([...(gameProfile.journey.unlockedNodes || ["1-1"]), ...journey.unlockedNodes])
+        );
+      }
+      if (journey.currentNodeId) {
+        gameProfile.journey.currentNodeId = journey.currentNodeId;
+      }
+      if (journey.characterStage) {
+        gameProfile.journey.characterStage = journey.characterStage;
+      }
+      await gameProfile.save();
     }
 
     // Clear guest data from localStorage (this will be done on the client side)

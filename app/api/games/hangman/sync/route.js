@@ -3,7 +3,69 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectMongoDB } from "@/lib/mongodb";
 import GameProfile from "@/models/gameprofile";
+import Journey from "@/models/journey";
 import User from "@/models/user";
+
+/**
+ * Helper to lazily migrate legacy Journey data into GameProfile if not present.
+ * Ensures zero data loss for existing users.
+ */
+async function ensureJourneyConsolidated(gameProfile, userEmail) {
+  try {
+    const hasJourneyData =
+      gameProfile.journey &&
+      Array.isArray(gameProfile.journey.unlockedNodes) &&
+      gameProfile.journey.unlockedNodes.length > 0 &&
+      gameProfile.journey.unlockedNodes[0] !== "1-1";
+
+    if (!hasJourneyData) {
+      const legacyJourney = await Journey.findOne({ userEmail });
+      if (legacyJourney) {
+        if (!gameProfile.journey) {
+          gameProfile.journey = {};
+        }
+        if (legacyJourney.unlockedNodes?.length) {
+          gameProfile.journey.unlockedNodes = Array.from(
+            new Set([
+              ...(gameProfile.journey.unlockedNodes || ["1-1"]),
+              ...legacyJourney.unlockedNodes,
+            ]),
+          );
+        }
+        if (legacyJourney.currentNodeId) {
+          gameProfile.journey.currentNodeId = legacyJourney.currentNodeId;
+        }
+        if (legacyJourney.characterStage) {
+          gameProfile.journey.characterStage = legacyJourney.characterStage;
+        }
+        if (legacyJourney.streak) {
+          gameProfile.journey.streak = Math.max(
+            gameProfile.journey.streak || 0,
+            legacyJourney.streak,
+          );
+        }
+        if (legacyJourney.streakShields !== undefined) {
+          gameProfile.journey.streakShields = legacyJourney.streakShields;
+        }
+        if (legacyJourney.lastPracticeDay) {
+          gameProfile.journey.lastPracticeDay = legacyJourney.lastPracticeDay;
+        }
+        if (legacyJourney.nodeWordProgress && legacyJourney.nodeWordProgress.size > 0) {
+          const targetMap = gameProfile.journey.nodeWordProgress || new Map();
+          for (const [key, value] of legacyJourney.nodeWordProgress.entries()) {
+            if (!targetMap.has(key)) {
+              targetMap.set(key, value);
+            }
+          }
+          gameProfile.journey.nodeWordProgress = targetMap;
+        }
+        await gameProfile.save();
+      }
+    }
+  } catch (err) {
+    console.warn("[ensureJourneyConsolidated] Legacy migration notice:", err?.message);
+  }
+}
 
 /**
  * GET: Retrieves the user's profile if it exists.
@@ -24,6 +86,9 @@ export async function GET() {
     if (!profile) {
       return NextResponse.json({ success: false, message: "No profile found" });
     }
+
+    // Lazy migration check for existing users
+    await ensureJourneyConsolidated(profile, session.user.email);
 
     // Update name from session if needed
     profile.name = session.user.name || profile.name || "Player";
@@ -137,6 +202,13 @@ export async function POST(req) {
         updatedProfile.xp = computedXP;
         needsSave = true;
       }
+      
+      // Track highestXP (career peak for Trophy Gate floor logic)
+      if (updatedProfile.xp > (updatedProfile.highestXP || 0)) {
+        updatedProfile.highestXP = updatedProfile.xp;
+        needsSave = true;
+      }
+
       // Floor papaPoints at 0 — $inc with negative delta could dip below zero
       if (updatedProfile.papaPoints < 0) {
         updatedProfile.papaPoints = 0;

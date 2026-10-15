@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@app/api/auth/[...nextauth]/route";
 import NodeList from "@models/nodeList";
 import Journey from "@models/journey";
+import GameProfile from "@models/gameprofile";
 import List from "@models/list";
 import { NextResponse } from "next/server";
 
@@ -226,6 +227,23 @@ export async function POST(request) {
     }
 
     await journey.save();
+
+    // Mirror to consolidated GameProfile for zero-loss progressive migration
+    try {
+      const profile = await GameProfile.findOne({ userEmail: session.user.email });
+      if (profile) {
+        if (!profile.journey) profile.journey = {};
+        profile.journey.currentNodeId = journey.currentNodeId;
+        profile.journey.unlockedNodes = journey.unlockedNodes;
+        if (!profile.journey.nodeWordProgress) {
+          profile.journey.nodeWordProgress = new Map();
+        }
+        profile.journey.nodeWordProgress.set(nodeId, journey.nodeWordProgress.get(nodeId));
+        await profile.save();
+      }
+    } catch (profileMirrorErr) {
+      console.warn("Mirroring node progress to GameProfile failed (non-fatal):", profileMirrorErr?.message);
+    }
 
     if (syncDebugEnabled) {
       console.log("[JourneySync][server] node-progress.success", {

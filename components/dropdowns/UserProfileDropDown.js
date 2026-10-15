@@ -76,13 +76,13 @@ export default function UserProfileDropdown() {
             <LayoutDashboard size={16} />
             Dashboard
           </Link>
-          
+
           <Link
             href="/settings"
             className="flex items-center gap-3 w-full px-4 py-2.5 text-[12px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 hover:bg-[#75c32c]/10 hover:text-[#75c32c] rounded-xl transition-colors"
           >
             <Settings size={16} />
-            Settings
+            Settings & Identity
           </Link>
 
           <div className="h-px bg-gray-50 dark:bg-gray-800/50 my-1.5" />

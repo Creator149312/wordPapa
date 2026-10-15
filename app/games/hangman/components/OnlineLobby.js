@@ -7,9 +7,29 @@ import { GAME_STAKES } from '../constants';
 export default function OnlineLobby({ socket, profile, onCancel }) {
   const [status, setStatus] = useState('searching'); 
   const [opponentName, setOpponentName] = useState('');
+  const [searchSeconds, setSearchSeconds] = useState(0);
 
   const ENTRY_FEE = GAME_STAKES.ONLINE_1V1.ENTRY_FEE;
   const WIN_PRIZE = GAME_STAKES.ONLINE_1V1.WIN_PRIZE;
+
+  const triggerBotDuel = () => {
+    if (socket?.connected) {
+      socket.emit('request-bot-match');
+    }
+  };
+
+  useEffect(() => {
+    if (status !== 'searching') return;
+    const interval = setInterval(() => {
+      setSearchSeconds((s) => {
+        if (s >= 7) {
+          triggerBotDuel();
+        }
+        return s + 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [status, socket]);
 
   useEffect(() => {
     if (!socket) return;
@@ -116,15 +136,26 @@ export default function OnlineLobby({ socket, profile, onCancel }) {
           </div>
 
           {/* FOOTER ACTIONS */}
-          <div className="flex flex-col gap-6 items-center pt-4">
+          <div className="flex flex-col gap-4 items-center pt-2">
             {status === 'searching' ? (
-              <button
-                onClick={onCancel}
-                className="group flex items-center gap-2 px-10 py-4 rounded-full bg-white border-2 border-red-100 text-red-500 hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg hover:shadow-red-200 active:scale-95"
-              >
-                <X size={18} />
-                <span className="text-sm font-black uppercase tracking-widest">Abandon Queue</span>
-              </button>
+              <>
+                {searchSeconds >= 3 && (
+                  <button
+                    onClick={triggerBotDuel}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-black text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 shadow-md shadow-fuchsia-500/30 animate-in fade-in"
+                  >
+                    <Sword size={14} />
+                    <span>Duel AI Challenger Now ({Math.max(0, 7 - searchSeconds)}s)</span>
+                  </button>
+                )}
+                <button
+                  onClick={onCancel}
+                  className="group flex items-center gap-2 px-8 py-3 rounded-full bg-white dark:bg-zinc-800 border-2 border-red-100 dark:border-red-900/40 text-red-500 hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-md active:scale-95"
+                >
+                  <X size={16} />
+                  <span className="text-xs font-black uppercase tracking-widest">Abandon Queue</span>
+                </button>
+              </>
             ) : (
               <div className="flex items-center gap-2 text-green-600 font-black uppercase text-xs animate-pulse">
                 <ShieldCheck size={16} />

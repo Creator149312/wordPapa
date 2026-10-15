@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@app/api/auth/[...nextauth]/route";
 import NodeList from "@models/nodeList";
 import Journey from "@models/journey";
+import GameProfile from "@models/gameprofile";
 import List from "@models/list";
 import { NextResponse } from "next/server";
 
@@ -46,16 +47,26 @@ export async function GET(request) {
       nodeMap[nl.node].push(nl);
     });
 
-    // If user is logged in, get their progress
+    // If user is logged in, get their progress (checking GameProfile and falling back to legacy Journey)
     let userJourney = null;
+    let gameProfile = null;
     let currentNodeId = null;
     let unlockedNodes = ["1-1"];
+
     if (session?.user?.email) {
-      userJourney = await Journey.findOne({
-        userEmail: session.user.email,
-      });
-      unlockedNodes = userJourney?.unlockedNodes?.length ? userJourney.unlockedNodes : ["1-1"];
-      currentNodeId = userJourney?.currentNodeId || unlockedNodes[unlockedNodes.length - 1] || "1-1";
+      gameProfile = await GameProfile.findOne({ userEmail: session.user.email });
+      userJourney = await Journey.findOne({ userEmail: session.user.email });
+
+      const profileUnlocked = gameProfile?.journey?.unlockedNodes || [];
+      const legacyUnlocked = userJourney?.unlockedNodes || [];
+      const mergedUnlocked = Array.from(new Set(["1-1", ...profileUnlocked, ...legacyUnlocked]));
+
+      unlockedNodes = mergedUnlocked.length ? mergedUnlocked : ["1-1"];
+      currentNodeId =
+        gameProfile?.journey?.currentNodeId ||
+        userJourney?.currentNodeId ||
+        unlockedNodes[unlockedNodes.length - 1] ||
+        "1-1";
     }
 
     // Format response
@@ -78,7 +89,9 @@ export async function GET(request) {
         const isFullyMastered = totalCount > 0 && masteredCount >= totalCount;
         const isUnlocked = unlockedNodes.includes(nodeId) || nodeId === "1-1";
         const isCompleted = isUnlocked && !isCurrent && isFullyMastered;
-        const storedNodeProgress = userJourney?.nodeWordProgress?.get(nodeId);
+        const storedNodeProgress =
+          gameProfile?.journey?.nodeWordProgress?.get(nodeId) ||
+          userJourney?.nodeWordProgress?.get(nodeId);
         const masteryProgress = Math.floor((masteredCount / (totalCount || 1)) * 100);
         const progress = isCompleted
           ? 100
