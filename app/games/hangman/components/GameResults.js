@@ -97,6 +97,10 @@ export default function GameResults({
                       : "Try Again"
                   : isEndless
                   ? "Run Complete!"
+                  : mode === "online"
+                  ? isWon
+                    ? "Victory! Word Solved"
+                    : "Defeated!"
                   : isWon
                     ? "Success!"
                     : isRunEndedStatus
@@ -110,6 +114,8 @@ export default function GameResults({
                   ? `Cleared ${streak} words`
                   : isEndless
                   ? `Mastered ${streak} words`
+                  : mode === "online"
+                  ? `Duel Word: ${word}`
                   : `Word: ${word}`}
             </p>
           </div>
@@ -314,7 +320,7 @@ export default function GameResults({
                   : "bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90"
               }`}
             >
-              {isJourney ? (isWon ? "Replay Node" : "Retry Node") : isEndless ? "New Flight" : isWon ? "Next Word" : "Try Again"}
+              {isJourney ? (isWon ? "Replay Node" : "Retry Node") : isEndless ? "New Flight" : mode === "online" ? "Find Duel" : isWon ? "Next Word" : "Try Again"}
               <RefreshCw size={14} className="ml-2" />
             </Button>
           </>

@@ -7,6 +7,8 @@ import {
   Flame,
   Trophy,
   ChevronRight,
+  Swords,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { calculateLevel, calculateProgress, getNextRank } from "../lib/progression";
@@ -25,7 +27,7 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 max-w-5xl mx-auto">
         {/* ENDLESS CLASSIC MODE */}
         {/* <button
           onClick={() => onSelect("classic")}
@@ -193,55 +195,57 @@ export default function ModeSelector({ onSelect, profile, requirements }) {
           })()}
         </button>
 
-        {/* ONLINE 1v1 DUEL */}
-        {/* <button
-          onClick={() => !isLocked ? onSelect('online') : null}
-          className={`group relative p-8 rounded-[2rem] border-2 transition-all duration-500 text-left flex flex-col h-full overflow-hidden ${isLocked
-              ? "border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 cursor-not-allowed"
-              : "border-transparent bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 hover:-translate-y-1"
-            }`}
+        {/* CLASH 1v1 ARENA DUEL */}
+        <button
+          onClick={() => !isLocked ? onSelect("online") : null}
+          className={`group relative p-4 md:p-5 rounded-xl border-2 transition-all duration-300 text-left flex flex-col shadow-sm hover:shadow-lg ${
+            isLocked
+              ? "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 opacity-70 cursor-not-allowed"
+              : "bg-gradient-to-br from-blue-500/10 via-fuchsia-500/10 to-purple-600/15 dark:from-blue-900/30 dark:via-fuchsia-900/30 dark:to-purple-900/40 border-fuchsia-400/40 hover:border-fuchsia-500 hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer"
+          }`}
         >
-          
-          <div className={`absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isLocked ? "bg-gray-200 dark:bg-gray-700 text-gray-500" : "bg-white/20 text-white backdrop-blur-md"
-            }`}>
-            {isLocked ? <Lock size={10} /> : <span className="relative flex h-2 w-2 mr-1"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span></span>}
-            {isLocked ? "Level Restricted" : "Live Duel"}
-          </div>
-
-          <div className="mb-8">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 ${isLocked ? 'bg-gray-200 dark:bg-gray-800' : 'bg-white/10 group-hover:rotate-12'}`}>
-              <Globe className={isLocked ? "text-gray-400" : "text-white"} size={30} strokeWidth={2.5} />
-            </div>
-            <h3 className={`font-black text-2xl uppercase tracking-tighter ${isLocked ? 'text-gray-400' : 'text-white'}`}>Online Arena</h3>
-
-            {isLocked ? (
-              <div className="mt-4 space-y-3">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[9px] font-black uppercase text-gray-400">
-                    <span>XP Progress</span>
-                    <span>{profile.xp}/{requirements.MIN_XP}</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#75c32c] transition-all duration-1000" style={{ width: `${Math.min((profile.xp / requirements.MIN_XP) * 100, 100)}%` }} />
-                  </div>
-                </div>
-                {isCoinLocked && (
-                  <p className="text-[10px] text-amber-600 font-black uppercase flex items-center gap-1">
-                    <Coins size={10} /> Entry: {requirements.MIN_COINS} needed
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className="text-[11px] text-blue-100 font-medium uppercase tracking-widest mt-2 leading-relaxed">
-                Compete for <span className="underline decoration-white/30 underline-offset-4">{requirements.MIN_COINS * 2} Coins</span>.<br />Ranked Matchmaking.
-              </p>
+          {/* Header Status Badge */}
+          <div className="absolute top-3 right-3 flex items-center gap-1">
+            {profile.onlineWinStreak > 0 && !isLocked && (
+              <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-black shadow-sm">
+                <Flame size={10} fill="currentColor" /> {profile.onlineWinStreak} Streak
+              </span>
             )}
+            <span
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${
+                isLocked
+                  ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
+                  : "bg-fuchsia-500 text-white shadow-sm shadow-fuchsia-500/40 animate-pulse"
+              }`}
+            >
+              {isLocked ? <Lock size={9} /> : <Zap size={9} className="fill-white" />}
+              {isLocked ? "Locked" : "Live Duel"}
+            </span>
           </div>
 
-          <div className={`mt-auto flex items-center gap-2 font-black text-[10px] uppercase tracking-[0.2em] ${isLocked ? 'text-gray-400' : 'text-white'}`}>
-            {isLocked ? 'Boost XP to Unlock' : 'Join Queue'} <ChevronRight size={14} className={isLocked ? '' : 'group-hover:translate-x-1 transition-transform'} />
+          <div className="mb-3">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-fuchsia-600 rounded-lg flex items-center justify-center mb-3 text-white shadow-md shadow-fuchsia-500/20 group-hover:scale-110 group-hover:rotate-3 transition-transform">
+              <Swords size={22} />
+            </div>
+            <h3 className="font-black text-2xl uppercase tracking-tighter text-zinc-900 dark:text-white">
+              1v1 Arena
+            </h3>
+            <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1 uppercase leading-tight">
+              Clash Duel with Elixir & Spells
+            </p>
           </div>
-        </button> */}
+
+          {/* Stakes / Requirements */}
+          <div className="mt-auto pt-4 border-t border-fuchsia-200/50 dark:border-fuchsia-900/40 flex items-center justify-between">
+            <span className="text-[10px] font-black uppercase text-zinc-400 tracking-wider">
+              Entry
+            </span>
+            <span className="text-[11px] font-black text-amber-500 flex items-center gap-1">
+              <Coins size={12} className="fill-amber-500" />
+              {requirements?.MIN_COINS || 10} Coins
+            </span>
+          </div>
+        </button>
       </div>
 
       {/* Footer Stats */}

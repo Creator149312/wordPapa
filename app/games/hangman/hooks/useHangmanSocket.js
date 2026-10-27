@@ -103,6 +103,18 @@ export function useHangmanSocket({
     }
   }, [socket, profile?.name]);
 
+  const createCustomRoom = useCallback(() => {
+    if (!socket) return;
+    if (!socket.connected) socket.connect();
+    socket.emit('create-custom-room', { username: profile?.name || "Player" });
+  }, [socket, profile?.name]);
+
+  const joinCustomRoom = useCallback((roomCode) => {
+    if (!socket) return;
+    if (!socket.connected) socket.connect();
+    socket.emit('join-custom-room', { roomCode, username: profile?.name || "Player" });
+  }, [socket, profile?.name]);
+
   useEffect(() => {
     if (!socket) return;
 
@@ -122,10 +134,19 @@ export function useHangmanSocket({
         wrongCount: 0,
         isShielded: false,
         isFrozen: false,
-        roomId: data.roomId 
+        roomId: data.roomId,
+        isBot: Boolean(data.isBot),
       });
 
-      initGameSession?.('online', { word: data.word, category: data.category });
+      // Pass the complete match payload to parent
+      initGameSession?.('online', { 
+        word: data.word, 
+        category: data.category,
+        roomId: data.roomId,
+        opponentName: data.opponentName,
+        opponentId: data.opponentId,
+        isBot: Boolean(data.isBot),
+      });
       setGameState?.('playing');
     });
 
@@ -161,7 +182,9 @@ export function useHangmanSocket({
 
     // 9. Final Results Sync
     socket.on('game-results-synced', (data) => {
-      const isMeWinner = profile?.name === data.winnerName;
+      const isMeWinner = data.winnerId 
+        ? socket.id === data.winnerId 
+        : profile?.name === data.winnerName;
       applyOnlineResults?.(isMeWinner);
     });
 
@@ -202,5 +225,7 @@ export function useHangmanSocket({
     sendShieldState,
     sendWrongCount,
     sendTaunt,
+    createCustomRoom,
+    joinCustomRoom,
   };
 }

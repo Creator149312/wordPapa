@@ -16,6 +16,7 @@ export default function WordDisplay({
   accent = "#75c32c",
   hint = "",
   category = "",
+  showClue = true,
 }) {
   const { playSynth } = useAudio();
   const [showWinJuice, setShowWinJuice] = useState(false);
@@ -85,7 +86,7 @@ export default function WordDisplay({
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center select-none overflow-visible">
       {/* ── CONTEXTUAL MICRO-NARRATIVE CLUE (Real-World Usage) ── */}
-      {scenarioClue && (
+      {showClue && scenarioClue && (
         <div className="w-full mb-3 px-4 py-2.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-700/60 text-center shadow-sm">
           <p className="text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-200 italic leading-relaxed">
             "{scenarioClue}"

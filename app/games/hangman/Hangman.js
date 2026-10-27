@@ -193,11 +193,30 @@ export default function Hangman({
     }
   };
 
+  const [onlineMatchData, setOnlineMatchData] = useState(null);
+
+  const handleStartInstantDuel = useCallback((matchData) => {
+    setOnlineMatchData(matchData);
+    setGameMode("online");
+    setGameState("playing");
+  }, []);
+
+  const handleOnlineRestart = useCallback(() => {
+    // Re-open lobby so player can find a new duel or play friend
+    setOnlineMatchData(null);
+    setGameMode("online");
+    setGameState("lobby");
+  }, []);
+
   const { joinQueue, disconnect, socket } = useHangmanSocket({
     profile,
     deductCoins,
     setGameState,
     applyOnlineResults,
+    initGameSession: (mode, data) => {
+      setOnlineMatchData(data);
+      setGameState("playing");
+    },
   });
 
   const handleModeSelect = (mode) => {
@@ -324,6 +343,7 @@ export default function Hangman({
               requirements={ONLINE_REQUIREMENTS}
               socket={socket}
               startNewGame={() => setGameState("playing")}
+              onStartInstantDuel={handleStartInstantDuel}
             />
           </div>
           <SaveProgressModal
@@ -355,8 +375,10 @@ export default function Hangman({
         <div className="relative z-10">
           {gameMode === "online" && (
             <OnlineMode
+              initialMatchData={onlineMatchData}
               profile={profile}
               onQuit={handleQuitToMenu}
+              onRestartDuel={handleOnlineRestart}
               applyOnlineResults={applyOnlineResults}
               syncToDatabase={syncToDatabase}
               triggerSavePrompt={() => setShowSavePrompt(true)}

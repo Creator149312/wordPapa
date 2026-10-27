@@ -166,6 +166,22 @@ export function useAudio() {
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
       osc.start(now);
       osc.stop(now + 0.12);
+    } else if (type === "SUDDEN_DEATH") {
+      // Clash Royale Battle Horn / Royal Trumpet fanfare
+      [220, 293.66, 369.99, 440].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        const start = now + i * 0.12;
+        osc.frequency.setValueAtTime(freq, start);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.12, start + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+        osc.start(start);
+        osc.stop(start + 0.5);
+      });
     }
   }, []);
 
