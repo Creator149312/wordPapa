@@ -13,48 +13,32 @@ export default function ClashElixirBar({
 
   return (
     <div
-      className={`w-full flex items-center gap-2 select-none px-1 transition-transform duration-100 ${
-        isShaking ? "animate-bounce ring-2 ring-red-500 rounded-xl" : ""
+      className={`w-full flex flex-col gap-1 select-none px-1 transition-transform duration-100 ${
+        isShaking ? "animate-pulse ring-1 ring-red-500 rounded-lg p-0.5" : ""
       }`}
     >
-      {/* Hexagonal Droplet Icon / Elixir Count */}
-      <div className="relative shrink-0 flex items-center justify-center">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-700 flex items-center justify-center shadow-md shadow-fuchsia-500/40 border border-fuchsia-300/40">
-          <Droplets size={16} className="text-white fill-white" />
+      {/* Top Info Header */}
+      <div className="flex items-center justify-between text-[10px] font-bold">
+        <div className="flex items-center gap-1 text-fuchsia-300">
+          <Droplets size={11} className="fill-fuchsia-400 text-fuchsia-400" />
+          <span className="font-mono tabular-nums text-fuchsia-200">{displayVal}</span>
+          <span className="text-zinc-500 font-mono">/ 10 Elixir</span>
         </div>
-        <span className="absolute -bottom-1 -right-1 px-1 rounded-full bg-black/90 text-fuchsia-200 text-[10px] font-black border border-fuchsia-500/50 tabular-nums">
-          {displayVal}
-        </span>
+
+        {isSuddenDeath && (
+          <span className="flex items-center gap-0.5 text-[9px] font-mono text-amber-300 font-bold">
+            <Zap size={9} className="fill-amber-300" /> 2X Speed
+          </span>
+        )}
       </div>
 
-      {/* Segmented Elixir Track */}
-      <div className="flex-1 relative h-4 bg-zinc-950 rounded-xl overflow-hidden border border-fuchsia-950/80 p-0.5 shadow-inner">
-        {/* Fluid Fill */}
+      {/* Sleek Slim Bar */}
+      <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
         <div
-          className="h-full rounded-lg bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 transition-all duration-150 ease-out relative shadow-[0_0_10px_rgba(217,70,239,0.5)]"
+          className="h-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500 transition-all duration-150 ease-out"
           style={{ width: `${percentage}%` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" />
-        </div>
-
-        {/* 10 Segment Markers */}
-        <div className="absolute inset-0 flex justify-between pointer-events-none px-0.5">
-          {Array.from({ length: maxElixir - 1 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-full w-[1px] bg-black/50 z-10"
-              style={{ left: `${((i + 1) / maxElixir) * 100}%` }}
-            />
-          ))}
-        </div>
+        />
       </div>
-
-      {/* Sudden Death Pill */}
-      {isSuddenDeath && (
-        <span className="shrink-0 flex items-center gap-0.5 px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[9px] font-black uppercase tracking-wider animate-pulse">
-          <Zap size={10} className="fill-amber-300" /> 2X
-        </span>
-      )}
     </div>
   );
 }

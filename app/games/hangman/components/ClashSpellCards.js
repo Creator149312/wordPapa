@@ -40,51 +40,42 @@ export default function ClashSpellCards({
             }}
             disabled={isDisabled}
             className={`
-              relative flex flex-col items-center justify-between p-2 rounded-2xl
-              border-2 transition-all duration-150 overflow-hidden aspect-[4/5]
+              relative flex flex-col items-center justify-between p-1.5 rounded-xl
+              border transition-all duration-150 overflow-hidden h-16
               ${
                 !isDisabled
-                  ? `bg-zinc-900 ${spell.border} shadow-lg ${spell.glow} hover:-translate-y-1 active:scale-95 cursor-pointer ring-1 ring-white/10`
-                  : "bg-zinc-950/80 border-zinc-800/80 opacity-40 cursor-not-allowed"
+                  ? `bg-zinc-900/90 border-zinc-700/80 hover:border-zinc-500 hover:-translate-y-0.5 active:scale-95 cursor-pointer shadow-sm`
+                  : "bg-zinc-950/60 border-zinc-800/60 opacity-35 cursor-not-allowed"
               }
             `}
           >
-            {/* Top Cost Droplet & Overtime 2X Badge */}
+            {/* Top Cost Droplet & Hotkey Indicator */}
             <div className="w-full flex items-center justify-between">
-              <div className="flex items-center gap-0.5 px-1.5 py-0.2 rounded-full bg-fuchsia-950/90 border border-fuchsia-400/60 shadow-sm">
-                <Droplets size={9} className="text-fuchsia-300 fill-fuchsia-300" />
-                <span className="text-[10px] font-black text-fuchsia-100 tabular-nums">
+              <div className="flex items-center gap-0.5 px-1 py-0.2 rounded bg-fuchsia-950/80 border border-fuchsia-500/40">
+                <Droplets size={8} className="text-fuchsia-300 fill-fuchsia-300" />
+                <span className="text-[9px] font-black text-fuchsia-100 tabular-nums">
                   {spell.cost}
                 </span>
               </div>
-              <span className="text-[8px] font-mono font-black text-zinc-500 hidden sm:inline">
-                [{deck.indexOf(spellKey) + 1}]
+              <span className="text-[8px] font-mono font-bold text-zinc-400 bg-zinc-800/80 px-1 rounded border border-zinc-700/50">
+                {deck.indexOf(spellKey) + 1}
               </span>
-              {isOvertime && (
-                <span className="text-[7px] font-black uppercase text-amber-300 tracking-tighter">
-                  2X SPD
-                </span>
-              )}
             </div>
 
             {/* Spell Art Icon */}
-            <div
-              className={`p-2 rounded-xl bg-gradient-to-br ${spell.color} text-white shadow-sm transition-transform ${
-                !isDisabled ? "hover:scale-110" : ""
-              }`}
-            >
-              <Icon size={18} />
+            <div className={`p-1 rounded-lg bg-gradient-to-br ${spell.color} text-white shadow-xs`}>
+              <Icon size={14} />
             </div>
 
             {/* Spell Name */}
-            <span className="text-[10px] font-black uppercase tracking-tight text-white truncate max-w-full">
+            <span className="text-[8px] font-bold uppercase tracking-tight text-zinc-200 truncate max-w-full">
               {spell.name}
             </span>
 
             {/* Active Shield Label */}
             {isRedundantShield && (
-              <div className="absolute inset-0 bg-amber-950/90 border border-amber-400 flex items-center justify-center">
-                <span className="text-[9px] font-black uppercase text-amber-200 tracking-wider">
+              <div className="absolute inset-0 bg-amber-950/90 border border-amber-400/80 flex items-center justify-center">
+                <span className="text-[8px] font-black uppercase text-amber-200 tracking-wider">
                   Active
                 </span>
               </div>
@@ -92,7 +83,7 @@ export default function ClashSpellCards({
 
             {/* Cooldown Timer */}
             {isOnCooldown && !isRedundantShield && (
-              <div className="absolute inset-0 bg-black/80 flex items-center justify-center backdrop-blur-[1px]">
+              <div className="absolute inset-0 bg-black/85 flex items-center justify-center backdrop-blur-[1px]">
                 <span className="text-xs font-black text-white tabular-nums">
                   {cooldowns[spell.id].toFixed(0)}s
                 </span>

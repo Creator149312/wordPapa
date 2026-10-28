@@ -47,6 +47,12 @@ export function useHangmanSocket({
   onOpponentShield,
   onOpponentWrongCount,
   onOpponentTaunt,
+  onRematchRequested,
+  onRematchWaiting,
+  onRematchAccepted,
+  onOpponentLeftMatch,
+  onSeriesResultsSynced,
+  onMatchEnded,
 }) {
   const socket = useMemo(() => getSocket(), []);
 
@@ -72,9 +78,9 @@ export function useHangmanSocket({
     }
   }, [socket]);
 
-  const emitFinished = useCallback((roomId, winnerName) => {
-    if (socket?.connected) {
-      socket.emit('game-finished', { roomId, winnerName });
+  const emitFinished = useCallback((roomId, winnerName, reason = "word_solved") => {
+    if (socket?.connected && roomId) {
+      socket.emit('game-finished', { roomId, winnerName, winnerId: socket.id, reason });
     }
   }, [socket]);
 
@@ -115,6 +121,19 @@ export function useHangmanSocket({
     socket.emit('join-custom-room', { roomCode, username: profile?.name || "Player" });
   }, [socket, profile?.name]);
 
+  // Instant Rematch & Best-of-3 Emitters
+  const requestRematch = useCallback((roomId) => {
+    if (socket?.connected && roomId) {
+      socket.emit('request-rematch', { roomId });
+    }
+  }, [socket]);
+
+  const leaveMatch = useCallback((roomId) => {
+    if (socket?.connected && roomId) {
+      socket.emit('leave-match', { roomId });
+    }
+  }, [socket]);
+
   useEffect(() => {
     if (!socket) return;
 
@@ -146,6 +165,7 @@ export function useHangmanSocket({
         opponentName: data.opponentName,
         opponentId: data.opponentId,
         isBot: Boolean(data.isBot),
+        seriesScore: data.seriesScore,
       });
       setGameState?.('playing');
     });
@@ -180,12 +200,41 @@ export function useHangmanSocket({
       onOpponentTaunt?.(data);
     });
 
+    // 8.5 Authoritative Match Ended (Simultaneous on both ends)
+    socket.on('match-ended', (data) => {
+      onMatchEnded?.(data);
+    });
+
     // 9. Final Results Sync
     socket.on('game-results-synced', (data) => {
       const isMeWinner = data.winnerId 
         ? socket.id === data.winnerId 
         : profile?.name === data.winnerName;
       applyOnlineResults?.(isMeWinner);
+      if (data.seriesScore) {
+        onSeriesResultsSynced?.(data.seriesScore);
+      }
+    });
+
+    // 10. Instant Rematch Handshake
+    socket.on('rematch-requested', (data) => {
+      onRematchRequested?.(data);
+    });
+
+    socket.on('rematch-waiting', () => {
+      onRematchWaiting?.();
+    });
+
+    socket.on('rematch-accepted', (data) => {
+      onRematchAccepted?.(data);
+    });
+
+    socket.on('opponent-left-match', () => {
+      onOpponentLeftMatch?.();
+    });
+
+    socket.on('rematch-declined', () => {
+      onOpponentLeftMatch?.();
     });
 
     return () => {
@@ -197,7 +246,13 @@ export function useHangmanSocket({
       socket.off('opponent-shield-state');
       socket.off('opponent-wrong-count');
       socket.off('opponent-taunt');
+      socket.off('match-ended');
       socket.off('game-results-synced');
+      socket.off('rematch-requested');
+      socket.off('rematch-waiting');
+      socket.off('rematch-accepted');
+      socket.off('opponent-left-match');
+      socket.off('rematch-declined');
     };
   }, [
     socket,
@@ -213,6 +268,12 @@ export function useHangmanSocket({
     onOpponentShield,
     onOpponentWrongCount,
     onOpponentTaunt,
+    onRematchRequested,
+    onRematchWaiting,
+    onRematchAccepted,
+    onOpponentLeftMatch,
+    onSeriesResultsSynced,
+    onMatchEnded,
   ]);
 
   return { 
@@ -227,5 +288,7 @@ export function useHangmanSocket({
     sendTaunt,
     createCustomRoom,
     joinCustomRoom,
+    requestRematch,
+    leaveMatch,
   };
 }

@@ -13,6 +13,9 @@ import {
   Timer,
   Wind,
   Map,
+  Crown,
+  Loader2,
+  Swords,
 } from "lucide-react";
 import ShareResult from "./ShareResult";
 
@@ -39,6 +42,11 @@ export default function GameResults({
   onContinueJourney,
   nextNodeId = null,
   onBackToJourney = null,
+  // Clash Royale 1v1 Series & Rematch Props:
+  seriesScore = null,
+  rematchStatus = "idle",
+  onRequestRematch = null,
+  opponentName = null,
 }) {
   const isEndless = mode === "endless";
   const isJourney = mode === "journey";
@@ -312,17 +320,61 @@ export default function GameResults({
                 Journey Map
               </Button>
             )}
-            <Button
-              onClick={onRestart}
-              className={`flex-1 h-12 rounded-2xl font-black uppercase text-[11px] tracking-widest transition-all active:scale-95 text-white ${
-                isWon
-                  ? "bg-[#75c32c] hover:bg-[#64a825]"
-                  : "bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90"
-              }`}
-            >
-              {isJourney ? (isWon ? "Replay Node" : "Retry Node") : isEndless ? "New Flight" : mode === "online" ? "Find Duel" : isWon ? "Next Word" : "Try Again"}
-              <RefreshCw size={14} className="ml-2" />
-            </Button>
+            {mode === "online" && onRequestRematch ? (
+              <>
+                <Button
+                  onClick={onRequestRematch}
+                  disabled={rematchStatus === "waiting" || rematchStatus === "opponent_left"}
+                  className={`flex-[1.4] h-12 rounded-2xl font-black uppercase text-[11px] tracking-widest transition-all active:scale-95 text-white ${
+                    rematchStatus === "opponent_requested"
+                      ? "bg-emerald-500 hover:bg-emerald-600 animate-pulse shadow-lg shadow-emerald-500/40"
+                      : rematchStatus === "waiting"
+                      ? "bg-zinc-800 text-zinc-400 cursor-not-allowed"
+                      : rematchStatus === "opponent_left"
+                      ? "bg-zinc-800 text-zinc-500 opacity-60 cursor-not-allowed"
+                      : "bg-[#75c32c] hover:bg-[#64a825] shadow-lg shadow-green-500/20"
+                  }`}
+                >
+                  {rematchStatus === "waiting" ? (
+                    <span className="flex items-center gap-1.5">
+                      <Loader2 size={13} className="animate-spin" />
+                      Waiting for Opponent...
+                    </span>
+                  ) : rematchStatus === "opponent_requested" ? (
+                    <span className="flex items-center gap-1.5">
+                      <RefreshCw size={13} className="animate-spin" />
+                      Accept Rematch!
+                    </span>
+                  ) : rematchStatus === "opponent_left" ? (
+                    "Opponent Left"
+                  ) : (
+                    <>
+                      Rematch
+                      <RefreshCw size={13} className="ml-1.5" />
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={onRestart}
+                  className="flex-1 h-12 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all active:scale-95 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700"
+                >
+                  <Swords size={13} className="mr-1.5" />
+                  Find New Opponent
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={onRestart}
+                className={`flex-1 h-12 rounded-2xl font-black uppercase text-[11px] tracking-widest transition-all active:scale-95 text-white ${
+                  isWon
+                    ? "bg-[#75c32c] hover:bg-[#64a825]"
+                    : "bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90"
+                }`}
+              >
+                {isJourney ? (isWon ? "Replay Node" : "Retry Node") : isEndless ? "New Flight" : mode === "online" ? "Find Duel" : isWon ? "Next Word" : "Try Again"}
+                <RefreshCw size={14} className="ml-2" />
+              </Button>
+            )}
           </>
         )}
       </div>

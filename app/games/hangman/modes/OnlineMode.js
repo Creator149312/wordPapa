@@ -23,7 +23,8 @@ import { useHangmanSocket } from "../hooks/useHangmanSocket";
 import { useGameLogic } from "../hooks/useGameLogic";
 import { useAudio } from "../hooks/useAudio";
 import { getOnlineMatchRewards, calculateLevel, applyTrophyFloor } from "../lib/progression";
-import { RANKS, ARENAS } from "../constants";
+import { RANKS, ARENAS, ONLINE_WORDS } from "../constants";
+import { SPELLS_CONFIG } from "../constants/spells";
 
 const RARE_BOUNTY_LETTERS = ["J", "Q", "X", "Z", "K", "V", "W", "B", "P"];
 
@@ -42,6 +43,17 @@ export default function OnlineMode({
   const [opponent, setOpponent] = useState(null);
   const [opponentWon, setOpponentWon] = useState(false);
   const [gameState, setGameState] = useState("playing");
+
+  // --- Best-of-3 Series & Instant Rematch State ---
+  const [seriesScore, setSeriesScore] = useState({
+    myScore: initialMatchData?.seriesScore?.myScore || 0,
+    oppScore: initialMatchData?.seriesScore?.oppScore || 0,
+    round: initialMatchData?.seriesScore?.round || 1,
+    isSeriesOver: false,
+    seriesWinner: null,
+  });
+  const [rematchStatus, setRematchStatus] = useState("idle"); // "idle" | "waiting" | "opponent_requested" | "opponent_left"
+  const [matchOutcome, setMatchOutcome] = useState(null); // { isOver: true, isWon: boolean, winnerName: string, reason: string }
 
   // --- Clash Royale Elixir & Combat State ---
   const [elixir, setElixir] = useState(5.0); // Starts at 5, max 10
@@ -142,18 +154,68 @@ export default function OnlineMode({
     }
   }, [playSynth, showCombatAlert]);
 
+  // Handler for Rematch Acceptance (starts new round on shared word)
+  const handleRematchAccepted = useCallback((data) => {
+    initializedRoomIdRef.current = data.roomId;
+    initGameSession("online", data);
+    setOpponent((prev) => ({
+      name: data.opponentName || prev?.name || "Rival",
+      progress: 0,
+      wrongCount: 0,
+      isShielded: false,
+      isFrozen: false,
+      roomId: data.roomId,
+      isBot: Boolean(data.isBot),
+    }));
+    setMatchOutcome(null);
+    setHasClaimedResult(false);
+    setOpponentWon(false);
+    setTimeLeft(90);
+    setIsOvertime(false);
+    setElixir(5.0);
+    setHasShield(false);
+    setShieldedWrongLetters([]);
+    setIsFrozen(false);
+    setFreezeRemaining(0);
+    setIsScrambled(false);
+    setScrambleRemaining(0);
+    setOppShield(false);
+    setOppFrozen(false);
+    setOppWrongCount(0);
+    setGameState("playing");
+    setRematchStatus("idle");
+    syncLock.current = false;
+
+    if (data.seriesScore) {
+      setSeriesScore({
+        myScore: data.seriesScore.myScore || 0,
+        oppScore: data.seriesScore.oppScore || 0,
+        round: data.seriesScore.round || 1,
+        isSeriesOver: false,
+        seriesWinner: null,
+      });
+    }
+
+    playSynth("SUDDEN_DEATH");
+    showCombatAlert("bounty", "⚔️ New Match Started! Good luck!");
+  }, [initGameSession, playSynth, showCombatAlert]);
+
   // --- Socket Integration ---
   const {
+    socket,
     disconnect,
     sendGuess,
     emitFinished,
     castSpell: emitSpell,
     sendShieldState,
     sendWrongCount,
+    requestRematch,
+    leaveMatch,
   } = useHangmanSocket({
     profile,
     initGameSession: (mode, data) => {
       initGameSession("online", data);
+      setMatchOutcome(null);
       setHasClaimedResult(false);
       setOpponentWon(false);
       setTimeLeft(90);
@@ -169,6 +231,9 @@ export default function OnlineMode({
       setOppFrozen(false);
       setOppWrongCount(0);
       syncLock.current = false;
+      if (data.seriesScore) {
+        setSeriesScore(data.seriesScore);
+      }
     },
     setOpponent,
     setGameState,
@@ -178,11 +243,64 @@ export default function OnlineMode({
     onOpponentSpell: handleOpponentSpell,
     onOpponentShield: (active) => setOppShield(active),
     onOpponentWrongCount: (count) => setOppWrongCount(count),
+    onRematchRequested: () => {
+      setRematchStatus("opponent_requested");
+      showCombatAlert("bounty", "Opponent Requested a Rematch!");
+      playSynth("CORRECT");
+    },
+    onRematchWaiting: () => {
+      setRematchStatus("waiting");
+    },
+    onRematchAccepted: (data) => {
+      handleRematchAccepted(data);
+    },
+    onOpponentLeftMatch: () => {
+      setRematchStatus("opponent_left");
+      showCombatAlert("insufficient", "Opponent Left the Match");
+    },
+    onSeriesResultsSynced: (serverSeries) => {
+      if (serverSeries) {
+        setSeriesScore({
+          myScore: serverSeries.p1Score,
+          oppScore: serverSeries.p2Score,
+          round: serverSeries.round,
+          isSeriesOver: serverSeries.isSeriesOver,
+          seriesWinner: serverSeries.seriesWinner,
+        });
+      }
+    },
+    onMatchEnded: (data) => {
+      const isMeWinner = data.winnerId
+        ? socket?.id === data.winnerId
+        : profile?.name === data.winnerName;
+      setMatchOutcome({
+        isOver: true,
+        isWon: isMeWinner,
+        winnerName: data.winnerName,
+        reason: data.reason,
+      });
+      if (data.seriesScore) {
+        setSeriesScore({
+          myScore: data.seriesScore.p1Id === socket?.id ? data.seriesScore.p1Score : data.seriesScore.p2Score,
+          oppScore: data.seriesScore.p1Id === socket?.id ? data.seriesScore.p2Score : data.seriesScore.p1Score,
+          round: data.seriesScore.round,
+          isSeriesOver: data.seriesScore.isSeriesOver,
+          seriesWinner: data.seriesScore.seriesWinner,
+        });
+      }
+    },
   });
 
   // --- Initial Match Data Setup (Instant Bot or Socket) ---
+  const initializedRoomIdRef = useRef(null);
+
   useEffect(() => {
     if (initialMatchData) {
+      if (initializedRoomIdRef.current === initialMatchData.roomId) {
+        return; // Already initialized this match session! Prevent wiping board when profile XP updates.
+      }
+      initializedRoomIdRef.current = initialMatchData.roomId;
+
       initGameSession("online", initialMatchData);
       setOpponent({
         name: initialMatchData.opponentName,
@@ -193,6 +311,10 @@ export default function OnlineMode({
         roomId: initialMatchData.roomId,
         isBot: Boolean(initialMatchData.isBot),
       });
+      if (initialMatchData.seriesScore) {
+        setSeriesScore(initialMatchData.seriesScore);
+      }
+      setMatchOutcome(null);
       setHasClaimedResult(false);
       setOpponentWon(false);
       setTimeLeft(90);
@@ -208,14 +330,11 @@ export default function OnlineMode({
       setOppFrozen(false);
       setOppWrongCount(0);
       syncLock.current = false;
-    } else if (!currentGame) {
-      const fallbackWords = [
-        { word: "JUPITER", category: "Space" },
-        { word: "PINEAPPLE", category: "Fruits" },
-        { word: "COLOSSEUM", category: "Landmarks" },
-        { word: "AVOCADO", category: "Food" },
-      ];
-      const selected = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+    } else if (!currentGame && !initializedRoomIdRef.current) {
+      const selected = ONLINE_WORDS[Math.floor(Math.random() * ONLINE_WORDS.length)];
+      const botRoomId = `duel_bot_${Date.now()}`;
+      initializedRoomIdRef.current = botRoomId;
+
       initGameSession("online", selected);
       setOpponent({
         name: "Scholar Aether",
@@ -223,12 +342,12 @@ export default function OnlineMode({
         wrongCount: 0,
         isShielded: false,
         isFrozen: false,
-        roomId: `duel_bot_${Date.now()}`,
+        roomId: botRoomId,
         isBot: true,
       });
       setElixir(5.0);
     }
-  }, [initialMatchData, initGameSession]);
+  }, [initialMatchData, initGameSession, currentGame]);
 
   // --- Win/Loss & Game-Over Logic ---
   // Overtime has expired when in overtime and timeLeft reaches 0
@@ -238,33 +357,38 @@ export default function OnlineMode({
   const oppLostByErrors = oppWrongCount >= 6;
 
   const isWon = useMemo(() => {
-    // 1. Instant Win: You completed the word!
+    // 1. Authoritative match outcome from server (or bot completion)
+    if (matchOutcome) return matchOutcome.isWon;
+    // 2. Instant Win: You completed the word!
     if (logicIsWon && !opponentWon) return true;
-    // 2. Opponent lost all 6 lives
+    // 3. Opponent lost all 6 lives
     if (oppLostByErrors && wrongGuesses.length < 6) return true;
-    // 3. Overtime expired: highest score wins
+    // 4. Overtime expired: highest score wins
     if (isTimeUp) {
       if (myScore > oppScore) return true;
       if (myScore === oppScore && wrongGuesses.length < oppWrongCount) return true;
     }
     return false;
-  }, [logicIsWon, opponentWon, oppLostByErrors, isTimeUp, myScore, oppScore, wrongGuesses.length, oppWrongCount]);
+  }, [matchOutcome, logicIsWon, opponentWon, oppLostByErrors, isTimeUp, myScore, oppScore, wrongGuesses.length, oppWrongCount]);
 
   const isLost = useMemo(() => {
-    // 1. Instant Loss: Opponent completed the word!
+    // 1. Authoritative match outcome from server
+    if (matchOutcome) return !matchOutcome.isWon;
+    // 2. Instant Loss: Opponent completed the word!
     if (opponentWon) return true;
-    // 2. You lost all 6 lives
+    // 3. You lost all 6 lives
     if (wrongGuesses.length >= 6) return true;
-    // 3. Overtime expired: opponent has higher score
+    // 4. Overtime expired: opponent has higher score
     if (isTimeUp) {
       if (myScore < oppScore) return true;
       if (myScore === oppScore && wrongGuesses.length > oppWrongCount) return true;
     }
     return false;
-  }, [opponentWon, wrongGuesses.length, isTimeUp, myScore, oppScore, oppWrongCount]);
+  }, [matchOutcome, opponentWon, wrongGuesses.length, isTimeUp, myScore, oppScore, oppWrongCount]);
 
   const isDraw = useMemo(() => {
     return (
+      !matchOutcome &&
       isTimeUp &&
       myScore === oppScore &&
       wrongGuesses.length === oppWrongCount &&
@@ -272,9 +396,9 @@ export default function OnlineMode({
       !opponentWon &&
       !oppLostByErrors
     );
-  }, [isTimeUp, myScore, oppScore, wrongGuesses.length, oppWrongCount, logicIsWon, opponentWon, oppLostByErrors]);
+  }, [matchOutcome, isTimeUp, myScore, oppScore, wrongGuesses.length, oppWrongCount, logicIsWon, opponentWon, oppLostByErrors]);
 
-  const isGameOver = isWon || isLost || isDraw;
+  const isGameOver = Boolean(matchOutcome?.isOver) || isWon || isLost || isDraw;
 
   // Sudden Death (2X Elixir) when in Overtime or in the final 30 seconds of regulation
   const isSuddenDeath = isOvertime || (timeLeft <= 30 && timeLeft > 0);
@@ -487,10 +611,40 @@ export default function OnlineMode({
 
   // --- 5. Clash Royale Spell Casting ---
   const handleCastSpell = (spellId, cost) => {
-    if (elixir < cost || isFrozen || isGameOver) return;
+    if (isGameOver) return;
+
+    if (isFrozen) {
+      playSynth("FREEZE");
+      showCombatAlert("freeze", "Cannot Cast While Frozen!");
+      return;
+    }
+
+    // Guard Cooldown
+    if ((spellCooldowns[spellId] || 0) > 0) {
+      playSynth("POP");
+      showCombatAlert("insufficient", "Spell on Cooldown!");
+      return;
+    }
+
+    // Guard Shield Redundancy
+    if (spellId === "shield" && hasShield) {
+      playSynth("POP");
+      showCombatAlert("insufficient", "Shield Already Active!");
+      return;
+    }
+
+    // Guard Elixir Cost
+    const spellCost = SPELLS_CONFIG[spellId]?.cost || cost;
+    if (elixir < spellCost) {
+      playSynth("ELIXIR_EMPTY");
+      setIsElixirShaking(true);
+      setTimeout(() => setIsElixirShaking(false), 400);
+      showCombatAlert("insufficient", `Need ${spellCost} Elixir for ${SPELLS_CONFIG[spellId]?.name || spellId.toUpperCase()}!`);
+      return;
+    }
 
     // Deduct Elixir
-    setElixir((prev) => Math.max(0, prev - cost));
+    setElixir((prev) => Math.max(0, prev - spellCost));
     setSpellsCastCount((c) => c + 1);
 
     if (spellId === "freeze") {
@@ -541,7 +695,35 @@ export default function OnlineMode({
     }
   };
 
+  // Instant Rematch / Play Again Handler
+  const handleRequestRematch = useCallback(() => {
+    if (isOpponentBot) {
+      if (opponent?.roomId && socket?.connected) {
+        requestRematch(opponent.roomId);
+        setRematchStatus("waiting");
+      } else {
+        // Instant offline bot rematch
+        const nextWord = ONLINE_WORDS[Math.floor(Math.random() * ONLINE_WORDS.length)];
+        handleRematchAccepted({
+          ...nextWord,
+          roomId: opponent?.roomId || `duel_bot_${Date.now()}`,
+          opponentName: opponent?.name || "Scholar Aether",
+          isBot: true,
+        });
+      }
+      return;
+    }
+
+    if (opponent?.roomId) {
+      requestRematch(opponent.roomId);
+      setRematchStatus("waiting");
+    }
+  }, [isOpponentBot, opponent, socket, requestRematch, handleRematchAccepted]);
+
   const startNewGame = (resetToMenu = false) => {
+    if (opponent?.roomId) {
+      leaveMatch(opponent.roomId);
+    }
     disconnect();
     if (!resetToMenu && onRestartDuel) {
       onRestartDuel();
@@ -550,37 +732,87 @@ export default function OnlineMode({
     }
   };
 
-  // --- Keyboard Shortcuts (A-Z to guess, 1-4 for Spells) ---
+  // --- Stable Refs for Keyboard Shortcuts to avoid interval re-render listener churn ---
+  const handleGuessRef = useRef(handleGuess);
+  handleGuessRef.current = handleGuess;
+
+  const handleCastSpellRef = useRef(handleCastSpell);
+  handleCastSpellRef.current = handleCastSpell;
+
+  const activeDeckRef = useRef(profile?.activeDeck);
+  activeDeckRef.current = profile?.activeDeck;
+
+  // --- Physical Keyboard & Spell Hotkeys (A-Z to guess, 1-4 for Spells) ---
   useEffect(() => {
     if (gameState !== "playing" || isGameOver) return;
 
     const handleKeyDown = (e) => {
       // Ignore if user is focused on an input element
-      if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target?.tagName)) return;
+      if (
+        ["INPUT", "TEXTAREA", "SELECT"].includes(e.target?.tagName) ||
+        e.target?.isContentEditable
+      ) {
+        return;
+      }
 
-      const key = e.key.toUpperCase();
+      // Ignore if modifier keys are held
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
 
-      // Number keys 1-4 for spells
+      // 1. Number keys 1-4 for Spells (supports top number row & numpad)
+      let spellIdx = -1;
       if (["1", "2", "3", "4"].includes(e.key)) {
-        const spellDeck = profile.activeDeck || ["freeze", "shield", "scramble", "reveal"];
-        const index = parseInt(e.key, 10) - 1;
-        const spellId = spellDeck[index];
-        const costs = { freeze: 3, shield: 3, scramble: 2, reveal: 4 };
-        if (spellId && costs[spellId]) {
-          handleCastSpell(spellId, costs[spellId]);
+        spellIdx = parseInt(e.key, 10) - 1;
+      } else if (e.code && /^Digit[1-4]$/.test(e.code)) {
+        spellIdx = parseInt(e.code.replace("Digit", ""), 10) - 1;
+      } else if (e.code && /^Numpad[1-4]$/.test(e.code)) {
+        spellIdx = parseInt(e.code.replace("Numpad", ""), 10) - 1;
+      }
+
+      if (spellIdx >= 0 && spellIdx <= 3) {
+        e.preventDefault();
+        const deck = activeDeckRef.current || ["freeze", "shield", "scramble", "reveal"];
+        const spellId = deck[spellIdx];
+        if (spellId) {
+          const spellCost = SPELLS_CONFIG[spellId]?.cost || (spellId === "reveal" ? 4 : spellId === "scramble" ? 2 : 3);
+          handleCastSpellRef.current?.(spellId, spellCost);
         }
         return;
       }
 
-      // Letter keys A-Z for guesses
-      if (/^[A-Z]$/.test(key)) {
-        handleGuess(key);
+      // 2. Letter keys A-Z for guesses
+      if (e.key && e.key.length === 1 && /^[a-zA-Z]$/.test(e.key)) {
+        e.preventDefault();
+        handleGuessRef.current?.(e.key.toUpperCase());
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [gameState, isGameOver, profile.activeDeck, elixir, isFrozen, allGuessedLetters, wordLetters]);
+  }, [gameState, isGameOver]);
+
+  // --- Proactive Dual-Ended Match Termination Sync ---
+  // When ANY local ending condition is triggered, inform the server so BOTH ends finish simultaneously
+  useEffect(() => {
+    if (matchOutcome) return; // already concluded by server
+    if (!opponent?.roomId) return;
+
+    if (logicIsWon) {
+      // 1. You solved the word -> You won!
+      emitFinished(opponent.roomId, profile.name, "word_solved");
+    } else if (wrongGuesses.length >= 6) {
+      // 2. You lost all 6 lives -> Opponent won!
+      emitFinished(opponent.roomId, opponent.name || "Opponent", "six_errors");
+    } else if (oppLostByErrors && wrongGuesses.length < 6) {
+      // 3. Opponent lost all 6 lives -> You won!
+      emitFinished(opponent.roomId, profile.name, "opponent_six_errors");
+    } else if (isTimeUp) {
+      // 4. Sudden Death Overtime expired -> Highest score wins!
+      const winner = myScore > oppScore
+        ? profile.name
+        : (oppScore > myScore ? (opponent.name || "Opponent") : (wrongGuesses.length <= oppWrongCount ? profile.name : (opponent.name || "Opponent")));
+      emitFinished(opponent.roomId, winner, "time_up");
+    }
+  }, [logicIsWon, wrongGuesses.length, oppLostByErrors, isTimeUp, matchOutcome, opponent, profile.name, myScore, oppScore, oppWrongCount, emitFinished]);
 
   // --- Effects: Game End & Cloud Sync ---
   useEffect(() => {
@@ -599,9 +831,19 @@ export default function OnlineMode({
       setSessionSnapshot({ streak: newStreak, totalXP: earnedXP, totalCoins: earnedCoins });
       applyOnlineResults(isWon);
 
-      if (isWon && (logicIsWon || oppLostByErrors) && opponent?.roomId) {
-        emitFinished(opponent.roomId, profile.name);
-      }
+      // Local Series Score update fallback if not synced by server
+      setSeriesScore((prev) => {
+        const newMy = isWon ? prev.myScore + 1 : prev.myScore;
+        const newOpp = !isWon ? prev.oppScore + 1 : prev.oppScore;
+        const isOver = newMy >= 2 || newOpp >= 2;
+        return {
+          ...prev,
+          myScore: newMy,
+          oppScore: newOpp,
+          isSeriesOver: isOver,
+          seriesWinner: isOver ? (newMy >= 2 ? profile.name : opponent?.name) : null,
+        };
+      });
 
       // Trophy Gate calculation
       const currentHighestXP = Math.max(profile.highestXP || 0, profile.xp + earnedXP);
@@ -624,15 +866,13 @@ export default function OnlineMode({
   }, [
     isGameOver,
     isWon,
+    isLost,
     hasClaimedResult,
     profile,
-    opponent,
-    logicIsWon,
-    oppLostByErrors,
     spellsCastCount,
     applyOnlineResults,
-    emitFinished,
     syncToDatabase,
+    playSynth,
   ]);
 
   // Match Timer with Sudden Death Overtime (+30 seconds)
@@ -675,17 +915,10 @@ export default function OnlineMode({
   ]);
 
   return (
-    <div className="w-full flex justify-center py-2 px-1 select-none">
-      {/* 9:16 Clash Royale Console Container */}
-      <div className="w-full max-w-[430px] rounded-[2.5rem] bg-zinc-950/95 border-2 border-zinc-800/80 shadow-2xl p-3 flex flex-col space-y-2.5 relative overflow-hidden backdrop-blur-md">
-        
-        {/* Arena Atmosphere Background Tint */}
-        <div
-          className="absolute -top-24 -left-24 w-64 h-64 rounded-full blur-3xl opacity-15 pointer-events-none"
-          style={{ backgroundColor: currentRank.color }}
-        />
-
-        {/* 1. Clash Arena Minimal Header (Quit, Category, Timer) */}
+    <div className="w-full flex justify-center py-1 px-1 select-none">
+      {/* Sleek Minimalist 1v1 Console Container */}
+      <div className="w-full max-w-[420px] rounded-3xl bg-zinc-950 border border-zinc-800/80 shadow-2xl p-2.5 flex flex-col space-y-2 relative overflow-hidden">
+        {/* 1. Clash Arena Minimal Header (Quit, Category, Timer, Series Score) */}
         <ClashArenaHeader
           timeLeft={timeLeft}
           onQuit={() => startNewGame(true)}
@@ -693,9 +926,10 @@ export default function OnlineMode({
           isOvertime={isOvertime}
           category={currentGame?.category || "Clash Duel"}
           currentArena={activeArena}
+          seriesScore={seriesScore}
         />
 
-        {/* 2. Opponent River Strip (Avatar, Name, Hearts, Progress Dots) */}
+        {/* 2. Opponent River Strip (Avatar, Name, Hearts, Progress) */}
         {opponent && (
           <ClashOpponentStrip
             opponent={opponent}
@@ -720,9 +954,9 @@ export default function OnlineMode({
 
         {/* 4. Player Word Arena (Hidden Letters Tiles) */}
         <div
-          className={`py-3 px-2 flex justify-center bg-zinc-900/60 rounded-2xl relative overflow-hidden transition-all duration-300 border border-zinc-800/80 ${
-            hasShield ? "ring-2 ring-amber-400/90 shadow-[0_0_15px_rgba(251,191,36,0.25)]" : ""
-          } ${isScrambled ? "filter blur-[1px] rotate-[0.5deg]" : ""}`}
+          className={`py-2 px-2 flex justify-center bg-zinc-900/40 rounded-xl relative overflow-hidden transition-all border border-zinc-800/60 ${
+            hasShield ? "ring-1 ring-amber-400/80" : ""
+          } ${isScrambled ? "filter blur-[1px]" : ""}`}
         >
           <WordDisplay
             wordLetters={wordLetters}
@@ -733,8 +967,8 @@ export default function OnlineMode({
           />
         </div>
 
-        {/* 5. Clash Royale Elixir Bar (0..10 Magenta Bar) */}
-        {!hasClaimedResult && (
+        {/* 5. Clash Royale Elixir Bar (Slim Minimalist Bar) */}
+        {!hasClaimedResult && !isGameOver && (
           <ClashElixirBar
             elixir={elixir}
             maxElixir={10}
@@ -743,8 +977,8 @@ export default function OnlineMode({
           />
         )}
 
-        {/* 6. 4-Card Tactical Spell Deck */}
-        {!hasClaimedResult && (
+        {/* 6. 4-Card Tactical Spell Deck (Compact Minimal Grid) */}
+        {!hasClaimedResult && !isGameOver && (
           <ClashSpellCards
             deck={profile.activeDeck || ["freeze", "shield", "scramble", "reveal"]}
             currentElixir={elixir}
@@ -759,7 +993,7 @@ export default function OnlineMode({
 
         {/* 7. Virtual Keyboard or Match Over Results */}
         <div className="relative pt-0.5">
-          {!hasClaimedResult ? (
+          {!hasClaimedResult && !isGameOver ? (
             <VirtualKeyboard
               guessedLetters={allGuessedLetters}
               wordLetters={wordLetters}
@@ -776,6 +1010,10 @@ export default function OnlineMode({
               streak={sessionSnapshot.streak}
               xpEarned={sessionSnapshot.totalXP}
               coinsEarned={sessionSnapshot.totalCoins}
+              seriesScore={seriesScore}
+              rematchStatus={rematchStatus}
+              onRequestRematch={handleRequestRematch}
+              opponentName={opponent?.name}
             />
           )}
         </div>

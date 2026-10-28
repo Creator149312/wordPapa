@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Globe, Users, X, Coins, Sword, ShieldCheck, KeyRound, ArrowRight } from 'lucide-react';
-import { GAME_STAKES } from '../constants';
+import { GAME_STAKES, ONLINE_WORDS } from '../constants';
 
 export default function OnlineLobby({ socket, profile, onCancel, onStartInstantDuel }) {
   const [status, setStatus] = useState('searching'); 
@@ -16,24 +16,7 @@ export default function OnlineLobby({ socket, profile, onCancel, onStartInstantD
   const ENTRY_FEE = GAME_STAKES.ONLINE_1V1.ENTRY_FEE;
   const WIN_PRIZE = GAME_STAKES.ONLINE_1V1.WIN_PRIZE;
 
-  const DUEL_WORDS = [
-    { word: "JUPITER", category: "Space" },
-    { word: "GALAXY", category: "Space" },
-    { word: "ASTEROID", category: "Space" },
-    { word: "PLATYPUS", category: "Animals" },
-    { word: "CHAMELEON", category: "Animals" },
-    { word: "DOLPHIN", category: "Animals" },
-    { word: "CHOPSTICKS", category: "Items" },
-    { word: "AVOCADO", category: "Food" },
-    { word: "PINEAPPLE", category: "Fruits" },
-    { word: "COLOSSEUM", category: "Landmarks" },
-    { word: "PYRAMID", category: "Landmarks" },
-    { word: "FERRARI", category: "Cars" },
-    { word: "SUBMARINE", category: "Vehicles" },
-    { word: "EINSTEIN", category: "Famous People" },
-    { word: "SERENDIPITY", category: "SAT Vocabulary" },
-    { word: "METICULOUS", category: "SAT Vocabulary" }
-  ];
+  const DUEL_WORDS = ONLINE_WORDS;
   const BOTS = ["Scholar Aether", "Sage Orion", "Student Zephyr", "Rival Kael"];
 
   // Fallback bot duel
